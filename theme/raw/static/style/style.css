@@ -1,0 +1,15 @@
+div#subjects_list p {
+	font-size: 120%;
+}
+form.pieform table {
+	float: right;
+}
+form#addlearnedlanguage table {
+    float: left;
+}
+table#checklist th {
+	color: #666;
+}
+td.radio {
+    white-space: nowrap;
+}
