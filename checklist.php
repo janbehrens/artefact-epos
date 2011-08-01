@@ -83,7 +83,7 @@ if ($data) {
 }
 else {
     $haslanguages = false;
-    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href="index.php">' . get_string('epossettings', 'artefact.epos') . ' </a>' . get_string('nolanguageselected2', 'artefact.epos');
+    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href="index.php">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
 
 

@@ -50,9 +50,8 @@ $string['save'] = 'Save';
 $string['addedlanguage'] = 'Language has been added.';
 $string['confirmdel'] = 'Are you sure you want to delete this language?';
 $string['deletedlanguage'] = 'Language has been deleted.';
-$string['epossettings'] = 'epos settings';
-$string['nolanguageselected1'] = 'You have not selected any languages. Go to ';
-$string['nolanguageselected2'] = ' to add one.';
+$string['nolanguageselected1'] = 'You have not selected any languages. Go to "';
+$string['nolanguageselected2'] = '" to add one.';
 $string['savedchecklist'] = 'Your checklist has been saved.';
 
 //vocabulary
