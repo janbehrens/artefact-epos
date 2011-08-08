@@ -275,7 +275,7 @@ $string['elc_sp_c1_3'] = /*FIXME*/'Ich kann mündlich etwas ausführlich darstel
 $string['elc_sp_c1_4'] = /*FIXME*/'Ich kann in meinem Fach- und Interessengebiet ein klar gegliedertes Referat halten, dabei wenn nötig vom vorbereiteten Text abweichen und spontan auf Fragen von Zuhörenden eingehen.';
 $string['elc_sp_c2_1'] = /*FIXME*/'Ich kann Informationen aus verschiedenen Quellen mündlich zusammenfassen und dabei die enthaltenen Argumente und Sachverhalte in einer klaren zusammenhängenden Darstellung wiedergeben. ';
 $string['elc_sp_c2_2'] = /*FIXME*/'Ich kann Gedanken und Standpunkte sehr flexibel vortragen und dabei etwas hervorheben, differenzieren und Mehrdeutigkeit beseitigen. ';
-$string['elc_sp_c2_3'] = "I can present a complex topic confidently and articulately to an audience unfamiliar with it , structuring and adapting the talk flexibly to meet the audience's needs.";
+$string['elc_sp_c2_3'] = 'I can present a complex topic confidently and articulately to an audience unfamiliar with it , structuring and adapting the talk flexibly to meet the audience\'s needs.';
 $string['elc_wr_a1_1'] = /*FIXME*/'Ich kann auf einem Fragebogen Angaben zu meiner Person machen (Beruf, Alter, Wohnort, Hobbys). ';
 $string['elc_wr_a1_2'] = /*FIXME*/'Ich kann eine Glückwunschkarte schreiben, zum Beispiel zum Geburtstag. ';
 $string['elc_wr_a1_3'] = /*FIXME*/'Ich kann eine einfache Postkarte (z. B. mit Feriengrüßen) schreiben. ';
@@ -329,9 +329,11 @@ $string['elc_wr_c2_9'] = 'I can write scientific texts in my field, with a view 
 $string['elc_wr_c2_10'] = 'I can write a critical essay (e.g., a review) of scientific literature for publication in my field.';
 $string['elc_wr_c2_11'] = 'I can take accurate and complete notes during a lecture, seminar, or tutorial.';
 $string['elc_wr_c2_12'] = 'I can summarise information from different sources, reconstructing arguments in such a way that the overall result is a coherent presentation.';
-$string['elc_wr_c2_13'] = "I can edit colleagues' texts, improving them grammatically and stylistically, with little hesitation.";
+$string['elc_wr_c2_13'] = 'I can edit colleagues\' texts, improving them grammatically and stylistically, with little hesitation.';
 
-//descriptors CercleS
+/*
+ * descriptors CercleS
+ */
 $string['cercles_li_a1_1'] = 'I can understand basic words and phrases about myself and my family when people speak slowly and clearly ';
 $string['cercles_li_a1_2'] = 'I can understand simple instructions, directions and comments ';
 $string['cercles_li_a1_3'] = 'I can understand the names of everyday objects in my immediate environment ';
@@ -365,7 +367,7 @@ $string['cercles_li_b2_4'] = 'I can follow extended talks delivered in standard 
 $string['cercles_li_b2_5'] = 'I can follow complex lines of argument, provided these are clearly signposted and the topic is reasonably familiar ';
 $string['cercles_li_b2_6'] = 'I can follow the essentials of lectures, talks and reports and other forms of academic or professional presentation in my field ';
 $string['cercles_li_b2_7'] = 'I can follow most TV news programmes, documentaries, interviews, talk shows and the majority of films in standard dialect ';
-$string['cercles_li_b2_8'] = "I can follow most radio programmes and audio material delivered in standard dialect and identify the speaker's mood, tone, etc. ";
+$string['cercles_li_b2_8'] = 'I can follow most radio programmes and audio material delivered in standard dialect and identify the speaker\'s mood, tone, etc. ';
 $string['cercles_li_b2_9'] = 'I am sensitive to expressions of feeling and attitudes (e.g., critical, ironic, supportive, flippant, disapproving)';
 $string['cercles_li_c1_1'] = 'I can follow extended speech even when it is not clearly structured and when relationships are only implied and not signalled explicitly ';
 $string['cercles_li_c1_2'] = 'I can recognize a wide range of idiomatic expressions and colloquialisms, appreciating register shifts ';
@@ -474,7 +476,7 @@ $string['cercles_sp_a2_4'] = 'I can describe my educational background and subje
 $string['cercles_sp_a2_5'] = 'I can describe plans, arrangements and alternatives ';
 $string['cercles_sp_a2_6'] = 'I can give short simple descriptions of events or tell a simple story ';
 $string['cercles_sp_a2_7'] = 'I can describe past activities and personal experiences (e.g., what I did at the weekend) ';
-$string['cercles_sp_a2_8'] = "I can explain what I like and don't like about something ";
+$string['cercles_sp_a2_8'] = 'I can explain what I like and don\'t like about something ';
 $string['cercles_sp_a2_9'] = 'I can give simple descriptions of things and make comparisons ';
 $string['cercles_sp_a2_10'] = 'I can deliver very short rehearsed announcements of predictable learnt content ';
 $string['cercles_sp_a2_11'] = 'I can give a short rehearsed presentation on a familiar subject in my academic or professional field';
@@ -505,8 +507,8 @@ $string['cercles_sp_c2_2'] = 'I can give clear, fluent, elaborate and often memo
 $string['cercles_sp_c2_3'] = 'I can summarize and synthesize information and ideas from a variety of specialized sources in my field in a clear and flexible manner ';
 $string['cercles_sp_c2_4'] = 'I can present a complex topic in my field confidently and articulately, and can handle difficult and even hostile questioning';
 $string['cercles_si_a1_1'] = 'I can say basic greetings and phrases (e.g., please, thank you), ask how someone is and say how I am ';
-$string['cercles_si_a1_2'] = "I can say who I am, ask someone's name and introduce someone ";
-$string['cercles_si_a1_3'] = "I can say I don't understand, ask people to repeat what they say or speak more slowly, attract attention and ask for help ";
+$string['cercles_si_a1_2'] = 'I can say who I am, ask someone\'s name and introduce someone ';
+$string['cercles_si_a1_3'] = 'I can say I don\'t understand, ask people to repeat what they say or speak more slowly, attract attention and ask for help ';
 $string['cercles_si_a1_4'] = 'I can ask how to say something in the language or what a word means ';
 $string['cercles_si_a1_5'] = 'I can ask and answer simple direct questions on very familiar topics (e.g., family, student life) with help from the person I am talking to ';
 $string['cercles_si_a1_6'] = 'I can ask people for things and give people things ';
