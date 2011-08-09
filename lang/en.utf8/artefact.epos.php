@@ -82,15 +82,19 @@ $string['language.ru'] = 'Russian';
 $string['language.sv'] = 'Swedish';
 $string['language.tr'] = 'Turkish';
 $string['language.zh'] = 'Chinese';
+$string['language.biology'] = 'Biologie';
 
 //descriptor sets
 $string['descriptorset.cercles'] = 'CercleS';
 $string['descriptorset.elc'] = 'ELC';
+$string['descriptorset.biology'] = 'Biologie';
 
 //evaluation levels
 $string['eval0'] = 'no';
 $string['eval1'] = 'somewhat';
 $string['eval2'] = 'yes';
+
+//TODO: the following should be like $string['descriptorset.elc.listening']
 
 //competences ELC
 $string['listening'] = 'Listening';
@@ -106,6 +110,14 @@ $string['b1'] = 'B1';
 $string['b2'] = 'B2';
 $string['c1'] = 'C1';
 $string['c2'] = 'C2';
+
+//competences Biology
+$string['system'] = 'System';
+$string['structureandfunction'] = 'Struktur und Funktion';
+$string['development'] = 'Entwicklung';
+
+//competence levels Biology
+$string['m'] = 'Mittlerer Schulabschluss';
 
 /*
  * descriptors ELC - still incomplete
