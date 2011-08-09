@@ -560,4 +560,31 @@ $string['cercles_si_c2_2'] = 'I can converse comfortably and appropriately, unha
 $string['cercles_si_c2_3'] = 'I can hold my own in formal discussion of complex and specialist issues in my field, putting forward and sustaining an articulate and persuasive argument, at no disadvantage to native speakers ';
 $string['cercles_si_c2_4'] = 'I can keep up my side of the dialogue as interviewer or interviewee with complete confidence and fluency, structuring the talk and interacting authoritatively at no disadvantage to a native speaker';
 
+/*
+* descriptors biology
+*/
+$string['bio_sy_m_1'] = 'Ich besitze ein Verständnis der Zelle als System.';
+$string['bio_sy_m_2'] = 'Ich bin in der Lage, den Organismus und Organismengruppen als System zu erklären.';
+$string['bio_sy_m_3'] = 'Ich bin in der Lage, Ökosystem und Biosphäre als System zu erklären.';
+$string['bio_sy_m_4'] = 'Ich kann die Wechselwirkungen im Organismus, zwischen Organismen sowie zwischen Organismen und unbelebter Materie beschreiben und erklären.';
+$string['bio_sy_m_5'] = 'Ich bin in der Lage, zwischen den Systemebenen zu wechseln.';
+$string['bio_sy_m_6'] = 'Ich bin in der Lage, einen Stoffkreislauf sowie den Energiefluss in einem Ökosystem darzustellen.';
+$string['bio_sy_m_7'] = 'Ich bin in der Lage, Wechselwirkungen zwischen Biosphäre und den anderen Sphären der Erde zu beschreiben.';
+$string['bio_sy_m_8'] = 'Ich kenne und verstehe die grundlegenden Kriterien von nachhaltiger Entwicklung.';
+$string['bio_st_m_1'] = 'Ich bin in der Lage, Zellen als strukturelle und funktionelle Grundbaueinheiten von Lebewesen zu beschreiben.';
+$string['bio_st_m_2'] = 'Ich bin in der Lage, die bakterielle, pflanzliche und tierliche Zelle in Struktur und Funktion zu vergleichen.';
+$string['bio_st_m_3'] = 'Ich kann strukturelle und funktionelle Gemeinsamkeiten und Unterschiede von Organismen und Organismengruppen darstellen.';
+$string['bio_st_m_4'] = 'Ich bin in der Lage, Struktur und Funktion von Organen und Organsystemen, z. B. bei der Stoff- und Energieumwandlung, Steuerung und Regelung, Informationsverarbeitung, Vererbung und Reproduktion, zu beschreiben und zu erklären.';
+$string['bio_st_m_5'] = 'Ich kann die strukturelle und funktionelle Organisation im Ökosystem beschreiben.';
+$string['bio_st_m_6'] = 'Ich kann die Angepasstheit ausgewählter Organismen an die Umwelt beschreiben und erklären.';
+$string['bio_de_m_1'] = 'Ich kann die Bedeutung der Zellteilung für Wachstum, Fortpflanzung und Vermehrung erläutern.';
+$string['bio_de_m_2'] = 'Ich kann die artspezifische Individualentwicklung von Organismen beschreiben.';
+$string['bio_de_m_3'] = 'Ich bin in der Lage, verschiedene Formen der Fortpflanzung zu beschreiben.';
+$string['bio_de_m_4'] = 'Ich bin in der Lage, ein Ökosystem in zeitlicher Veränderung zu beschreiben.';
+$string['bio_de_m_5'] = 'Ich kann stammesgeschichtliche Verwandtschaft von Organismen beschreiben und erklären.';
+$string['bio_de_m_6'] = 'Ich kann den Verlauf und die Ursachen der Evolution an ausgewählten Lebewesen beschreiben und erklären.';
+$string['bio_de_m_7'] = 'Ich bin in der Lage, die Variabilität von Lebewesen zu erklären.';
+$string['bio_de_m_8'] = 'Ich kenne Eingriffe des Menschen in die Natur und Kriterien für solche Entscheidungen und kann sie erörtern.';
+
+
 ?>

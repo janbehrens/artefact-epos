@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XML>
+    <DESCRIPTORSET NAME="biology"></DESCRIPTORSET>
+    <DESCRIPTORS>
+        <DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_1"></DESCRIPTOR>
+		<DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_2"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_3"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_4"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_5"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_6"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_7"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="system" LEVEL="m" NAME="bio_sy_m_8"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="structureandfunction" LEVEL="m" NAME="bio_st_m_1"></DESCRIPTOR>
+		<DESCRIPTOR COMPETENCE="structureandfunction" LEVEL="m" NAME="bio_st_m_2"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="structureandfunction" LEVEL="m" NAME="bio_st_m_3"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="structureandfunction" LEVEL="m" NAME="bio_st_m_4"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="structureandfunction" LEVEL="m" NAME="bio_st_m_5"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="structureandfunction" LEVEL="m" NAME="bio_st_m_6"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_1"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_2"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_3"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_4"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_5"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_6"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_7"></DESCRIPTOR>
+        <DESCRIPTOR COMPETENCE="development" LEVEL="m" NAME="bio_de_m_8"></DESCRIPTOR>
+    </DESCRIPTORS>
+</XML>
