@@ -3,7 +3,7 @@
 <table id="learnedlanguagelist">
     <thead>
         <tr>
-            <th>{str tag='language' section='mahara'}</th>
+            <th>{str tag='subject' section='mahara'}</th>
             <th>{str tag='descriptors' section='artefact.epos'}</th>
             <th></th>
         </tr>
