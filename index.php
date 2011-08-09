@@ -161,7 +161,7 @@ function get_learnedlanguages() {
     if (!empty($languages)) {
         return $languages;
     }
-    $codes = array('ar', 'ca', 'de', 'en', 'eo', 'es', 'fi', 'fr', 'he', 'hu', 'it', 'ja', 'la', 'nl', 'pl', 'pt', 'ru', 'sv', 'tr', 'zh');
+    $codes = array('ar', 'ca', 'de', 'en', 'eo', 'es', 'fi', 'fr', 'he', 'hu', 'it', 'ja', 'la', 'nl', 'pl', 'pt', 'ru', 'sv', 'tr', 'zh', 'biology');
 
     foreach ($codes as $c) {
         $languages[$c] = get_string("language.{$c}", 'artefact.epos');
@@ -178,7 +178,7 @@ function get_descriptors() {
     if (!empty($descriptors)) {
         return $descriptors;
     }
-    $codes = array('cercles', 'elc');
+    $codes = array('cercles', 'elc', 'biology');
 
     foreach ($codes as $c) {
         $descriptors[$c] = get_string("descriptorset.{$c}", 'artefact.epos');
