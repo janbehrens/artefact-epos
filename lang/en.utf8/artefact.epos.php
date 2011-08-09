@@ -34,10 +34,10 @@ $string['selfevaluation'] = 'Self-evaluation';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
 $string['biography'] = 'Biography';
-$string['mylanguages'] = 'My Subjects';
+$string['mylanguages'] = 'My Languages';
 $string['myexperience'] = 'My Experience';
 $string['mydiary'] = 'My Diary';
-$string['mychecklistdescription'] = 'Display your checklist for a selected subject';
+$string['mychecklistdescription'] = 'Display your checklist for a selected language';
 
 //interaction
 $string['add'] = 'Add';
@@ -47,18 +47,17 @@ $string['edit'] = 'Edit';
 $string['save'] = 'Save';
 
 //notifications
-$string['addedlanguage'] = 'Subject has been added.';
-$string['confirmdel'] = 'Are you sure you want to delete this subject?';
-$string['deletedlanguage'] = 'Subject has been deleted.';
-$string['nolanguageselected1'] = 'You have not selected any subjects. Go to "';
+$string['addedlanguage'] = 'Language has been added.';
+$string['confirmdel'] = 'Are you sure you want to delete this language?';
+$string['deletedlanguage'] = 'Language has been deleted.';
+$string['nolanguageselected1'] = 'You have not selected any languages. Go to "';
 $string['nolanguageselected2'] = '" to add one.';
 $string['savedchecklist'] = 'Your checklist has been saved.';
 
 //vocabulary
 $string['competence'] = 'Competence';
 $string['descriptors'] = 'Descriptors';
-$string['languages'] = 'Subjects';
-$string['subject'] = 'Subject';
+$string['languages'] = 'Languages';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';
 
@@ -91,9 +90,9 @@ $string['descriptorset.elc'] = 'ELC';
 $string['descriptorset.biology'] = 'Biologie';
 
 //evaluation levels
-$string['eval0'] = 'not at all';
-$string['eval1'] = 'satisfactory';
-$string['eval2'] = 'very good';
+$string['eval0'] = 'no';
+$string['eval1'] = 'somewhat';
+$string['eval2'] = 'yes';
 
 //TODO: the following should be like $string['descriptorset.elc.listening']
 
