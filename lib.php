@@ -138,7 +138,7 @@ function write_descriptor_db($xml) {
         
         $values['descriptorset'] = $xmlarr['XML']['#']['DESCRIPTORSET']['0']['@']['NAME'];
         
-        foreach ($xmlarr['XML']['#']['DESCRIPTORS']['0']['#']['DESCRIPTOR'] as $x) {
+        foreach ($xmlarr['XML']['#']['DESCRIPTORSET']['0']['#']['DESCRIPTOR'] as $x) {
             $values['competence'] = $x['@']['COMPETENCE'];
             $values['level']      = $x['@']['LEVEL'];
             $values['name']       = $x['@']['NAME'];
