@@ -88,9 +88,11 @@ $string['descriptorset.cercles'] = 'CercleS';
 $string['descriptorset.elc'] = 'ELC';
 
 //evaluation levels
-$string['eval0'] = 'no';
-$string['eval1'] = 'somewhat';
-$string['eval2'] = 'yes';
+$string['eval0'] = 'not at all';
+$string['eval1'] = 'satisfactory';
+$string['eval2'] = 'very good';
+
+//TODO: the following should be like $string['descriptorset.elc.listening']
 
 //competences ELC
 $string['listening'] = 'Listening';
