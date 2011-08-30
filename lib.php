@@ -49,22 +49,16 @@ class PluginArtefactEpos extends PluginArtefact {
     public static function menu_items() {
         return array(
             array(
-                'path' => 'goals',
-                'title' => get_string('goals', 'artefact.epos'),
-                'url' => 'artefact/epos/goals.php',
-                'weight' => 31,
-            ),
-            array(
                 'path' => 'goals/mylanguages',
                 'title' => get_string('mylanguages', 'artefact.epos'),
                 'url' => 'artefact/epos/',
-                'weight' => 60,
+                'weight' => 30,
             ),
             array(
-                'path' => 'goals/goals',
+                'path' => 'goals',
                 'title' => get_string('goals', 'artefact.epos'),
-                'url' => 'artefact/epos/goals.php',
-                'weight' => 28,
+                'url' => 'artefact/epos/',
+                'weight' => 31,
             ),
             array(
                 'path' => 'selfevaluation',
@@ -158,18 +152,9 @@ function write_descriptor_db($xml) {
 }
 
 
-// comparison functions for sql records
-function cmpByTitle($a, $b) {
+// comparison function for sql records
+function cmp($a, $b) {
     return strcoll($a->title, $b->title);
-}
-
-function cmpByCompetenceAndLevel($a, $b) {
-    $cmp = strcoll($a->competence, $b->competence);
-    return $cmp == 0 ? strcoll($a->level, $b->level) : $cmp;
-}
-
-function cmpByLevel($a, $b) {
-    return ;
 }
 
 ?>

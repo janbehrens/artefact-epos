@@ -56,9 +56,7 @@ $string['savedchecklist'] = 'Your checklist has been saved.';
 
 //vocabulary
 $string['competence'] = 'Competence';
-$string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
-$string['descriptorset'] = 'Descriptor set';
 $string['languages'] = 'Languages';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';

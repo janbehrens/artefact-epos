@@ -33,7 +33,7 @@ safe_require('artefact', 'epos');
 
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
-$type = param_alpha('type');
+$type = 'learnedlanguage';//param_alpha('type');
 $view = param_integer('view', 0);
 
 $owner = $USER->get('id');
@@ -61,7 +61,7 @@ if ($data) {
 
 $count = count($data);
 
-usort($data, 'cmpByTitle');
+usort($data, 'cmp');
 
 echo json_encode(array(
     'data' => $data,
