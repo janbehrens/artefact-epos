@@ -26,42 +26,52 @@
  */
 
 define('INTERNAL', 1);
-define('JSON', 1);
+define('JSON', 1);    //comment to debug
 
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'epos');
 
+//non-debug
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
 $type = param_alpha('type');
 $view = param_integer('view', 0);
 
 $owner = $USER->get('id');
-$count = 0;
+$id = $_GET['id'];
+
+//debug
+// $type = 'debug';
+// $id = 408;
+
 
 $data = array();
 
-$sql = 'SELECT c.*, a.title
-	FROM {artefact} a
-	JOIN {artefact_epos_checklist} c ON c.learnedlanguage = a.id
-	WHERE a.owner = ? AND a.artefacttype = ?';
+$sql = 'SELECT c.descriptorset, ci.descriptor, d.level, d.competence
+	FROM artefact a
+    JOIN {artefact_epos_checklist} c ON c.learnedlanguage = a.id
+    JOIN {artefact_epos_checklist_item} ci ON ci.checklist = c.id
+    JOIN {artefact_epos_descriptor} d ON d.name = ci.descriptor
+    WHERE a.id = ? AND ci.goal = ?';
 
-if (!$data = get_records_sql_array($sql, array($owner, $type))) {
+if (!$data = get_records_sql_array($sql, array($id, 1))) {
     $data = array();
 }
 
-// For converting language and descriptorset codes to their respective names...
+//substitute strings
 if ($data) {
     foreach ($data as $field) {
-        $field->language = get_string('language.'.$field->title, 'artefact.epos');
-        $field->descriptorset = get_string('descriptorset.'.$field->descriptorset, 'artefact.epos');
+        $field->descriptor = get_string($field->descriptor, 'artefact.epos');
+        $field->descriptorset = get_string('descriptorset.' . $field->descriptorset, 'artefact.epos');
+        $field->competence = get_string($field->competence, 'artefact.epos');
+        $field->level = get_string($field->level, 'artefact.epos');
     }
 }
 
 
 $count = count($data);
 
-usort($data, 'cmpByTitle');
+usort($data, 'cmpByCompetenceAndLevel');
 
 echo json_encode(array(
     'data' => $data,
