@@ -34,10 +34,10 @@ $string['selfevaluation'] = 'Self-evaluation';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
 $string['biography'] = 'Biography';
-$string['mylanguages'] = 'My Languages';
+$string['mylanguages'] = 'My Subjects';
 $string['myexperience'] = 'My Experience';
 $string['mydiary'] = 'My Diary';
-$string['mychecklistdescription'] = 'Display your checklist for a selected language';
+$string['mychecklistdescription'] = 'Display your checklist for a selected subject';
 
 //interaction
 $string['add'] = 'Add';
@@ -47,10 +47,10 @@ $string['edit'] = 'Edit';
 $string['save'] = 'Save';
 
 //notifications
-$string['addedlanguage'] = 'Language has been added.';
-$string['confirmdel'] = 'Are you sure you want to delete this language?';
-$string['deletedlanguage'] = 'Language has been deleted.';
-$string['nolanguageselected1'] = 'You have not selected any languages. Go to "';
+$string['addedlanguage'] = 'Subject has been added.';
+$string['confirmdel'] = 'Are you sure you want to delete this subject?';
+$string['deletedlanguage'] = 'Subject has been deleted.';
+$string['nolanguageselected1'] = 'You have not selected any subjects. Go to "';
 $string['nolanguageselected2'] = '" to add one.';
 $string['savedchecklist'] = 'Your checklist has been saved.';
 
@@ -59,7 +59,8 @@ $string['competence'] = 'Competence';
 $string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
 $string['descriptorset'] = 'Descriptor set';
-$string['languages'] = 'Languages';
+$string['languages'] = 'Subjects';
+$string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';
 
@@ -84,10 +85,14 @@ $string['language.ru'] = 'Russian';
 $string['language.sv'] = 'Swedish';
 $string['language.tr'] = 'Turkish';
 $string['language.zh'] = 'Chinese';
+$string['language.biology'] = 'Biology';
 
 //descriptor sets
 $string['descriptorset.cercles'] = 'CercleS';
 $string['descriptorset.elc'] = 'ELC';
+$string['descriptorset.biology'] = 'Biology';
+$string['descriptorset.biology2'] = 'Biology 2';
+$string['descriptorset.schule'] = 'School';
 
 //evaluation levels
 $string['eval0'] = 'not at all';
@@ -111,56 +116,78 @@ $string['b2'] = 'B2';
 $string['c1'] = 'C1';
 $string['c2'] = 'C2';
 
+//competences Biology
+$string['system'] = 'System';
+$string['structureandfunction'] = 'Struktur und Funktion';
+$string['development'] = 'Entwicklung';
+
+//competence levels Biology
+$string['m'] = '';
+
+//competences Biology 2
+$string['fach'] = 'Fachjargon und sprachspezifische Kompetenzen';
+$string['daten'] = 'Datenaufnahme und Analyse';
+$string['lab'] = 'Laborkompetenzen';
+$string['softskills'] = 'Soziale Kompetenzen & Soft Skills';
+
 /*
- * descriptors ELC - still incomplete
- * sources:	http://www.coe.int/T/DG4/Portfolio/documents/descripteurs.doc
- * 			http://www.macmillanglobal.com/wp-content/uploads/2009/12/gpi_global_cef_descriptors.pdf
+ * descriptors ELC 
  */
-$string['elc_li_a1_1'] = /*FIXME*/'Ich kann verstehen, wenn jemand sehr langsam und deutlich mit mir spricht und wenn lange Pausen mir Zeit lassen, den Sinn zu erfassen.';
-$string['elc_li_a1_2'] = /*FIXME*/'Ich kann eine einfache Wegerklärung, wie man zu Fuß oder mit einem öffentlichen Verkehrsmittel von A nach B kommt, verstehen.';
-$string['elc_li_a1_3'] = /*FIXME*/'Ich kann Fragen und Aufforderungen verstehen, mit denen man sich langsam und sorgfältig an mich wendet, und ich kann kurzen einfachen Anweisungen folgen.';
-$string['elc_li_a1_4'] = /*FIXME*/'Ich kann Zahlen, Preisangaben und Uhrzeiten verstehen.';
+ 
+ //Listening
+$string['elc_li_a1_1'] = 'I can understand when someone speaks very slowly to me and articulates carefully, with long pauses for me to assimilate meaning.';
+$string['elc_li_a1_2'] = 'I can understand simple directions on how to get from X to Y, by foot or public transport.';
+$string['elc_li_a1_3'] = 'I can understand questions and instructions addressed carefully and slowly to me and follow short, simple directions.';
+$string['elc_li_a1_4'] = 'I can understand numbers, prices and times.';
+
 $string['elc_li_a2_1'] = 'I can understand what is said clearly, slowly and directly to me in simple everyday conversation; it is possible to make me understand, if the speaker can take the trouble.';
 $string['elc_li_a2_2'] = 'I can generally identify the topic of discussion around me when people speak slowly and clearly.';
 $string['elc_li_a2_3'] = 'I can understand phrases, words and expressions related to areas of most immediate priority (e.g. very basic personal and family information, shopping, local area, employment).';
-$string['elc_li_a2_4'] = 'I can catch the main point in short, clear, simple messages and announcements.';
-$string['elc_li_a2_5'] = 'I can understand the essential information in short recorded passages dealing with predictable everyday matters which are spoken slowly and clearly.';
+$string['elc_li_a2_4'] = 'I can grasp the main point in short, clear, simple messages and announcements.';
+$string['elc_li_a2_5'] = 'I can understand the essential information in short recorded passages dealing with predictable everyday matters provided they are spoken slowly and clearly.';
 $string['elc_li_a2_6'] = 'I can identify the main point of TV news items reporting events, accidents etc. when the visual supports the commentary.';
+
 $string['elc_li_b1_1'] = 'I can follow clearly articulated speech directed at me in everyday conversation, though I sometimes have to ask for repetition of particular words and phrases.';
 $string['elc_li_b1_2'] = 'I can generally follow the main points of extended discussion around me, provided speech is clearly articulated in standard dialect.';
 $string['elc_li_b1_3'] = 'I can listen to a short narrative and form hypotheses about what will happen next.';
 $string['elc_li_b1_4'] = 'I can understand the main points of radio news bulletins and simpler recorded material on topics of personal interest delivered relatively slowly and clearly.';
-$string['elc_li_b1_5'] = 'I can catch the main points in TV programmes on familiar topics when the delivery is relatively slow and clear.';
+$string['elc_li_b1_5'] = 'I can grasp the main points in TV programmes on familiar topics when the delivery is relatively slow and clear.';
 $string['elc_li_b1_6'] = 'I can understand simple technical information, such as operating instructions for everyday equipment.';
 $string['elc_li_b1_7'] = 'I can understand the main points of a discussion on familiar matters within my own field (e.g., in a seminar, at a round table, or during a television discussion), provided that the participants speak clearly and use standard language.';
 $string['elc_li_b1_8'] = 'I can take notes on the main points of a lecture which are precise enough for my own use at a later date, provided the topic is within my field of study and the talk is clear and well-structured.';
-$string['elc_li_b2_1'] = /*FIXME*/'Ich kann im Detail verstehen, was man mir in der Standardsprache sagt – auch wenn es in der Umgebung störende Geräusche gibt.';
-$string['elc_li_b2_2'] = /*FIXME*/'Ich kann einer Vorlesung oder einem Vortrag innerhalb meines Fach- oder Interessengebiets folgen, wenn mir die Thematik vertraut ist und wenn der Aufbau einfach und klar ist.';
-$string['elc_li_b2_3'] = /*FIXME*/'Ich kann im Radio die meisten Dokumentarsendungen, in denen Standardsprache gesprochen wird, verstehen und die Stimmung, den Ton usw. der Sprechenden heraushören.';
-$string['elc_li_b2_4'] = /*FIXME*/'Ich kann am Fernsehen Reportagen, Live-Interviews, Talk-Shows, Fernsehspiele und auch die meisten Filme verstehen, sofern die Standardsprache und nicht Dialekt gesprochen wird.';
-$string['elc_li_b2_5'] = /*FIXME*/'Ich kann die Hauptpunkte von komplexen Redebeiträgen zu konkreten und abstrakten Themen verstehen, wenn in der Standardsprache gesprochen wird; ich verstehe in meinem Spezialgebiet auch Fachdiskussionen.';
-$string['elc_li_b2_6'] = /*FIXME*/'Ich kann verschiedene Strategien anwenden, um etwas zu verstehen, z. B. auf die Hauptpunkte hören oder Hinweise aus dem Kontext nutzen, um mein Verstehen zu überprüfen.';
+
+$string['elc_li_b2_1'] = 'I can understand in detail what is said to me in standard spoken language even in a noisy environment.';
+$string['elc_li_b2_2'] = 'I can follow a lecture or talk within my own field, provided the subject matter is familiar and the presentation straightforward and clearly structured.';
+$string['elc_li_b2_3'] = 'I can understand most radio documentaries delivered in standard language and can identify the speaker’s mood, tone etc.';
+$string['elc_li_b2_4'] = 'I can understand TV documentaries, live interviews, talk shows, plays and the majority of films in standard dialect.';
+$string['elc_li_b2_5'] = 'I can understand the main ideas of complex speech on both concrete and abstract topics delivered in a standard dialect, including technical discussions in my field of specialisation.';
+$string['elc_li_b2_6'] = 'I can use a variety of strategies to achieve comprehension, including listening for main points and checking comprehension by using contextual clues.';
 $string['elc_li_b2_7'] = 'I can understand a clearly structured lecture on a familiar topic and take notes on points that strike me as important, although I sometimes get stuck on words and therefore miss part of the information.';
-$string['elc_li_c1_1'] = /*FIXME*/'Ich kann längeren Redebeiträgen und Gesprächen folgen, auch wenn sie nicht klar strukturiert sind und wenn Zusammenhänge nicht explizit ausgedrückt werden.';
-$string['elc_li_c1_2'] = /*FIXME*/'Ich kann ein breites Spektrum von Redewendungen und umgangssprachlichen Ausdrucksweisen verstehen und Wechsel im Stil und Ton erkennen.';
-$string['elc_li_c1_3'] = /*FIXME*/'Ich kann auch bei schlechter Übertragungsqualität aus öffentlichen Durchsagen – z. B. am Bahnhof oder an Sportveranstaltungen – Einzelinformationen heraushören.';
-$string['elc_li_c1_4'] = /*FIXME*/'Ich kann komplexe technische Informationen verstehen, z. B. Bedienungsanleitungen oder genaue Angaben zu vertrauten Produkten und Dienstleistungen.';
-$string['elc_li_c1_5'] = /*FIXME*/'Ich kann Vorlesungen, Reden und Berichte im Rahmen meines Berufs, meiner Ausbildung oder meines Studiums verstehen, auch wenn sie inhaltlich und sprachlich komplex sind.';
-$string['elc_li_c1_6'] = /*FIXME*/'Ich kann ohne allzu große Mühe Spielfilme verstehen, auch wenn darin viel saloppe Umgangssprache und viele Redewendungen vorkommen.';
+
+$string['elc_li_c1_1'] = 'I can follow extended speech even when it is not clearly structured and when relationships are only implied and not signalled explicitly.';
+$string['elc_li_c1_2'] = 'I can understand a wide range of idiomatic expressions and colloquialisms, appreciating shifts in style and register.';
+$string['elc_li_c1_3'] = 'I can extract specific information from even poor quality, audibly distorted public announcements, e.g. in a station, sports stadium etc.';
+$string['elc_li_c1_4'] = 'I can understand complex technical information, such as operating instructions, specifications for familiar products and services.';
+$string['elc_li_c1_5'] = 'I can understand lectures, talks and reports in my field of professional or academic interest even when they are propositionally and linguistically complex.';
+$string['elc_li_c1_6'] = 'I can, without too much effort, understand films which contain a considerable degree of slang and idiomatic usage.';
 $string['elc_li_c1_7'] = 'I can understand radio and television programs in my field, even when they are demanding in content and linguistically complex.';
 $string['elc_li_c1_8'] = 'I can understand in detail speech on abstract and complex topics of a specialist nature outside my own field, although on occasion I need to confirm details, especially when the accent is unfamiliar.';
 $string['elc_li_c1_9'] = 'I can take detailed notes during a lecture on a familiar topic in my field of interest, recording the information so accurately and so closely to the original that they are also useful to other people.';
-$string['elc_li_c2_1'] = /*FIXME*/'Ich habe keinerlei Schwierigkeit, gesprochene Sprache zu verstehen, gleichgültig ob „live“ oder in den Medien, und zwar auch, wenn schnell gesprochen wird. Ich brauche nur etwas Zeit, mich an einen besonderen Akzent zu gewöhnen.';
+
+$string['elc_li_c2_1'] = 'I have no difficulty in understanding any kind of spoken language, whether live or broadcast, even when delivered at fast native speed, provided I have some time to become familiar with the accent.';
 $string['elc_li_c2_2'] = 'I can follow specialised lectures and presentations that contain a high degree of colloquial expressions, regional usage, or unfamiliar terminology.';
 $string['elc_li_c2_3'] = 'I notice, during a lecture or seminar, what is only implicitly said and alluded to and can take notes on this as well as what the speaker directly expresses.';
-$string['elc_re_a1_1'] = /*FIXME*/'Ich kann in Zeitungsartikeln Angaben zu Personen (Wohnort, Alter usw.) verstehen. ';
-$string['elc_re_a1_2'] = /*FIXME*/'Ich kann auf Veranstaltungskalendern oder Plakaten ein Konzert oder einen Film aussuchen und Ort und Anfangszeit entnehmen. ';
-$string['elc_re_a1_3'] = /*FIXME*/'Ich kann einen Fragebogen (bei der Einreise oder bei der Anmeldung im Hotel) so weit verstehen, dass ich die wichtigsten Angaben zu meiner Person machen kann (z. B. Name, Vorname, Geburtsdatum, Nationalität). ';
-$string['elc_re_a1_4'] = /*FIXME*/'Ich kann Wörter und Ausdrücke auf Schildern verstehen, denen man im Alltag oft begegnet (wie z. B. „Bahnhof“, „Parkplatz“, „Rauchen verboten“, „rechts bleiben“). ';
-$string['elc_re_a1_5'] = /*FIXME*/'Ich kann die wichtigsten Befehle eines Computerprogramms verstehen, wie z. B. „Speichern“, „Löschen“, „Öffnen“, „Schließen“. ';
-$string['elc_re_a1_6'] = /*FIXME*/'Ich kann kurze, einfache schriftliche Wegerklärungen verstehen. ';
-$string['elc_re_a1_7'] = /*FIXME*/'Ich kann kurze, einfache Mitteilungen auf Postkarten verstehen, z. B. Feriengrüße. ';
-$string['elc_re_a1_8'] = /*FIXME*/'Ich kann in Alltagssituationen einfache schriftliche Mitteilungen von Bekannten und Mitarbeitern / Mitarbeiterinnen verstehen, z. B. „Bin um 4 Uhr zurück“.';
+
+//Reading
+$string['elc_re_a1_1'] = 'I can understand information about people (place of residence, age, etc.) in newspapers.';
+$string['elc_re_a1_2'] = 'I can locate a concert or a film on calendars of public events or posters and identify where it takes place and at what time it starts.';
+$string['elc_re_a1_3'] = 'I can understand a questionnaire (entry permit form, hotel registration form) well enough to give the most important information about myself (name, surname, date of birth, nationality).';
+$string['elc_re_a1_4'] = 'I can understand words and phrases on signs encountered in everyday life (for instance ”station”, ”car park”, ”no parking”, ”no smoking”, ”keep left”.';
+$string['elc_re_a1_5'] = 'I can understand the most important orders in a computer programme such as ”PRINT”, ”SAVE”, ”COPY”, etc.';
+$string['elc_re_a1_6'] = 'I can follow short simple written directions (e.g. how to go from X to Y).';
+$string['elc_re_a1_7'] = 'I can understand short simple messages on postcards, for example holiday greetings.';
+$string['elc_re_a1_8'] = 'In everyday situations I can understand simple messages written by friends or colleagues, for example ”back at 4 o’clock”.';
+
 $string['elc_re_a2_1'] = 'I can identify important information in news summaries or simple newspaper articles in which numbers and names play an important role and which are clearly structured and illustrated.';
 $string['elc_re_a2_2'] = 'I can understand a simple personal letter in which the writer tells or asks me about aspects of everyday life.';
 $string['elc_re_a2_3'] = 'I can understand simple written messages from friends or colleagues, for example saying when we should meet to play football or asking me to be at work early.';
@@ -169,6 +196,7 @@ $string['elc_re_a2_5'] = 'I can skim small advertisements in newspapers, locate 
 $string['elc_re_a2_6'] = 'I can understand simple user’s instructions for equipment (for example, a public telephone).';
 $string['elc_re_a2_7'] = 'I can understand feedback messages or simple help indications in computer programmes.';
 $string['elc_re_a2_8'] = 'I can understand short narratives about everyday things dealing with topics which are familiar to me if the text is written in simple language.';
+
 $string['elc_re_b1_1'] = 'I can understand the main points in short newspaper articles about current and familiar topics.';
 $string['elc_re_b1_2'] = 'I can guess the meaning of single unknown words from the context thus deducing the meaning of expressions if the topic is familiar.';
 $string['elc_re_b1_3'] = 'I can skim short texts (for example news summaries) and find relevant facts and information (for example who has done what and where).';
@@ -178,37 +206,43 @@ $string['elc_re_b1_6'] = 'I can understand the plot of a clearly structured stor
 $string['elc_re_b1_7'] = 'I can identify the main conclusions in clearly written argumentative texts.';
 $string['elc_re_b1_8'] = 'I can read straightforward factual texts on subjects related to my field and interests at a satisfactory level of understanding.';
 $string['elc_re_b1_9'] = 'I can scan longer texts in my field in order to locate desired information and also to gather information from different texts or parts of a text in order to complete a specific task.';
-$string['elc_re_b2_1'] = /*FIXME*/'Ich kann rasch den Inhalt und die Wichtigkeit von Nachrichten, Artikeln und Berichten über Themen, die mit meinen Interessen oder meinem Beruf zusammenhängen, erfassen und entscheiden, ob sich ein genaueres Lesen lohnt. ';
-$string['elc_re_b2_2'] = /*FIXME*/'Ich kann Artikel und Berichte über aktuelle Fragen lesen und verstehen, in denen die Schreibenden eine bestimmte Haltung oder einen bestimmten Standpunkt vertreten. ';
-$string['elc_re_b2_3'] = /*FIXME*/'Ich kann Texte zu Themen aus meinem Fach- und Interessenbereich im Detail verstehen. ';
-$string['elc_re_b2_4'] = /*FIXME*/'Ich kann auch Fachartikel, die über mein eigenes Gebiet hinausgehen, lesen und verstehen, wenn ich zur Kontrolle ab und zu im Wörterbuch nachschlagen kann. ';
-$string['elc_re_b2_5'] = /*FIXME*/'Ich kann Kritiken lesen, in denen es um den Inhalt und die Beurteilung von kulturellen Ereignissen geht (Filme, Theater, Bücher, Konzerte), und die Hauptaussagen zusammenfassen. ';
-$string['elc_re_b2_6'] = /*FIXME*/'Ich kann Korrespondenz zu Themen innerhalb meines Fach-, Studien- oder Interessengebietes lesen und die wesentlichen Punkte erfassen. ';
-$string['elc_re_b2_7'] = /*FIXME*/'Ich kann ein Handbuch (z. B. zu einem Computerprogramm) rasch durchsuchen und für ein bestimmtes Problem die passenden Erklärungen und Hilfen finden und verstehen. ';
-$string['elc_re_b2_8'] = /*FIXME*/'Ich kann in einem erzählenden Text oder einem Theaterstück die Handlungsmotive der Personen und die Konsequenzen für den Handlungsablauf erkennen.';
-$string['elc_re_c1_1'] = /*FIXME*/'Ich kann längere, anspruchsvolle Texte verstehen und mündlich zusammenfassen. ';
-$string['elc_re_c1_2'] = /*FIXME*/'Ich kann ausführliche Berichte, Analysen und Kommentare lesen, in denen Zusammenhänge, Meinungen und Standpunkte erörtert werden. ';
-$string['elc_re_c1_3'] = /*FIXME*/'Ich kann hoch spezialisierten Texten aus dem eigenen Fachgebiet (z. B. Forschungsberichten) Informationen, Gedanken und Meinungen entnehmen. ';
-$string['elc_re_c1_4'] = /*FIXME*/'Ich kann längere komplexe Anleitungen und Anweisungen verstehen, z. B. zur Bedienung eines neuen Geräts, auch wenn diese nicht in Bezug zu meinem Sach- oder Interessengebiet stehen, sofern ich genug Zeit zum Lesen habe. ';
-$string['elc_re_c1_5'] = /*FIXME*/'Ich kann unter gelegentlicher Zuhilfenahme des Wörterbuchs jegliche Korrespondenz verstehen. ';
-$string['elc_re_c1_6'] = /*FIXME*/'Ich kann zeitgenössische literarische Texte fließend lesen. ';
-$string['elc_re_c1_7'] = /*FIXME*/'Ich kann in einem literarischen Text vom erzählten Geschehen abstrahieren und implizite Aussagen, Ideen und Zusammenhänge erfassen. ';
-$string['elc_re_c1_8'] = /*FIXME*/'Ich kann den sozialen, politischen oder geschichtlichen Hintergrund eines literarischen Werkes erkennen.';
-$string['elc_re_c2_1'] = /*FIXME*/'Ich kann Wortspiele erkennen und Texte richtig verstehen, deren eigentliche Bedeutung nicht in dem liegt, was explizit gesagt wird (z. B. Ironie, Satire). ';
-$string['elc_re_c2_2'] = /*FIXME*/'Ich kann Texte verstehen, die stark umgangssprachlich sind und zahlreiche idiomatische Ausdrücke (Redewendungen) oder Slang enthalten. ';
-$string['elc_re_c2_3'] = /*FIXME*/'Ich kann Handbücher, Verordnungen und Verträge verstehen, auch wenn mir das Gebiet nicht vertraut ist. ';
-$string['elc_re_c2_4'] = /*FIXME*/'Ich kann zeitgenössische und klassische literarische Texte verschiedener Gattungen lesen (Gedichte, Prosa, dramatische Werke). ';
-$string['elc_re_c2_5'] = /*FIXME*/'Ich kann Texte wie etwa literarische Kolumnen oder satirische Glossen lesen, in denen vieles indirekt gesagt wird, mehrdeutig ist und die versteckte Wertungen enthalten. ';
-$string['elc_re_c2_6'] = /*FIXME*/'Ich kann unterschiedlichste literarische Stilmittel (Wortspiele, Metaphern, literarische Motive, Symbolisierung, Konnotation, Mehrdeutigkeit) erkennen und ihre Funktion innerhalb des Textes einschätzen. ';
+
+$string['elc_re_b2_1'] = 'I can rapidly grasp the content and the significance of news, articles and reports on topics connected with my interests or my job, and decide if a closer reading is worthwhile.';
+$string['elc_re_b2_2'] = 'I can read and understand articles and reports on current problems in which the writers express specific attitudes and points of view.';
+$string['elc_re_b2_3'] = 'I can understand in detail texts within my field of interest or the area of my academic or professional speciality.';
+$string['elc_re_b2_4'] = 'I can understand specialised articles outside my own field if I can occasionally check with a dictionary.';
+$string['elc_re_b2_5'] = 'I can read reviews dealing with the content and criticism of cultural topics (films, theatre, books, concerts) and summarise the main points.';
+$string['elc_re_b2_6'] = 'I can read letters on topics within my areas of academic or professional speciality or interest and grasp the most important points.';
+$string['elc_re_b2_7'] = 'I can quickly look through a manual (for example, for a computer programme) and find and understand the relevant explanations and advice for a specific problem.';
+$string['elc_re_b2_8'] = 'I can understand, in a narrative or play, the motives for the characters’ actions and their consequences for the development of the plot.';
+
+$string['elc_re_c1_1'] = 'I can understand fairly long demanding texts and summarise them orally.';
+$string['elc_re_c1_2'] = 'I can read complex reports, analyses and commentaries where opinions, viewpoints and implications are discussed.';
+$string['elc_re_c1_3'] = 'I can extract information, ideas and opinions from highly specialised texts in my own field, for example, research reports.';
+$string['elc_re_c1_4'] = 'I can understand long complex instructions, for example, for the use of a new piece of equipment, even if these are not related to my job or field of interest, provided I have enough time to reread them.';
+$string['elc_re_c1_5'] = 'I can read any correspondence with occasional use of a dictionary.';
+$string['elc_re_c1_6'] = 'I can read contemporary literary texts with ease.';
+$string['elc_re_c1_7'] = 'I can go beyond the concrete plot of a narrative and grasp implicit meanings, ideas, and connections.';
+$string['elc_re_c1_8'] = 'I can recognise the social, political, or historical background of a literary work.';
+
+$string['elc_re_c2_1'] = 'I can recognise puns and appreciate texts whose real meaning is not explicit (for example irony, satire).';
+$string['elc_re_c2_2'] = 'I can understand texts written in a very colloquial style and containing many idiomatic expressions or slang.';
+$string['elc_re_c2_3'] = 'I can understand manuals, regulations and contracts even within unfamiliar fields.';
+$string['elc_re_c2_4'] = 'I can understand contemporary and classical literary texts of different genres (poetry, prose, drama).';
+$string['elc_re_c2_5'] = 'I can read texts such as literary columns or satirical glosses where much is said in an indirect and ambiguous way and which contain hidden value judgements.';
+$string['elc_re_c2_6'] = 'I can recognise different stylistic means (puns, metaphors, symbols, connotations, ambiguity) and appreciate and evaluate their function within the text.';
 $string['elc_re_c2_7'] = 'I can understand in detail lengthy and complex scientific texts, whether or not they relate to my own field.';
-$string['elc_si_a1_1'] = /*FIXME*/'Ich kann jemanden vorstellen und einfache Gruß- und Abschiedsformeln gebrauchen. ';
-$string['elc_si_a1_2'] = /*FIXME*/'Ich kann einfache Fragen stellen und beantworten, einfache Aussagen machen oder auf einfache Aussagen von anderen reagieren, sofern es um ganz vertraute oder unmittelbar notwendige Dinge geht. ';
-$string['elc_si_a1_3'] = /*FIXME*/'Ich kann mich auf einfache Art verständigen, bin aber darauf angewiesen, dass die Gesprächspartnerin / der Gesprächspartner bereit ist, etwas langsamer zu wiederholen oder anders zu sagen, und mir dabei hilft zu formulieren, was ich sagen möchte. ';
-$string['elc_si_a1_4'] = /*FIXME*/'Ich kann einfache Einkäufe machen, wenn es möglich ist, durch Zeigen oder Gesten zu verdeutlichen, was ich meine. ';
-$string['elc_si_a1_5'] = /*FIXME*/'Ich komme mit Zahlen, Mengenangaben, Preisen und Uhrzeiten zurecht ';
-$string['elc_si_a1_6'] = /*FIXME*/'Ich kann andere um etwas bitten und anderen etwas geben. ';
-$string['elc_si_a1_7'] = /*FIXME*/'Ich kann Leuten Fragen zu ihrer Person stellen – z. B. wo sie wohnen, was für Leute sie kennen oder was für Dinge sie haben – und ich kann auf Fragen dieser Art Antwort geben, wenn die Fragen langsam und deutlich formuliert werden. ';
-$string['elc_si_a1_8'] = /*FIXME*/'Ich kann Angaben zur Zeit machen mit Hilfe von Wendungen wie „nächste Woche“, „letzten Freitag“, „im November“, „um drei Uhr“.';
+
+//Spoken Interaction
+$string['elc_si_a1_1'] = 'I can introduce somebody and use basic greeting and leave-taking expressions.';
+$string['elc_si_a1_2'] = 'I can ask and answer simple questions, initiate and respond to simple statements in areas of immediate need or on very familiar topics.';
+$string['elc_si_a1_3'] = 'I can make myself understood in a simple way but I am dependent on my partner being prepared to repeat more slowly and rephrase what I say and to help me to say what I want.';
+$string['elc_si_a1_4'] = 'I can make simple purchases where pointing or other gestures can support what I say.';
+$string['elc_si_a1_5'] = 'I can handle numbers, quantities, cost and time.';
+$string['elc_si_a1_6'] = 'I can ask people for things and give people things.';
+$string['elc_si_a1_7'] = 'I can ask people questions about where they live, people they know, things they have, etc. and answer such questions addressed to me provided they are articulated slowly and clearly.';
+$string['elc_si_a1_8'] = 'I can indicate time by such phrases as ”next week”, ”last Friday”, ”in November”, ”three o clock”.';
+
 $string['elc_si_a2_1'] = 'I can make simple transactions in shops, post offices or banks.';
 $string['elc_si_a2_2'] = 'I can use public transport: buses, trains, and taxis, ask for basic information and buy tickets.';
 $string['elc_si_a2_3'] = 'I can get simple information about travel.';
@@ -221,6 +255,7 @@ $string['elc_si_a2_9'] = 'I can make and accept apologies.';
 $string['elc_si_a2_10'] = 'I can say what I like and dislike.';
 $string['elc_si_a2_11'] = 'I can discuss with other people what to do, where to go and make arrangements to meet.';
 $string['elc_si_a2_12'] = 'I can ask people questions about what they do at work and in free time, and answer such questions addressed to me.';
+
 $string['elc_si_b1_1'] = 'I can start, maintain and close simple face-to-face conversation on topics that are familiar or of personal interest.';
 $string['elc_si_b1_2'] = 'I can maintain a conversation or discussion but may sometimes be difficult to follow when trying to say exactly what I would like to.';
 $string['elc_si_b1_3'] = 'I can deal with most situations likely to arise when making travel arrangements through an agent or when actually travelling.';
@@ -229,34 +264,44 @@ $string['elc_si_b1_5'] = 'I can give or seek personal views and opinions in an i
 $string['elc_si_b1_6'] = 'I can agree and disagree politely.';
 $string['elc_si_b1_7'] = 'I can speak about topics in my field in informal situations with colleagues or fellow students.';
 $string['elc_si_b1_8'] = 'I can manage most discussions involved in the organisation of my studies, either face to face or by telephone.';
-$string['elc_si_b2_1'] = /*FIXME*/'Ich kann ein Gespräch auf natürliche Art beginnen, in Gang halten und beenden und wirksam zwischen der Rolle als Sprecher und Hörer wechseln. ';
-$string['elc_si_b2_2'] = /*FIXME*/'Ich kann in meinem Fach- und Interessengebiet größere Mengen von Sachinformationen austauschen. ';
-$string['elc_si_b2_3'] = /*FIXME*/'Ich kann Gefühle unterschiedlicher Intensität zum Ausdruck bringen und hervorheben, was für mich persönlich an Ereignissen oder Erfahrungen bedeutsam ist. ';
-$string['elc_si_b2_4'] = /*FIXME*/'Ich kann mich aktiv an längeren Gesprächen über die meisten Themen von allgemeinem Interesse beteiligen. ';
-$string['elc_si_b2_5'] = /*FIXME*/'Ich kann in Diskussionen meine Ansichten durch Erklärungen, Argumente und Kommentare begründen und verteidigen. ';
-$string['elc_si_b2_6'] = /*FIXME*/'Ich kann zum Fortgang eines Gesprächs auf einem mir vertrauten Gebiet beitragen, indem ich zum Beispiel bestätige, dass ich verstehe, oder indem ich andere auffordere, etwas zu sagen. ';
-$string['elc_si_b2_7'] = /*FIXME*/'Ich kann ein vorbereitetes Interviewgespräch führen, dabei nachfragen, ob ich das Gesagte richtig verstanden habe, und auf interessante Antworten näher eingehen. ';
+
+$string['elc_si_b2_1'] = 'I can initiate, maintain and end discourse naturally with effective turn-taking.';
+$string['elc_si_b2_2'] = 'I can exchange considerable quantities of detailed factual information on matters within my fields of interest.';
+$string['elc_si_b2_3'] = 'I can convey degrees of emotion and highlight the personal significance of events and experiences.';
+$string['elc_si_b2_4'] = 'I can engage in extended conversation in a clearly participatory fashion on most general topics.';
+$string['elc_si_b2_5'] = 'I can account for and sustain my opinions in discussion by providing relevant explanations, arguments and comments.';
+$string['elc_si_b2_6'] = 'I can contribute to a discussion on familiar topics by confirming comprehension, inviting others in, etc.';
+$string['elc_si_b2_7'] = 'I can carry out a prepared interview, checking and confirming information, following up interesting replies.';
 $string['elc_si_b2_8'] = 'I can actively participate in conversations on specialised or cultural topics, whether during or outside of courses.';
 $string['elc_si_b2_9'] = 'I can efficiently solve problems arising from the organisation of my studies, for example, with teachers and the administration.';
-$string['elc_si_c1_1'] = /*FIXME*/'Ich kann auch in lebhaften Gesprächen unter Muttersprachlerinnen / Muttersprachlern gut mithalten. ';
-$string['elc_si_c1_2'] = /*FIXME*/'Ich kann flüssig, korrekt und wirkungsvoll über ein sehr breites Spektrum von Themen allgemeiner, beruflicher oder wissenschaftlicher Art sprechen. ';
-$string['elc_si_c1_3'] = /*FIXME*/'Ich kann die Sprache in Gesellschaft wirksam und flexibel gebrauchen, auch um Gefühle auszudrücken, Anspielungen zu machen oder zu scherzen. ';
-$string['elc_si_c1_4'] = /*FIXME*/'Ich kann in Diskussionen meine Gedanken und Meinungen präzise und klar formuliert ausdrücken, überzeugend argumentieren und wirksam auf komplexe Argumentation anderer reagieren.';
-$string['elc_si_c2_1'] = /*FIXME*/'Ich kann mich mühelos an allen Gesprächen und Diskussionen mit Muttersprachlerinnen / Muttersprachlern beteiligen. ';
+
+$string['elc_si_c1_1'] = 'I can keep up with an animated conversation between native speakers.';
+$string['elc_si_c1_2'] = 'I can use the language fluently, accurately, and effectively on a wide range of general, professional, or academic topics.';
+$string['elc_si_c1_3'] = 'I can use language flexibly and effectively for social purposes, including emotional, allusive and joking usage.';
+$string['elc_si_c1_4'] = 'I can express my ideas and opinions clearly and precisely and can present and respond to complex lines of reasoning convincingly.';
+
+$string['elc_si_c2_1'] = 'I can take part effortlessly in all conversations and discussions with native speakers.';
 $string['elc_si_c2_2'] = 'I have a good command of idiomatic expressions and colloquialisms as well as the specialised language of my field, with connotative levels of meaning. I can also convey finer shades of meaning.';
 $string['elc_si_c2_3'] = 'I can hold my own in formal discussions of complex issues, arguing articulately and persuasively and without being at a disadvantage compared with native speakers.';
-$string['elc_si_c2_4'] = /*FIXME*/'Ich kann mit schwierigen und auch unfreundlichen Fragen umgehen, die mir im Anschluss an ein Referat oder eine Präsentation gestellt werden. ';
-$string['elc_si_c2_5'] = /*FIXME*/'Ich kann Informationen aus verschiedenen Quellen mündlich zusammenfassen und dabei die enthaltenen Argumente und Sachverhalte in einer klaren zusammenhängenden Darstellung wiedergeben. ';
-$string['elc_si_c2_6'] = /*FIXME*/'Ich kann Gedanken und Standpunkte sehr flexibel vortragen und dabei etwas hervorheben, differenzieren und Mehrdeutigkeit beseitigen. ';
-$string['elc_si_c2_7'] = /*FIXME*/'Ich kann sicher und gut verständlich einem Publikum ein komplexes Thema vortragen, mit dem es nicht vertraut ist, und dabei die Rede flexibel den Bedürfnissen des Publikums anpassen und entsprechend strukturieren.';
-$string['elc_sp_a1_1'] = /*FIXME*/'Ich kann Angaben zu meiner Person machen (z. B. Adresse, Telefonnummer, Alter, Herkunftsland, Familie, Hobbys). ';
-$string['elc_sp_a1_2'] = /*FIXME*/'Ich kann beschreiben, wo ich wohne.';
+$string['elc_si_c2_4'] = 'I can handle difficult and even hostile questioning after a speech or a presentation.';
+//$string['elc_si_c2_5'] = 'Ich kann Informationen aus verschiedenen Quellen mündlich zusammenfassen und dabei die enthaltenen Argumente und Sachverhalte in einer klaren zusammenhängenden Darstellung wiedergeben. ';
+//$string['elc_si_c2_6'] = 'Ich kann Gedanken und Standpunkte sehr flexibel vortragen und dabei etwas hervorheben, differenzieren und Mehrdeutigkeit beseitigen. ';
+//$string['elc_si_c2_7'] = 'Ich kann sicher und gut verständlich einem Publikum ein komplexes Thema vortragen, mit dem es nicht vertraut ist, und dabei die Rede flexibel den Bedürfnissen des Publikums anpassen und entsprechend strukturieren.';
+$string['elc_si_c2_5'] = ' ';
+$string['elc_si_c2_6'] = ' ';
+$string['elc_si_c2_7'] = ' ';
+
+//Spoken Production
+$string['elc_sp_a1_1'] = 'I can give personal information (address, telephone number, nationality, age, family, and hobbies). ';
+$string['elc_sp_a1_2'] = 'I can describe where I live.';
+
 $string['elc_sp_a2_1'] = 'I can describe myself, my family and other people.';
 $string['elc_sp_a2_2'] = 'I can describe where I live.';
 $string['elc_sp_a2_3'] = 'I can give short, basic descriptions of events.';
 $string['elc_sp_a2_4'] = 'I can describe my educational background, my present or most recent job.';
 $string['elc_sp_a2_5'] = 'I can describe my hobbies and interests in a simple way.';
 $string['elc_sp_a2_6'] = 'I can describe past activities and personal experiences (e.g. the last weekend, my last holiday).';
+
 $string['elc_sp_b1_1'] = 'I can narrate a story.';
 $string['elc_sp_b1_2'] = 'I can give detailed accounts of experiences, describing feelings and reactions.';
 $string['elc_sp_b1_3'] = 'I can describe dreams, hopes and ambitions.';
@@ -265,26 +310,36 @@ $string['elc_sp_b1_5'] = 'I can relate the plot of a book or film and describe m
 $string['elc_sp_b1_6'] = 'I can paraphrase short written passages orally in a simple fashion, using the original text wording and ordering.';
 $string['elc_sp_b1_7'] = 'I can give straightforward descriptions on a variety of familiar subjects related to my own fields of interest or study.';
 $string['elc_sp_b1_8'] = 'I can give a simple, prepared presentation on a familiar topic within my field that is clear and precise enough to be followed without difficulty most of the time and in which the main points can be understood.';
-$string['elc_sp_b2_1'] = /*FIXME*/'Ich kann zu sehr vielen Themen meines Interessengebiets klare und detaillierte Beschreibungen und Berichte geben. ';
-$string['elc_sp_b2_2'] = /*FIXME*/'Ich kann kurze Auszüge aus Nachrichten, Interviews oder Reportagen, welche Stellungnahmen, Erörterungen und Diskussionen enthalten, verstehen und mündlich zusammenfassen. ';
-$string['elc_sp_b2_3'] = /*FIXME*/'Ich kann die Handlung und die Abfolge der Ereignisse in einem Auszug aus einem Film oder Theaterstück verstehen und mündlich zusammenfassen. ';
-$string['elc_sp_b2_4'] = /*FIXME*/'Ich kann eine Argumentation logisch aufbauen und die Gedanken verknüpfen. ';
-$string['elc_sp_b2_5'] = /*FIXME*/'Ich kann einen Standpunkt zu einem Problem erklären und Vor- und Nachteile zu verschiedenen Möglichkeiten angeben. ';
-$string['elc_sp_b2_6'] = /*FIXME*/'Ich kann Vermutungen über Ursachen und Konsequenzen anstellen und über hypothetische Situationen sprechen. ';
-$string['elc_sp_b2_7'] = /*FIXME*/'Ich kann im eigenen Fach frei oder nach Stichworten einen Kurzvortrag halten.';
+
+$string['elc_sp_b2_1'] = 'I can give clear, detailed descriptions on a wide range of subjects related to my fields of interest.';
+$string['elc_sp_b2_2'] = 'I can understand and summarise orally short extracts from news items, interviews or documentaries containing opinions, argument and discussion.';
+$string['elc_sp_b2_3'] = 'I can understand and summarise orally the plot and sequence of events in an extract from a film or play.';
+$string['elc_sp_b2_4'] = 'I can construct a chain of reasoned argument, linking my ideas logically.';
+$string['elc_sp_b2_5'] = 'I can explain a viewpoint on a topical issue giving the advantages and disadvantages of various options.';
+$string['elc_sp_b2_6'] = 'I can speculate about causes, consequences, and hypothetical situations.';
+$string['elc_sp_b2_7'] = 'I can give a short talk in my field, either without notes or using keywords.';
 $string['elc_sp_b2_8'] = 'I can summarise information and arguments from various written sources and reproduce them orally.';
-$string['elc_sp_c1_1'] = /*FIXME*/'Ich kann komplexe Sachverhalte klar und detailliert darstellen. ';
-$string['elc_sp_c1_2'] = /*FIXME*/'Ich kann lange, anspruchsvolle Texte mündlich zusammenfassen. ';
-$string['elc_sp_c1_3'] = /*FIXME*/'Ich kann mündlich etwas ausführlich darstellen oder berichten, dabei Themenpunkte miteinander verbinden, einzelne Aspekte besonders ausführen und meinen Beitrag angemessen abschließen. ';
-$string['elc_sp_c1_4'] = /*FIXME*/'Ich kann in meinem Fach- und Interessengebiet ein klar gegliedertes Referat halten, dabei wenn nötig vom vorbereiteten Text abweichen und spontan auf Fragen von Zuhörenden eingehen.';
-$string['elc_sp_c2_1'] = /*FIXME*/'Ich kann Informationen aus verschiedenen Quellen mündlich zusammenfassen und dabei die enthaltenen Argumente und Sachverhalte in einer klaren zusammenhängenden Darstellung wiedergeben. ';
-$string['elc_sp_c2_2'] = /*FIXME*/'Ich kann Gedanken und Standpunkte sehr flexibel vortragen und dabei etwas hervorheben, differenzieren und Mehrdeutigkeit beseitigen. ';
+
+$string['elc_sp_c1_1'] = 'I can give clear, detailed descriptions of complex subjects.';
+$string['elc_sp_c1_2'] = 'I can orally summarise long, demanding texts.';
+$string['elc_sp_c1_3'] = 'I can give an extended description or account of something, integrating themes, developing particular points and concluding appropriately.';
+$string['elc_sp_c1_4'] = 'I can give a clearly developed presentation on a subject in my fields of personal or professional interest, departing when necessary from the prepared text and spontaneously following up points raised by members of the audience.';
+
+$string['elc_sp_c2_1'] = 'I can summarise orally information from different sources, reconstructing arguments and accounts in a coherent presentation.';
+$string['elc_sp_c2_2'] = 'I can present ideas and viewpoints in a very flexible manner in order to give emphasis, to differentiate, and to avoid ambiguity.';
 $string['elc_sp_c2_3'] = 'I can present a complex topic confidently and articulately to an audience unfamiliar with it , structuring and adapting the talk flexibly to meet the audience\'s needs.';
-$string['elc_wr_a1_1'] = /*FIXME*/'Ich kann auf einem Fragebogen Angaben zu meiner Person machen (Beruf, Alter, Wohnort, Hobbys). ';
-$string['elc_wr_a1_2'] = /*FIXME*/'Ich kann eine Glückwunschkarte schreiben, zum Beispiel zum Geburtstag. ';
-$string['elc_wr_a1_3'] = /*FIXME*/'Ich kann eine einfache Postkarte (z. B. mit Feriengrüßen) schreiben. ';
-$string['elc_wr_a1_4'] = /*FIXME*/'Ich kann einen Notizzettel schreiben, um jemanden zu informieren, wo ich bin oder wo wir uns treffen. ';
-$string['elc_wr_a1_5'] = /*FIXME*/'Ich kann in einfachen Sätzen über mich schreiben, z. B. wo ich wohne und was ich mache.';
+
+// Ergänzen "Strategies"
+
+// Ergänzen "Language Quality"
+
+//Writing
+$string['elc_wr_a1_1'] = 'I can fill in a questionnaire with my personal details (job, age, address, hobbies).';
+$string['elc_wr_a1_2'] = 'I can write a greeting card, for instance a birthday card.';
+$string['elc_wr_a1_3'] = 'I can write a simple postcard (for example with holiday greetings).';
+$string['elc_wr_a1_4'] = 'I can write a note to tell somebody where I am or where we are to meet.';
+$string['elc_wr_a1_5'] = 'I can write sentences and simple phrases about myself, for example where I live and what I do.';
+
 $string['elc_wr_a2_1'] = 'I can write short, simple notes and messages.';
 $string['elc_wr_a2_2'] = 'I can describe an event in simple sentences and report what happened when and where (for example a party or an accident).';
 $string['elc_wr_a2_3'] = 'I can write about aspects of my everyday life in simple phrases and sentences (people, places, job, school, family, hobbies).';
@@ -293,42 +348,46 @@ $string['elc_wr_a2_5'] = 'I can briefly introduce myself in a letter with simple
 $string['elc_wr_a2_6'] = 'I can write a short letter using simple expressions for greeting, addressing, asking or thanking somebody.';
 $string['elc_wr_a2_7'] = 'I can write simple sentences, connecting them with words such as “and”, “but”, “because”.';
 $string['elc_wr_a2_8'] = 'I can use the most important connecting words to indicate the chronological order of events (first, then, after, later).';
+
 $string['elc_wr_b1_1'] = 'I can write simple connected texts on a range of topics within my field of interest and can express personal views and opinions.';
 $string['elc_wr_b1_2'] = 'I can write simple texts about experiences or events, for example about a trip, for a school newspaper or a club newsletter.';
 $string['elc_wr_b1_3'] = 'I can write personal letters to friends or acquaintances asking for or giving them news and narrating events. ';
 $string['elc_wr_b1_4'] = 'I can describe in a personal letter the plot of a film or a book or give an account of a concert.';
-$string['elc_wr_b1_5'] = 'In a letter I can express feelings such as grief, happiness, interest, regret and sympathy.';
+$string['elc_wr_b1_5'] = 'In a letter, I can express feelings such as grief, happiness, interest, regret and sympathy.';
 $string['elc_wr_b1_6'] = 'I can reply in written form to advertisements and ask for more complete or more specific information about products (for example a car or an academic course).';
 $string['elc_wr_b1_7'] = 'I can convey – via fax, e-mail or a circular – short simple factual information to friends or colleagues or ask for information in such a way.';
 $string['elc_wr_b1_8'] = 'I can write my CV in summary form.';
-$string['elc_wr_b1_9'] = /*FIXME*/'Ich kann in meinem Fachgebiet den Verlauf eines wissenschaftlichen Experiments in Stichworten festhalten. ';
-$string['elc_wr_b1_10'] = /*FIXME*/'Ich kann in meinem Fachgebiet einfache Texte verfassen und dabei wichtige Fachbegriffe richtig gebrauchen.';
-$string['elc_wr_b2_1'] = /*FIXME*/'Ich kann klare und detaillierte Texte über unterschiedliche Themen schreiben, die mit meinem Interessengebiet zu tun haben, sei in Form von Aufsätzen, Berichten oder Referaten. ';
-$string['elc_wr_b2_2'] = /*FIXME*/'Ich kann eine Zusammenfassung zu einem Artikel über ein Thema von allgemeinem Interesse schreiben. ';
-$string['elc_wr_b2_3'] = /*FIXME*/'Ich kann Informationen aus verschiedenen Quellen und Medien schriftlich zusammenfassen. ';
-$string['elc_wr_b2_4'] = /*FIXME*/'Ich kann in einem Aufsatz oder Bericht etwas erörtern und dabei entscheidende Punkte hervorheben und Einzelheiten anführen, welche die Argumentation stützen. ';
-$string['elc_wr_b2_5'] = /*FIXME*/'Ich kann ausführlich und gut lesbar über Ereignisse und reale oder fiktive Erlebnisse schreiben. ';
-$string['elc_wr_b2_6'] = /*FIXME*/'Ich kann eine kurze Besprechung über einen Film oder ein Buch schreiben. ';
-$string['elc_wr_b2_7'] = /*FIXME*/'Ich kann in privaten Briefen oder E-Mails verschiedene Einstellungen und Gefühle ausdrücken und ich kann von den Neuigkeiten des Tages erzählen und dabei deutlich machen, was für mich an einem Ereignis wichtig ist. ';
-$string['elc_wr_b2_8'] = 'I can write seminar papers on my own, although I must have them checked for linguistic accuracy and appropriateness.';
-$string['elc_wr_b2_9'] = 'I can write summaries of scientific texts in my field for use at a later date.';
-$string['elc_wr_c1_1'] = /*FIXME*/'Ich kann mich schriftlich zu unterschiedlichsten Themen allgemeiner oder beruflicher Art klar und gut lesbar äußern. ';
-$string['elc_wr_c1_2'] = /*FIXME*/'Ich kann z. B. in einem Aufsatz oder Arbeitsbericht ein komplexes Thema klar und gut strukturiert darlegen und die wichtigsten Punkte hervorheben. ';
-$string['elc_wr_c1_3'] = /*FIXME*/'Ich kann in einem Kommentar zu einem Thema oder einem Ereignis verschiedene Standpunkte darstellen, dabei die Hauptgedanken hervorheben und meine Argumentation durch ausführliche Beispiele verdeutlichen. ';
-$string['elc_wr_c1_4'] = /*FIXME*/'Ich kann Informationen aus verschiedenen Quellen zusammentragen und in zusammenhängender Form schriftlich zusammenfassen. ';
-$string['elc_wr_c1_5'] = /*FIXME*/'Ich kann in persönlichen Briefen ausführlich Erfahrungen, Gefühle und Geschehnisse beschreiben. ';
-$string['elc_wr_c1_6'] = /*FIXME*/'Ich kann formal korrekte Briefe schreiben, zum Beispiel einen Beschwerdebrief oder eine Stellungnahme für oder gegen etwas. ';
-$string['elc_wr_c1_7'] = /*FIXME*/'Ich kann Texte schreiben, die weitgehend korrekt sind, und meinen Wortschatz und Stil je nach Adressatin / Adressat, Textsorte und Thema variieren. ';
-$string['elc_wr_c1_8'] = /*FIXME*/'Ich kann in meinen schriftlichen Texten den Stil wählen, der für die jeweiligen Leser angemessen ist. ';
-$string['elc_wr_c1_9'] = /*FIXME*/'Ich verwende in meinen Texten ohne größere Probleme die Terminologie und Idiomatik meines Fachgebiets.';
-$string['elc_wr_c2_1'] = /*FIXME*/'Ich kann gut strukturierte und gut lesbare Berichte und Artikel über komplexe Themen schreiben. ';
-$string['elc_wr_c2_2'] = /*FIXME*/'Ich kann in einem Bericht oder Essay ein Thema, das ich recherchiert habe, umfassend darstellen, die Meinungen anderer zusammenfassen, Detailinformationen und Fakten aufführen und beurteilen. ';
-$string['elc_wr_c2_3'] = /*FIXME*/'Ich kann eine schriftliche Stellungnahme zu einem Arbeitspapier oder einem Projekt schreiben, sie klar gliedern und darin meine Meinung begründen. ';
-$string['elc_wr_c2_4'] = /*FIXME*/'Ich kann zu kulturellen Ereignissen (Film, Musik, Theater, Literatur, Radio, Fernsehen) eine kritische Stellungnahme schreiben. ';
-$string['elc_wr_c2_5'] = /*FIXME*/'Ich kann Zusammenfassungen von Sachtexten und literarischen Werken schreiben. ';
-$string['elc_wr_c2_6'] = /*FIXME*/'Ich kann über Erfahrungen Geschichten schreiben, die in einem klaren und flüssigen, dem Genre entsprechenden Stil abgefasst sind. ';
-$string['elc_wr_c2_7'] = /*FIXME*/'Ich kann klare und gut strukturierte formelle Briefe auch komplexerer Art in passendem Stil schreiben, z. B. Anträge, Eingaben, Offerten an Behörden, Vorgesetzte oder Geschäftskunden. ';
-$string['elc_wr_c2_8'] = /*FIXME*/'Ich kann mich in Briefen oder E-Mails bewusst ironisch, mehrdeutig oder humorvoll ausdrücken. ';
+$string['elc_wr_b1_9'] = 'I can record the course of a scientific experiment in keywords.';
+$string['elc_wr_b1_10'] = 'I can write simple texts in my field, correctly using the most important specialised terms.';
+
+$string['elc_wr_b2_1'] = 'I can write clear and detailed texts (compositions, reports or texts of presentations) on various topics related to my field of interest.';
+$string['elc_wr_b2_2'] = 'I can write summaries of articles on topics of general interest.';
+$string['elc_wr_b2_3'] = 'I can summarise information from different sources and media.';
+$string['elc_wr_b2_4'] = 'I can develop an argument systematically in a composition or report, emphasising decisive points and including supporting details.';
+$string['elc_wr_b2_5'] = 'I can write about events and real or fictional experiences in a detailed and easily readable way.';
+$string['elc_wr_b2_6'] = 'I can write a short review of a film or a book.';
+$string['elc_wr_b2_7'] = 'I can express, in a personal letter or e-mail, different feelings and attitudes and can report the news of the day making clear what – in my opinion – are the important aspects of an event.';
+$string['elc_wr_b2_8'] = 'I can write summaries of scientific texts in my field for use at a later date.';
+$string['elc_wr_b2_9'] = 'I can write seminar papers on my own, although I must have them checked for linguistic accuracy and appropriateness.';
+
+$string['elc_wr_c1_1'] = 'I can express myself in writing on a wide range of general or professional topics in a clear and user-friendly manner.';
+$string['elc_wr_c1_2'] = 'I can present a complex topic in a clear and well-structured way, highlighting the most important points, for example in a composition or a report.';
+$string['elc_wr_c1_3'] = 'I can present points of view in a comment on a topic or an event, underlining the main ideas and supporting my reasoning with detailed examples.';
+$string['elc_wr_c1_4'] = 'I can put together information from different sources and present it in a coherent summary.';
+$string['elc_wr_c1_5'] = 'I can give a detailed description of experiences, feelings and events in a personal letter.';
+$string['elc_wr_c1_6'] = 'I can write formally correct letters, for example to complain or to take a stand in favour of or against something.';
+$string['elc_wr_c1_7'] = 'I can write texts which show a high degree of grammatical correctness, and vary my vocabulary and style according to the target reader, the kind of text and the topic.';
+$string['elc_wr_c1_8'] = 'I can select a style appropriate to the target reader.';
+$string['elc_wr_c1_9'] = 'I can use the specialised terms and idiomatic expressions in my field without major difficulty.';
+
+$string['elc_wr_c2_1'] = 'I can write well-structured and easily readable reports and articles on complex topics.';
+$string['elc_wr_c2_2'] = 'In a report or an essay I can give a complete account of a topic based on research I have carried out, make a summary of the opinions of others, and give and evaluate detailed information and facts.';
+$string['elc_wr_c2_3'] = 'I can write a well-structured review of a paper or a project giving reasons for my opinion.';
+$string['elc_wr_c2_4'] = 'I can write a critical review of cultural events (film, music, theatre, literature, radio, TV).';
+$string['elc_wr_c2_5'] = 'I can write summaries of factual texts and literary works.';
+$string['elc_wr_c2_6'] = 'I can write narratives about experiences in a clear, fluent style appropriate to the genre.';
+$string['elc_wr_c2_7'] = 'I can write clear, well-structured, complex letters in an appropriate style, for example an application or request, an offer to authorities, superiors or commercial clients.';
+$string['elc_wr_c2_8'] = 'In a letter or an e-mail I can express myself in a consciously ironical, ambiguous and humorous way.';
 $string['elc_wr_c2_9'] = 'I can write scientific texts in my field, with a view to being published, that are generally correct and stylistically appropriate.';
 $string['elc_wr_c2_10'] = 'I can write a critical essay (e.g., a review) of scientific literature for publication in my field.';
 $string['elc_wr_c2_11'] = 'I can take accurate and complete notes during a lecture, seminar, or tutorial.';
@@ -563,5 +622,225 @@ $string['cercles_si_c2_1'] = 'I can understand any native speaker interlocutor, 
 $string['cercles_si_c2_2'] = 'I can converse comfortably and appropriately, unhampered by any linguistic limitations in conducting a full social and personal life ';
 $string['cercles_si_c2_3'] = 'I can hold my own in formal discussion of complex and specialist issues in my field, putting forward and sustaining an articulate and persuasive argument, at no disadvantage to native speakers ';
 $string['cercles_si_c2_4'] = 'I can keep up my side of the dialogue as interviewer or interviewee with complete confidence and fluency, structuring the talk and interacting authoritatively at no disadvantage to a native speaker';
+
+/*
+* descriptors biology
+*/
+/*$string['bio_sy_m_1'] = 'Ich besitze ein Verständnis der Zelle als System.';
+$string['bio_sy_m_2'] = 'Ich bin in der Lage, den Organismus und Organismengruppen als System zu erklären.';
+$string['bio_sy_m_3'] = 'Ich bin in der Lage, Ökosystem und Biosphäre als System zu erklären.';
+$string['bio_sy_m_4'] = 'Ich kann die Wechselwirkungen im Organismus, zwischen Organismen sowie zwischen Organismen und unbelebter Materie beschreiben und erklären.';
+$string['bio_sy_m_5'] = 'Ich bin in der Lage, zwischen den Systemebenen zu wechseln.';
+$string['bio_sy_m_6'] = 'Ich bin in der Lage, einen Stoffkreislauf sowie den Energiefluss in einem Ökosystem darzustellen.';
+$string['bio_sy_m_7'] = 'Ich bin in der Lage, Wechselwirkungen zwischen Biosphäre und den anderen Sphären der Erde zu beschreiben.';
+$string['bio_sy_m_8'] = 'Ich kenne und verstehe die grundlegenden Kriterien von nachhaltiger Entwicklung.';
+$string['bio_st_m_1'] = 'Ich bin in der Lage, Zellen als strukturelle und funktionelle Grundbaueinheiten von Lebewesen zu beschreiben.';
+$string['bio_st_m_2'] = 'Ich bin in der Lage, die bakterielle, pflanzliche und tierliche Zelle in Struktur und Funktion zu vergleichen.';
+$string['bio_st_m_3'] = 'Ich kann strukturelle und funktionelle Gemeinsamkeiten und Unterschiede von Organismen und Organismengruppen darstellen.';
+$string['bio_st_m_4'] = 'Ich bin in der Lage, Struktur und Funktion von Organen und Organsystemen, z. B. bei der Stoff- und Energieumwandlung, Steuerung und Regelung, Informationsverarbeitung, Vererbung und Reproduktion, zu beschreiben und zu erklären.';
+$string['bio_st_m_5'] = 'Ich kann die strukturelle und funktionelle Organisation im Ökosystem beschreiben.';
+$string['bio_st_m_6'] = 'Ich kann die Angepasstheit ausgewählter Organismen an die Umwelt beschreiben und erklären.';
+$string['bio_de_m_1'] = 'Ich kann die Bedeutung der Zellteilung für Wachstum, Fortpflanzung und Vermehrung erläutern.';
+$string['bio_de_m_2'] = 'Ich kann die artspezifische Individualentwicklung von Organismen beschreiben.';
+$string['bio_de_m_3'] = 'Ich bin in der Lage, verschiedene Formen der Fortpflanzung zu beschreiben.';
+$string['bio_de_m_4'] = 'Ich bin in der Lage, ein Ökosystem in zeitlicher Veränderung zu beschreiben.';
+$string['bio_de_m_5'] = 'Ich kann stammesgeschichtliche Verwandtschaft von Organismen beschreiben und erklären.';
+$string['bio_de_m_6'] = 'Ich kann den Verlauf und die Ursachen der Evolution an ausgewählten Lebewesen beschreiben und erklären.';
+$string['bio_de_m_7'] = 'Ich bin in der Lage, die Variabilität von Lebewesen zu erklären.';
+$string['bio_de_m_8'] = 'Ich kenne Eingriffe des Menschen in die Natur und Kriterien für solche Entscheidungen und kann sie erörtern.';*/
+
+/*
+* descriptors biology 2
+*/
+/*$string['bi2_fa_m_1'] = 'Ich bin in der Lage ein deutschsprachiges Lehrbuch zu verstehen und gegebenfalls vorhandene Testfragen zu beantworten.';
+$string['bi2_fa_m_2'] = 'Ich kann mir unbekannte Fachbegriffe erkennen, aneignen und merken.';
+$string['bi2_fa_m_3'] = 'Ich bin in der Lage ein englischsprachiges Lehrbuch zu verstehen und gegebenfalls vorhandene Testfragen zu beantworten.';
+$string['bi2_fa_m_4'] = 'Ich bin in der Lage englischsprachige Fachliteratur zu verstehen.';
+$string['bi2_fa_m_5'] = 'Ich bin in der Lage englischsprachige Vorträge zu verstehen.';
+$string['bi2_fa_m_6'] = 'Ich kann gute deutschsprachige Texte verfassen.';
+$string['bi2_fa_m_7'] = 'Ich kann englischsprachige Texte verfassen.';
+$string['bi2_fa_m_8'] = 'Ich kann deutschsprachige Präsentationen verfassen.';
+$string['bi2_fa_m_9'] = 'Ich kann englischsprachige Präsentationen verfassen.';
+$string['bi2_da_m_1'] = 'Ich kann Daten in Excel eingeben.';
+$string['bi2_da_m_2'] = 'Ich kann Datentabellen sinnvoll erstellen.';
+$string['bi2_da_m_3'] = 'Ich kann Formeln in Excel erstellen.';
+$string['bi2_da_m_4'] = 'Ich kann Grafiken in Excel erstellen.';
+$string['bi2_da_m_5'] = 'Ich bin mit den Grundlagen der Statistik vertraut und kann einfache Tests selbständig anwenden.';
+$string['bi2_da_m_6'] = 'Ich kann mit mind. einem speziellen Statistikprogramm umgehen.';
+$string['bi2_da_m_7'] = 'Ich kann Ergebnisse biologisch sinnvoll interpretieren.';
+$string['bi2_la_m_1'] = 'Ich kenne die Sicherheitsbestimmungen im Labor.';
+$string['bi2_la_m_2'] = 'Ich kann mit Messergebnissen umgehen.';
+$string['bi2_la_m_3'] = 'Ich kann die Funktionen von Laborgeräten beschreiben.';
+$string['bi2_so_m_1'] = 'Ich kann gut in einer Gruppe arbeiten.';
+$string['bi2_so_m_2'] = 'Ich nehme in der Gruppe Arbeit an.';
+$string['bi2_so_m_3'] = 'Ich kann Arbeiten in einer Gruppe delegieren.';
+$string['bi2_so_m_4'] = 'Ich kann sicher vor größeren Gruppen sprechen.';*/
+
+/*
+ * descriptors Schule
+ */
+/*$string['schule_li_a1_1'] = 'Ich kann verstehen, wenn andere mir Fragen zu meiner Person stellen.';
+$string['schule_li_a1_2'] = 'Ich kann verstehen, wenn andere sich selbst vorstellen.';
+$string['schule_li_a1_3'] = 'Ich kann Fragen und Informationen zum Tages- und Jahresablauf verstehen.';
+$string['schule_li_a1_4'] = 'Ich kann verstehen, wenn ich im Unterricht angesprochen werde.';
+$string['schule_li_a1_5'] = 'Ich kann Arbeitsanweisungen verstehen.';
+$string['schule_li_a1_6'] = 'Ich kann verstehen, wenn jemand sagt, wo sich etwas befindet und wie weit es entfernt ist.';
+$string['schule_li_a1_7'] = 'Ich kann verstehen, wenn jemand sagt, wie ich an einen bestimmten Ort komme.';
+$string['schule_li_a1_8'] = 'Ich kann verstehen, wenn jemand sagt, wie teuer etwas ist.';
+$string['schule_li_a1_9'] = 'Ich kann einzelne Wörter und Sätze wiedererkennen, wenn andere Leute miteinander sprechen.';
+$string['schule_li_a1_10'] = 'Ich kann verstehen, worum es geht, wenn ich einfache Texte und Geschichten - auch von einer CD - höre.';
+$string['schule_li_a2_1'] = 'Ich kann verstehen, wenn jemand mit mir über Dinge spricht, die mich betreffen (z.B. Schule, Hobbys, Freizeit, Familie).';
+$string['schule_li_a2_2'] = 'Ich kann Gesprächen folgen, wenn sie mit mir, meiner Familie und Dingen zu tun haben, die mich interessieren.';
+$string['schule_li_a2_3'] = 'Ich kann genug verstehen, um mich im Alltag (z.B. in einem Geschäft, auf der Post) zurecht zu finden.';
+$string['schule_li_a2_4'] = 'Ich kann das Wesentliche bei kurzen, deutlichen Mitteilungen, Anweisungen und Durchsagen verstehen.';
+$string['schule_li_a2_5'] = 'Ich kann Texten aus Kassette, CD oder DVD folgen, wenn es um Dinge geht, die ich kenne.';
+$string['schule_li_a2_6'] = 'Ich kann auch Einzelheiten verstehen, wenn ich die Texte mehrmals hören kann.';
+$string['schule_li_a2_7'] = 'Ich kann einfache Geschichten, Lieder und Gedichte im Großen und Ganzen verstehen.';
+$string['schule_li_b1_1'] = 'Ich kann in längeren Alltagsgesprächen den Hauptaussagen folgen.';
+$string['schule_li_b1_2'] = 'Ich kann Erzählungen aus dem Alltag verstehen.';
+$string['schule_li_b1_3'] = 'Ich kann Anweisungen, Aufforderungen, Auskünfte ohne größere Mühe verstehen und darauf reagieren.';
+$string['schule_li_b1_4'] = 'Ich kann Beschreibungen Berichten die wichtigsten Informationen entnehmen.';
+$string['schule_li_b1_5'] = 'Ich kann längeren gesprochenen Texten gezielt Einzelinformationen entnehmen.';
+$string['schule_li_b1_6'] = 'Ich kann in Radionachrichten oder Tonaufnahmen über vertraute Themen die Hauptpunkte verstehen.';
+$string['schule_li_b1_7'] = 'Ich kann in Fernsehsendungen, kurzen Filmen und Clips die Hauptpunkte erfassen, wenn mir die Themen vertraut sind.';
+$string['schule_li_b1_8'] = 'Ich kann den Sinn von Geschichten, Liedern und Gedichten verstehen.';
+$string['schule_li_b2_1'] = 'Ich kann Geprächen, auch zwischen Muttersprachlern, folgen, wenn sie miteinander Standardsprache sprechen und ich übert den Gesprächsgegenstand einigermaßen Bescheid weiß.';
+$string['schule_li_b2_2'] = 'Ich kann unerwartete Ankündigungen und Durchsagen verstehen, wenn die Ansage deutlich und störungsfrei ist.';
+$string['schule_li_b2_3'] = 'Ich kann mein Gegenüber am Telefon gut verstehen, wenn Alltägliches besprochen wird oder Themen, die mir vertraut sind.';
+$string['schule_li_b2_4'] = 'Ich kann die wichtigsten Aussagen von schwierigeren Redebeiträgen, wie Berichten, Präsentationen und Argumentationen, gut verstehen, wenn Standardsprache gesprochen wird und mir das Thema einigermaßen vertraut ist.';
+$string['schule_li_b2_5'] = 'Ich kann die meisten aktuellen Nachrichtensendungen und Reportagen im Fernsehen verstehen.';
+$string['schule_li_b2_6'] = 'Ich kann den meisten Spielfilmen und Theaterstücken folgen, sofern Standardsprache gesprochen wird.';
+$string['schule_li_b2_7'] = 'Ich kann dem Vortrag von komplexeren Gedichten und Geschichten in Standardsprache folgen.';
+$string['schule_li_c1_1'] = 'Ich habe kein Problem, gesprochene Sprache von Muttersprachlerinnen und Muttersprachlern zu verstehen, auch bei ungewohnter Aussprache und unbekannten Redewendungen, sofern ich die Gelegenheit habe nachzufragen.';
+$string['schule_li_c1_2'] = 'Ich kann öffentliche Durchsagen im Allgemeinen verstehen.';
+$string['schule_li_c1_3'] = 'Ich kann längeren Debatten, Reden und Vorträgen folgen, auch wenn sie nicht klar strukturiert sind und mir die angesprochenen Themen und Inhalte im Vorhinein nicht bekannt sind.';
+$string['schule_li_c1_4'] = 'Ich kann Radio- und Fernsehsendungen gut folgen und dabei auch komplexere Informationen und Zusammenhänge verstehen.';
+$string['schule_li_c1_5'] = 'Ich kann künstlerischen Darbietungen (Film, Theater, öffentliche Lesung) im Allgemeinen ohne Mühe folgen.';
+$string['schule_li_c2_1'] = 'Ich verstehe meine Gesprächspartnerinnen und Gesprächspartner in Alltagsgesprächen, auch am Telefon, mühelos, auch wenn ich mich manchmal erst an einen besonderen Akzent gewöhnen muss.';
+$string['schule_li_c2_2'] = 'Ich kann komplexe Redebeiträge in Debatten, Reden und Vorträgen zu unterschiedlichen Themen ohne Mühe verstehen, gleich ob ich sie persönlich oder in den Medien höre.';
+$string['schule_li_c2_3'] = 'Ich kann künstlerische Darbietungen in den Medien (Radio, Fernsehen, Kino, Theater) und live mit Genuss verfolgen.';
+$string['schule_re_a1_1'] = 'Ich kann herausfinden, worum es auf Plakaten, Prospekten usw. geht.';
+$string['schule_re_a1_2'] = 'Ich kann Briefe, Postkarten, E-Mails und SMS verstehen.';
+$string['schule_re_a1_3'] = 'Ich kann Notizen und Mitteilungen verstehen.';
+$string['schule_re_a1_4'] = 'Ich kann schriftliche Arbeitsaufträge verstehen.';
+$string['schule_re_a1_5'] = 'Ich kann bei kurzen Geschichten, Reimen, Gedichten usw. verstehen, worum es geht, wenn mir Bilder dabei helfen.';
+$string['schule_re_a2_1'] = 'Ich kann in Fahrplänen, Katalogen, Programmen, Anzeigen usw. Informationen finden, die ich suche (z.B. Ort, Zeit, Preis).';
+$string['schule_re_a2_2'] = 'Ich kann persönliche Mitteilungen (SMS, Postkarten, E-Mails, Briefe) und kurze Erlebnisberichte verstehen.';
+$string['schule_re_a2_3'] = 'Ich kann geschriebenen Anweisungen (z.B. Hilfstexten in Computerprogrammen, Gebrauchsanweisungen, Rezepten) die wichtigsten Informationen entnehmen.';
+$string['schule_re_a2_4'] = 'Ich kann kurze Texte über allgemeine Themen, wie z.B. das Leben in anderen Ländern, im Wesentlichen verstehen.';
+$string['schule_re_a2_5'] = 'Ich kann einfachen Geschichten, Gedichten usw. folgen, wenn mir z.B. Schlüsselwörter helfen.';
+$string['schule_re_b1_1'] = 'Ich kann private Briefe, Karten und E-Mails verstehen, in denen Gefühle, Wünsche und Erlebnisse beschrieben werden.';
+$string['schule_re_b1_2'] = 'Ich kann einfache Mitteilungen und Standardbriefe verstehen (z.B. von Geschäften, Vereinen oder Behörden).';
+$string['schule_re_b1_3'] = 'Ich kann einfache Sachtexte zu allgemeinen Themen lesen und ihnen gezielt Informationen entnehmen.';
+$string['schule_re_b1_4'] = 'Ich kann den Gedanken und Argumenten in einem Text folgen, ohne diesen in allen Einzelheiten zu verstehen.';
+$string['schule_re_b1_5'] = 'Ich kann den Sinn von Geschichten, Theaterstücken, Gedichten, Liedtexten usw. erfassen.';
+$string['schule_re_b2_1'] = 'Ich kann private Korrespondenz und Standardbriefe von Behörden und Unternehmen verstehen.';
+$string['schule_re_b2_2'] = 'Ich kann langen, auch schwierigeren Texten beim raschen Überfliegen die wichtigsten Informationen entnehmen und entscheiden, ob sich genaues Lesen für meine Zwecke lohnt.';
+$string['schule_re_b2_3'] = 'Ich kann beim Lesen auch umfangreicherer Texte den dargelegten Gedanken folgen und Standpunkte ermitteln.';
+$string['schule_re_b2_4'] = 'Ich kann zeitgenössische literarische Texte lesen und dabei der Gesamtaussage und bestimmten Aspekten im Einzelnen nachgehen (z.B. Handlungsverlauf, Charakter von Personen, Atmosphäre und Stimmungen).';
+$string['schule_re_c1_1'] = 'Ich kann unter gelegentlicher Zuhilfenahme eines Wörterbuchs jede Art von Korrespondenz verstehen.';
+$string['schule_re_c1_2'] = 'Ich kann sprachlich anspruchsvolle längere Texte im Wesentlichen verstehen, wenn ich bei besonders schwierigen Abschnitten Hilfsmittel (Wörterbuch, Suchmaschine usw.) verwende';
+$string['schule_re_c1_3'] = 'Ich kann längere komplexe Anleitungen und Anweisungen verstehen, z. B. zur Bedienung eines neuen Geräts, auch wenn diese nicht in Bezug zu meinem Sach- oder Interessensgebiet stehen.';
+$string['schule_re_c1_4'] = 'Ich kann in längeren Analysen, Berichten und Kommentaren Meinungen, Standpunkte und Zusammenhänge erfassen.';
+$string['schule_re_c1_5'] = 'Ich kann literarische und journalistische Texte gut verstehen und Unterschiede in Stil und Ausdruck wahrnehmen.';
+$string['schule_re_c2_1'] = 'Ich kann Texte verstehen, die stark von der Standardsprache abweichen.';
+$string['schule_re_c2_2'] = 'Ich kann Handbücher, Verordnungen und Verträge verstehen, auch wenn mir das Gebiet nicht vertraut ist.';
+$string['schule_re_c2_3'] = 'Ich kann zeitgenössische und klassische literarische Texte verschiedener Gattungen lesen (Gedichte, Prosa, dramatische Werke).';
+$string['schule_re_c2_4'] = 'Ich kann Wortspiele erkennen und Texte richtig verstehen, deren eigentliche Bedeutung nicht in dem liegt, was vordergründig gesagt wird (z. B. Ironie, Satire).';
+$string['schule_wr_a1_1'] = 'Ich kann kurze Texte über mich und andere Personen schreiben.';
+$string['schule_wr_a1_2'] = 'Ich kann über mein Zuhause, meinen Schulalltag und meine Freizeit schreiben.';
+$string['schule_wr_a1_3'] = 'Ich kann Notizen und Mitteilungen an Freunde schreiben.';
+$string['schule_wr_a1_4'] = 'Ich kann Fragen stellen (z.B. in einem Brief oder einer E-Mail) und Fragen schriftlich beantworten.';
+$string['schule_wr_a2_1'] = 'Ich kann Texte über meine Familie, meine Interessen, die Schule oder Freizeitaktivitäten schreiben.';
+$string['schule_wr_a2_2'] = 'Ich kann Orte, Gegenstände und Personen aus meiner Umgebung in einem kurzen Text beschreiben.';
+$string['schule_wr_a2_3'] = 'Ich kann eine kurze Notiz oder Mitteilung schreiben, um jemanden zu informieren, z.B. wo ich bin oder wo wir uns treffen.';
+$string['schule_wr_a2_4'] = 'Ich kann kurze Briefe, Postkarten, E-Mails oder SMS schreiben, in denen ich mich auch bedanken oder entschuldigen kann.';
+$string['schule_wr_a2_5'] = 'Ich kann einfache kürzere Texte über Erlebtes, Gelesenes oder Erfundenes schreiben.';
+$string['schule_wr_b1_1'] = 'Ich kann schriftlich darstellen, was ich getan und erlebt habe und wie ich mich dabei gefühlt habe.';
+$string['schule_wr_b1_2'] = 'Ich kann meine Meinung, Gefühle und Anteilnahme ausdrücken, z.B. in Briefen und E-Mails.';
+$string['schule_wr_b1_3'] = 'Ich kann mit Hilfe einer Vorlage einfache formelle Schreiben verfassen, z.B. einen Lebenslauf, ein Bewerbungsschreiben oder einen Geschäftsbrief.';
+$string['schule_wr_b1_4'] = 'Ich kann gezielt Informationen aus Gehörtem und Gelesenem in Notizen festhalten.';
+$string['schule_wr_b1_5'] = 'Ich kann einfache Sachinformationen schriftlich mitteilen oder danach fragen.';
+$string['schule_wr_b1_6'] = 'Ich kann den Handlungsverlauf von gelesenen oder gehörten Texten schriftlich wiedergeben.';
+$string['schule_wr_b1_7'] = 'Ich kann über verschiedene Themen einen Text schreiben und darin persönliche Ansichten und Meinungen, Gefühle und Stimmungen ausdrücken.';
+$string['schule_wr_b2_1'] = 'Ich kann gegliedert und anschaulich beschreiben, was ich erlebt, erfahren oder mir ausgedacht habe.';
+$string['schule_wr_b2_2'] = 'Ich kann private Briefe und E-Mails zu Themen des täglichen Lebens schreiben und dabei auf die Erzählungen, Berichte, Gefühle, Standpunkte meiner Partnerinnen und Partner eingehen.';
+$string['schule_wr_b2_3'] = 'Ich kann formelle und halbformelle Briefe schreiben, z.B. ein Bewerbungsschreiben, eine Anfrage oder einen Leserbrief.';
+$string['schule_wr_b2_4'] = 'Ich kann Informationen aus verschiedenen Quellen und Medien schriftlich zusammenfassen und verständlich präsentieren.';
+$string['schule_wr_b2_5'] = 'Ich kann den Inhalt von Filmen und Büchern oder Gesprächen klar und sachgerecht wiedergeben und Erlebtes oder Beobachtetes genau zusammenfassen.';
+$string['schule_wr_b2_6'] = 'Ich kann ein Thema erörtern und dabei Gründe für oder gegen einen bestimmten Standpunkt darlegen sowie Vor- und Nachteile erläutern.';
+$string['schule_wr_b2_7'] = 'Ich kann mit Hilfe von Mustern einfache Texte literarischer Genres schreiben.';
+$string['schule_wr_c1_1'] = 'Ich kann eigene Erlebnisse und Erfahrungen klar, verständlich und lebendig wiedergeben.';
+$string['schule_wr_c1_2'] = 'Ich kann private und formelle Briefe im jeweils angemessenen Ton abfassen.';
+$string['schule_wr_c1_3'] = 'Ich kann zu einem Ereignis oder Sachverhalt Stellung nehmen, Standpunkte darstellen und erörtern und meine Position begründet und nachvollziehbar darstellen.';
+$string['schule_wr_c1_4'] = 'Ich kann literarische Texte, Dramen und Filme zusammenfassen, untersuchen und begründet darlegen, wie ich sie aus meiner Sicht deute.';
+$string['schule_wr_c2_1'] = 'Ich kann ohne Mühe anspruchsvolle private und formelle Briefe schreiben.';
+$string['schule_wr_c2_2'] = 'Ich kann gut strukturierte Berichte, Artikel und Stellungnahmen verfassen.';
+$string['schule_wr_c2_3'] = 'Ich kann Zusammenfassungen und Besprechungen von Fachliteratur und künstlerischen Werken schreiben.';
+$string['schule_sp_a1_1'] = 'Ich kann etwas über meine Familie, meine Freunde und Freundinnen erzählen.';
+$string['schule_sp_a1_2'] = 'Ich kann über mich, meinen Schulalltag und meine Freizeit sprechen.';
+$string['schule_sp_a2_1'] = 'Ich kann in zusammenhängenden Sätzen über mich, meine Familie und meine Freunde und Freundinnen berichten.';
+$string['schule_sp_a2_2'] = 'Ich kann über meinen Tagesablauf berichten.';
+$string['schule_sp_a2_3'] = 'Ich kann über meine Hobbys und Interessen berichten und Vorlieben und Abneigungen äußern.';
+$string['schule_sp_a2_4'] = 'Ich kann über ein Ereignis oder ein Erlebnis in kurzen, einfachen Sätzen berichten.';
+$string['schule_sp_a2_5'] = 'Ich kann Alltagsthemen kurz, einfach und zusammenhängend präsentieren, wenn ich mich darauf vorbereitet habe.';
+$string['schule_sp_a2_6'] = 'Ich kann kurze gelesene oder gehörte Texte mit einfachen Worten wiedergeben.';
+$string['schule_sp_a2_7'] = 'Ich kann mit Hilfe vorgegebener Wörter oder Bilder einfache Geschichten erzählen, wenn ich mich darauf vorbereitet habe.';
+$string['schule_sp_b1_1'] = 'Ich kann erzählen oder berichten, was ich erlebt, beobachtet oder unternommen habe.';
+$string['schule_sp_b1_2'] = 'Ich kann über Musik, Filme, Bücher und Fernsehsendungen sprechen und meine Meinung dazu sagen.';
+$string['schule_sp_b1_3'] = 'Ich kann meine Absichten, Pläne und Ziele darlegen und begründen.';
+$string['schule_sp_b1_4'] = 'Ich kann Informationen wiedergeben, die ich gehört oder gelesen habe.';
+$string['schule_sp_b1_5'] = 'Ich kann gut vorbereitete Kurzpräsentationen durchführen und durch meine Darstellung das Zuhören leicht und interessant machen.';
+$string['schule_sp_b1_6'] = 'Ich kann mit Hilfe von Stichwörtern oder Bildern Geschichten erzählen.';
+$string['schule_sp_b2_1'] = 'Ich kann spontan erzählen und berichten, was ich erlebt, erfahren, mir ausgedacht habe oder was ich vorhabe.';
+$string['schule_sp_b2_2'] = 'Ich kann die Handlung und Abfolge von Ereignissen in Büchern, Filmen, Fernsehsendungen, Theaterstücken usw. zusammenfassen.';
+$string['schule_sp_b2_3'] = 'Ich kann längere Texte und kurze Auszüge aus Nachrichten, Interviews, Reportagen usw., die Stellungnahmen und Diskussionen enthalten, zusammenfassen.';
+$string['schule_sp_b2_4'] = 'Ich kann meinen Standpunkt ausführlich und klar gegliedert darstellen und begründen, durch geeignete Beispiele stützen und Vor- und Nachteile sowie Alternativen aufzeigen.';
+$string['schule_sp_b2_5'] = 'Ich kann zu vielen Themen meines Interesses detaillierte Beschreibungen und Berichte geben.';
+$string['schule_sp_b2_6'] = 'Ich kann Abläufe beschreiben und komplexere Arbeitsanleitungen und Anweisungen geben.';
+$string['schule_sp_b2_7'] = 'Ich kann mit Hilfe weniger Stichwörter Geschichten erzählen.';
+$string['schule_sp_c1_1'] = 'Ich kann fließend in allen Einzelheiten über meine Erlebnisse, Ideen und Pläne berichten.';
+$string['schule_sp_c1_2'] = 'Ich kann lange, anspruchsvolle Texte mündlich zusammenfassen und wichtige Einzelheiten dabei genau wiedergeben.';
+$string['schule_sp_c1_3'] = 'Ich kann komplexe Sachverhalte klar und detailliert darstellen.';
+$string['schule_sp_c1_4'] = 'Ich kann mündlich etwas ausführlich darstellen oder berichten, dabei inhaltliche Aspekte zueinander in Bezug setzen, bestimmte Gesichtspunkte genauer ausführen und den Beitrag angemessen abschließen.';
+$string['schule_sp_c1_5'] = 'Ich kann in meinem Fach- und Interessensgebiet einen klar gegliederten Vortrag halten, dabei, wenn nötig, vom vorbereiteten Text abweichen und spontan auf Fragen von Zuhörerinnen und Zuhörern reagieren.';
+$string['schule_sp_c1_6'] = 'Ich kann Geschichten interessant und lebendig erzählen.';
+$string['schule_sp_c2_1'] = 'Ich kann mühelos und detailliert meine Erfahrungen, Erlebnisse, Ideen und Pläne darstellen und dabei auch feinere Bedeutungsnuancen genau zum Ausdruck bringen.';
+$string['schule_sp_c2_2'] = 'Ich kann Informationen aus verschiedenen Quellen mündlich zusammenfassen und die dabei enthaltenen Argumente und Sachverhalte in einer klaren, zusammenhängenden Darstellung wiedergeben.';
+$string['schule_sp_c2_3'] = 'Ich kann Gedanken und Standpunkte sehr flexibel vortragen und mich auch zu abstrakten, schwierigen Themen spontan und flüssig äußern.';
+$string['schule_sp_c2_4'] = 'Ich kann ein komplexes Thema sprachlich und inhaltlich gut strukturiert präsentieren. Dabei erleichtere ich meinen Zuhörerinnen und Zuhörern das Verständnis, indem ich meine Ausführungen logisch aufbaue und auf wichtige Aspekte gezielt verweise.';
+$string['schule_sp_c2_5'] = 'Ich kann mühelos Geschichten frei erzählen und sie interessant und lebendig darstellen.';
+$string['schule_si_a1_1'] = 'Ich kann jemanden begrüßen und verabschieden, und ich kann etwas über mich erzählen.';
+$string['schule_si_a1_2'] = 'Ich kann einem aneren Menschen Fragen stellen, um ihn besser kennen zu lernen. Ich auch wiedergeben, was er über sich sagt.';
+$string['schule_si_a1_3'] = 'Ich weiß, was ich sagen kann, wenn ich andere Menschen im Alltag und zu Festtagen treffe.';
+$string['schule_si_a1_4'] = 'Ich kann Fragen über den Tages- und Jahresablauf stellen und beantworten.';
+$string['schule_si_a1_5'] = 'Ich kann mich beim Einkauf verständigen.';
+$string['schule_si_a1_6'] = 'Ich kann sagen, wo sich etwas befindet.';
+$string['schule_si_a1_7'] = 'Ich kann um etwas bitten.';
+$string['schule_si_a1_8'] = 'Ich kann sagen, dass ich etwas nicht verstanden habe.';
+$string['schule_si_a2_1'] = 'Ich kann mich mit anderen über mich, meine Familie, Schule und Freizeit unterhalten.';
+$string['schule_si_a2_2'] = 'Ich kann in einfachen Worten meine Meinung zu einem bestimmten Thema äußern.';
+$string['schule_si_a2_3'] = 'Ich kann mich mit anderen verabreden, andere einladen und auf Einladungen reagieren.';
+$string['schule_si_a2_4'] = 'Ich kann sagen, ob ich mit etwas einverstanden bin oder nicht, und auch eigene Vorschläge machen.';
+$string['schule_si_a2_5'] = 'Ich kann mich an Kiosken, in Geschäften und in einem Restaurant darüber verständigen, was ich haben oder wissen möchte.';
+$string['schule_si_a2_6'] = 'Ich kann am Schalter (z.B. Post, Bank, Flughafen, Bahnhof) einfache Informationen erfragen.';
+$string['schule_si_a2_7'] = 'Ich kann Auskünfte über Ort, Zeit und Weg erfragen und geben.';
+$string['schule_si_b1_1'] = 'Ich kann viele Alltagssituationen sprachlich bewältigen, z.B. Erkundigungen einholen, Verabredungen treffen oder ein Problem schildern.';
+$string['schule_si_b1_2'] = 'Ich kann Gespräche über Themen führen, die mich interessieren und über die ich etwas weiß.';
+$string['schule_si_b1_3'] = 'Ich kann in einer Diskussion zu Themen, mit denen ich mich beschäftigt habe, persönliche Ansichten äußern und Meinungen austauschen.';
+$string['schule_si_b1_4'] = 'Ich kann meine Meinung äußern und begründen, ich kann zustimmen, höflich widersprechen und Gegenvorschläge einbringen.';
+$string['schule_si_b1_5'] = 'Ich kann Gefühle wie Überraschung, Freude, Trauer, Interesse und Gleichgültigkeit mit einigen wenigen Redewendungen ausdrücken. Ich kann auch auf entsprechende Gefühlsäußerungen anderer reagieren.';
+$string['schule_si_b2_1'] = 'Ich kann spontan ein Gespräch über ein Thema von allgemeinem Interesse, auch mit Muttersprachlerinnen und Muttersprachlern, beginnen, aufrechterhalten und beenden.';
+$string['schule_si_b2_2'] = 'Ich kann in Diskussionen meinen Standpunkt vertreten und auf Gegenargumente im Einzelnen eingehen, wenn es sich um Sachverhalte handelt, die ich kenne.';
+$string['schule_si_b2_3'] = 'Ich kann in Gesprächen und Diskussionen Absichten, Wünsche, Einwände, Bedenken und Gegenvorschläge höflich vorbringen. Dabei kann ich begründen, warum ich mit etwas nicht einverstanden bin oder mich missverstanden fühle, und ich kann über eine Regelung oder Lösung verhandeln.';
+$string['schule_si_b2_4'] = 'Ich kann meine Gefühle ausdrücken und hervorheben, was für mich persönlich an Ereignissen und Erfahrungen bedeutsam ist.';
+$string['schule_si_c1_1'] = 'Ich kann auch in lebhaften Gesprächen mit Muttersprachlerinnen und Muttersprachlern gut mithalten, selbst wenn Themen besprochen werden, die mir weniger vertraut sind.';
+$string['schule_si_c1_2'] = 'Ich kann meine Gedanken und Meinungen präzise und klar ausdrücken, meine eigenen Beiträge auf die anderer Gesprächsteilnehmer beziehen und Ergebnisse zusammenfassen und erläutern.';
+$string['schule_si_c1_3'] = 'Ich kann überzeugend eine Position vertreten, Fragen und Kommentare beantworten und auch auf umfangreiche Gegenargumente spontan und flexibel reagieren.';
+$string['schule_si_c1_4'] = 'Ich kann mich über meine Gefühle und Erfahrungen treffend und situationsgerecht äußern und in unterschiedlichen Situationen auf die Empfindungen und Gedanken verschiedener Gesprächspartner angemessen reagieren.';
+$string['schule_si_c2_1'] = 'Ich kann sprachliche Situationen jeglicher Art sicher bewältigen.';
+$string['schule_si_c2_2'] = 'Ich kann mich mühelos an allen Gesprächen und Diskussionen mit Muttersprachlerinnen und Muttersprachlern beteiligen.';
+$string['schule_si_c2_3'] = 'Ich kann in Diskussionen und Gesprächen mühelos meinen Standpunkt vertreten und dabei jederzeit auf umfangreiche Fragen, Argumente und Einwände anderer flexibel und wirkungsvoll reagieren. Dabei kann ich auch vielschichtige Überlegungen und Haltungen präzise und deutlich formulieren und sehr umfangreiche Ergebnisse bündig zusammenfassen und erläutern.';
+$string['schule_si_c2_4'] = 'Ich kann meine Gefühle und Erfahrungen so darstellen, dass auch feinere Bedeutungsnuancen deutlich werden und kann mich mühelos und situationsgerecht auf die Empfindungen und Gedanken verschiedener Gesprächspartner einstellen.';*/
 
 ?>
