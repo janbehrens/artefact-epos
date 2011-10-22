@@ -44,18 +44,17 @@ $haslanguages = true;
 $owner = $USER->get('id');
 
 //get user's checklists
-$sql = 'SELECT c.*, a.title
-    FROM {artefact} a 
-    JOIN {artefact_epos_checklist} c ON c.learnedlanguage = a.id
-    WHERE a.owner = ?';
+$sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title as language
+	FROM artefact a, artefact b
+	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
 
-if (!$data = get_records_sql_array($sql, array($owner))) {
+if (!$data = get_records_sql_array($sql, array($owner, 'checklist'))) {
     $data = array();
 }
 
 // generate language links
 if ($data) {
-    usort($data, 'cmp');
+    usort($data, 'cmpByTitle');
     
     // select first language if GET parameter is not set
     if (!isset($_GET['id'])) {
@@ -71,7 +70,7 @@ if ($data) {
         else {
             $languagelinks .= '<a href="checklist.php?id=' . $field->id . '">';
         }
-        $languagelinks .= get_string('language.' . $field->title, 'artefact.epos') . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
+        $languagelinks .= get_string('language.' . $field->language, 'artefact.epos') . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
         if ($field->id == $_GET['id']) {
             $languagelinks .= '</b> | ';
         }
@@ -311,9 +310,9 @@ function load_descriptorset() {
     global $id;
     
     $sql = 'SELECT d.*
-        FROM {artefact_epos_descriptor} d
-        JOIN {artefact_epos_checklist} c ON c.descriptorset = d.descriptorset
-        WHERE c.id = ?';
+        FROM artefact_epos_descriptor d
+        JOIN artefact a ON a.title = d.descriptorset
+        WHERE a.id = ?';
     
     if (!$descriptors = get_records_sql_array($sql, array($id))) {
         $descriptors = array();
@@ -354,10 +353,9 @@ function load_descriptorset() {
 function load_checklist() {
     global $id;
     
-    $sql = 'SELECT ci.*
-        FROM {artefact_epos_checklist} c
-        JOIN {artefact_epos_checklist_item} ci ON ci.checklist = c.id
-        WHERE c.id = ?';
+    $sql = 'SELECT *
+        FROM artefact_epos_checklist_item
+        WHERE checklist = ?';
     
     if (!$data = get_records_sql_array($sql, array($id))) {
         $data = array();

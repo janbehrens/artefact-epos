@@ -234,17 +234,18 @@ function process_languageform(Pieform $form, $values) {
     }
 
     // update artefact_epos_checklist if checklist not in database yet
-    $sql = 'SELECT c.*
-        FROM {artefact_epos_checklist} c
-        JOIN {artefact} a ON c.learnedlanguage = a.id
-        WHERE learnedlanguage = ? AND descriptorset = ?';
+    $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
     
     if (!get_records_sql_array($sql, array($values['artefact'], $values['descriptorset']))) {
         $values['learnedlanguage'] = $values['artefact'];
         
-        // insert into checklist, returns id
-        $values['checklist'] = insert_record('artefact_epos_checklist', (object)$values, 'id', true);
-        
+        $a = new ArtefactTypeChecklist(0, array(
+            'owner' => $owner,
+            'title' => $values['descriptorset'],
+            'parent' => $values['learnedlanguage']
+        ));
+        $a->commit();
+
         // load descriptors
         $descriptors = array();
         
@@ -254,6 +255,7 @@ function process_languageform(Pieform $form, $values) {
             $descriptors = array();
         }
         
+        $values['checklist'] = $a->get('id');
         $values['evaluation'] = 0;
         $values['goal'] = 0;
         

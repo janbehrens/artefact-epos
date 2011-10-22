@@ -4,17 +4,6 @@
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="artefact_epos_checklist"> 
-            <FIELDS> 
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
-                <FIELD NAME="learnedlanguage"   TYPE="int" LENGTH="10" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="text" NOTNULL="true" />
-            </FIELDS>
-            <KEYS>
-                <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="learnedlanguagefk"   TYPE="foreign" FIELDS="learnedlanguage" REFTABLE="artefact" REFFIELDS="id" />
-            </KEYS>
-        </TABLE>
         <TABLE NAME="artefact_epos_checklist_item"> 
             <FIELDS> 
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
@@ -25,7 +14,7 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="checklistfk"         TYPE="foreign" FIELDS="checklist" REFTABLE="artefact_epos_checklist" REFFIELDS="id" />
+                <KEY NAME="checklistfk"         TYPE="foreign" FIELDS="checklist" REFTABLE="artefact" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_descriptor"> 

@@ -55,7 +55,7 @@ if (!$data = get_records_sql_array($sql, array($owner, 'learnedlanguage'))) {
 
 // generate language links
 if ($data) {
-    usort($data, 'cmp');
+    usort($data, 'cmpByTitle');
 
     // select first language if GET parameter is not set
     if (!isset($_GET['id'])) {
