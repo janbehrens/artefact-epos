@@ -114,18 +114,24 @@ tableRenderer.updateOnLoad();
 EOF;
 
 //pieform
+$optionssubject = array(get_string('languages', 'artefact.epos'));
 $optionslanguage = get_learnedlanguages();
 $optionsdescriptors = get_descriptors();
 
 $elements = array(
-    'language' => array(
+    'subject' => array(
         'type' => 'select',
-        'title' => get_string('language', 'mahara'),
-        'options' => $optionslanguage,
+        'title' => get_string('subjectform.subject', 'artefact.epos'),
+        'options' => $optionssubject,
+    ),
+    'title' => array(
+        'type' => 'text',
+        'title' => get_string('subjectform.title', 'artefact.epos'),
+        'defaultvalue' => '',
     ),
     'descriptorset' => array(
         'type' => 'select',
-        'title' => get_string('descriptors', 'artefact.epos'),
+        'title' => get_string('subjectform.descriptorset', 'artefact.epos'),
         'options' => $optionsdescriptors,
     ),
 );
@@ -204,9 +210,11 @@ function process_languageform(Pieform $form, $values) {
     global $USER;
     $owner = $USER->get('id');
     
+    $newsubject = $values['title'] == '' ? $values['subject'] : $values['title'];     //FIXME: validate
+    
     // update artefact 'learnedlanguage' ...
     $sql = 'SELECT * FROM {artefact} WHERE owner = ? AND artefacttype = ? AND title = ?';
-    if ($langs = get_records_sql_array($sql, array($owner, 'learnedlanguage', $values['language']))) {
+    if ($langs = get_records_sql_array($sql, array($owner, 'learnedlanguage', $newsubject))) {
         $a = artefact_instance_from_id($langs[0]->id);
         $a->set('mtime', time());
         $a->commit();
@@ -216,7 +224,7 @@ function process_languageform(Pieform $form, $values) {
         safe_require('artefact', 'epos');
         $a = new ArtefactTypeLearnedLanguage(0, array(
                 'owner' => $owner,
-                'title' => $values['language'],
+                'title' => $newsubject,
             )
         );
     }

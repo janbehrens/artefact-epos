@@ -53,7 +53,7 @@ if (!$data = get_records_sql_array($sql, array($owner, $type))) {
 // For converting language and descriptorset codes to their respective names...
 if ($data) {
     foreach ($data as $field) {
-        $field->language = get_string('language.'.$field->language, 'artefact.epos');
+        //$field->language = get_string('language.'.$field->language, 'artefact.epos');
         $field->descriptorset = get_string('descriptorset.'.$field->descriptorset, 'artefact.epos');
     }
 }

@@ -62,27 +62,10 @@ $string['languages'] = 'Languages';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';
 
-//languages
-$string['language.ar'] = 'Arabic';
-$string['language.ca'] = 'Catalan';
-$string['language.de'] = 'German';
-$string['language.en'] = 'English';
-$string['language.eo'] = 'Esperanto';
-$string['language.es'] = 'Spanish';
-$string['language.fi'] = 'Finnish';
-$string['language.fr'] = 'French';
-$string['language.he'] = 'Hebrew';
-$string['language.hu'] = 'Hungarian';
-$string['language.it'] = 'Italian';
-$string['language.ja'] = 'Japanese';
-$string['language.la'] = 'Latin';
-$string['language.nl'] = 'Dutch';
-$string['language.pl'] = 'Polish';
-$string['language.pt'] = 'Portuguese';
-$string['language.ru'] = 'Russian';
-$string['language.sv'] = 'Swedish';
-$string['language.tr'] = 'Turkish';
-$string['language.zh'] = 'Chinese';
+//add subject form
+$string['subjectform.subject'] = 'Subject';
+$string['subjectform.title'] = 'Title';
+$string['subjectform.descriptorset'] = 'Descriptors';
 
 //descriptor sets
 $string['descriptorset.cercles'] = 'CercleS';

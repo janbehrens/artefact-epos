@@ -70,7 +70,7 @@ if ($data) {
         else {
             $languagelinks .= '<a href="checklist.php?id=' . $field->id . '">';
         }
-        $languagelinks .= get_string('language.' . $field->language, 'artefact.epos') . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
+        $languagelinks .= $field->language . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
         if ($field->id == $_GET['id']) {
             $languagelinks .= '</b> | ';
         }

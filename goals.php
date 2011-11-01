@@ -71,7 +71,7 @@ if ($data) {
         else {
             $languagelinks .= '<a href="goals.php?id=' . $field->id . '">';
         }
-        $languagelinks .= get_string('language.' . $field->title, 'artefact.epos');
+        $languagelinks .= $field->title;
         if ($field->id == $_GET['id']) {
             $languagelinks .= '</b> | ';
         }
