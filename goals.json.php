@@ -47,12 +47,11 @@ $id = $_GET['id'];
 
 $data = array();
 
-$sql = 'SELECT c.descriptorset, ci.descriptor, d.level, d.competence
-	FROM artefact a
-    JOIN {artefact_epos_checklist} c ON c.learnedlanguage = a.id
-    JOIN {artefact_epos_checklist_item} ci ON ci.checklist = c.id
-    JOIN {artefact_epos_descriptor} d ON d.name = ci.descriptor
-    WHERE a.id = ? AND ci.goal = ?';
+$sql = 'SELECT c.title, ci.descriptor, d.level, d.competence
+	FROM artefact c
+    JOIN artefact_epos_checklist_item ci ON ci.checklist = c.id
+    JOIN artefact_epos_descriptor d ON d.name = ci.descriptor
+    WHERE c.parent = ? AND ci.goal = ?';
 
 if (!$data = get_records_sql_array($sql, array($id, 1))) {
     $data = array();
@@ -62,7 +61,7 @@ if (!$data = get_records_sql_array($sql, array($id, 1))) {
 if ($data) {
     foreach ($data as $field) {
         $field->descriptor = get_string($field->descriptor, 'artefact.epos');
-        $field->descriptorset = get_string('descriptorset.' . $field->descriptorset, 'artefact.epos');
+        $field->descriptorset = get_string('descriptorset.' . $field->title, 'artefact.epos');
         $field->competence = get_string($field->competence, 'artefact.epos');
         $field->level = get_string($field->level, 'artefact.epos');
     }

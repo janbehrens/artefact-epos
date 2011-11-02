@@ -91,7 +91,7 @@ tableRenderer = new TableRenderer(
     'language.json.php',
     [
         function (r, d) {
-            return TD(null, r.language);
+            return TD(null, r.title);
         },
         function (r, d) {
             return TD(null, r.descriptorset);
@@ -114,18 +114,24 @@ tableRenderer.updateOnLoad();
 EOF;
 
 //pieform
+$optionssubject = array(get_string('languages', 'artefact.epos'));
 $optionslanguage = get_learnedlanguages();
 $optionsdescriptors = get_descriptors();
 
 $elements = array(
-    'language' => array(
+    'subject' => array(
         'type' => 'select',
-        'title' => get_string('language', 'mahara'),
-        'options' => $optionslanguage,
+        'title' => get_string('subjectform.subject', 'artefact.epos'),
+        'options' => $optionssubject,
+    ),
+    'title' => array(
+        'type' => 'text',
+        'title' => get_string('subjectform.title', 'artefact.epos'),
+        'defaultvalue' => '',
     ),
     'descriptorset' => array(
         'type' => 'select',
-        'title' => get_string('descriptors', 'artefact.epos'),
+        'title' => get_string('subjectform.descriptorset', 'artefact.epos'),
         'options' => $optionsdescriptors,
     ),
 );
@@ -178,7 +184,7 @@ function get_descriptors() {
     if (!empty($descriptors)) {
         return $descriptors;
     }
-    $codes = array('cercles', 'elc', 'schule');
+    $codes = array('cercles.de', 'cercles.en', 'elc.de', 'elc.en', 'elc.fr');
 
     foreach ($codes as $c) {
         $descriptors[$c] = get_string("descriptorset.{$c}", 'artefact.epos');
@@ -204,9 +210,11 @@ function process_languageform(Pieform $form, $values) {
     global $USER;
     $owner = $USER->get('id');
     
+    $newsubject = $values['title'] == '' ? $values['subject'] : $values['title'];     //FIXME: validate
+    
     // update artefact 'learnedlanguage' ...
     $sql = 'SELECT * FROM {artefact} WHERE owner = ? AND artefacttype = ? AND title = ?';
-    if ($langs = get_records_sql_array($sql, array($owner, 'learnedlanguage', $values['language']))) {
+    if ($langs = get_records_sql_array($sql, array($owner, 'learnedlanguage', $newsubject))) {
         $a = artefact_instance_from_id($langs[0]->id);
         $a->set('mtime', time());
         $a->commit();
@@ -216,7 +224,7 @@ function process_languageform(Pieform $form, $values) {
         safe_require('artefact', 'epos');
         $a = new ArtefactTypeLearnedLanguage(0, array(
                 'owner' => $owner,
-                'title' => $values['language'],
+                'title' => $newsubject,
             )
         );
     }
@@ -224,36 +232,38 @@ function process_languageform(Pieform $form, $values) {
 
     $values['artefact'] = $a->get('id');
     
-    // update artefact_epos_descriptor if descriptors are not in database yet
+    // update artefact_epos_descriptor if descriptors are not in database yet   //FIXME nach unten?
     $sql = 'SELECT *
-        FROM {artefact_epos_descriptor}
+        FROM artefact_epos_descriptor
         WHERE descriptorset = ?';
     
     if (!get_records_sql_array($sql, array($values['descriptorset']))) {
         write_descriptor_db('db/' . $values['descriptorset'] . '.xml');
     }
 
-    // update artefact_epos_checklist if checklist not in database yet
-    $sql = 'SELECT c.*
-        FROM {artefact_epos_checklist} c
-        JOIN {artefact} a ON c.learnedlanguage = a.id
-        WHERE learnedlanguage = ? AND descriptorset = ?';
+    // create checklist artefact
+    $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
     
     if (!get_records_sql_array($sql, array($values['artefact'], $values['descriptorset']))) {
         $values['learnedlanguage'] = $values['artefact'];
         
-        // insert into checklist, returns id
-        $values['checklist'] = insert_record('artefact_epos_checklist', (object)$values, 'id', true);
-        
+        $a = new ArtefactTypeChecklist(0, array(
+            'owner' => $owner,
+            'title' => $values['descriptorset'],
+            'parent' => $values['learnedlanguage']
+        ));
+        $a->commit();
+
         // load descriptors
         $descriptors = array();
         
-        $sql = 'SELECT * FROM {artefact_epos_descriptor} WHERE descriptorset = ?';
+        $sql = 'SELECT * FROM artefact_epos_descriptor WHERE descriptorset = ?';
         
         if (!$descriptors = get_records_sql_array($sql, array($values['descriptorset']))) {
             $descriptors = array();
         }
         
+        $values['checklist'] = $a->get('id');
         $values['evaluation'] = 0;
         $values['goal'] = 0;
         

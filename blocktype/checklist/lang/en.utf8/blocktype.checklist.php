@@ -25,45 +25,11 @@
  *
  */
 
-define('INTERNAL', 1);
-define('JSON', 1);
+defined('INTERNAL') || die();
 
-require(dirname(dirname(dirname(__FILE__))) . '/init.php');
-require_once(get_config('docroot') . 'artefact/lib.php');
+//general
+$string['title'] = 'Self-evaluation';
+$string['description'] = 'Display your checklist for a selected language';
 
-$id = param_integer('checklist_id');
-
-//get learnedlanguage artefact id
-if ($data = get_records_array('artefact', 'id', $id)) {
-    $lang = $data[0]->parent;
-}
-
-$a = artefact_instance_from_id($lang);
-
-if ($a->get('owner') != $USER->get('id')) {
-    throw new AccessDeniedException(get_string('notartefactowner', 'error'));
-}
-
-//delete from artefact_parent_cache
-delete_records('artefact_parent_cache', 'artefact', $id);
-
-//delete from checklist_item
-delete_records('artefact_epos_checklist_item', 'checklist', $id);
-
-//delete from artefact
-delete_records('artefact', 'id', $id);
-
-//delete artefact if there is no checklist left
-$count = count_records('artefact', 'parent', $lang);
-if (empty($count)) {
-    $a->delete();
-}
-else {
-    $a->set('mtime', time());
-    $a->commit();
-}
-
-//reply
-json_reply(null, get_string('deletedlanguage', 'artefact.epos'));
 
 ?>

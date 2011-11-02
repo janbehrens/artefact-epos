@@ -36,11 +36,11 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
     }
 
     public static function get_title() {
-        return get_string('mychecklist', 'artefact.epos');
+        return get_string('title', 'blocktype.epos/checklist');
     }
 
     public static function get_description() {
-        return get_string('mychecklistdescription', 'artefact.epos');
+        return get_string('description', 'blocktype.epos/checklist');
     }
 
     public static function get_categories() {
@@ -64,15 +64,31 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
         return $artefacts;
     }*/
     
-    public static function artefactchooser_element($default=null) {
+    /*public static function artefactchooser_element($default=null) {
         return array(
         	'name' => 'artefactid',
             'type'  => 'artefactchooser',
-            'title' => 'select language',
+            'title' => 'Select language',
             //'defaultvalue' => $default,
             'selectone' => true,
             'blocktype' => 'checklist',
         	'artefacttypes' => array('checklist'),
+        );
+    }*/
+    
+    public static function artefactchooser_element($default=null) {
+        return array(
+            'name'  => 'artefactid',
+            'type'  => 'artefactchooser',
+            'title' => 'Select language',
+            'defaultvalue' => $default,
+            'rules' => array(
+                'required' => true,
+            ),
+            'blocktype' => 'checklist',
+            'limit' => 5,
+            'artefacttypes' => array('checklist'),
+            //'template' => 'artefact:file:artefactchooser-element.tpl',
         );
     }
     

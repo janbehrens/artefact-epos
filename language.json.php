@@ -33,7 +33,7 @@ safe_require('artefact', 'epos');
 
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
-$type = param_alpha('type');
+$type = 'checklist';//param_alpha('type');
 $view = param_integer('view', 0);
 
 $owner = $USER->get('id');
@@ -41,19 +41,19 @@ $count = 0;
 
 $data = array();
 
-$sql = 'SELECT c.*, a.title
-	FROM {artefact} a
-	JOIN {artefact_epos_checklist} c ON c.learnedlanguage = a.id
-	WHERE a.owner = ? AND a.artefacttype = ?';
+$sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
+	FROM artefact a, artefact b
+	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
 
 if (!$data = get_records_sql_array($sql, array($owner, $type))) {
     $data = array();
 }
 
+
 // For converting language and descriptorset codes to their respective names...
 if ($data) {
     foreach ($data as $field) {
-        $field->language = get_string('language.'.$field->title, 'artefact.epos');
+        //$field->language = get_string('language.'.$field->language, 'artefact.epos');
         $field->descriptorset = get_string('descriptorset.'.$field->descriptorset, 'artefact.epos');
     }
 }
