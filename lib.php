@@ -142,7 +142,8 @@ function write_descriptor_db($xml) {
         
         $table = 'artefact_epos_descriptor';
         
-        $values['descriptorset'] = $xmlarr['XML']['#']['DESCRIPTORSET']['0']['@']['NAME'];
+        $descriptorset = $xmlarr['XML']['#']['DESCRIPTORSET']['0'];
+        $values['descriptorset'] = $descriptorset['@']['NAME'] . '.' . $descriptorset['@']['LANGUAGE'];
         
         foreach ($xmlarr['XML']['#']['DESCRIPTORSET']['0']['#']['DESCRIPTOR'] as $x) {
             $values['competence'] = $x['@']['COMPETENCE'];

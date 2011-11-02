@@ -44,7 +44,7 @@ $haslanguages = true;
 $owner = $USER->get('id');
 
 //get user's checklists
-$sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title as language
+$sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
 	FROM artefact a, artefact b
 	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
 
@@ -70,7 +70,7 @@ if ($data) {
         else {
             $languagelinks .= '<a href="checklist.php?id=' . $field->id . '">';
         }
-        $languagelinks .= $field->language . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
+        $languagelinks .= $field->title . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
         if ($field->id == $_GET['id']) {
             $languagelinks .= '</b> | ';
         }

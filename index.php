@@ -91,7 +91,7 @@ tableRenderer = new TableRenderer(
     'language.json.php',
     [
         function (r, d) {
-            return TD(null, r.language);
+            return TD(null, r.title);
         },
         function (r, d) {
             return TD(null, r.descriptorset);
@@ -184,7 +184,7 @@ function get_descriptors() {
     if (!empty($descriptors)) {
         return $descriptors;
     }
-    $codes = array('cercles', 'elc');
+    $codes = array('cercles.de', 'cercles.en', 'elc.de', 'elc.en', 'elc.fr');
 
     foreach ($codes as $c) {
         $descriptors[$c] = get_string("descriptorset.{$c}", 'artefact.epos');
@@ -232,16 +232,16 @@ function process_languageform(Pieform $form, $values) {
 
     $values['artefact'] = $a->get('id');
     
-    // update artefact_epos_descriptor if descriptors are not in database yet
+    // update artefact_epos_descriptor if descriptors are not in database yet   //FIXME nach unten?
     $sql = 'SELECT *
-        FROM {artefact_epos_descriptor}
+        FROM artefact_epos_descriptor
         WHERE descriptorset = ?';
     
     if (!get_records_sql_array($sql, array($values['descriptorset']))) {
         write_descriptor_db('db/' . $values['descriptorset'] . '.xml');
     }
 
-    // update artefact_epos_checklist if checklist not in database yet
+    // create checklist artefact
     $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
     
     if (!get_records_sql_array($sql, array($values['artefact'], $values['descriptorset']))) {
@@ -257,7 +257,7 @@ function process_languageform(Pieform $form, $values) {
         // load descriptors
         $descriptors = array();
         
-        $sql = 'SELECT * FROM {artefact_epos_descriptor} WHERE descriptorset = ?';
+        $sql = 'SELECT * FROM artefact_epos_descriptor WHERE descriptorset = ?';
         
         if (!$descriptors = get_records_sql_array($sql, array($values['descriptorset']))) {
             $descriptors = array();
