@@ -78,7 +78,7 @@ $string['descriptorset.schule.de'] = 'Schule Deskriptoren auf Deutsch';
 //evaluation levels
 $string['eval0'] = 'not at all';
 $string['eval1'] = 'satisfactory';
-$string['eval2'] = 'very good';
+$string['eval2'] = 'good';
 
 //TODO: the following should be like $string['descriptorset.elc.listening']
 
