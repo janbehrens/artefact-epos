@@ -30,6 +30,7 @@ defined('INTERNAL') || die();
 //general
 $string['title'] = 'Self-evaluation';
 $string['description'] = 'Display your checklist for a selected language';
+$string['selectchecklist'] = 'Select the checklist to display';
 
 
 ?>
