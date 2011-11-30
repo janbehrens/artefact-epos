@@ -64,7 +64,7 @@ if ($data) {
 
     $languagelinks = '<p>' . get_string('subjects', 'artefact.epos') . ': ';
 
-    foreach ($data as $field) {
+    foreach ($data as $field) {    	
         if ($field->id == $_GET['id']) {
             $languagelinks .= '<b>';
         }
@@ -91,8 +91,89 @@ if (isset($_GET['id'])) {
 }
 else $id = 0;
 
+//pieform for customlearninggoal
+$elements = array(
+    'title' => array(
+        'type' => 'textarea',
+        'title' => 'Eigenes Lernziel', //FIXME: get String
+        'defaultvalue' => '',
+    ),
+);
+$elements['submit'] = array(
+    'type' => 'submit',
+    'value' => get_string('save', 'artefact.epos'),
+);
+
+$addcustomgoalform = pieform(array(
+    'name' => 'addcustomgoal',
+    'plugintype' => 'artefact',
+    'pluginname' => 'epos',
+    'elements' => $elements, 
+    'jsform' => true,
+    'successcallback' => 'form_submit',
+    'jssuccesscallback' => 'languageSaveCallback',
+));
+//end: pieform for customlearninggoal
+
+/**
+* form submit function
+*/
+function form_submit(Pieform $form, $values) {
+	try {
+		process_addcustomgoal($form, $values);
+	}
+	catch (Exception $e) {
+		$form->json_reply(PIEFORM_ERR, $e->getMessage());
+	}
+	$form->json_reply(PIEFORM_OK, get_string('addedcustomgoal', 'artefact.epos'));
+}
+
+/** 
+ * Processs the form values: creates anartefact and writes tecustom goal to the database
+ * @param Pieform $form
+ * @param unknown_type $values
+ */
+function process_addcustomgoal(Pieform $form, $values) {
+	global $USER;
+	$owner = $USER->get('id');
+		
+	//Create an Artefact and commit it to the artefact table
+	safe_require('artefact', 'epos');
+	$a = new ArtefactTypeCustomGoal(0, array(
+         	'owner' => $owner,
+                'title' => 'customgoal',
+                'parent' => $_GET['id'],
+		)
+		);
+		
+	$a->commit();
+	
+	//Finally insert the custom goal into to table
+	$values['id'] = $a->get('id');	
+	$table = 'artefact_epos_custom_goal';	
+	insert_record($table, (object)$values);
+	
+}
+
+//TODO: Please check if the if(r.competence == null) is really the best solution here
 
 $inlinejs = <<<EOF
+function deleteCustomGoal(customgoal_id) {
+    if (confirm('Sind Sie sicher, dass Sie dieses CustomGoal löschen wollen?')) {
+        sendjsonrequest('customgoaldelete.json.php',
+            {'customgoal_id': customgoal_id},
+            'GET', 
+            function(data) {
+                tableRenderer.doupdate();
+            },
+            function() {
+                // @todo error
+            }
+        );
+    }
+    return false;
+}
+
 tableRenderer = new TableRenderer(
     'goals_table',
     'goals.json.php?id={$id}',
@@ -101,10 +182,26 @@ tableRenderer = new TableRenderer(
             return TD(null, r.descriptor);
         },
         function (r, d) {
+        	if(r.competence == null) {
+        		r.competence = "";
+        		r.level = ""
+        	}
             return TD(null, r.competence + ' ' + r.level);
         },
         function (r, d) {
-        	return TD(null, r.descriptorset);
+        	if(r.competence == "") {
+        		var link = A({'class': 'icon btn-del s', 'href': ''}, 'Löschen');
+	            connect(link, 'onclick', function (e) {
+	                e.stop();
+	                var myID = 33;
+	                return deleteCustomGoal(myID);
+	            });
+	            
+	            return TD(null, A({'class': 'icon btn-edit s', 'href': 'EMPTY'}, 'Bearbeiten'), link);
+            }
+            else {
+        		return TD(null, r.descriptorset);
+        	}
         },
     ]
 );
@@ -116,8 +213,9 @@ tableRenderer.paginate = false;
 tableRenderer.updateOnLoad();
 EOF;
 
-
 $smarty = smarty(array('tablerenderer'));
+
+$smarty->assign("custon_goal_form", $addcustomgoalform);
 
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('languagelinks', $languagelinks);

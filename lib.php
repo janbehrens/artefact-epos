@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ u*
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -35,7 +35,7 @@ include_once('xmlize.php');
 class PluginArtefactEpos extends PluginArtefact {
 
     public static function get_artefact_types() {
-        return array('learnedlanguage', 'checklist');
+        return array('learnedlanguage', 'checklist', 'customgoal');
     }
 
     public static function get_block_types() {
@@ -132,6 +132,20 @@ class ArtefactTypeChecklist extends ArtefactType {
     }
 
     public static function get_links($id) {}
+}
+
+/**
+* ArtefactTypeCustomGoal implementing ArtefactType
+*/
+class ArtefactTypeCustomGoal extends ArtefactType {
+
+	public static function get_icon($options=null) {}
+
+	public static function is_singular() {
+		return false;
+	}
+
+	public static function get_links($id) {}
 }
 
 //write descriptors from xml into database

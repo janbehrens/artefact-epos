@@ -67,10 +67,22 @@ if ($data) {
     }
 }
 
+usort($data, 'cmpByCompetenceAndLevel');
+
+//Collect custom goals for certain language
+$sql = 'SELECT c.title AS descriptor 
+		FROM artefact_epos_custom_goal c, artefact d 
+		WHERE d.id = c.id 
+			AND d.owner = ? 
+			AND d.parent = ?';
+
+if(!$data_custom_goal = get_records_sql_array($sql, array($owner, $id))) {
+	$data_custom_goal = array();
+}
+
+$data = array_merge($data, $data_custom_goal); //TODO: Please check if this is really the way how to do it.
 
 $count = count($data);
-
-usort($data, 'cmpByCompetenceAndLevel');
 
 echo json_encode(array(
     'data' => $data,
