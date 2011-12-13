@@ -42,9 +42,6 @@ if ($a->get('owner') != $USER->get('id')) {
 //delete from artefact_parent_cache
 delete_records('artefact_parent_cache', 'artefact', $id);
 
-//delete from checklist_item
-delete_records('artefact_epos_custom_goal', 'id', $id);
-
 //delete from artefact
 delete_records('artefact', 'id', $id);
 

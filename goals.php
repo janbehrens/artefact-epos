@@ -93,7 +93,7 @@ else $id = 0;
 
 //pieform for customlearninggoal
 $elements = array(
-    'title' => array(
+    'customgoal_text' => array(
         'type' => 'textarea',
         'title' => 'Eigenes Lernziel', //FIXME: get String
         'defaultvalue' => '',
@@ -111,7 +111,7 @@ $addcustomgoalform = pieform(array(
     'elements' => $elements, 
     'jsform' => true,
     'successcallback' => 'form_submit',
-    'jssuccesscallback' => 'languageSaveCallback',
+    'jssuccesscallback' => 'customgoalSaveCallback',
 ));
 //end: pieform for customlearninggoal
 
@@ -136,28 +136,42 @@ function form_submit(Pieform $form, $values) {
 function process_addcustomgoal(Pieform $form, $values) {
 	global $USER;
 	$owner = $USER->get('id');
-		
+	
 	//Create an Artefact and commit it to the artefact table
 	safe_require('artefact', 'epos');
 	$a = new ArtefactTypeCustomGoal(0, array(
          	'owner' => $owner,
                 'title' => 'customgoal',
                 'parent' => $_GET['id'],
+                'description' => $values['customgoal_text'],
 		)
 		);
 		
 	$a->commit();
 	
-	//Finally insert the custom goal into to table
+	/*Finally insert the custom goal into to table
 	$values['id'] = $a->get('id');	
 	$table = 'artefact_epos_custom_goal';	
 	insert_record($table, (object)$values);
-	
+	*/
 }
 
 //TODO: Please check if the if(r.competence == null) is really the best solution here
 
 $inlinejs = <<<EOF
+
+function customgoalSaveCallback(form, data) {
+    tableRenderer.doupdate(); 
+    toggleLanguageForm();
+    // Can't reset() the form here, because its values are what were just submitted, 
+    // thanks to pieforms
+    forEach(form.elements, function(element) {
+        if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
+            element.value = '';
+        }
+    });
+}
+
 function deleteCustomGoal(customgoal_id) {
     if (confirm('Sind Sie sicher, dass Sie dieses CustomGoal löschen wollen?')) {
         sendjsonrequest('customgoaldelete.json.php',
@@ -174,35 +188,81 @@ function deleteCustomGoal(customgoal_id) {
     return false;
 }
 
+function editCustomGoal(customgoal_id) {
+	customgoal_text = document.getElementById(customgoal_id).innerHTML;
+	if(customgoal_text.substr(0, 5) != "<form") {
+		document.getElementById(customgoal_id).innerHTML = '<form name="bm"><textarea style="float:left" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea><input type="submit" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/><input type="reset" onClick="javascript: cancleEditCustomGoal('+customgoal_id+');"/></form>';
+		
+	}
+	return true;
+}
+
+function submitEditCustomGoal(customgoal_id) {
+	ta_id = "ta_"+customgoal_id;
+	customgoal_text = document.getElementById(ta_id).innerHTML;
+	sendjsonrequest('customgoalupdate.json.php',
+            {'customgoal_id': customgoal_id},
+            'GET', 
+            function(data) {
+                tableRenderer.doupdate();
+            },
+            function() {
+                // @todo error
+            }
+        );
+	return true;
+}
+
+function cancleEditCustomGoal(customgoal_id) {
+	ta_id = "ta_"+customgoal_id;
+	customgoal_text = document.getElementById(ta_id).innerHTML;
+	document.getElementById(customgoal_id).innerHTML = customgoal_text;
+	return true;
+}
+
 tableRenderer = new TableRenderer(
     'goals_table',
     'goals.json.php?id={$id}',
     [
         function (r, d) {
+        	if(r.descriptor == null && r.description != null) {
+        		r.descriptor = r.description;
+        		var data = TD(null);
+            	data.innerHTML = '<div class="autogrow" id="' + r.id + '">' + r.description + '</div>';
+        		return data;
+			}
             return TD(null, r.descriptor);
-        },
+        },        
         function (r, d) {
         	if(r.competence == null) {
-        		r.competence = "";
-        		r.level = ""
+        			r.competence = "";
+        			r.level = "";
         	}
             return TD(null, r.competence + ' ' + r.level);
         },
         function (r, d) {
-        	if(r.competence == "") {
-        		var link = A({'class': 'icon btn-del s', 'href': ''}, 'Löschen');
-	            connect(link, 'onclick', function (e) {
-	                e.stop();
-	                var myID = 33;
-	                return deleteCustomGoal(myID);
-	            });
-	            
-	            return TD(null, A({'class': 'icon btn-edit s', 'href': 'EMPTY'}, 'Bearbeiten'), link);
-            }
-            else {
-        		return TD(null, r.descriptorset);
-        	}
+        	return TD(null, r.descriptorset);
+        	
         },
+        function (r, d) {
+        	if(r.description != null) {
+        		var btnDel = A({'class': 'icon btn-del s', 'href': ''}, 'Löschen');
+                connect(btnDel, 'onclick', function (e) {
+                    e.stop();
+                    var myID = r.id;
+                    return deleteCustomGoal(myID);
+                });
+                
+                var btnEdit = A({'class': 'icon btn-edit s', 'href': ''}, 'Bearbeiten');
+                connect(btnEdit, 'onclick', function (e) {
+                    e.stop();
+                    var myID = r.id;
+                    return editCustomGoal(myID);
+                });
+                
+                return TD(null, null, null, btnEdit, btnDel);
+			}        
+		},
     ]
 );
 
@@ -215,11 +275,10 @@ EOF;
 
 $smarty = smarty(array('tablerenderer'));
 
-$smarty->assign("custon_goal_form", $addcustomgoalform);
-
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('languagelinks', $languagelinks);
 //$smarty->assign('tables', $tables);
+$smarty->assign("custon_goal_form", $addcustomgoalform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('goals', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
