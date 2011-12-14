@@ -13,3 +13,29 @@ table#checklist th {
 td.radio {
     white-space: nowrap;
 }
+
+
+/** Customgoal specific **/
+
+#addcustomgoal_customgoal_text {
+	resize: none;
+    
+}
+
+form.pieform.customgoal table {
+	float: none;
+}
+
+div#customgoal {
+	margin-top: 10px;
+}
+
+div.customgoalText {
+	width: 100%;
+	height: 100%;
+	margin-left: -5px;
+	margin-top: -5px;
+	margin-bottom: -5px;
+	padding-right: 5px;
+}
+/** End: Customgoal specific **/

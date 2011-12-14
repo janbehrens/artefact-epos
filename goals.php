@@ -96,6 +96,8 @@ $elements = array(
     'customgoal_text' => array(
         'type' => 'textarea',
         'title' => 'Eigenes Lernziel', //FIXME: get String
+        'cols' => 80,
+        'rows' => 5,
         'defaultvalue' => '',
     ),
 );
@@ -106,6 +108,7 @@ $elements['submit'] = array(
 
 $addcustomgoalform = pieform(array(
     'name' => 'addcustomgoal',
+    'class' => 'customgoal',
     'plugintype' => 'artefact',
     'pluginname' => 'epos',
     'elements' => $elements, 
@@ -160,9 +163,45 @@ function process_addcustomgoal(Pieform $form, $values) {
 
 $inlinejs = <<<EOF
 
+var oldTA = '';
+
+function editCustomGoalOut(customgoal_id) {
+	oldTA = customgoal_text = document.getElementById(customgoal_id).innerHTML;
+	if(customgoal_text.substr(0, 5) != "<form") {
+		document.getElementById(customgoal_id).innerHTML = '<form name="bm">' +
+		'<textarea style="float:left; width: 100%" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
+		'<input type="submit" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/>' +
+		'<input type="reset" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
+		'</form>';
+		
+	}
+	return true;
+}
+
+function cancleEditCustomGoalOut(customgoal_id) {
+	document.getElementById(customgoal_id).innerHTML = oldTA;
+	return true;
+}
+
+function submitEditCustomGoal(customgoal_id) {
+	ta_id = 'ta_'+customgoal_id;
+	customgoal_text = document.getElementById(ta_id).value;
+	sendjsonrequest('customgoalupdate.json.php',
+            {'customgoal_id': customgoal_id,
+            'customgoal_text': customgoal_text},
+            'GET', 
+            function(data) {
+                tableRenderer.doupdate();
+            },
+            function() {
+                // @todo error
+            }
+        );
+	return true;
+}
+
 function customgoalSaveCallback(form, data) {
-    tableRenderer.doupdate(); 
-    toggleLanguageForm();
+    tableRenderer.doupdate();    
     // Can't reset() the form here, because its values are what were just submitted, 
     // thanks to pieforms
     forEach(form.elements, function(element) {
@@ -188,48 +227,16 @@ function deleteCustomGoal(customgoal_id) {
     return false;
 }
 
-function editCustomGoal(customgoal_id) {
-	customgoal_text = document.getElementById(customgoal_id).innerHTML;
-	if(customgoal_text.substr(0, 5) != "<form") {
-		document.getElementById(customgoal_id).innerHTML = '<form name="bm"><textarea style="float:left" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea><input type="submit" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/><input type="reset" onClick="javascript: cancleEditCustomGoal('+customgoal_id+');"/></form>';
-		
-	}
-	return true;
-}
-
-function submitEditCustomGoal(customgoal_id) {
-	ta_id = "ta_"+customgoal_id;
-	customgoal_text = document.getElementById(ta_id).innerHTML;
-	sendjsonrequest('customgoalupdate.json.php',
-            {'customgoal_id': customgoal_id},
-            'GET', 
-            function(data) {
-                tableRenderer.doupdate();
-            },
-            function() {
-                // @todo error
-            }
-        );
-	return true;
-}
-
-function cancleEditCustomGoal(customgoal_id) {
-	ta_id = "ta_"+customgoal_id;
-	customgoal_text = document.getElementById(ta_id).innerHTML;
-	document.getElementById(customgoal_id).innerHTML = customgoal_text;
-	return true;
-}
-
 tableRenderer = new TableRenderer(
     'goals_table',
     'goals.json.php?id={$id}',
     [
         function (r, d) {
-        	if(r.descriptor == null && r.description != null) {
-        		r.descriptor = r.description;
+        	if(r.descriptor == null && r.description != null) {        	
         		var data = TD(null);
-            	data.innerHTML = '<div class="autogrow" id="' + r.id + '">' + r.description + '</div>';
-        		return data;
+            	data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
+
+            	r.descriptor = data;
 			}
             return TD(null, r.descriptor);
         },        
@@ -257,7 +264,7 @@ tableRenderer = new TableRenderer(
                 connect(btnEdit, 'onclick', function (e) {
                     e.stop();
                     var myID = r.id;
-                    return editCustomGoal(myID);
+                    return editCustomGoalOut(myID);
                 });
                 
                 return TD(null, null, null, btnEdit, btnDel);

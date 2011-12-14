@@ -32,7 +32,7 @@ require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 
 $id = param_integer('customgoal_id');
-//$text = param_variable('customgoal_text');
+$text = param_variable('customgoal_text');
 
 $a = artefact_instance_from_id($id);
 
@@ -40,11 +40,11 @@ if ($a->get('owner') != $USER->get('id')) {
     throw new AccessDeniedException(get_string('notartefactowner', 'error'));
 }
 
-/*
-$a = artefact_instance_from_id($id);
+//$a = artefact_instance_from_id($id);
 $a->set('description', $text);
+$a->set('mtime', time());
 $a->commit();
-*/
+
 
 //reply
 json_reply(null, "update done");

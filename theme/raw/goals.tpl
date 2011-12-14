@@ -21,6 +21,9 @@
     </tbody>
 </table>
 
-<div>{$custon_goal_form|safe}</div>
+<div id="customgoal">
+    {$custon_goal_form|safe}
+</div>
+
 
 {include file="footer.tpl"}
