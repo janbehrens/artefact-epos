@@ -1518,5 +1518,8 @@ $string['schule_de_si_c2_2'] = 'Ich kann mich mühelos an allen Gesprächen und 
 $string['schule_de_si_c2_3'] = 'Ich kann in Diskussionen und Gesprächen mühelos meinen Standpunkt vertreten und dabei jederzeit auf umfangreiche Fragen, Argumente und Einwände anderer flexibel und wirkungsvoll reagieren. Dabei kann ich auch vielschichtige Überlegungen und Haltungen präzise und deutlich formulieren und sehr umfangreiche Ergebnisse bündig zusammenfassen und erläutern.';
 $string['schule_de_si_c2_4'] = 'Ich kann meine Gefühle und Erfahrungen so darstellen, dass auch feinere Bedeutungsnuancen deutlich werden und kann mich mühelos und situationsgerecht auf die Empfindungen und Gedanken verschiedener Gesprächspartner einstellen.';
 
-
+//custom learning goal
+$string['customlearninggoal'] = 'Custom goal';
+$string['customlearninggoalupdatesuccess'] = "Custom goal successfully updated.";
+$string['customlearninggoaldeleted'] = 'Custom goal removed.';
 ?>

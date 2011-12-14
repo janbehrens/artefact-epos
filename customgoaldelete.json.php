@@ -47,6 +47,6 @@ delete_records('artefact', 'id', $id);
 
 
 //reply
-json_reply(null, get_string('deletedlanguage', 'artefact.epos'));
+json_reply(null, get_string('customlearninggoaldeleted', 'artefact.epos'));
 
 ?>

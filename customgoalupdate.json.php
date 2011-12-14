@@ -40,13 +40,11 @@ if ($a->get('owner') != $USER->get('id')) {
     throw new AccessDeniedException(get_string('notartefactowner', 'error'));
 }
 
-//$a = artefact_instance_from_id($id);
 $a->set('description', $text);
 $a->set('mtime', time());
 $a->commit();
 
-
 //reply
-json_reply(null, "update done");
+json_reply(null, get_string('customlearninggoalupdatesuccess', 'artefact.epos'));
 
 ?>

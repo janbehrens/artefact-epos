@@ -95,12 +95,13 @@ else $id = 0;
 $elements = array(
     'customgoal_text' => array(
         'type' => 'textarea',
-        'title' => 'Eigenes Lernziel', //FIXME: get String
+        'title' => get_string('customlearninggoal', 'artefact.epos'), //FIXME: get String
         'cols' => 80,
         'rows' => 5,
         'defaultvalue' => '',
     ),
 );
+
 $elements['submit'] = array(
     'type' => 'submit',
     'value' => get_string('save', 'artefact.epos'),
@@ -151,15 +152,7 @@ function process_addcustomgoal(Pieform $form, $values) {
 		);
 		
 	$a->commit();
-	
-	/*Finally insert the custom goal into to table
-	$values['id'] = $a->get('id');	
-	$table = 'artefact_epos_custom_goal';	
-	insert_record($table, (object)$values);
-	*/
 }
-
-//TODO: Please check if the if(r.competence == null) is really the best solution here
 
 $inlinejs = <<<EOF
 
@@ -267,7 +260,7 @@ tableRenderer = new TableRenderer(
                     return editCustomGoalOut(myID);
                 });
                 
-                return TD(null, null, null, btnEdit, btnDel);
+                return TD(null, btnEdit, btnDel);
 			}        
 		},
     ]
