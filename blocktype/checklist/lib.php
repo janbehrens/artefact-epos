@@ -80,7 +80,7 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
         return array(
             'name'  => 'artefactid',
             'type'  => 'artefactchooser',
-            'title' => 'Select language',
+            'title' => get_string('selectchecklist', 'blocktype.epos/checklist'),
             'defaultvalue' => $default,
             'rules' => array(
                 'required' => true,
@@ -94,6 +94,11 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
     
     public static function has_instance_config() {
         return true;
+    }
+    
+    public static function artefactchooser_get_element_data($data) {
+        $data->id = $data->id . $data->id;
+        return $data;
     }
 
     public static function instance_config_form() {

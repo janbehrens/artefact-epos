@@ -19,18 +19,34 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Jan Behrens
+ * @author     Björn Mellies
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011 Jan Behrens, jb3@informatik.uni-bremen.de
+ * @copyright  (C) 2011 Björn Mellies, bmellies@informatik.uni-bremen.de
  *
  */
 
-defined('INTERNAL') || die();
+define('INTERNAL', 1);
+define('JSON', 1);
 
-//general
-$string['title'] = 'Self-evaluation';
-$string['description'] = 'Display your checklist for a selected language';
-$string['selectchecklist'] = 'Select the checklist to display';
+require(dirname(dirname(dirname(__FILE__))) . '/init.php');
+require_once(get_config('docroot') . 'artefact/lib.php');
 
+$id = param_integer('customgoal_id');
+
+$a = artefact_instance_from_id($id);
+
+if ($a->get('owner') != $USER->get('id')) {
+    throw new AccessDeniedException(get_string('notartefactowner', 'error'));
+}
+
+//delete from artefact_parent_cache
+delete_records('artefact_parent_cache', 'artefact', $id);
+
+//delete from artefact
+delete_records('artefact', 'id', $id);
+
+
+//reply
+json_reply(null, get_string('customlearninggoaldeleted', 'artefact.epos'));
 
 ?>

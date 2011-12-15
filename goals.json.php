@@ -67,10 +67,26 @@ if ($data) {
     }
 }
 
+usort($data, 'cmpByCompetenceAndLevel');
+
+
+
+//Collect custom goals for certain language
+$data_custom_goal = array();
+$sql = "SELECT id, description 
+		FROM artefact
+		WHERE artefacttype = 'customgoal' AND 
+			owner = ? AND parent = ?";
+
+if(!$data_custom_goal = get_records_sql_array($sql, array($owner, $id))) {
+	$data_custom_goal = array();
+}
+
+
+$data = array_merge($data, $data_custom_goal); //TODO: Please check if this is really the way how to do it.
+
 
 $count = count($data);
-
-usort($data, 'cmpByCompetenceAndLevel');
 
 echo json_encode(array(
     'data' => $data,

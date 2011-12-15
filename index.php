@@ -37,7 +37,6 @@ require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'internal');
 
-
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
 $delstr = get_string('del', 'artefact.epos');
