@@ -90,11 +90,9 @@ if (isset($_GET['id'])) {
 }
 else $id = 0;
 
-$set = load_descriptorset();
-//print_r($set);
-//echo '<br/>';
-$checklistitems = load_checklist();
-//print_r($checklistitems);
+$a = artefact_instance_from_id($id);
+$set = $a->set;
+$checklistitems = $a->load_checklist();
 
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
@@ -216,54 +214,9 @@ function toggleLanguageForm(comp, level) {
 function checklistSaveCallback(form, data) {
     tableRenderer.doupdate();
 }
-
-var prevValue = {};
-
-tableRenderer = new TableRenderer(
-    'checklist',
-    'checklist.json.php?id={$id}',
-    [
-        function (r, d) {
-            return TD(null, r.competencestr);
-        },
 EOF;
 
-foreach (array_keys($set) as $competence) {
-    foreach (array_keys($set[$competence]) as $level) {
-        $inlinejs .= <<<EOF
-
-        function (r) {
-            var str1 = 'toggleLanguageForm("' + r.competence + '", "$level")';
-            var str2 = 'progressbar_' + r.competence + "_$level";
-            var str3 = '#progressbar_' + r.previous + "_$level";
-            var data = TD({'onclick': str1});
-            data.innerHTML = '<div id="' + str2 + '"></div>';
-        	if (prevValue.hasOwnProperty("$level")) {
-                jQuery(str3).progressbar({ value: prevValue["$level"] });
-            }
-            prevValue["$level"] = r.$level;
-            
-//            if (typeof(r.competence) == 'string') {
-                return data;
-//            }
-    },
-EOF;
-
-    }
-    break;  //we need the column definitions only once
-}
-
-$inlinejs .= <<<EOF
-
-    ]
-);
-
-tableRenderer.type = 'checklist';
-tableRenderer.statevars.push('type');
-tableRenderer.emptycontent = '';
-tableRenderer.updateOnLoad();
-
-EOF;
+$inlinejs .= $a->returnJS(true);
 
 
 $smarty = smarty(array('tablerenderer', 
@@ -275,6 +228,7 @@ $smarty = smarty(array('tablerenderer',
                  array('<link rel="stylesheet" href="js/jquery/themes/base/jquery.ui.all.css">')
 );
 
+$smarty->assign('id', $id);
 $smarty->assign('languagelinks', $languagelinks);
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('checklistforms', $checklistforms);
@@ -283,94 +237,6 @@ $smarty->assign('PAGEHEADING', get_string('selfevaluation', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:checklist.tpl');
 
-
-/**
- * load_descriptorset()
- * 
- * will return something like
- * 	array(
- * 		'listening' => array(
- * 			'a1' => array(
- * 				0 => 'cercles_li_a1_1',
- * 				1 => 'cercles_li_a1_2',
- * 				etc.
- * 			),
- * 			'a2' => array(
- * 				...
- * 			),
- * 			etc.
- * 		),
- * 		'reading' => array(
- * 			...
- * 		),
- * 		etc.
- * 	)
- */
-function load_descriptorset() {
-    global $id;
-    
-    $sql = 'SELECT d.*
-        FROM artefact_epos_descriptor d
-        JOIN artefact a ON a.title = d.descriptorset
-        WHERE a.id = ?';
-    
-    if (!$descriptors = get_records_sql_array($sql, array($id))) {
-        $descriptors = array();
-    }
-    
-    $competences = array();
-    
-    // group them by competences and levels:
-    foreach ($descriptors as $desc) {
-        if (!isset($competences[$desc->competence])) {
-            $competences[$desc->competence] = array();
-        }
-        if (!isset($competences[$desc->competence][$desc->level])) {
-            $competences[$desc->competence][$desc->level] = array();
-        }
-        $competences[$desc->competence][$desc->level][] = $desc->name;
-    }
-    return $competences;
-}
-
-/**
- * load_checklist()
- * 
- * will return something like
- * 	array(
- * 		'evaluation' => array(
- * 			'cercles_li_a1_1' => 0,
- * 			'cercles_li_a1_2' => 2,
- * 			etc.
- * 		),
- * 		'goal' => array(
- * 			'cercles_li_a1_1' => 0,
- * 			'cercles_li_a1_2' => 1,
- * 			etc.
- * 		)
- * 	)
- */
-function load_checklist() {
-    global $id;
-    
-    $sql = 'SELECT *
-        FROM artefact_epos_checklist_item
-        WHERE checklist = ?';
-    
-    if (!$data = get_records_sql_array($sql, array($id))) {
-        $data = array();
-    }
-    
-    $evaluation = array();
-    $goal = array();
-    
-    foreach ($data as $field) {
-        $evaluation[$field->descriptor] = $field->evaluation;
-        $goal[$field->descriptor] = $field->goal;
-    }
-    
-    return array('evaluation' => $evaluation, 'goal' => $goal);
-}
 
 /**
  * form submit function

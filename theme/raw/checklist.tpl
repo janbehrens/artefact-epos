@@ -3,10 +3,10 @@
 <div id="subjects_list">{$languagelinks|safe}</div>
 
 {if $haslanguages}
-<table id="checklist" width="100%">
+<table id="checklist{$id}" width="100%">
     <thead>
         <tr>
-            <th width="35%">{str tag='competence' section='artefact.epos'}</th>
+            <th width="30%">{str tag='competence' section='artefact.epos'}</th>
             {foreach $checklistforms item=competence name=getlevels}
                 {if $dwoo.foreach.getlevels.first}
                     {loop $competence}
@@ -28,6 +28,5 @@
 </div>
     {/loop}
 {/foreach}
-
 
 {include file="footer.tpl"}
