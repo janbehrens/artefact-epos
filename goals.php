@@ -95,9 +95,10 @@ else $id = 0;
 $elements = array(
     'customgoal_text' => array(
         'type' => 'textarea',
-        'title' => get_string('customlearninggoal', 'artefact.epos'), //FIXME: get String
-        'cols' => 80,
-        'rows' => 5,
+        'width' => '450px',
+        'height' => '100px',
+        'resize' => 'none',
+        'title' => get_string('customlearninggoal', 'artefact.epos'),
         'defaultvalue' => '',
     ),
 );
@@ -112,7 +113,7 @@ $addcustomgoalform = pieform(array(
     'class' => 'customgoal',
     'plugintype' => 'artefact',
     'pluginname' => 'epos',
-    'elements' => $elements, 
+    'elements' => $elements,
     'jsform' => true,
     'successcallback' => 'form_submit',
     'jssuccesscallback' => 'customgoalSaveCallback',
@@ -154,6 +155,9 @@ function process_addcustomgoal(Pieform $form, $values) {
 	$a->commit();
 }
 
+$textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
+$textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
+
 $inlinejs = <<<EOF
 
 var oldTA = '';
@@ -162,13 +166,12 @@ function editCustomGoalOut(customgoal_id) {
 	oldTA = customgoal_text = document.getElementById(customgoal_id).innerHTML;
 	if(customgoal_text.substr(0, 5) != "<form") {
 		document.getElementById(customgoal_id).innerHTML = '<form name="bm">' +
-		'<textarea style="float:left; width: 100%" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
-		'<input type="submit" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/>' +
-		'<input type="reset" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
+		'<textarea class="customgoalta" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
+		'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/>' +
+		'<input class="submitcancel cancel" type="reset" value="$textCancelCustomgoalchanges" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
 		'</form>';
 		
 	}
-	return true;
 }
 
 function cancleEditCustomGoalOut(customgoal_id) {
@@ -217,7 +220,6 @@ function deleteCustomGoal(customgoal_id) {
             }
         );
     }
-    return false;
 }
 
 tableRenderer = new TableRenderer(
@@ -225,11 +227,10 @@ tableRenderer = new TableRenderer(
     'goals.json.php?id={$id}',
     [
         function (r, d) {
-        	if(r.descriptor == null && r.description != null) {        	
-        		var data = TD(null);
+        	var data = TD(null);
+        	if(r.descriptor == null && r.description != null) {	
             	data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
-
-            	r.descriptor = data;
+            	return data;
 			}
             return TD(null, r.descriptor);
         },        
@@ -245,23 +246,13 @@ tableRenderer = new TableRenderer(
         	
         },
         function (r, d) {
-        	if(r.description != null) {
-        		var btnDel = A({'class': 'icon btn-del s', 'href': ''}, 'Löschen');
-                connect(btnDel, 'onclick', function (e) {
-                    e.stop();
-                    var myID = r.id;
-                    return deleteCustomGoal(myID);
-                });
-                
-                var btnEdit = A({'class': 'icon btn-edit s', 'href': ''}, 'Bearbeiten');
-                connect(btnEdit, 'onclick', function (e) {
-                    e.stop();
-                    var myID = r.id;
-                    return editCustomGoalOut(myID);
-                });
-                
-                return TD(null, btnEdit, btnDel);
-			}        
+        	var data = TD(null);
+        	if(r.description != null) {        		
+        		data.innerHTML = '<div style="width:32px;"><a href="javascript: onClick=editCustomGoalOut('+r.id+');" title="edit"><img src="../../theme/raw/static/images/edit.gif" alt="edit"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="delete"><img src="../../theme/raw/static/images/icon_close.gif" alt="delete"></a></div>';
+                return data;
+			}
+			
+			return TD(null);
 		},
     ]
 );

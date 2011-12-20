@@ -27,7 +27,7 @@
 
 defined('INTERNAL') || die();
 
-safe_require('artefact', 'epos');
+//safe_require('artefact', 'epos');
 
 class PluginBlocktypeChecklist extends PluginBlocktype {
 
@@ -49,32 +49,24 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $configdata = $instance->get('configdata');
-        $full_self_url = urlencode(get_full_script_path());
-        $result = 'foo';
+        
+        $result = '';
+        if (!empty($configdata['artefactid'])) {
+	        $checklist = $instance->get_artefact_instance($configdata['artefactid']);
+	        $result = $checklist->render_self($configdata);
+	        $result = $result['html'];
+        }
         return $result;
     }
-
-    /*public static function get_artefacts(BlockInstance $instance) {
-        $configdata = $instance->get('configdata');
-        $artefacts = array();
-        
-        if (isset($configdata['artefactid'])) {
-            $artefacts[] = $configdata['artefactid'];
-        }
-        return $artefacts;
-    }*/
-    
-    /*public static function artefactchooser_element($default=null) {
-        return array(
-        	'name' => 'artefactid',
-            'type'  => 'artefactchooser',
-            'title' => 'Select language',
-            //'defaultvalue' => $default,
-            'selectone' => true,
-            'blocktype' => 'checklist',
-        	'artefacttypes' => array('checklist'),
+	
+    public static function get_instance_javascript(BlockInstance $instance) {
+        return array(get_config('wwwroot') . 'js/tablerenderer.js',
+                     get_config('wwwroot') . 'artefact/epos/js/jquery/jquery-1.4.4.js',
+                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.core.js',
+                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.widget.js',
+                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.progressbar.js'
         );
-    }*/
+    }
     
     public static function artefactchooser_element($default=null) {
         return array(
@@ -88,7 +80,6 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
             'blocktype' => 'checklist',
             'limit' => 5,
             'artefacttypes' => array('checklist'),
-            //'template' => 'artefact:file:artefactchooser-element.tpl',
         );
     }
     
@@ -96,61 +87,21 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
         return true;
     }
     
-    public static function artefactchooser_get_element_data($data) {
-        $data->id = $data->id . $data->id;
-        return $data;
+    /**
+     * Optional method. If specified, allows the blocktype class to munge the 
+     * artefactchooser element data before it's templated
+     */
+    public static function artefactchooser_get_element_data($artefact) {
+    	$instance = artefact_instance_from_id($artefact->id);
+        $artefact->title = $instance->display_title();
+        $artefact->hovertitle = '';
+        return $artefact;
     }
 
     public static function instance_config_form() {
-        //$configdata = $instance->get('configdata');
-
         $form = array();
-
         $form[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
-        $form['message'] = array(
-            'type' => 'html',
-            'value' => '',
-        );
-        
         return $form;
-        
-        /*global $USER;
-        
-        $data = array();
-        $options = array();
-        $count = 0;
-        $table = 'artefact_epos_learnedlanguage';
-        
-        $owner = $USER->get('id');
-        
-        $sql = 'SELECT ar.*, a.owner
-            FROM {artefact} a 
-            JOIN {' . $table . '} ar ON ar.artefact = a.id
-            WHERE a.owner = ? AND a.artefacttype = ?';
-        
-        if (!$data = get_records_sql_array($sql, array($owner, 'learnedlanguage'))) {
-            $data = array();
-        }
-        
-        // For converting language and descriptorset codes to their respective names...
-        if ($data) {
-            foreach ($data as $field) {
-                $options[$count] = get_string('language.'.$field->language, 'artefact.epos') . ' (' . get_string('descriptorset.'.$field->descriptorset, 'artefact.epos') . ')';
-                $count++;
-            }
-        }
-        
-        return array(
-            'language' => array(
-                'type' => 'select',
-                'title' => get_string('language', 'mahara'),
-                'options' => $options,
-                'defaultvalue' => 0,
-            ),
-        );*/
-    }
-
-    public static function instance_config_validate(Pieform $form, $values) {
     }
     
     public static function default_copy_type() {
