@@ -1519,7 +1519,7 @@ $string['schule_de_si_c2_3'] = 'Ich kann in Diskussionen und Gesprächen mühelo
 $string['schule_de_si_c2_4'] = 'Ich kann meine Gefühle und Erfahrungen so darstellen, dass auch feinere Bedeutungsnuancen deutlich werden und kann mich mühelos und situationsgerecht auf die Empfindungen und Gedanken verschiedener Gesprächspartner einstellen.';
 
 //custom learning goal
-$string['customlearninggoal'] = 'Custom goal';
-$string['customlearninggoalupdatesuccess'] = "Custom goal successfully updated.";
-$string['customlearninggoaldeleted'] = 'Custom goal removed.';
+$string['customlearninggoal'] = 'Additional learning objectives';
+$string['customlearninggoalupdatesuccess'] = "Additional learning objectives successfully updated.";
+$string['customlearninggoaldeleted'] = 'Additional learning objectives removed.';
 ?>
