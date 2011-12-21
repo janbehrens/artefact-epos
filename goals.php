@@ -158,24 +158,32 @@ function process_addcustomgoal(Pieform $form, $values) {
 $textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
 $textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
 
+$editCustomgoal = get_string('edit', 'mahara');
+$deleteCustomgoal = get_string('delete', 'mahara');
+
 $inlinejs = <<<EOF
 
-var oldTA = '';
+var oldTA = new Array();
+var openToEdit = new Array();
 
 function editCustomGoalOut(customgoal_id) {
-	oldTA = customgoal_text = document.getElementById(customgoal_id).innerHTML;
-	if(customgoal_text.substr(0, 5) != "<form") {
-		document.getElementById(customgoal_id).innerHTML = '<form name="bm">' +
-		'<textarea class="customgoalta" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
-		'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/>' +
-		'<input class="submitcancel cancel" type="reset" value="$textCancelCustomgoalchanges" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
-		'</form>';
-		
+	if(!openToEdit[customgoal_id]) {
+		openToEdit[customgoal_id] = true;
+		oldTA[customgoal_id] = customgoal_text = document.getElementById(customgoal_id).innerHTML;
+		if(customgoal_text.substr(0, 5) != "<form") {
+			document.getElementById(customgoal_id).innerHTML = '<form name="bm">' +
+			'<textarea class="customgoalta" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
+			'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/>' +
+			'<input class="submitcancel cancel" type="reset" value="$textCancelCustomgoalchanges" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
+			'</form>';
+			
+		}
 	}
 }
 
 function cancleEditCustomGoalOut(customgoal_id) {
-	document.getElementById(customgoal_id).innerHTML = oldTA;
+	document.getElementById(customgoal_id).innerHTML = oldTA[customgoal_id];
+	openToEdit[customgoal_id] = false;
 	return true;
 }
 
@@ -248,7 +256,7 @@ tableRenderer = new TableRenderer(
         function (r, d) {
         	var data = TD(null);
         	if(r.description != null) {        		
-        		data.innerHTML = '<div style="width:32px;"><a href="javascript: onClick=editCustomGoalOut('+r.id+');" title="edit"><img src="../../theme/raw/static/images/edit.gif" alt="edit"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="delete"><img src="../../theme/raw/static/images/icon_close.gif" alt="delete"></a></div>';
+        		data.innerHTML = '<div style="width:32px;"><a href="javascript: onClick=editCustomGoalOut('+r.id+');" title="$editCustomgoal"><img src="../../theme/raw/static/images/edit.gif" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal"></a></div>';
                 return data;
 			}
 			
