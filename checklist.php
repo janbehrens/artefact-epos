@@ -212,7 +212,7 @@ function toggleLanguageForm(comp, level) {
 }
 
 function checklistSaveCallback(form, data) {
-    tableRenderer.doupdate();
+    tableRenderer{$id}.doupdate();
 }
 EOF;
 
