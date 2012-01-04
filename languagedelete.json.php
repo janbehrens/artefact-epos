@@ -33,34 +33,24 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 
 $id = param_integer('checklist_id');
 
-//get learnedlanguage artefact id
-if ($data = get_records_array('artefact', 'id', $id)) {
-    $lang = $data[0]->parent;
-}
+$checklistartefact = artefact_instance_from_id($id);
 
-$a = artefact_instance_from_id($lang);
+$languageartefact = $checklistartefact->get_parent_instance();
 
-if ($a->get('owner') != $USER->get('id')) {
+if ($languageartefact->get('owner') != $USER->get('id')) {
     throw new AccessDeniedException(get_string('notartefactowner', 'error'));
 }
 
-//delete from artefact_parent_cache
-delete_records('artefact_parent_cache', 'artefact', $id);
+$checklistartefact->delete();
 
-//delete from checklist_item
-delete_records('artefact_epos_checklist_item', 'checklist', $id);
-
-//delete from artefact
-delete_records('artefact', 'id', $id);
-
-//delete artefact if there is no checklist left
-$count = count_records('artefact', 'parent', $lang);
+//delete language artefact if there is no checklist left
+$count = $languageartefact->count_children();
 if (empty($count)) {
-    $a->delete();
+    $languageartefact->delete();
 }
 else {
-    $a->set('mtime', time());
-    $a->commit();
+    $languageartefact->set('mtime', time());
+    $languageartefact->commit();
 }
 
 //reply
