@@ -320,6 +320,15 @@ EOF;
 	    
 	    return array('evaluation' => $evaluation, 'goal' => $goal);
 	}
+    
+    /**
+     * Overriding the delete() function to clear the checklist table
+     */
+    public function delete() {
+        delete_records('artefact_epos_checklist_item', 'checklist', $this->id);
+
+        parent::delete();
+    }
 }
 
 /**

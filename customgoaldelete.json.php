@@ -39,12 +39,7 @@ if ($a->get('owner') != $USER->get('id')) {
     throw new AccessDeniedException(get_string('notartefactowner', 'error'));
 }
 
-//delete from artefact_parent_cache
-delete_records('artefact_parent_cache', 'artefact', $id);
-
-//delete from artefact
-delete_records('artefact', 'id', $id);
-
+$a->delete();
 
 //reply
 json_reply(null, get_string('customlearninggoaldeleted', 'artefact.epos'));
