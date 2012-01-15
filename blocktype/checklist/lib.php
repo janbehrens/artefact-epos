@@ -49,19 +49,19 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $configdata = $instance->get('configdata');
+        $blockid = $instance->get('id');
         
         $result = '';
         if (!empty($configdata['artefactid'])) {
 	        $checklist = $instance->get_artefact_instance($configdata['artefactid']);
-	        $result = $checklist->render_self($configdata);
+	        $result = $checklist->render_self($configdata, $blockid);
 	        $result = $result['html'];
         }
         return $result;
     }
 	
     public static function get_instance_javascript(BlockInstance $instance) {
-        return array(get_config('wwwroot') . 'js/tablerenderer.js',
-                     get_config('wwwroot') . 'artefact/epos/js/jquery/jquery-1.4.4.js',
+        return array(get_config('wwwroot') . 'artefact/epos/js/jquery/jquery-1.4.4.js',
                      get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.core.js',
                      get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.widget.js',
                      get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.progressbar.js'
@@ -98,10 +98,16 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
         return $artefact;
     }
 
-    public static function instance_config_form() {
-        $form = array();
-        $form[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
-        return $form;
+    public static function instance_config_form($instance) {
+        $configdata = $instance->get('configdata');
+
+        /*if (!empty($configdata['artefactid'])) {
+            $blog = $instance->get_artefact_instance($configdata['artefactid']);
+        }*/
+
+        $elements = array();
+        $elements[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
+        return $elements;
     }
     
     public static function default_copy_type() {

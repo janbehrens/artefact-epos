@@ -140,7 +140,7 @@ class ArtefactTypeChecklist extends ArtefactType {
         $this->set = $this->load_descriptorset();
     }
     
-    public function render_self($options) {
+    public function render_self($options, $blockid) {
         $this->add_to_render_path($options);
 
 	    $inlinejs = <<<EOF
@@ -148,18 +148,11 @@ class ArtefactTypeChecklist extends ArtefactType {
 jQuery.noConflict();
 
 EOF;
-		$inlinejs .= $this->returnJS(false);
+		$inlinejs .= $this->returnJS(false, $blockid);
 		
-		// js includes have gone to view/artefact.php, because it doesn't work from here
-        /*$smarty = smarty(array('tablerenderer', 
-					   'artefact/epos/js/jquery/jquery-1.4.4.js',
-                       'artefact/epos/js/jquery/ui/jquery.ui.core.js',
-                       'artefact/epos/js/jquery/ui/jquery.ui.widget.js',
-                       'artefact/epos/js/jquery/ui/jquery.ui.progressbar.js')
-        );*/
         $smarty = smarty_core();
 
-        $smarty->assign('id', $this->id);
+        $smarty->assign('id', isset($blockid) ? $blockid : $this->id);
         $smarty->assign('levels', $this->set);
         $smarty->assign('JAVASCRIPT', $inlinejs);
         
@@ -171,15 +164,31 @@ EOF;
         return $language . ' (' . get_string('descriptorset.' . $this->title, 'artefact.epos') . ')';
     }
     
-    public function returnJS($editable) {
+    public function returnJS($editable, $blockid) {
     	$jsonpath = get_config('wwwroot') . 'artefact/epos/checklist.json.php?id=' . $this->id;
 	    $inlinejs = <<<EOF
 
-
 var prevValue = {};
+
+EOF;
+
+        if(isset($blockid)) {
+            $inlinejs .= <<<EOF
+
+tableRenderer{$blockid} = new TableRenderer(
+	'checklist{$blockid}',
+EOF;
+        }
+        else {
+            $inlinejs .= <<<EOF
 
 tableRenderer{$this->id} = new TableRenderer(
 	'checklist{$this->id}',
+EOF;
+        }
+        
+        $inlinejs .= <<<EOF
+
 	'{$jsonpath}',
 	[
 		function (r, d) {
@@ -227,12 +236,31 @@ EOF;
 	]
 );
 
+EOF;
+
+        if(isset($blockid)) {
+            $inlinejs .= <<<EOF
+
+tableRenderer{$blockid}.type = 'checklist';
+tableRenderer{$blockid}.statevars.push('type');
+tableRenderer{$blockid}.emptycontent = '';
+tableRenderer{$blockid}.updateOnLoad();
+
+jQuery('#checklistnotvisible{$blockid}').addClass('hidden');
+EOF;
+        }
+        else {
+            $inlinejs .= <<<EOF
+
 tableRenderer{$this->id}.type = 'checklist';
 tableRenderer{$this->id}.statevars.push('type');
 tableRenderer{$this->id}.emptycontent = '';
 tableRenderer{$this->id}.updateOnLoad();
 
+jQuery('#checklistnotvisible{$this->id}').addClass('hidden');
 EOF;
+        }
+        
 		return $inlinejs;
     }
     
