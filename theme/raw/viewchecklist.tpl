@@ -10,8 +10,11 @@
                 {/if}
             {/foreach}
         </tr>
+        <tr>
+        </tr>
     </thead>
 </table>
+<div id="checklistnotvisible{$id}">Die Selbsteinschätzung ist nach dem Neuladen der Seite sichtbar.</div>
 <script>
 {$JAVASCRIPT|safe}
 </script>
