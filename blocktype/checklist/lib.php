@@ -47,6 +47,15 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
         return array('general');
     }
 
+    public static function get_instance_title(BlockInstance $bi) {
+        $configdata = $bi->get('configdata');
+
+        if (!empty($configdata['artefactid'])) {
+            return $bi->get_artefact_instance($configdata['artefactid'])->display_title();
+        }
+        return '';
+    }
+
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $configdata = $instance->get('configdata');
         $blockid = $instance->get('id');

@@ -31,6 +31,7 @@ defined('INTERNAL') || die();
 $string['title'] = 'Self-evaluation';
 $string['description'] = 'Display your checklist for a selected language';
 $string['selectchecklist'] = 'Select the checklist to display';
+$string['checklistnotvisible'] = 'The checklist will be visible after a page reload.'
 
 
 ?>
