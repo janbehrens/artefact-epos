@@ -14,7 +14,7 @@
         </tr>
     </thead>
 </table>
-<div id="checklistnotvisible{$id}">{str tag='checklistnotvisible' section='blocktype.epos/checklist'}</div>
+<div id="checklistnotvisible{$id}" style="font-size:130%; margin:8px; color:red; text-align:center">{str tag='checklistnotvisible' section='blocktype.epos/checklist'}</div>
 <script>
 {$JAVASCRIPT|safe}
 </script>

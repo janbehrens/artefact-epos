@@ -131,223 +131,224 @@ class ArtefactTypeChecklist extends ArtefactType {
     }
 
     public static function get_links($id) {}
-	
+    
     public $set;
     
+    /**
+     * Overriding the constructor in order to read the descriptors from the database
+     * @param unknown_type $id
+     * @param unknown_type $data
+     */
     public function __construct($id = 0, $data = null) {
         parent::__construct($id, $data);
 
         $this->set = $this->load_descriptorset();
     }
     
-    public function render_self($options, $blockid) {
+    public function render_self($options, $blockid = 0) {
         $this->add_to_render_path($options);
 
-	    $inlinejs = <<<EOF
+        $inlinejs = $this->returnJS(false, $blockid);
+        
+        //if this is used in a block, we use the block instance id, artefact id otherwise
+        if($blockid == 0) $blockid = $this->id;
 
-jQuery.noConflict();
-
-EOF;
-		$inlinejs .= $this->returnJS(false, $blockid);
-		
         $smarty = smarty_core();
 
-        $smarty->assign('id', isset($blockid) ? $blockid : $this->id);
+        $smarty->assign('id', $blockid);
         $smarty->assign('levels', $this->set);
         $smarty->assign('JAVASCRIPT', $inlinejs);
         
         return array('html' => $smarty->fetch('artefact:epos:viewchecklist.tpl'), 'javascript' => '');
     }
-
+	
+    /**
+     * This function builds the artefact title from language and checklist information
+     * @see ArtefactType::display_title()
+     */
     public function display_title() {
         $language = get_field('artefact', 'title', 'id', $this->parent);
         return $language . ' (' . get_string('descriptorset.' . $this->title, 'artefact.epos') . ')';
     }
     
-    public function returnJS($editable, $blockid) {
-    	$jsonpath = get_config('wwwroot') . 'artefact/epos/checklist.json.php?id=' . $this->id;
-	    $inlinejs = <<<EOF
+    /**
+     * Returns the JS used to build the checklist table
+     * @param unknown_type $editable	whether this is used in the checklist page (editing support) or in a view
+     * @param unknown_type $blockid
+     * @return string
+     */
+    public function returnJS($editable, $blockid = 0) {
+        $jsonpath = get_config('wwwroot') . 'artefact/epos/checklist.json.php?id=' . $this->id;
 
-var prevValue = {};
+        //if this is used in a block, we use the block instance id, artefact id otherwise
+        if($blockid == 0) $blockid = $this->id;
+        
+        $inlinejs = '
+(function($){$.fn.checklist=function(){
 
-EOF;
+var prevValue = {};';
 
         if(isset($blockid)) {
             $inlinejs .= <<<EOF
 
 tableRenderer{$blockid} = new TableRenderer(
-	'checklist{$blockid}',
+    'checklist{$blockid}',
 EOF;
         }
         else {
             $inlinejs .= <<<EOF
 
 tableRenderer{$this->id} = new TableRenderer(
-	'checklist{$this->id}',
+    'checklist{$this->id}',
 EOF;
         }
         
         $inlinejs .= <<<EOF
 
-	'{$jsonpath}',
-	[
-		function (r, d) {
-			return TD(null, r.competencestr);
-		},
+    '{$jsonpath}',
+    [
+        function (r, d) {
+            return TD(null, r.competencestr);
+        },
 EOF;
     
-	    foreach (array_keys($this->set) as $competence) {
-	    	foreach (array_keys($this->set[$competence]) as $level) {
-	    		$inlinejs .= <<<EOF
+        foreach (array_keys($this->set) as $competence) {
+            foreach (array_keys($this->set[$competence]) as $level) {
+                $inlinejs .= <<<EOF
 
-		function (r) {
+        function (r) {
 EOF;
-				if ($editable) {
-	    			$inlinejs .= <<<EOF
+                if ($editable) {
+                    $inlinejs .= <<<EOF
 
-			var str1 = 'toggleLanguageForm("' + r.competence + '", "$level")';
+            var str1 = 'toggleLanguageForm("' + r.competence + '", "$level")';
 EOF;
-	    		}
-	    		else {
-	    			$inlinejs .= <<<EOF
+                }
+                else {
+                    $inlinejs .= <<<EOF
 
-	    	var str1 = '';
+            var str1 = '';
 EOF;
-	    		}
-	    		
-	    		$inlinejs .= <<<EOF
+                }
+                
+                $inlinejs .= <<<EOF
 
-			var str2 = 'progressbar_' + r.competence + "_$level";
-			var str3 = '#progressbar_' + r.previous + "_$level";
-			var data = TD({'onclick': str1});
-			data.innerHTML = '<div id="' + str2 + '"></div>';
-			if (prevValue.hasOwnProperty("$level")) {
-				jQuery(str3).progressbar({ value: prevValue["$level"] });
-			}
-			prevValue["$level"] = r.$level;
-			return data;
-		},
+            var str2 = 'progressbar_' + r.competence + "_$level";
+            var str3 = '#progressbar_' + r.previous + "_$level";
+            var data = TD({'onclick': str1});
+            data.innerHTML = '<div id="' + str2 + '"></div>';
+            if (prevValue.hasOwnProperty("$level")) {
+                $(str3).progressbar({ value: prevValue["$level"] });
+            }
+            prevValue["$level"] = r.$level;
+            return data;
+        },
 EOF;
-	    	}
-	    	break;  //we need the column definitions only once
-	    }
+            }
+            break;  //we need the column definitions only once
+        }
     
-    	$inlinejs .= <<<EOF
-	]
+        $inlinejs .= <<<EOF
+    ]
 );
-
-EOF;
-
-        if(isset($blockid)) {
-            $inlinejs .= <<<EOF
 
 tableRenderer{$blockid}.type = 'checklist';
 tableRenderer{$blockid}.statevars.push('type');
 tableRenderer{$blockid}.emptycontent = '';
 tableRenderer{$blockid}.updateOnLoad();
 
-jQuery('#checklistnotvisible{$blockid}').addClass('hidden');
-EOF;
-        }
-        else {
-            $inlinejs .= <<<EOF
+$('#checklistnotvisible{$blockid}').addClass('hidden');};
 
-tableRenderer{$this->id}.type = 'checklist';
-tableRenderer{$this->id}.statevars.push('type');
-tableRenderer{$this->id}.emptycontent = '';
-tableRenderer{$this->id}.updateOnLoad();
+$().checklist();})(jQuery);
 
-jQuery('#checklistnotvisible{$this->id}').addClass('hidden');
 EOF;
-        }
-        
-		return $inlinejs;
+        return $inlinejs;
     }
     
     
-	/**
-	 * load_descriptorset()
-	 * 
-	 * will return something like
-	 * 	array(
-	 * 		'listening' => array(
-	 * 			'a1' => array(
-	 * 				0 => 'cercles_li_a1_1',
-	 * 				1 => 'cercles_li_a1_2',
-	 * 				etc.
-	 * 			),
-	 * 			'a2' => array(
-	 * 				...
-	 * 			),
-	 * 			etc.
-	 * 		),
-	 * 		'reading' => array(
-	 * 			...
-	 * 		),
-	 * 		etc.
-	 * 	)
-	 */
-	function load_descriptorset() {
-	    $sql = 'SELECT d.*
-	        FROM artefact_epos_descriptor d
-	        JOIN artefact a ON a.title = d.descriptorset
-	        WHERE a.id = ?';
-	    
-	    if (!$descriptors = get_records_sql_array($sql, array($this->id))) {
-	        $descriptors = array();
-	    }
-	    
-	    $competences = array();
-	    
-	    // group them by competences and levels:
-	    foreach ($descriptors as $desc) {
-	        if (!isset($competences[$desc->competence])) {
-	            $competences[$desc->competence] = array();
-	        }
-	        if (!isset($competences[$desc->competence][$desc->level])) {
-	            $competences[$desc->competence][$desc->level] = array();
-	        }
-	        $competences[$desc->competence][$desc->level][] = $desc->name;
-	    }
-	    return $competences;
-	}
-	
-	/**
-	 * load_checklist()
-	 * 
-	 * will return something like
-	 * 	array(
-	 * 		'evaluation' => array(
-	 * 			'cercles_li_a1_1' => 0,
-	 * 			'cercles_li_a1_2' => 2,
-	 * 			etc.
-	 * 		),
-	 * 		'goal' => array(
-	 * 			'cercles_li_a1_1' => 0,
-	 * 			'cercles_li_a1_2' => 1,
-	 * 			etc.
-	 * 		)
-	 * 	)
-	 */
-	function load_checklist() {
-	    $sql = 'SELECT *
-	        FROM artefact_epos_checklist_item
-	        WHERE checklist = ?';
-	    
-	    if (!$data = get_records_sql_array($sql, array($this->id))) {
-	        $data = array();
-	    }
-	    
-	    $evaluation = array();
-	    $goal = array();
-	    
-	    foreach ($data as $field) {
-	        $evaluation[$field->descriptor] = $field->evaluation;
-	        $goal[$field->descriptor] = $field->goal;
-	    }
-	    
-	    return array('evaluation' => $evaluation, 'goal' => $goal);
-	}
+    /**
+     * load_descriptorset()
+     * 
+     * will return something like
+     *     array(
+     *         'listening' => array(
+     *             'a1' => array(
+     *                 0 => 'cercles_li_a1_1',
+     *                 1 => 'cercles_li_a1_2',
+     *                 etc.
+     *             ),
+     *             'a2' => array(
+     *                 ...
+     *             ),
+     *             etc.
+     *         ),
+     *         'reading' => array(
+     *             ...
+     *         ),
+     *         etc.
+     *     )
+     */
+    function load_descriptorset() {
+        $sql = 'SELECT d.*
+            FROM artefact_epos_descriptor d
+            JOIN artefact a ON a.title = d.descriptorset
+            WHERE a.id = ?';
+        
+        if (!$descriptors = get_records_sql_array($sql, array($this->id))) {
+            $descriptors = array();
+        }
+        
+        $competences = array();
+        
+        // group them by competences and levels:
+        foreach ($descriptors as $desc) {
+            if (!isset($competences[$desc->competence])) {
+                $competences[$desc->competence] = array();
+            }
+            if (!isset($competences[$desc->competence][$desc->level])) {
+                $competences[$desc->competence][$desc->level] = array();
+            }
+            $competences[$desc->competence][$desc->level][] = $desc->name;
+        }
+        return $competences;
+    }
+    
+    /**
+     * load_checklist()
+     * 
+     * will return something like
+     *     array(
+     *         'evaluation' => array(
+     *             'cercles_li_a1_1' => 0,
+     *             'cercles_li_a1_2' => 2,
+     *             etc.
+     *         ),
+     *         'goal' => array(
+     *             'cercles_li_a1_1' => 0,
+     *             'cercles_li_a1_2' => 1,
+     *             etc.
+     *         )
+     *     )
+     */
+    function load_checklist() {
+        $sql = 'SELECT *
+            FROM artefact_epos_checklist_item
+            WHERE checklist = ?';
+        
+        if (!$data = get_records_sql_array($sql, array($this->id))) {
+            $data = array();
+        }
+        
+        $evaluation = array();
+        $goal = array();
+        
+        foreach ($data as $field) {
+            $evaluation[$field->descriptor] = $field->evaluation;
+            $goal[$field->descriptor] = $field->goal;
+        }
+        
+        return array('evaluation' => $evaluation, 'goal' => $goal);
+    }
     
     /**
      * Overriding the delete() function to clear the checklist table
@@ -364,13 +365,13 @@ EOF;
 */
 class ArtefactTypeCustomGoal extends ArtefactType {
 
-	public static function get_icon($options=null) {}
+    public static function get_icon($options=null) {}
 
-	public static function is_singular() {
-		return false;
-	}
+    public static function is_singular() {
+        return false;
+    }
 
-	public static function get_links($id) {}
+    public static function get_links($id) {}
 }
 
 //write descriptors from xml into database

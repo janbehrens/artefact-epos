@@ -27,12 +27,10 @@
 
 defined('INTERNAL') || die();
 
-//safe_require('artefact', 'epos');
-
 class PluginBlocktypeChecklist extends PluginBlocktype {
 
     public static function single_only() {
-        return false;
+        return true;
     }
 
     public static function get_title() {
@@ -70,10 +68,9 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
     }
 	
     public static function get_instance_javascript(BlockInstance $instance) {
-        return array(get_config('wwwroot') . 'artefact/epos/js/jquery/jquery-1.4.4.js',
-                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.core.js',
-                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.widget.js',
-                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/jquery.ui.progressbar.js'
+        return array(get_config('wwwroot') . 'artefact/epos/js/jquery/ui/minified/jquery.ui.core.min.js',
+                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/minified/jquery.ui.widget.min.js',
+                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/minified/jquery.ui.progressbar.min.js'
         );
     }
     
@@ -109,10 +106,6 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
 
     public static function instance_config_form($instance) {
         $configdata = $instance->get('configdata');
-
-        /*if (!empty($configdata['artefactid'])) {
-            $blog = $instance->get_artefact_instance($configdata['artefactid']);
-        }*/
 
         $elements = array();
         $elements[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);

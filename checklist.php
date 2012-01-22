@@ -191,8 +191,6 @@ foreach (array_keys($set) as $competence) {
 //JS stuff
 $inlinejs = <<<EOF
 
-jQuery.noConflict();
-
 var divs = ["
 EOF;
 
@@ -214,18 +212,16 @@ function toggleLanguageForm(comp, level) {
 function checklistSaveCallback(form, data) {
     tableRenderer{$id}.doupdate();
 }
+
 EOF;
 
 $inlinejs .= $a->returnJS(true);
 
-
-$smarty = smarty(array('tablerenderer', 
-					   'artefact/epos/js/jquery/jquery-1.4.4.js',
-                       'artefact/epos/js/jquery/ui/jquery.ui.core.js',
-                       'artefact/epos/js/jquery/ui/jquery.ui.widget.js',
-                       'artefact/epos/js/jquery/ui/jquery.ui.progressbar.js'),
-                 //this is bad
-                 array('<link rel="stylesheet" href="js/jquery/themes/base/jquery.ui.all.css">')
+$smarty = smarty(array('tablerenderer',
+    				   'jquery',
+                       'artefact/epos/js/jquery/ui/minified/jquery.ui.core.min.js',
+                       'artefact/epos/js/jquery/ui/minified/jquery.ui.widget.min.js',
+                       'artefact/epos/js/jquery/ui/minified/jquery.ui.progressbar.min.js')
 );
 
 $smarty->assign('id', $id);
