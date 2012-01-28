@@ -183,7 +183,7 @@ function get_descriptors() {
     if (!empty($descriptors)) {
         return $descriptors;
     }
-    $codes = array('cercles.de', 'cercles.en', 'elc.de', 'elc.en', 'elc.fr');
+    $codes = array('cercles.de', 'cercles.en', 'elc.de', 'elc.en', 'elc.fr', 'schule.de');
 
     foreach ($codes as $c) {
         $descriptors[$c] = get_string("descriptorset.{$c}", 'artefact.epos');
