@@ -38,8 +38,8 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'internal');
 safe_require('artefact', 'epos');
 
-// load language data
 $haslanguages = true;
+$id = 0;
 
 $owner = $USER->get('id');
 
@@ -58,20 +58,20 @@ if ($data) {
     
     // select first language if GET parameter is not set
     if (!isset($_GET['id'])) {
-        $_GET['id'] = $data[0]->id;
+        $id = $data[0]->id;
     }
 
     $languagelinks = '<p>' . get_string('subjects', 'artefact.epos') . ': ';
     
     foreach ($data as $field) {
-        if ($field->id == $_GET['id']) {
+        if ($field->id == $id) {
             $languagelinks .= '<b>';
         }
         else {
             $languagelinks .= '<a href="checklist.php?id=' . $field->id . '">';
         }
         $languagelinks .= $field->title . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
-        if ($field->id == $_GET['id']) {
+        if ($field->id == $id) {
             $languagelinks .= '</b> | ';
         }
         else {
@@ -82,122 +82,118 @@ if ($data) {
 }
 else {
     $haslanguages = false;
-    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href="index.php">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
+    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
-
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-}
-else $id = 0;
-
-$a = artefact_instance_from_id($id);
-$set = $a->set;
-$checklistitems = $a->load_checklist();
-
-$addstr = get_string('add', 'artefact.epos');
-$cancelstr = get_string('cancel', 'artefact.epos');
-$delstr = get_string('del', 'artefact.epos');
-$editstr = get_string('edit', 'artefact.epos');
-$confirmdelstr = get_string('confirmdel', 'artefact.epos');
 
 $checklistforms = array();
 $checklistformsid = array();
+$inlinejs = '';
 
-/*
- * build form elements
- * 
- * for each competence/level combination there will be a form with
- * $elements:
- * 	array(
- * 		'header',
- * 		'header_goal',
- * 		'cercles_li_a1_1',
- * 		'cercles_li_a1_2',
- * 		etc.,
- * 		'competence',
- * 		'level',
- * 		'submit'
- * 	)
- */
-foreach (array_keys($set) as $competence) {
-    foreach (array_keys($set[$competence]) as $level) {
-        $elements = array();
-        //headings
-        $title = get_string($competence, 'artefact.epos') . ' ' . get_string($level, 'artefact.epos');
-        $elements['header'] = array(
-            'type' => 'html',
-            'title' => ' ',
-            'value' => '',
-        );
-        $elements['header_goal'] = array(
-            'type' => 'html',
-            'title' => ' ',
-            'value' => get_string('goal', 'artefact.epos') . '?',
-        );
-        foreach ($set[$competence][$level] as $name) {
-            //evaluation
-            $elements[$name] = array(
-                'type' => 'radio',
-                'title' => get_string($name, 'artefact.epos'),
-                'options' => array(
-                    0 => get_string('eval0', 'artefact.epos'),
-                    1 => get_string('eval1', 'artefact.epos'),
-                    2 => get_string('eval2', 'artefact.epos'),
-                ),
-                'defaultvalue' => $checklistitems['evaluation'][$name],
-            );
-            //goal
-            $elements[$name . '_goal'] = array(
-                'type' => 'checkbox',
-                'title' => get_string($name, 'artefact.epos'),
-                'defaultvalue' => $checklistitems['goal'][$name],
-            );
-        }
-        $elements['competence'] = array(
-            'type'  => 'hidden',
-            'value' => $competence,
-        );
-        $elements['level'] = array(
-            'type'  => 'hidden',
-            'value' => $level,
-        );
-        $elements['submit'] = array(
-            'type'  => 'submit',
-            'title' => '',
-            'value' => get_string('save', 'artefact.epos'),
-        );
+if ($haslanguages) {
+    $a = artefact_instance_from_id($id);
+    $set = $a->set;
+    $checklistitems = $a->load_checklist();
     
-        $checklistform = pieform(array(
-            'name'            => 'checklistform_' . $competence . '_' . $level,
-            'plugintype'      => 'artefact',
-            'pluginname'      => 'epos',
-            'jsform'          => true,
-            'renderer'        => 'multicolumntable',
-            'elements'        => $elements,
-            'elementclasses'  => true,
-            'successcallback' => 'form_submit',
-            'jssuccesscallback' => 'checklistSaveCallback',
-        ));
+    $addstr = get_string('add', 'artefact.epos');
+    $cancelstr = get_string('cancel', 'artefact.epos');
+    $delstr = get_string('del', 'artefact.epos');
+    $editstr = get_string('edit', 'artefact.epos');
+    $confirmdelstr = get_string('confirmdel', 'artefact.epos');
+    
+    
+    /*
+     * build form elements
+     * 
+     * for each competence/level combination there will be a form with
+     * $elements:
+     * 	array(
+     * 		'header',
+     * 		'header_goal',
+     * 		'cercles_li_a1_1',
+     * 		'cercles_li_a1_2',
+     * 		etc.,
+     * 		'competence',
+     * 		'level',
+     * 		'submit'
+     * 	)
+     */
+    foreach (array_keys($set) as $competence) {
+        foreach (array_keys($set[$competence]) as $level) {
+            $elements = array();
+            //headings
+            $title = get_string($competence, 'artefact.epos') . ' ' . get_string($level, 'artefact.epos');
+            $elements['header'] = array(
+                'type' => 'html',
+                'title' => ' ',
+                'value' => '',
+            );
+            $elements['header_goal'] = array(
+                'type' => 'html',
+                'title' => ' ',
+                'value' => get_string('goal', 'artefact.epos') . '?',
+            );
+            foreach ($set[$competence][$level] as $name) {
+                //evaluation
+                $elements[$name] = array(
+                    'type' => 'radio',
+                    'title' => get_string($name, 'artefact.epos'),
+                    'options' => array(
+                        0 => get_string('eval0', 'artefact.epos'),
+                        1 => get_string('eval1', 'artefact.epos'),
+                        2 => get_string('eval2', 'artefact.epos'),
+                    ),
+                    'defaultvalue' => $checklistitems['evaluation'][$name],
+                );
+                //goal
+                $elements[$name . '_goal'] = array(
+                    'type' => 'checkbox',
+                    'title' => get_string($name, 'artefact.epos'),
+                    'defaultvalue' => $checklistitems['goal'][$name],
+                );
+            }
+            $elements['competence'] = array(
+                'type'  => 'hidden',
+                'value' => $competence,
+            );
+            $elements['level'] = array(
+                'type'  => 'hidden',
+                'value' => $level,
+            );
+            $elements['submit'] = array(
+                'type'  => 'submit',
+                'title' => '',
+                'value' => get_string('save', 'artefact.epos'),
+            );
         
-        // $checklistforms is an associative array that contains all forms
-        // $checklistformsid contains their codes (like 'cercles_li_a1_1')
-        $checklistforms[$competence][$level]['competence'] = $competence;
-        $checklistforms[$competence][$level]['form'] = $checklistform;
-        $checklistforms[$competence][$level]['name'] = 'checklistform_' . $competence . '_' . $level;
-        $checklistformsid[] = $checklistforms[$competence][$level]['name'];
+            $checklistform = pieform(array(
+                'name'            => 'checklistform_' . $competence . '_' . $level,
+                'plugintype'      => 'artefact',
+                'pluginname'      => 'epos',
+                'jsform'          => true,
+                'renderer'        => 'multicolumntable',
+                'elements'        => $elements,
+                'elementclasses'  => true,
+                'successcallback' => 'form_submit',
+                'jssuccesscallback' => 'checklistSaveCallback',
+            ));
+            
+            // $checklistforms is an associative array that contains all forms
+            // $checklistformsid contains their codes (like 'cercles_li_a1_1')
+            $checklistforms[$competence][$level]['competence'] = $competence;
+            $checklistforms[$competence][$level]['form'] = $checklistform;
+            $checklistforms[$competence][$level]['name'] = 'checklistform_' . $competence . '_' . $level;
+            $checklistformsid[] = $checklistforms[$competence][$level]['name'];
+        }
     }
-}
-
-//JS stuff
-$inlinejs = <<<EOF
-
-var divs = ["
+    
+    //JS stuff
+    $inlinejs .= <<<EOF
+divs = ["
 EOF;
-
-$inlinejs .= implode('_div", "', $checklistformsid);
-
-$inlinejs .= <<<EOF
-_div"];
+    
+    $inlinejs .= implode('_div", "', $checklistformsid);
+    $inlinejs .= '_div"];';
+    $inlinejs .= <<<EOF
 
 function toggleLanguageForm(comp, level) {
     var elemName = 'checklistform_' + comp + '_' + level + '_div';
@@ -214,8 +210,9 @@ function checklistSaveCallback(form, data) {
 }
 
 EOF;
-
-$inlinejs .= $a->returnJS(true);
+    
+    $inlinejs .= $a->returnJS(true);
+}
 
 $smarty = smarty(array('tablerenderer',
     				   'jquery',

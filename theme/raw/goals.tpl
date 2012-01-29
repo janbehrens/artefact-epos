@@ -2,6 +2,7 @@
 
 <div id="subjects_list">{$languagelinks|safe}</div>
 
+{if $haslanguages}
 <table id="goals_table">
     <thead>
         <tr>
@@ -22,9 +23,10 @@
         {/foreach}
     </tbody>
 </table>
+{/if}
 
 <div id="customgoal">
-    {$custon_goal_form|safe}
+    {$custom_goal_form|safe}
 </div>
 
 {include file="footer.tpl"}
