@@ -38,9 +38,8 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'internal');
 safe_require('artefact', 'epos');
 
-
-// load language data
 $haslanguages = true;
+$id = 0;
 
 $owner = $USER->get('id');
 
@@ -59,20 +58,20 @@ if ($data) {
 
     // select first language if GET parameter is not set
     if (!isset($_GET['id'])) {
-        $_GET['id'] = $data[0]->id;
+        $id = $data[0]->id;
     }
 
     $languagelinks = '<p>' . get_string('subjects', 'artefact.epos') . ': ';
 
     foreach ($data as $field) {    	
-        if ($field->id == $_GET['id']) {
+        if ($field->id == $id) {
             $languagelinks .= '<b>';
         }
         else {
             $languagelinks .= '<a href="goals.php?id=' . $field->id . '">';
         }
         $languagelinks .= $field->title;
-        if ($field->id == $_GET['id']) {
+        if ($field->id == $id) {
             $languagelinks .= '</b> | ';
         }
         else {
@@ -83,13 +82,8 @@ if ($data) {
 }
 else {
     $haslanguages = false;
-    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href="index.php">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
+    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
-
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-}
-else $id = 0;
 
 //pieform for customlearninggoal
 $elements = array(
@@ -119,41 +113,6 @@ $addcustomgoalform = pieform(array(
     'jssuccesscallback' => 'customgoalSaveCallback',
 ));
 //end: pieform for customlearninggoal
-
-/**
-* form submit function
-*/
-function form_submit(Pieform $form, $values) {
-	try {
-		process_addcustomgoal($form, $values);
-	}
-	catch (Exception $e) {
-		$form->json_reply(PIEFORM_ERR, $e->getMessage());
-	}
-	$form->json_reply(PIEFORM_OK, get_string('addedcustomgoal', 'artefact.epos'));
-}
-
-/** 
- * Processs the form values: creates anartefact and writes tecustom goal to the database
- * @param Pieform $form
- * @param unknown_type $values
- */
-function process_addcustomgoal(Pieform $form, $values) {
-	global $USER;
-	$owner = $USER->get('id');
-	
-	//Create an Artefact and commit it to the artefact table
-	safe_require('artefact', 'epos');
-	$a = new ArtefactTypeCustomGoal(0, array(
-         	'owner' => $owner,
-                'title' => 'customgoal',
-                'parent' => $_GET['id'],
-                'description' => $values['customgoal_text'],
-		)
-		);
-		
-	$a->commit();
-}
 
 $textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
 $textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
@@ -276,11 +235,46 @@ $smarty = smarty(array('tablerenderer'));
 
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('languagelinks', $languagelinks);
-//$smarty->assign('tables', $tables);
-$smarty->assign("custon_goal_form", $addcustomgoalform);
+if ($haslanguages) $smarty->assign("custom_goal_form", $addcustomgoalform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('goals', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:goals.tpl');
+
+
+/**
+* form submit function
+*/
+function form_submit(Pieform $form, $values) {
+	try {
+		process_addcustomgoal($form, $values);
+	}
+	catch (Exception $e) {
+		$form->json_reply(PIEFORM_ERR, $e->getMessage());
+	}
+	$form->json_reply(PIEFORM_OK, get_string('addedcustomgoal', 'artefact.epos'));
+}
+
+/** 
+ * Processs the form values: creates anartefact and writes tecustom goal to the database
+ * @param Pieform $form
+ * @param unknown_type $values
+ */
+function process_addcustomgoal(Pieform $form, $values) {
+	global $USER, $id;
+	$owner = $USER->get('id');
+	
+	//Create an Artefact and commit it to the artefact table
+	safe_require('artefact', 'epos');
+	$a = new ArtefactTypeCustomGoal(0, array(
+         	'owner' => $owner,
+                'title' => 'customgoal',
+                'parent' => $id,
+                'description' => $values['customgoal_text'],
+		)
+		);
+		
+	$a->commit();
+}
 
 ?>
