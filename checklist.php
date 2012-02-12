@@ -134,21 +134,25 @@ if ($haslanguages) {
             );
             foreach ($set[$competence][$level] as $name) {
                 //evaluation
+            	$urlname = $name . '_url';
                 $elements[$name] = array(
                     'type' => 'radio',
-                    'title' => get_string($name, 'artefact.epos'),
+                    //'title' => get_string($name, 'artefact.epos'),
+                	'title' => get_string($name, 'artefact.epos', '<a href="'.get_string($urlname, 'artefact.epos').'" target="_blank">', '</a>'),                    
                     'options' => array(
                         0 => get_string('eval0', 'artefact.epos'),
                         1 => get_string('eval1', 'artefact.epos'),
                         2 => get_string('eval2', 'artefact.epos'),
                     ),
                     'defaultvalue' => $checklistitems['evaluation'][$name],
+                	'labelescaped' => true,
                 );
                 //goal
                 $elements[$name . '_goal'] = array(
-                    'type' => 'checkbox',
-                    'title' => get_string($name, 'artefact.epos'),
-                    'defaultvalue' => $checklistitems['goal'][$name],
+                'type' => 'checkbox',
+                'title' => get_string($name, 'artefact.epos', '<a href="'.get_string($urlname, 'artefact.epos').'" target="_blank">', '</a>'),  
+                'defaultvalue' => $checklistitems['goal'][$name],
+                'labelescaped' => true,
                 );
             }
             $elements['competence'] = array(

@@ -1360,7 +1360,8 @@ $string['cercles_en_si_c2_4'] = 'I can keep up my side of the dialogue as interv
  */
  
 $string['schule_de_li_a1_1'] = 'Ich kann verstehen, wenn andere mir Fragen zu meiner Person stellen.';
-$string['schule_de_li_a1_2'] = 'Ich kann verstehen, wenn andere sich selbst vorstellen.';
+$string['schule_de_li_a1_2'] = 'Ich kann verstehen, wenn andere sich selbst vorstellen. %s(Aufagbe)%s';
+$string['schule_de_li_a1_2_url'] = 'http://its-mine.homeip.net';
 $string['schule_de_li_a1_3'] = 'Ich kann Fragen und Informationen zum Tages- und Jahresablauf verstehen.';
 $string['schule_de_li_a1_4'] = 'Ich kann verstehen, wenn ich im Unterricht angesprochen werde.';
 $string['schule_de_li_a1_5'] = 'Ich kann Arbeitsanweisungen verstehen.';
