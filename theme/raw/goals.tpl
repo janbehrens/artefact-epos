@@ -25,8 +25,12 @@
 </table>
 {/if}
 
+<div>
+
 <div id="customgoal">
     {$custom_goal_form|safe}
+</div>
+
 </div>
 
 {include file="footer.tpl"}

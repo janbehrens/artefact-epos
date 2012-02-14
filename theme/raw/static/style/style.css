@@ -18,6 +18,7 @@ td.radio {
 
 form.pieform.customgoal table {
 	float: none;
+	width: 100%;
 }
 
 div#customgoal {
@@ -37,6 +38,27 @@ div.resizable-textarea {
 textarea.customgoalta {
 	float: left;
 	width: 100%;
+	rows: 5;
+}
+
+div.grippie {
+	height: 0px;
+	visibility: hidden;
+}
+
+#addcustomgoal_submit_container {
+	text-align: right;
+	padding: 0px;
+	
+}
+
+#addcustomgoal_submit_container td {
+    text-align: right;
+    padding: 0px;    
+}
+
+#addcustomgoal_submit {
+	margin: 0px;	
 }
 
 /** End: Customgoal specific **/
