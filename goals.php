@@ -89,8 +89,8 @@ else {
 $elements = array(
     'customgoal_text' => array(
         'type' => 'textarea',
-        'width' => '450px',
-        'height' => '100px',
+        'rows' => '5',
+        'width' => '565px',
         'resize' => 'none',
         'title' => get_string('customlearninggoal', 'artefact.epos'),
         'defaultvalue' => '',
@@ -130,9 +130,9 @@ function editCustomGoalOut(customgoal_id) {
 		openToEdit[customgoal_id] = true;
 		oldTA[customgoal_id] = customgoal_text = document.getElementById(customgoal_id).innerHTML;
 		if(customgoal_text.substr(0, 5) != "<form") {
-			document.getElementById(customgoal_id).innerHTML = '<form name="bm">' +
+			document.getElementById(customgoal_id).innerHTML = '<form name="bm" action="javascript: submitEditCustomGoal('+customgoal_id+');">' +
 			'<textarea class="customgoalta" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
-			'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" onClick="javascript: submitEditCustomGoal('+customgoal_id+');"/>' +
+			'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" />' +
 			'<input class="submitcancel cancel" type="reset" value="$textCancelCustomgoalchanges" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
 			'</form>';
 			
@@ -148,19 +148,18 @@ function cancleEditCustomGoalOut(customgoal_id) {
 
 function submitEditCustomGoal(customgoal_id) {
 	ta_id = 'ta_'+customgoal_id;
-	customgoal_text = document.getElementById(ta_id).value;
+	customgoal_text = document.getElementById(ta_id).value;	
 	sendjsonrequest('customgoalupdate.json.php',
             {'customgoal_id': customgoal_id,
             'customgoal_text': customgoal_text},
-            'GET', 
-            function(data) {
-                tableRenderer.doupdate();
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
             },
             function() {
-                // @todo error
-            }
-        );
-	return true;
+            	alert("ERROR");
+            });
+   openToEdit[customgoal_id] = false;
 }
 
 function customgoalSaveCallback(form, data) {
