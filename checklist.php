@@ -134,11 +134,14 @@ if ($haslanguages) {
             foreach ($set[$competence][$level] as $name) {
                 //evaluation
             	$urlname = $name . '_url';
+            	$link = null;
+            	if(substr(get_string($urlname, 'artefact.epos'),0,2) != "[[")
+            		$link = get_string($urlname, 'artefact.epos');
+            	
                 $elements[$name] = array(
                     'type' => 'radio',
-                    //'title' => get_string($name, 'artefact.epos'),
-                	'title' => get_string($name, 'artefact.epos', '<a href="'.get_string($urlname, 'artefact.epos').'" target="_blank">', '</a>'),                    
-                    'options' => array(
+                    'title' => get_string($name, 'artefact.epos') . ($link ? "&nbsp;".$link : ""),
+                	'options' => array(
                         0 => get_string('eval0', 'artefact.epos'),
                         1 => get_string('eval1', 'artefact.epos'),
                         2 => get_string('eval2', 'artefact.epos'),
@@ -149,7 +152,7 @@ if ($haslanguages) {
                 //goal
                 $elements[$name . '_goal'] = array(
                 'type' => 'checkbox',
-                'title' => get_string($name, 'artefact.epos', '<a href="'.get_string($urlname, 'artefact.epos').'" target="_blank">', '</a>'),  
+                'title' => get_string($name, 'artefact.epos') . ($link ? "&nbsp;".$link : ""),
                 'defaultvalue' => $checklistitems['goal'][$name],
                 'labelescaped' => true,
                 );
