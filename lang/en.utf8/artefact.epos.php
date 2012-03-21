@@ -101,6 +101,7 @@ $string['c2'] = 'C2';
 $string['customlearninggoal'] = 'Additional learning objective';
 $string['customlearninggoalupdatesuccess'] = "Learning objective has been updated.";
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
+$string['customlearninggoalwanttodelete'] = 'Are you sure you really want to delete this additional learning objectiv?';
 
 
 /*
