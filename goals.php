@@ -116,6 +116,7 @@ $addcustomgoalform = pieform(array(
 
 $textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
 $textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
+$reallyDeleteCustomGoal = get_string('customlearninggoalwanttodelete', 'artefact.epos');
 
 $editCustomgoal = get_string('edit', 'mahara');
 $deleteCustomgoal = get_string('delete', 'mahara');
@@ -134,8 +135,7 @@ function editCustomGoalOut(customgoal_id) {
 			'<textarea class="customgoalta" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
 			'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" />' +
 			'<input class="submitcancel cancel" type="reset" value="$textCancelCustomgoalchanges" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
-			'</form>';
-			
+			'</form>';			
 		}
 	}
 }
@@ -157,7 +157,7 @@ function submitEditCustomGoal(customgoal_id) {
             	tableRenderer.doupdate();
             },
             function() {
-            	alert("ERROR");
+            	// @todo error
             });
    openToEdit[customgoal_id] = false;
 }
@@ -174,7 +174,7 @@ function customgoalSaveCallback(form, data) {
 }
 
 function deleteCustomGoal(customgoal_id) {
-    if (confirm('Sind Sie sicher, dass Sie dieses CustomGoal löschen wollen?')) {
+    if (confirm('$reallyDeleteCustomGoal')) {
         sendjsonrequest('customgoaldelete.json.php',
             {'customgoal_id': customgoal_id},
             'GET', 
