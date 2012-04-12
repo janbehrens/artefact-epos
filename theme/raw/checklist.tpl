@@ -2,6 +2,8 @@
 
 <div id="subjects_list">{$languagelinks|safe}</div>
 
+<p>{str tag='helpselfevaluation' section='artefact.epos'}</p>
+
 {if $haslanguages}
 <table id="checklist{$id}" width="100%">
     <thead>
