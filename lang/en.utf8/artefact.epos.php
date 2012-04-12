@@ -80,6 +80,9 @@ $string['eval0'] = 'not at all';
 $string['eval1'] = 'satisfactory';
 $string['eval2'] = 'good';
 
+//help text
+$string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate your expertise in the selected area of competence and level.';
+
 //TODO: the following should be like $string['descriptorset.elc.listening']
 
 //competences ELC
