@@ -39,7 +39,7 @@ safe_require('artefact', 'internal');
 safe_require('artefact', 'epos');
 
 $haslanguages = true;
-$id = 0;
+$id = isset($_GET['id']) ? $_GET['id'] : 0;
 
 $owner = $USER->get('id');
 
