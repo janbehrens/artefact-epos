@@ -29,5 +29,23 @@
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
             </KEYS>
         </TABLE>
+        <TABLE NAME="artefact_epos_biography_educationhistory"> 
+            <FIELDS> 
+                <FIELD NAME="id" TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
+                <FIELD NAME="artefact" TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="name" TYPE="text" NOTNULL="true" />
+                <FIELD NAME="startdate" TYPE="text" NOTNULL="true" />
+                <FIELD NAME="enddate" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="place" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="subject" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="level" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="description" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="displayorder" TYPE="int" LENGTH="10" NOTNULL="true" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+                <KEY NAME="artefactfk" TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
     </TABLES>
 </XMLDB>

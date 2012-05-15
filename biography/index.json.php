@@ -1,7 +1,7 @@
 <?php
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
- * Copyright (C) 2006-2010 Catalyst IT Ltd and others; see:
+ * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
  *                         http://wiki.mahara.org/Contributors
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,17 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
- * @subpackage artefact-epos
- * @author     Jan Behrens
+ * @subpackage artefact-blog
+ * @author     Catalyst IT Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011 Jan Behrens, jb3@informatik.uni-bremen.de
+ * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *
  */
 
-defined('INTERNAL') || die();
+define('INTERNAL', 1);
+define('JSON', 1);
 
-$config = new StdClass;
-$config->version = 2012051400;
-$config->release = '0.1';
+require(dirname(dirname(dirname(__FILE__))) . '/init.php');
+require_once(get_config('libroot') . 'pieforms/pieform.php');
+safe_require('artefact', 'epos');
 
-?>
+$blogs = (object) array(
+    'offset' => param_integer('offset', 0),
+    'limit'  => param_integer('limit', 10),
+);
+
+list($blogs->count, $blogs->data) = ArtefactTypeBiography::get_blog_list($blogs->limit, $blogs->offset);
+ArtefactTypeBiography::build_blog_list_html($blogs);
+
+json_reply(false, array('data' => $blogs));
