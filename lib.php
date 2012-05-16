@@ -948,7 +948,7 @@ EOF;
     }
 
     public static function get_tablerenderer_title_js_string() {
-        return " formatQualification(r.name, r.level, r.place)";
+        return " formatQualification(r.name, r.level, r.place, r.subject)";
     }
 
     public static function format_render_self_data($data) {
@@ -1025,18 +1025,31 @@ EOF;
     static function get_composite_js() {
         $at = get_string('at');
         return <<<EOF
-function formatQualification(name, level, place) {
-    var qual = '';
-    if (name && level) {
-        qual = name + ' (' + level + ') {$at} ';
+function formatQualification(name, level, place, subject) {
+    var qual = name;
+    if (place) {
+        qual += ' (' + place;
+        if (subject) {
+       		qual += ', ' + subject;
+       		if (level) {
+       			qual += ', ' + level;
+       		}
+       	}
+   		else if (level) {
+   			qual += ', ' + level;
+   		}
+        qual += ')';
+    }
+    else if (subject) {
+        qual += ' (' + subject;
+   		if (level) {
+   			qual += ', ' + level;
+   		}
+   		qual += ')';
     }
     else if (level) {
-        qual = type + ' {$at} ';
+        qual += ' (' + level + ')';
     }
-    else if (name) {
-        qual = name + ' {$at} ';
-    }
-    qual += place;
     return qual;
 }
 EOF;
