@@ -1,17 +1,17 @@
 {include file="header.tpl"}
 <div id="resumewrap">
-<fieldset>{if !$hidetitle}<legend class="resumeh3">{str tag='educationhistory' section='artefact.resume'}
+<fieldset>{if !$hidetitle}<legend class="resumeh3">{str tag='educationhistory' section='artefact.epos'}
 {if $controls}
-    {contextualhelp plugintype='artefact' pluginname='resume' section='addeducationhistory'}
+    {contextualhelp plugintype='artefact' pluginname='epos' section='addeducationhistory'}
 {/if}
 </legend>{/if}
 <table id="educationhistorylist{$suffix}" class="tablerenderer resumefive resumecomposite">
     <thead>
         <tr>
             {if $controls}<th class="resumecontrols"></th>{/if}
-            <th class="resumedate">{str tag='startdate' section='artefact.resume'}</th>
-            <th class="resumedate">{str tag='enddate' section='artefact.resume'}</th>
-            <th>{str tag='qualification' section='artefact.resume'}</th>
+            <th class="resumedate">{str tag='startdate' section='artefact.epos'}</th>
+            <th class="resumedate">{str tag='enddate' section='artefact.epos'}</th>
+            <th>{str tag='qualification' section='artefact.epos'}</th>
             {if $controls}<th class="resumecontrols"></th>{/if}
         </tr>
     </thead>

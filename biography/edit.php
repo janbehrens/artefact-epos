@@ -28,7 +28,7 @@
 define('INTERNAL', true);
 define('MENUITEM', 'biography');
 define('SECTION_PLUGINTYPE', 'artefact');
-define('SECTION_PLUGINNAME', 'resume');
+define('SECTION_PLUGINNAME', 'epos');
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 require_once('pieforms/pieform.php');
@@ -36,7 +36,7 @@ require_once('pieforms/pieform/elements/calendar.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
-define('TITLE', get_string('resume', 'artefact.resume'));
+define('TITLE', get_string('biography', 'artefact.epos'));
 
 $id = param_integer('id');
 $artefact = param_integer('artefact');

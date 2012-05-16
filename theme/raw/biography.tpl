@@ -1,12 +1,12 @@
 {include file="header.tpl"}
             <div class="rbuttons">
-                <a class="btn" href="{$WWWROOT}artefact/epos/biography/new/">{str section="artefact.blog" tag="addblog"}</a>
+                <a class="btn" href="{$WWWROOT}artefact/epos/biography/new/">{str section="artefact.epos" tag="addbiography"}</a>
             </div>
 		<div id="myblogs rel">
 {if !$blogs->data}
-           <div>{str tag=youhavenoblogs section=artefact.blog}</div>
+           <div>{str tag=youhavenobiographies section=artefact.epos}</div>
 {else}
-           <table id="bloglist" class="tablerenderer fullwidth">
+           <table id="biographylist" class="tablerenderer fullwidth">
              <thead>
                <tr><th></th><th></th></tr>
              </thead>

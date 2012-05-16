@@ -29,7 +29,6 @@ define('INTERNAL', 1);
 define('MENUITEM', 'biography');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
-define('SECTION_PAGE', 'biography');
 
 require(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 safe_require('artefact', 'epos');
@@ -65,7 +64,7 @@ function delete_blog_submit(Pieform $form, $values) {
     }
     else {
         $blog->delete();
-        $SESSION->add_ok_msg(get_string('blogdeleted', 'artefact.blog'));
+        $SESSION->add_ok_msg(get_string('biographydeleted', 'artefact.epos'));
     }
     redirect('/artefact/epos/biography/');
 }

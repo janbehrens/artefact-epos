@@ -445,10 +445,9 @@ class ArtefactTypeBiography extends ArtefactType {
     public function check_permission() {
         global $USER;
         if ($USER->get('id') != $this->owner) {
-            throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
+            throw new AccessDeniedException(get_string('youarenottheownerofthisbiography', 'artefact.epos'));
         }
     }
-
 
     public function describe_size() {
         return $this->count_children() . ' ' . get_string('posts', 'artefact.blog');
@@ -575,8 +574,8 @@ class ArtefactTypeBiography extends ArtefactType {
             'nexttext' => '',
             'lasttext' => '',
             'numbersincludefirstlast' => false,
-            'resultcounttextsingular' => get_string('blog', 'artefact.blog'),
-            'resultcounttextplural' => get_string('blogs', 'artefact.blog'),
+            'resultcounttextsingular' => get_string('biography', 'artefact.epos'),
+            'resultcounttextplural' => get_string('biographies', 'artefact.epos'),
         ));
         $blogs->pagination = $pagination['html'];
         $blogs->pagination_js = $pagination['javascript'];
@@ -624,30 +623,9 @@ class ArtefactTypeBiography extends ArtefactType {
 
         return array(
             '_default'                                  => $wwwroot . 'artefact/epos/biography/view/?id=' . $id,
-            get_string('blogsettings', 'artefact.blog') => $wwwroot . 'artefact/epos/biography/settings/?id=' . $id,
+            get_string('biographysettings', 'artefact.epos') => $wwwroot . 'artefact/epos/biography/settings/?id=' . $id,
         );
     }
-
-    /*public function copy_extra($new) {
-        $new->set('title', get_string('Copyof', 'mahara', $this->get('title')));
-    }*/
-
-    /**
-     * Returns the number of posts in this blog that have been published.
-     *
-     * The result of this function looked up from the database each time, so 
-     * cache it if you know it's safe to do so.
-     *
-     * @return int
-     */
-    /*public function count_published_posts() {
-        return (int)get_field_sql("
-            SELECT COUNT(*)
-            FROM {artefact} a
-            LEFT JOIN {artefact_blog_blogpost} bp ON a.id = bp.blogpost
-            WHERE a.parent = ?
-            AND bp.published = 1", array($this->get('id')));
-    }*/
 
     public static function delete_form($id) {
         global $THEME;
@@ -663,8 +641,8 @@ class ArtefactTypeBiography extends ArtefactType {
                 'submit' => array(
                     'type' => 'image',
                     'src' => $THEME->get_url('images/icon_close.gif'),
-                    'elementtitle' => get_string('delete', 'artefact.blog'),
-                    'confirm' => get_string('deleteblog?', 'artefact.blog'),
+                    'elementtitle' => get_string('delete'),
+                    'confirm' => get_string('deletebiography?', 'artefact.epos'),
                 ),
             ),
         ));
@@ -753,7 +731,7 @@ class ArtefactTypeBiography extends ArtefactType {
     public static function get_common_js() {
         $cancelstr = get_string('cancel');
         $addstr = get_string('add');
-        $confirmdelstr = get_string('compositedeleteconfirm', 'artefact.resume');
+        $confirmdelstr = get_string('compositedeleteconfirm', 'artefact.epos');
         $js = <<<EOF
 var tableRenderers = {};
 
@@ -864,8 +842,8 @@ EOF;
         $delstr = get_string('delete');
         $imagemoveblockup   = json_encode($THEME->get_url('images/move-up.gif'));
         $imagemoveblockdown = json_encode($THEME->get_url('images/move-down.gif'));
-        $upstr = get_string('moveup', 'artefact.resume');
-        $downstr = get_string('movedown', 'artefact.resume');
+        $upstr = get_string('moveup', 'artefact.epos');
+        $downstr = get_string('movedown', 'artefact.epos');
 
         $js = self::get_composite_js();
 
@@ -1002,7 +980,7 @@ EOF;
                 'rules' => array(
                     'required' => true,
                 ),
-                'title' => get_string('name', 'artefact.resume'),
+                'title' => get_string('biographyform.name', 'artefact.epos'),
                 'size' => 50,
             ),
             'startdate' => array(
@@ -1010,28 +988,28 @@ EOF;
                 'rules' => array(
                     'required' => true,
                 ),
-                'title' => get_string('startdate', 'artefact.resume'),
+                'title' => get_string('biographyform.startdate', 'artefact.epos'),
                 'size' => 20,
                 'help' => true,
             ),
             'enddate' => array(
                 'type' => 'text', 
-                'title' => get_string('enddate', 'artefact.resume'),
+                'title' => get_string('biographyform.enddate', 'artefact.epos'),
                 'size' => 20,
             ),
             'place' => array(
                 'type' => 'text',
-                'title' => get_string('place', 'artefact.resume'),
+                'title' => get_string('biographyform.place', 'artefact.epos'),
                 'size' => 50,
             ),
             'subject' => array(
                 'type' => 'text',
-                'title' => get_string('subject', 'artefact.resume'),
+                'title' => get_string('biographyform.subject', 'artefact.epos'),
                 'size' => 50,
             ),
             'level' => array(
                 'type' => 'text',
-                'title' => get_string('level', 'artefact.resume'),
+                'title' => get_string('biographyform.level', 'artefact.epos'),
                 'size' => 50,
             ),
             'description' => array(
@@ -1039,7 +1017,7 @@ EOF;
                 'rows' => 10,
                 'cols' => 50,
                 'resizable' => false,
-                'title' => get_string('description', 'artefact.resume'),
+                'title' => get_string('biographyform.description', 'artefact.epos'),
             ),
         );
     }
@@ -1115,7 +1093,7 @@ function biographyform_submit(Pieform $form, $values) {
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());
     }
-    $form->json_reply(PIEFORM_OK, get_string('compositesaved', 'artefact.resume'));
+    $form->json_reply(PIEFORM_OK, get_string('compositesaved', 'artefact.epos'));
 }
 
 function biographyformedit_submit(Pieform $form, $values) {
@@ -1127,10 +1105,10 @@ function biographyformedit_submit(Pieform $form, $values) {
         ArtefactTypeBiography::process_compositeform($form, $values);
     }
     catch (Exception $e) {
-        $SESSION->add_error_msg(get_string('compositesavefailed', 'artefact.resume'));
+        $SESSION->add_error_msg(get_string('compositesavefailed', 'artefact.epos'));
         redirect($goto);
     }
-    $SESSION->add_ok_msg(get_string('compositesaved', 'artefact.resume'));
+    $SESSION->add_ok_msg(get_string('compositesaved', 'artefact.epos'));
     redirect($goto);
 }
 

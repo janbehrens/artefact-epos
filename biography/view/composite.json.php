@@ -52,7 +52,7 @@ if (!$data = get_records_sql_array($sql, array($owner, 'biography'))) {
     $data = array();
 }
 
-$count = count_records('artefact', 'owner', $owner, 'artefacttype', $type);
+$count = count_records('artefact', 'owner', $owner, 'artefacttype', 'biography');
 
 json_reply(false, array(
     'data' => $data,

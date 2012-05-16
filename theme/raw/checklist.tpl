@@ -23,7 +23,7 @@
 
 {foreach $checklistforms item=checklistform}
     {loop $checklistform}
-<div id="{$name}_div" class="hidden">
+<div id="{$name}_div" class="checklistform hidden">
 	<p></p>
     <h2>{str tag='$competence' section='artefact.epos'} {str tag='$_key' section='artefact.epos'}</h2>
     {$form|safe}

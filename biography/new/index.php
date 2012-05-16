@@ -28,11 +28,10 @@
 define('INTERNAL', 1);
 define('MENUITEM', 'biography');
 define('SECTION_PLUGINTYPE', 'artefact');
-define('SECTION_PLUGINNAME', 'blog');
-define('SECTION_PAGE', 'biography/new');
+define('SECTION_PLUGINNAME', 'epos');
 
 require(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/init.php');
-define('TITLE', get_string('newblog','artefact.blog') . ': ' . get_string('blogsettings','artefact.blog'));
+define('TITLE', get_string('newbiography','artefact.epos') . ': ' . get_string('biographysettings','artefact.epos'));
 require_once('pieforms/pieform.php');
 safe_require('artefact', 'epos');
 
@@ -45,8 +44,8 @@ $form = pieform(array(
     'elements' => array(
         'title' => array(
             'type'        => 'text',
-            'title'       => get_string('blogtitle', 'artefact.blog'),
-            'description' => get_string('blogtitledesc', 'artefact.blog'),
+            'title'       => get_string('biographytitle', 'artefact.epos'),
+            'description' => get_string('biographytitledesc', 'artefact.epos'),
             'rules' => array(
                 'required'    => true
             ),
@@ -55,8 +54,8 @@ $form = pieform(array(
             'type'        => 'wysiwyg',
             'rows'        => 10,
             'cols'        => 70,
-            'title'       => get_string('blogdesc', 'artefact.blog'),
-            'description' => get_string('blogdescdesc', 'artefact.blog'),
+            'title'       => get_string('biographydesc', 'artefact.epos'),
+            'description' => get_string('biographydescdesc', 'artefact.epos'),
             'rules' => array(
                 'maxlength'   => 65536,
                 'required'    => false
@@ -71,8 +70,8 @@ $form = pieform(array(
         'submit' => array(
             'type'  => 'submitcancel',
             'value' => array(
-                get_string('createblog', 'artefact.blog'),
-                get_string('cancel', 'artefact.blog')
+                get_string('createbiography', 'artefact.epos'),
+                get_string('cancel', 'artefact.epos')
             )
         )
     )

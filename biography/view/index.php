@@ -28,11 +28,11 @@
 define('INTERNAL', 1);
 define('MENUITEM', 'biography');
 define('SECTION_PLUGINTYPE', 'artefact');
-define('SECTION_PLUGINNAME', 'blog');
-define('SECTION_PAGE', 'view');
+define('SECTION_PLUGINNAME', 'epos');
+define('SECTION_PAGE', 'biography/view');
 
 require(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/init.php');
-define('TITLE', get_string('viewblog','artefact.blog'));
+define('TITLE', get_string('viewbiography','artefact.epos'));
 safe_require('artefact', 'epos');
 require_once(get_config('libroot') . 'pieforms/pieform.php');
 
