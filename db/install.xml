@@ -4,29 +4,72 @@
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="artefact_epos_checklist_item"> 
-            <FIELDS> 
+        <TABLE NAME="artefact_epos_subject"> 
+            <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
-                <FIELD NAME="checklist"         TYPE="int" LENGTH="10" NOTNULL="true" />
-                <FIELD NAME="descriptor"        TYPE="text" NOTNULL="true" />
-                <FIELD NAME="evaluation"        TYPE="int" NOTNULL="true" />
-                <FIELD NAME="goal"              TYPE="int" NOTNULL="true" />
+                <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
+                <FIELD NAME="institution"       TYPE="text" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="checklistfk"         TYPE="foreign" FIELDS="checklist" REFTABLE="artefact" REFFIELDS="id" />
+                <KEY NAME="institutionfk"       TYPE="foreign" FIELDS="institution" REFTABLE="institution" REFFIELDS="name" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_epos_artefact_subject"> 
+            <FIELDS> 
+                <FIELD NAME="artefact"          TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="subject"           TYPE="int" LENGTH="10" NOTNULL="true" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="artefactfk"          TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
+                <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_epos_descriptor_set"> 
+            <FIELDS>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
+                <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_epos_descriptorset_subject"> 
+            <FIELDS>
+                <FIELD NAME="descriptorset"     TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="subject"           TYPE="int" LENGTH="10" NOTNULL="true" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
+                <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_descriptor"> 
-            <FIELDS> 
+            <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
+                <FIELD NAME="link"              TYPE="text" />
                 <FIELD NAME="competence"        TYPE="text" NOTNULL="true" />
                 <FIELD NAME="level"             TYPE="text" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="text" NOTNULL="true" />
+                <FIELD NAME="evaluations"       TYPE="text" NOTNULL="true" />
+                <FIELD NAME="goal_available"    TYPE="int" NOTNULL="true" />
+                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_epos_checklist_item"> 
+            <FIELDS>
+                <FIELD NAME="checklist"         TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="descriptor"        TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="evaluation"        TYPE="int" NOTNULL="true" />
+                <FIELD NAME="goal"              TYPE="int" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="checklistfk"         TYPE="foreign" FIELDS="checklist" REFTABLE="artefact" REFFIELDS="id" />
+                <KEY NAME="descriptorfk"        TYPE="foreign" FIELDS="descriptor" REFTABLE="artefact_epos_descriptor" REFFIELDS="id" />
             </KEYS>
         </TABLE>
     </TABLES>

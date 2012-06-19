@@ -35,7 +35,7 @@ include_once('xmlize.php');
 class PluginArtefactEpos extends PluginArtefact {
 
     public static function get_artefact_types() {
-        return array('learnedlanguage', 'checklist', 'customgoal');
+        return array('subject', 'checklist', 'customgoal');
     }
 
     public static function get_block_types() {
@@ -107,9 +107,9 @@ class PluginArtefactEpos extends PluginArtefact {
 }
 
 /**
- * ArtefactTypeLearnedLanguage implementing ArtefactType
+ * ArtefactTypeSubject implementing ArtefactType
  */
-class ArtefactTypeLearnedLanguage extends ArtefactType {
+class ArtefactTypeSubject extends ArtefactType {
 
     public static function get_icon($options=null) {}
 
@@ -380,18 +380,22 @@ function write_descriptor_db($xml) {
         $contents = file_get_contents($xml);
         $xmlarr = xmlize($contents);
         
-        $table = 'artefact_epos_descriptor';
+        $descriptorsettable = 'artefact_epos_descriptor_set';
+        $descriptortable = 'artefact_epos_descriptor';
         
         $descriptorset = $xmlarr['XML']['#']['DESCRIPTORSET']['0'];
-        $values['descriptorset'] = $descriptorset['@']['NAME'] . '.' . $descriptorset['@']['LANGUAGE'];
+        $values['name'] = $descriptorset['@']['NAME'];
+        
+        $values['descriptorset'] = insert_record($descriptorsettable, (object)$values, 'id', true);
         
         foreach ($xmlarr['XML']['#']['DESCRIPTORSET']['0']['#']['DESCRIPTOR'] as $x) {
             $values['competence'] = $x['@']['COMPETENCE'];
             $values['level']      = $x['@']['LEVEL'];
             $values['name']       = $x['@']['NAME'];
+            $values['evaluations'] = $x['@']['EVALUATIONS'];
+            $values['goal_available'] = $x['@']['GOAL'];
             
-            insert_record($table, (object)$values);
-            echo $values['name'];
+            insert_record($descriptortable, (object)$values);
         }
         return true;
     }

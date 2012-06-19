@@ -1,5 +1,6 @@
 {include file="header.tpl"}
 
+{if $languageform}
 <table id="learnedlanguagelist">
     <thead>
         <tr>
@@ -22,5 +23,7 @@
     <div id="learnedlanguageform" class="hidden">{$languageform|safe}</div>
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
 </div>
+{else}No descriptorsets installed! <a href="installdescriptors.php">Install</a>
+{/if}
 
 {include file="footer.tpl"}

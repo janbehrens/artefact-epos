@@ -35,7 +35,6 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
 define('TITLE', get_string('mylanguages', 'artefact.epos'));
 require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
-safe_require('artefact', 'internal');
 
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
@@ -112,47 +111,49 @@ tableRenderer.emptycontent = '';
 tableRenderer.updateOnLoad();
 EOF;
 
+$smarty = smarty(array('tablerenderer'));
+
 //pieform
 $optionssubject = array(get_string('languages', 'artefact.epos'));
 $optionslanguage = get_learnedlanguages();
-$optionsdescriptors = get_descriptors();
+$optionsdescriptors = get_descriptorsets();
 
-$elements = array(
-    'subject' => array(
-        'type' => 'select',
-        'title' => get_string('subjectform.subject', 'artefact.epos'),
-        'options' => $optionssubject,
-    ),
-    'title' => array(
-        'type' => 'text',
-        'title' => get_string('subjectform.title', 'artefact.epos'),
-        'defaultvalue' => '',
-    ),
-    'descriptorset' => array(
-        'type' => 'select',
-        'title' => get_string('subjectform.descriptorset', 'artefact.epos'),
-        'options' => $optionsdescriptors,
-    ),
-);
-$elements['submit'] = array(
-    'type' => 'submit',
-    'value' => get_string('save', 'artefact.epos'),
-);
+if (count($optionsdescriptors) > 0 && count($optionsdescriptors) > 0) {
+    $elements = array(
+        'subject' => array(
+            'type' => 'select',
+            'title' => get_string('subjectform.subject', 'artefact.epos'),
+            'options' => $optionssubject,
+        ),
+        'title' => array(
+            'type' => 'text',
+            'title' => get_string('subjectform.title', 'artefact.epos'),
+            'defaultvalue' => '',
+        ),
+        'descriptorset' => array(
+            'type' => 'select',
+            'title' => get_string('subjectform.descriptorset', 'artefact.epos'),
+            'options' => $optionsdescriptors,
+        ),
+    );
+    $elements['submit'] = array(
+        'type' => 'submit',
+        'value' => get_string('save', 'artefact.epos'),
+    );
+    
+    $languageform = pieform(array(
+        'name' => 'addlearnedlanguage',
+        'plugintype' => 'artefact',
+        'pluginname' => 'epos',
+        'elements' => $elements, 
+        'jsform' => true,
+        'successcallback' => 'form_submit',
+        'jssuccesscallback' => 'languageSaveCallback',
+    ));
 
-$languageform = pieform(array(
-    'name' => 'addlearnedlanguage',
-    'plugintype' => 'artefact',
-    'pluginname' => 'epos',
-    'elements' => $elements, 
-    'jsform' => true,
-    'successcallback' => 'form_submit',
-    'jssuccesscallback' => 'languageSaveCallback',
-));
+    $smarty->assign('languageform', $languageform);
+}
 
-
-$smarty = smarty(array('tablerenderer'));
-
-$smarty->assign('languageform', $languageform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
@@ -178,18 +179,23 @@ function get_learnedlanguages() {
 /**
  * Get descriptor sets for pieform select
  */
-function get_descriptors() {
-    static $descriptors;
-    if (!empty($descriptors)) {
-        return $descriptors;
-    }
-    $codes = array('cercles.de', 'cercles.en', 'elc.de', 'elc.en', 'elc.fr');
+function get_descriptorsets() {
+    static $descriptorsets = array();
+    //if (!empty($descriptors)) {
+    //    return $descriptors;
+    //}
+    //$codes = array('cercles.de', 'cercles.en', 'elc.de', 'elc.en', 'elc.fr');
 
-    foreach ($codes as $c) {
-        $descriptors[$c] = get_string("descriptorset.{$c}", 'artefact.epos');
+    $sql = 'SELECT * FROM artefact_epos_descriptor_set';
+    
+    if (!$data = get_records_sql_array($sql, array())) {
+        $data = array();
+    }
+    foreach ($data as $field) {
+        $descriptorsets[] = $field->name;
     };
-    uasort($descriptors, 'strcoll');
-    return $descriptors;
+    uasort($descriptorsets, 'strcoll');
+    return $descriptorsets;
 }
 
 /**
@@ -232,13 +238,13 @@ function process_languageform(Pieform $form, $values) {
     $values['artefact'] = $a->get('id');
     
     // update artefact_epos_descriptor if descriptors are not in database yet   //FIXME nach unten?
-    $sql = 'SELECT *
+    /*$sql = 'SELECT *
         FROM artefact_epos_descriptor
         WHERE descriptorset = ?';
     
     if (!get_records_sql_array($sql, array($values['descriptorset']))) {
         write_descriptor_db('db/' . $values['descriptorset'] . '.xml');
-    }
+    }*/
 
     // create checklist artefact
     $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
