@@ -34,7 +34,6 @@ define('SECTION_PAGE', 'index');
 require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
 define('TITLE', get_string('mylanguages', 'artefact.epos'));
 require_once('pieforms/pieform.php');
-require_once(get_config('docroot') . 'artefact/lib.php');
 
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
@@ -105,20 +104,15 @@ tableRenderer = new TableRenderer(
     ]
 );
 
-tableRenderer.type = 'learnedlanguage';
-tableRenderer.statevars.push('type');
 tableRenderer.emptycontent = '';
 tableRenderer.updateOnLoad();
 EOF;
 
-$smarty = smarty(array('tablerenderer'));
-
 //pieform
-$optionssubject = array(get_string('languages', 'artefact.epos'));
-$optionslanguage = get_learnedlanguages();
+$optionssubject = get_subjects();
 $optionsdescriptors = get_descriptorsets();
 
-if (count($optionsdescriptors) > 0 && count($optionsdescriptors) > 0) {
+if (count($optionssubject) > 0 && count($optionsdescriptors) > 0) {
     $elements = array(
         'subject' => array(
             'type' => 'select',
@@ -150,10 +144,10 @@ if (count($optionsdescriptors) > 0 && count($optionsdescriptors) > 0) {
         'successcallback' => 'form_submit',
         'jssuccesscallback' => 'languageSaveCallback',
     ));
-
-    $smarty->assign('languageform', $languageform);
 }
 
+$smarty = smarty(array('tablerenderer'));
+$smarty->assign_by_ref('languageform', $languageform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
@@ -162,39 +156,37 @@ $smarty->display('artefact:epos:index.tpl');
 /**
  * Get language options for pieform select
  */
-function get_learnedlanguages() {
-    static $languages;
-    if (!empty($languages)) {
-        return $languages;
+function get_subjects() {
+    $subjects = array();
+    
+    //TODO: check institution membership
+    $sql = "SELECT name FROM artefact_epos_subject ORDER BY name";
+    
+    if (!$data = get_records_sql_array($sql, null)) {
+        $data = array();
     }
-    $codes = array('ar', 'ca', 'de', 'en', 'eo', 'es', 'fi', 'fr', 'he', 'hu', 'it', 'ja', 'la', 'nl', 'pl', 'pt', 'ru', 'sv', 'tr', 'zh');
-
-    foreach ($codes as $c) {
-        $languages[$c] = get_string("language.{$c}", 'artefact.epos');
+    foreach ($data as $field) {
+        $subjects[] = $field->name;
     };
-    uasort($languages, 'strcoll');
-    return $languages;
+    
+    return $subjects;
 }
 
 /**
  * Get descriptor sets for pieform select
  */
 function get_descriptorsets() {
-    static $descriptorsets = array();
-    //if (!empty($descriptors)) {
-    //    return $descriptors;
-    //}
-    //$codes = array('cercles.de', 'cercles.en', 'elc.de', 'elc.en', 'elc.fr');
+    $descriptorsets = array();
 
-    $sql = 'SELECT * FROM artefact_epos_descriptor_set';
+    $sql = "SELECT name FROM artefact_epos_descriptor_set ORDER BY name";
     
     if (!$data = get_records_sql_array($sql, array())) {
         $data = array();
     }
     foreach ($data as $field) {
-        $descriptorsets[] = $field->name;
+        $descriptorsets[$field->name] = $field->name;
     };
-    uasort($descriptorsets, 'strcoll');
+    
     return $descriptorsets;
 }
 
@@ -215,11 +207,11 @@ function process_languageform(Pieform $form, $values) {
     global $USER;
     $owner = $USER->get('id');
     
-    $newsubject = $values['title'] == '' ? $values['subject'] : $values['title'];     //FIXME: validate
+    $newsubject = $values['title'] == '' ? $values['subject'] : $values['title'];
     
-    // update artefact 'learnedlanguage' ...
-    $sql = 'SELECT * FROM {artefact} WHERE owner = ? AND artefacttype = ? AND title = ?';
-    if ($langs = get_records_sql_array($sql, array($owner, 'learnedlanguage', $newsubject))) {
+    // update artefact 'subject' ...
+    $sql = "SELECT * FROM artefact WHERE owner = ? AND artefacttype = 'subject' AND title = ?";
+    if ($langs = get_records_sql_array($sql, array($owner, $newsubject))) {
         $a = artefact_instance_from_id($langs[0]->id);
         $a->set('mtime', time());
         $a->commit();
@@ -227,42 +219,36 @@ function process_languageform(Pieform $form, $values) {
     // ... or create it if it doesn't exist
     else {
         safe_require('artefact', 'epos');
-        $a = new ArtefactTypeLearnedLanguage(0, array(
+        $a = new ArtefactTypeSubject(0, array(
                 'owner' => $owner,
                 'title' => $newsubject,
             )
         );
+        
+        //TODO: insert: artefact_epos_artefact_subject
     }
     $a->commit();
 
-    $values['artefact'] = $a->get('id');
+    $id = $a->get('id');
     
-    // update artefact_epos_descriptor if descriptors are not in database yet   //FIXME nach unten?
-    /*$sql = 'SELECT *
-        FROM artefact_epos_descriptor
-        WHERE descriptorset = ?';
-    
-    if (!get_records_sql_array($sql, array($values['descriptorset']))) {
-        write_descriptor_db('db/' . $values['descriptorset'] . '.xml');
-    }*/
-
     // create checklist artefact
     $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
     
-    if (!get_records_sql_array($sql, array($values['artefact'], $values['descriptorset']))) {
-        $values['learnedlanguage'] = $values['artefact'];
+    if (!get_records_sql_array($sql, array($id, $values['descriptorset']))) {
         
         $a = new ArtefactTypeChecklist(0, array(
             'owner' => $owner,
             'title' => $values['descriptorset'],
-            'parent' => $values['learnedlanguage']
+            'parent' => $id
         ));
         $a->commit();
 
         // load descriptors
         $descriptors = array();
         
-        $sql = 'SELECT * FROM artefact_epos_descriptor WHERE descriptorset = ?';
+        $sql = 'SELECT d.id FROM artefact_epos_descriptor d
+                JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset
+                WHERE s.name = ?';
         
         if (!$descriptors = get_records_sql_array($sql, array($values['descriptorset']))) {
             $descriptors = array();
@@ -274,7 +260,7 @@ function process_languageform(Pieform $form, $values) {
         
         // update artefact_epos_checklist_item
         foreach ($descriptors as $field) {
-            $values['descriptor'] = $field->name;
+            $values['descriptor'] = $field->id;
             insert_record('artefact_epos_checklist_item', (object)$values);
         }
     }

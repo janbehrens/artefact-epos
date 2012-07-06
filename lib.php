@@ -118,6 +118,15 @@ class ArtefactTypeSubject extends ArtefactType {
     }
 
     public static function get_links($id) {}
+
+    /**
+     * Overriding the delete() function to clear table references
+     */
+    public function delete() {
+        delete_records('artefact_epos_artefact_subject', 'artefact', $this->id);
+
+        parent::delete();
+    }
 }
 
 /**
@@ -142,7 +151,7 @@ class ArtefactTypeChecklist extends ArtefactType {
     public function __construct($id = 0, $data = null) {
         parent::__construct($id, $data);
 
-        $this->set = $this->load_descriptorset();
+        //$this->set = $this->load_descriptorset();
     }
     
     public function render_self($options, $blockid = 0) {

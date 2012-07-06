@@ -33,7 +33,6 @@ safe_require('artefact', 'epos');
 
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
-$type = 'checklist';//param_alpha('type');
 $view = param_integer('view', 0);
 
 $owner = $USER->get('id');
@@ -41,34 +40,23 @@ $count = 0;
 
 $data = array();
 
-$sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
-	FROM artefact a, artefact b
-	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
+$sql = "SELECT DISTINCT a.id, b.title, s.name as descriptorset FROM artefact b, artefact a 
+        JOIN artefact_epos_checklist_item i ON a.id = i.checklist 
+        JOIN artefact_epos_descriptor d ON d.id = i.descriptor 
+        JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset 
+        WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = 'checklist' ORDER BY b.title;";
 
-if (!$data = get_records_sql_array($sql, array($owner, $type))) {
+if (!$data = get_records_sql_array($sql, array($owner))) {
     $data = array();
 }
 
-
-// For converting language and descriptorset codes to their respective names...
-if ($data) {
-    foreach ($data as $field) {
-        //$field->language = get_string('language.'.$field->language, 'artefact.epos');
-        $field->descriptorset = get_string('descriptorset.'.$field->descriptorset, 'artefact.epos');
-    }
-}
-
-
 $count = count($data);
-
-usort($data, 'cmpByTitle');
 
 echo json_encode(array(
     'data' => $data,
     'limit' => $limit,
     'offset' => $offset,
     'count' => $count,
-    'type' => $type,
 ));
 
 ?>

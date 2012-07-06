@@ -34,7 +34,6 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 $id = param_integer('checklist_id');
 
 $checklistartefact = artefact_instance_from_id($id);
-
 $languageartefact = $checklistartefact->get_parent_instance();
 
 if ($languageartefact->get('owner') != $USER->get('id')) {
