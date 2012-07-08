@@ -160,13 +160,14 @@ function get_subjects() {
     $subjects = array();
     
     //TODO: check institution membership
-    $sql = "SELECT name FROM artefact_epos_subject ORDER BY name";
+    
+    $sql = "SELECT id, name FROM artefact_epos_subject ORDER BY name";
     
     if (!$data = get_records_sql_array($sql, null)) {
         $data = array();
     }
     foreach ($data as $field) {
-        $subjects[] = $field->name;
+        $subjects[$field->id] = $field->name;
     };
     
     return $subjects;
@@ -207,7 +208,7 @@ function process_languageform(Pieform $form, $values) {
     global $USER;
     $owner = $USER->get('id');
     
-    $newsubject = $values['title'] == '' ? $values['subject'] : $values['title'];
+    $newsubject = $values['title'] == '' ? $values['subject'] : $values['title'];    //FIXME: should use pieform validation instead
     
     // update artefact 'subject' ...
     $sql = "SELECT * FROM artefact WHERE owner = ? AND artefacttype = 'subject' AND title = ?";
@@ -224,10 +225,12 @@ function process_languageform(Pieform $form, $values) {
                 'title' => $newsubject,
             )
         );
+        $a->commit();
         
-        //TODO: insert: artefact_epos_artefact_subject
+        //insert: artefact_epos_artefact_subject
+        $values_artefact_subject = array('artefact' => $a->get('id'), 'subject' => $values['subject']);
+        insert_record('artefact_epos_artefact_subject', (object)$values_artefact_subject);
     }
-    $a->commit();
 
     $id = $a->get('id');
     

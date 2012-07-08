@@ -69,7 +69,7 @@ if ($data) {
         else {
             $languagelinks .= '<a href="checklist.php?id=' . $field->id . '">';
         }
-        $languagelinks .= $field->title . ' (' . get_string('descriptorset.' . $field->descriptorset, 'artefact.epos') . ')';
+        $languagelinks .= $field->title . ' (' . $field->descriptorset . ')';
         if ($field->id == $id) {
             $languagelinks .= '</b> | ';
         }
@@ -90,7 +90,7 @@ $inlinejs = '';
 
 if ($haslanguages) {
     $a = artefact_instance_from_id($id);
-    $set = $a->set;
+    $set = $a->set = $a->load_descriptorset();
     $checklistitems = $a->load_checklist();
     
     $addstr = get_string('add', 'artefact.epos');
@@ -116,39 +116,43 @@ if ($haslanguages) {
      * 		'submit'
      * 	)
      */
+    $ccount = 0;
+    $lcount = 0;
     foreach (array_keys($set) as $competence) {
         foreach (array_keys($set[$competence]) as $level) {
             $elements = array();
             //headings
-            $title = get_string($competence, 'artefact.epos') . ' ' . get_string($level, 'artefact.epos');
+            $title = $competence . ' ' . $level;
             $elements['header'] = array(
                 'type' => 'html',
                 'title' => ' ',
                 'value' => '',
             );
+            //FIXME: only if goal_available = true
             $elements['header_goal'] = array(
                 'type' => 'html',
                 'title' => ' ',
                 'value' => get_string('goal', 'artefact.epos') . '?',
             );
-            foreach ($set[$competence][$level] as $name) {
+            foreach (array_keys($set[$competence][$level]) as $k) {
                 //evaluation
-                $elements[$name] = array(
+                $elements['item' . $k] = array(
                     'type' => 'radio',
-                    'title' => get_string($name, 'artefact.epos'),
+                    'title' => $set[$competence][$level][$k],
                     'options' => array(
                         0 => get_string('eval0', 'artefact.epos'),
                         1 => get_string('eval1', 'artefact.epos'),
                         2 => get_string('eval2', 'artefact.epos'),
                     ),
-                    'defaultvalue' => $checklistitems['evaluation'][$name],
+                    'defaultvalue' => $checklistitems['evaluation'][$k],
                 );
                 //goal
-                $elements[$name . '_goal'] = array(
+                $elements['item' . $k . '_goal'] = array(
                     'type' => 'checkbox',
-                    'title' => get_string($name, 'artefact.epos'),
-                    'defaultvalue' => $checklistitems['goal'][$name],
+                    'title' => $set[$competence][$level][$k],
+                    'defaultvalue' => $checklistitems['goal'][$k],
                 );
+                $no = $k;
             }
             $elements['competence'] = array(
                 'type'  => 'hidden',
@@ -165,7 +169,7 @@ if ($haslanguages) {
             );
         
             $checklistform = pieform(array(
-                'name'            => 'checklistform_' . $competence . '_' . $level,
+                'name'            => 'checklistform_' . $ccount . '_' . $lcount,
                 'plugintype'      => 'artefact',
                 'pluginname'      => 'epos',
                 'jsform'          => true,
@@ -180,9 +184,13 @@ if ($haslanguages) {
             // $checklistformsid contains their codes (like 'cercles_li_a1_1')
             $checklistforms[$competence][$level]['competence'] = $competence;
             $checklistforms[$competence][$level]['form'] = $checklistform;
-            $checklistforms[$competence][$level]['name'] = 'checklistform_' . $competence . '_' . $level;
+            $checklistforms[$competence][$level]['name'] = 'checklistform_' . $ccount . '_' . $lcount;
             $checklistformsid[] = $checklistforms[$competence][$level]['name'];
+            
+            $lcount++;
         }
+        $lcount = 0;
+        $ccount++;
     }
     
     //JS stuff
@@ -260,14 +268,14 @@ function process_checklistform(Pieform $form, $values) {
     $elements = $form->get_elements();
     
     //identify changed fields and write them to database
-    foreach ($set[$competence][$level] as $desc) {
+    foreach (array_keys($set[$competence][$level]) as $k) {
         foreach ($elements as $element) {
-            if ($element['name'] == $desc) {
+            if ($element['name'] == 'item' . $k) {
                 foreach ($elements as $elementgoal) {
-                    if ($elementgoal['name'] == $desc . '_goal') {
-                        $values['descriptor'] = $desc;
-                        $values['evaluation'] = $values[$desc];
-                        $values['goal'] = $values[$desc . '_goal'] == 1 ? 1 : 0;
+                    if ($elementgoal['name'] == 'item' . $k . '_goal') {
+                        $values['descriptor'] = $k;
+                        $values['evaluation'] = $values['item' . $k];
+                        $values['goal'] = $values['item' . $k . '_goal'] == 1 ? 1 : 0;
                         
                         if ($values['evaluation'] != $element['defaultvalue']
                             || $values['goal'] != $elementgoal['defaultvalue']) {

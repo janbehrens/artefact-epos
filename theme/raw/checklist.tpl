@@ -12,7 +12,7 @@
             {foreach $checklistforms item=competence name=getlevels}
                 {if $dwoo.foreach.getlevels.first}
                     {loop $competence}
-            <th>{str tag='$_key' section='artefact.epos'}</th>
+            <th>{$_key}</th>
                     {/loop}
                 {/if}
             {/foreach}
@@ -25,7 +25,7 @@
     {loop $checklistform}
 <div id="{$name}_div" class="hidden">
 	<p></p>
-    <h2>{str tag='$competence' section='artefact.epos'} {str tag='$_key' section='artefact.epos'}</h2>
+    <h2>{$competence} {$_key}</h2>
     {$form|safe}
 </div>
     {/loop}

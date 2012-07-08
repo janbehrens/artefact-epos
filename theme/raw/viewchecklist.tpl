@@ -5,7 +5,7 @@
             {foreach $levels item=competence name=getlevels}
                 {if $dwoo.foreach.getlevels.first}
                     {loop $competence}
-            <th>{str tag='$_key' section='artefact.epos'}</th>
+            <th>{$_key}</th>
                     {/loop}
                 {/if}
             {/foreach}

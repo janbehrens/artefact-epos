@@ -143,19 +143,13 @@ class ArtefactTypeChecklist extends ArtefactType {
     
     public $set;
     
-    /**
-     * Overriding the constructor in order to read the descriptors from the database
-     * @param unknown_type $id
-     * @param unknown_type $data
-     */
     public function __construct($id = 0, $data = null) {
         parent::__construct($id, $data);
-
-        //$this->set = $this->load_descriptorset();
     }
     
     public function render_self($options, $blockid = 0) {
         $this->add_to_render_path($options);
+        $this->set = $this->load_descriptorset();
 
         $inlinejs = $this->returnJS(false, $blockid);
         
@@ -217,12 +211,14 @@ EOF;
     '{$jsonpath}',
     [
         function (r, d) {
-            return TD(null, r.competencestr);
+            return TD(null, r.competence);
         },
 EOF;
     
         foreach (array_keys($this->set) as $competence) {
+            $count = 0;
             foreach (array_keys($this->set[$competence]) as $level) {
+            //for ($level = 0; $level < count($this->set[$competence]); $level++) {
                 $inlinejs .= <<<EOF
 
         function (r) {
@@ -230,7 +226,7 @@ EOF;
                 if ($editable) {
                     $inlinejs .= <<<EOF
 
-            var str1 = 'toggleLanguageForm("' + r.competence + '", "$level")';
+            var str1 = 'toggleLanguageForm("' + r.index + '", "$count")';
 EOF;
                 }
                 else {
@@ -242,17 +238,20 @@ EOF;
                 
                 $inlinejs .= <<<EOF
 
-            var str2 = 'progressbar_' + r.competence + "_$level";
-            var str3 = '#progressbar_' + r.previous + "_$level";
+            var str2 = 'progressbar_' + r.index + "_$count";
+            var str3 = '#progressbar_' + r.previous + "_$count";
             var data = TD({'onclick': str1});
             data.innerHTML = '<div id="' + str2 + '"></div>';
-            if (prevValue.hasOwnProperty("$level")) {
-                $(str3).progressbar({ value: prevValue["$level"] });
+            if (prevValue.hasOwnProperty('$level')) {
+                $(str3).progressbar({ value: prevValue['$level'] });
             }
-            prevValue["$level"] = r.$level;
+            if ('$level' in r) {
+                prevValue['$level'] = r['$level']['val'];
+            }
             return data;
         },
 EOF;
+                $count++;
             }
             break;  //we need the column definitions only once
         }
@@ -278,30 +277,32 @@ EOF;
     /**
      * load_descriptorset()
      * 
-     * will return something like
+     * will return something like:
      *     array(
-     *         'listening' => array(
-     *             'a1' => array(
-     *                 0 => 'cercles_li_a1_1',
-     *                 1 => 'cercles_li_a1_2',
+     *         'Listening' => array(
+     *             'A1' => array(
+     *                 101 => 'I can something',
+     *                 102 => 'I can something else',
      *                 etc.
      *             ),
-     *             'a2' => array(
+     *             'A2' => array(
      *                 ...
      *             ),
      *             etc.
      *         ),
-     *         'reading' => array(
+     *         'Reading' => array(
      *             ...
      *         ),
      *         etc.
      *     )
      */
     function load_descriptorset() {
-        $sql = 'SELECT d.*
-            FROM artefact_epos_descriptor d
-            JOIN artefact a ON a.title = d.descriptorset
-            WHERE a.id = ?';
+        $sql = 'SELECT DISTINCT d.*
+            FROM artefact_epos_descriptor d 
+            JOIN artefact_epos_checklist_item i ON d.id = i.descriptor 
+            JOIN artefact a ON a.id = i.checklist 
+            WHERE a.id = ?
+            ORDER BY d.id, d.level';
         
         if (!$descriptors = get_records_sql_array($sql, array($this->id))) {
             $descriptors = array();
@@ -317,7 +318,7 @@ EOF;
             if (!isset($competences[$desc->competence][$desc->level])) {
                 $competences[$desc->competence][$desc->level] = array();
             }
-            $competences[$desc->competence][$desc->level][] = $desc->name;
+            $competences[$desc->competence][$desc->level][$desc->id] = $desc->name;
         }
         return $competences;
     }

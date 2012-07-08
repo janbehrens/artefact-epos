@@ -26,31 +26,25 @@
  */
 
 define('INTERNAL', 1);
-define('JSON', 1);
-
-//???
-/*if (isset($_POST['view'])) {
-    define('PUBLIC', 1);
-}*/
+//define('JSON', 1);
 
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'epos');
 
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
-//$type = 'checklist';//param_alpha('type');
 $view = param_integer('view', 0);
 
 $owner = $USER->get('id');
 $id = $_GET['id'];
-$count = 0;
 
 $descriptors = array();
 
-$sql = 'SELECT ci.*, d.competence, d.level
-    FROM {artefact_epos_descriptor} d 
-    JOIN {artefact_epos_checklist_item} ci ON ci.descriptor = d.name
-    WHERE ci.checklist = ?';
+$sql = 'SELECT *
+    FROM artefact_epos_descriptor d 
+    JOIN artefact_epos_checklist_item ci ON ci.descriptor = d.id
+    WHERE ci.checklist = ?
+    ORDER BY d.level, d.competence';
 
 if (!$descriptors = get_records_sql_array($sql, array($id))) {
     $descriptors = array();
@@ -59,37 +53,47 @@ if (!$descriptors = get_records_sql_array($sql, array($id))) {
 // group by competences and levels
 $competences = array();
 $sendarray = array();
+$count = 0;
 
 foreach ($descriptors as $desc) {
     if (!array_key_exists($desc->competence, $competences)) {
-        $competences[$desc->competence] = array('competence' => $desc->competence,
-        					   'competencestr' => get_string($desc->competence, 'artefact.epos'),
-                               $desc->level => 0.0,
-                               $desc->level . 'max' => 0);
+        $competences[$desc->competence] = array(
+                'competence' => $desc->competence,
+                'index' => $count
+        );
         $count++;
     }
     if (!array_key_exists($desc->level, $competences[$desc->competence])) {
-        $competences[$desc->competence][$desc->level] = 0.0;
-        $competences[$desc->competence][$desc->level . 'max'] = 0;
+        $competences[$desc->competence][$desc->level] = array(
+                'val' => 0.0,
+                'max' => 0
+        );
     }
-    $competences[$desc->competence][$desc->level] += (float)$desc->evaluation;
-    $competences[$desc->competence][$desc->level . 'max'] += 2;
+    $competences[$desc->competence][$desc->level]['val'] += (float)$desc->evaluation;
+    $competences[$desc->competence][$desc->level]['max'] += 2;    //FIXME: depends on number of evaluation levels
 }
 
-$competences['final'] = array();
+$competences['dummy'] = array('index' => $count);
 $previous = '';
 
+//print_r($competences);
+//echo '<br/>';
+
 //calculate percentage
-foreach (array_keys($competences) as $c) {
-    foreach (array_keys($competences[$c]) as $l) {
-        if (array_key_exists($l . 'max', $competences[$c])) {
-            $competences[$c][$l] = round(100 * ($competences[$c][$l] / $competences[$c][$l . 'max']));
+foreach ($competences as $c) {
+    foreach (array_keys($c) as $l) {
+        if (is_array($c[$l])) {
+            $c[$l]['val'] = round(100 * $c[$l]['val'] / $c[$l]['max']);
+            
         }
     }
-    $competences[$c]['previous'] = $previous;
-    $previous = $c;
-    $sendarray[] = $competences[$c];
+    $c['previous'] = $previous;
+    $previous = $c['index'];
+    $sendarray[] = $c;
 }
+
+//print_r($sendarray);
+//echo '<br/>';
 
 //send
 echo json_encode(array(
