@@ -149,7 +149,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
             $descriptorsettable = 'artefact_epos_descriptor_set';
             $descriptortable = 'artefact_epos_descriptor';
             
-            $values['name'] = $xmlarr['XML']['#']['DESCRIPTORSET']['0']['@']['NAME'];
+            $descriptorset_newname = $values['name'] = $xmlarr['XML']['#']['DESCRIPTORSET']['0']['@']['NAME'];
             $values['descriptorset'] = insert_record($descriptorsettable, (object)($values), 'id', true);
             
             insert_record('artefact_epos_descriptorset_subject', (object)($values));
@@ -178,6 +178,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                         SET descriptorint=$descriptor_new 
                         WHERE descriptor='$descriptor_old'");
             }
+            execute_sql("UPDATE artefact 
+                    SET title = '$descriptorset_newname' 
+                    WHERE artefacttype = 'checklist' AND title='$set'");
         }
         
         execute_sql('ALTER TABLE artefact_epos_checklist_item 
@@ -198,7 +201,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION');
         execute_sql("ALTER TABLE artefact_epos_descriptorset_subject
                 ALTER subject DROP DEFAULT");
-}
+    }
     
     return true;
 }
