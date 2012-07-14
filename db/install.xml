@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="artefact/epos/db" VERSION="20101112" COMMENT="XMLDB file for epos tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
         <TABLE NAME="artefact_epos_subject"> 
@@ -48,7 +48,7 @@
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="link"              TYPE="text" />
+                <FIELD NAME="link"              TYPE="text" NOTNULL="false" />
                 <FIELD NAME="competence"        TYPE="text" NOTNULL="true" />
                 <FIELD NAME="level"             TYPE="text" NOTNULL="true" />
                 <FIELD NAME="evaluations"       TYPE="text" NOTNULL="true" />
@@ -65,7 +65,7 @@
                 <FIELD NAME="checklist"         TYPE="int" LENGTH="10" NOTNULL="true" />
                 <FIELD NAME="descriptor"        TYPE="int" LENGTH="10" NOTNULL="true" />
                 <FIELD NAME="evaluation"        TYPE="int" NOTNULL="true" />
-                <FIELD NAME="goal"              TYPE="int" />
+                <FIELD NAME="goal"              TYPE="int" NOTNULL="false" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="checklistfk"         TYPE="foreign" FIELDS="checklist" REFTABLE="artefact" REFFIELDS="id" />
