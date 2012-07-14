@@ -171,7 +171,7 @@ class ArtefactTypeChecklist extends ArtefactType {
      */
     public function display_title() {
         $language = get_field('artefact', 'title', 'id', $this->parent);
-        return $language . ' (' . get_string('descriptorset.' . $this->title, 'artefact.epos') . ')';
+        return $language . ' (' . $this->title . ')';
     }
     
     /**
