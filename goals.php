@@ -39,23 +39,21 @@ safe_require('artefact', 'internal');
 safe_require('artefact', 'epos');
 
 $haslanguages = true;
-$id = 0;
-
+$id = isset($_GET['id']) ? $_GET['id'] : 0;
 $owner = $USER->get('id');
 
 //get user's languages
 $sql = 'SELECT id, title
     FROM artefact 
-    WHERE owner = ? and artefacttype = ?';
+    WHERE owner = ? and artefacttype = ?
+    ORDER BY title';
 
-if (!$data = get_records_sql_array($sql, array($owner, 'learnedlanguage'))) {
+if (!$data = get_records_sql_array($sql, array($owner, 'subject'))) {
     $data = array();
 }
 
 // generate language links
 if ($data) {
-    usort($data, 'cmpByTitle');
-
     // select first language if GET parameter is not set
     if (!isset($_GET['id'])) {
         $id = $data[0]->id;

@@ -31,7 +31,6 @@ define('JSON', 1);    //comment to debug
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'epos');
 
-//non-debug
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
 $type = param_alpha('type');
@@ -40,18 +39,14 @@ $view = param_integer('view', 0);
 $owner = $USER->get('id');
 $id = $_GET['id'];
 
-//debug
-// $type = 'debug';
-// $id = 408;
-
-
 $data = array();
 
-$sql = 'SELECT c.title, ci.descriptor, d.level, d.competence
+$sql = 'SELECT c.title, d.name, d.level, d.competence
 	FROM artefact c
     JOIN artefact_epos_checklist_item ci ON ci.checklist = c.id
-    JOIN artefact_epos_descriptor d ON d.name = ci.descriptor
-    WHERE c.parent = ? AND ci.goal = ?';
+    JOIN artefact_epos_descriptor d ON d.id = ci.descriptor
+    WHERE c.parent = ? AND ci.goal = ?
+    ORDER BY d.competence, d.level';
 
 if (!$data = get_records_sql_array($sql, array($id, 1))) {
     $data = array();
@@ -60,31 +55,24 @@ if (!$data = get_records_sql_array($sql, array($id, 1))) {
 //substitute strings
 if ($data) {
     foreach ($data as $field) {
-        $field->descriptor = get_string($field->descriptor, 'artefact.epos');
-        $field->descriptorset = get_string('descriptorset.' . $field->title, 'artefact.epos');
-        $field->competence = get_string($field->competence, 'artefact.epos');
-        $field->level = get_string($field->level, 'artefact.epos');
+        $field->descriptor = $field->name;
+        $field->descriptorset = $field->title;
+        $field->competence = $field->competence;
+        $field->level = $field->level;
     }
 }
-
-usort($data, 'cmpByCompetenceAndLevel');
-
-
 
 //Collect custom goals for certain language
 $data_custom_goal = array();
 $sql = "SELECT id, description 
 		FROM artefact
-		WHERE artefacttype = 'customgoal' AND 
-			owner = ? AND parent = ?";
+		WHERE artefacttype = 'customgoal' AND owner = ? AND parent = ?";
 
 if(!$data_custom_goal = get_records_sql_array($sql, array($owner, $id))) {
 	$data_custom_goal = array();
 }
 
-
-$data = array_merge($data, $data_custom_goal); //TODO: Please check if this is really the way how to do it.
-
+$data = array_merge($data, $data_custom_goal);
 
 $count = count($data);
 
