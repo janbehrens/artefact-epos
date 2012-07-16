@@ -393,15 +393,16 @@ function write_descriptor_db($xml) {
         $descriptorsettable = 'artefact_epos_descriptor_set';
         $descriptortable = 'artefact_epos_descriptor';
         
-        $descriptorset = $xmlarr['XML']['#']['DESCRIPTORSET']['0'];
+        $descriptorset = $xmlarr['DESCRIPTORSET'];
         $values['name'] = $descriptorset['@']['NAME'];
         
         $values['descriptorset'] = insert_record($descriptorsettable, (object)$values, 'id', true);
         
-        foreach ($xmlarr['XML']['#']['DESCRIPTORSET']['0']['#']['DESCRIPTOR'] as $x) {
+        foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
             $values['competence'] = $x['@']['COMPETENCE'];
             $values['level']      = $x['@']['LEVEL'];
             $values['name']       = $x['@']['NAME'];
+            $values['link']       = $x['@']['LINK'];
             $values['evaluations'] = $x['@']['EVALUATIONS'];
             $values['goal_available'] = $x['@']['GOAL'];
             
