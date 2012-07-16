@@ -149,14 +149,14 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
             $descriptorsettable = 'artefact_epos_descriptor_set';
             $descriptortable = 'artefact_epos_descriptor';
             
-            $descriptorset_newname = $values['name'] = $xmlarr['XML']['#']['DESCRIPTORSET']['0']['@']['NAME'];
+            $descriptorset_newname = $values['name'] = $xmlarr['DESCRIPTORSET']['@']['NAME'];
             $values['descriptorset'] = insert_record($descriptorsettable, (object)($values), 'id', true);
             
             insert_record('artefact_epos_descriptorset_subject', (object)($values));
             
             $i = 0;
             $prev_level = '';
-            foreach ($xmlarr['XML']['#']['DESCRIPTORSET']['0']['#']['DESCRIPTOR'] as $x) {
+            foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
                 $values['name']       = $x['@']['NAME'];
                 $values['link']       = $x['@']['LINK'];
                 $values['competence'] = $x['@']['COMPETENCE'];
