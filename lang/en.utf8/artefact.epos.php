@@ -77,4 +77,16 @@ $string['customlearninggoalupdatesuccess'] = "Learning objective has been update
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you really want to delete this additional learning objectiv?';
 
+//Selfevaluation Template Editor
+$string['create_selfevaluation_template'] = 'Competency grid editor'; 
+$string['num_valuation_levels'] = 'Number of valution levels';
+$string['name_valuation_grid'] = 'Name of valuation grid';
+$string['num_rows'] = 'Number competency names';
+$string['num_cols'] = 'Number competency levels';
+$string['valuationlevel'] = 'Valuation level&nbsp;';
+$string['competency_name'] = 'Competency name&nbsp;';
+$string['competency_level'] = 'Competency level&nbsp;';
+$string['cando_statement'] = 'Can-Do statement';
+$string['tasklink'] = 'Task link';
+
 ?>

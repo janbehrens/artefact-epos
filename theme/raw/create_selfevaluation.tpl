@@ -5,8 +5,13 @@
 		<th width="200"><label for="competencyPatternTitle">{$text_name_valuation_grid}</label></th>
 		<td><input type="text" id="competencyPatternTitle" maxlength="255" size="25" /></td>
 	</tr>
+</table>
+
+<br />
+
+<table cellspacing="0">
 	<tr>
-		<th><label for="valuationLevelNumItems">{$text_num_valuation_levels}</label></th>
+		<th width="200"><label for="valuationLevelNumItems">{$text_num_valuation_levels}</label></th>
 		<td><input type="text" id="valuationLevelNumItems" maxlength="2" size="25" onkeypress="validateNumericKey(event);" onkeyup="updateValuationLevelInputFields();" value="5" /></td>
 	</tr>
 </table>
