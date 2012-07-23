@@ -70,7 +70,7 @@ foreach ($descriptors as $desc) {
         );
     }
     $competences[$desc->competence][$desc->level]['val'] += (float)$desc->evaluation;
-    $competences[$desc->competence][$desc->level]['max'] += 2;    //FIXME: depends on number of evaluation levels
+    $competences[$desc->competence][$desc->level]['max'] += count(explode(';', $desc->evaluations)) - 1;
 }
 
 $competences['dummy'] = array('index' => $count);

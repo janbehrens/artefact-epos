@@ -128,7 +128,6 @@ if ($haslanguages) {
                 'title' => ' ',
                 'value' => '',
             );
-            //FIXME: only if goal_available = true
             $elements['header_goal'] = array(
                 'type' => 'html',
                 'title' => ' ',
@@ -136,22 +135,30 @@ if ($haslanguages) {
             );
             foreach (array_keys($set[$competence][$level]) as $k) {
                 //evaluation
+                $optionsarray = array();
+                $evals = explode(';', $set[$competence][$level][$k]['evaluations']);
+                for ($j = 0; $j < count($evals); $j++) {
+                    $optionsarray[$j] = $evals[$j];
+                }
                 $elements['item' . $k] = array(
                     'type' => 'radio',
-                    'title' => $set[$competence][$level][$k],
-                    'options' => array(
-                        0 => get_string('eval0', 'artefact.epos'),
-                        1 => get_string('eval1', 'artefact.epos'),
-                        2 => get_string('eval2', 'artefact.epos'),
-                    ),
+                    'title' => $set[$competence][$level][$k]['name'],
+                    'options' => $optionsarray,
                     'defaultvalue' => $checklistitems['evaluation'][$k],
                 );
-                //goal
-                $elements['item' . $k . '_goal'] = array(
-                    'type' => 'checkbox',
-                    'title' => $set[$competence][$level][$k],
-                    'defaultvalue' => $checklistitems['goal'][$k],
-                );
+                //goal checkbox
+                $goal_count = 0;
+                if ($set[$competence][$level][$k]['goal'] == 1) {
+                    $elements['item' . $k . '_goal'] = array(
+                        'type' => 'checkbox',
+                        'title' => $set[$competence][$level][$k]['name'],
+                        'defaultvalue' => $checklistitems['goal'][$k],
+                    );
+                    $goal_count++;
+                }
+                if ($goal_count == 0) {
+                    unset($elements['header_goal']);
+                }
                 $no = $k;
             }
             $elements['competence'] = array(

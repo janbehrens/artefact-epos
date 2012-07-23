@@ -281,8 +281,11 @@ EOF;
      *     array(
      *         'Listening' => array(
      *             'A1' => array(
-     *                 101 => 'I can something',
-     *                 102 => 'I can something else',
+     *                 101 => array(
+     *                     'name' => 'I can something',
+     *                     'evaluations' => 'not at all; satisfactory; good',
+     *                     'goal' => 1
+     *                 102 => array(...),
      *                 etc.
      *             ),
      *             'A2' => array(
@@ -318,7 +321,11 @@ EOF;
             if (!isset($competences[$desc->competence][$desc->level])) {
                 $competences[$desc->competence][$desc->level] = array();
             }
-            $competences[$desc->competence][$desc->level][$desc->id] = $desc->name;
+            $competences[$desc->competence][$desc->level][$desc->id] = array(
+                    'name' => $desc->name,
+                    'evaluations' => $desc->evaluations,
+                    'goal' => $desc->goal_available
+            );
         }
         return $competences;
     }
