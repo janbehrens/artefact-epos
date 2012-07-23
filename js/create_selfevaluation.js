@@ -7,13 +7,6 @@
 	var arrCompetencyName = new Array("");
 	
 	/*
-		arrCompetencyNameComment
-		
-		Stores one comment each competency name
-	*/
-	var arrCompetencyNameComment = new Array();
-	
-	/*
 		arrCompetencyLevel
 		
 		Stores all the competency levels filled in the forms in the table horizontally.
@@ -121,22 +114,15 @@
 			if(oldColCount == "")
 				oldColCount = 0;		
 			
-			alert(oldColCount);
 			
-			//collect old data (competency names, levels and the comments to the names)
+			//collect old data (competency names, levels)
 			if(oldRowCount > 0) {
 				arrCompetencyName = new Array();
 				for(nI = 0; nI < oldRowCount; nI++) {
 					if(document.getElementById("competencyName_"+nI))
 						arrCompetencyName.push(document.getElementById("competencyName_"+nI).value);
 				}
-				arrCompetencyNameComment = new Array();
-				for(nI = 0; nI < oldRowCount; nI++) {
-					if(document.getElementById("competencyNameComment_"+nI)) {
-						arrCompetencyNameComment.push(document.getElementById("competencyNameComment_"+nI).value);
-					}
-				}
-			}			
+			}	
 			if(oldColCount > 0) {
 				arrCompetencyLevel = new Array();
 				for(nI = 0; nI < oldColCount; nI++) {
@@ -182,28 +168,22 @@
 		
 		//add input field for row count
 		col = document.createElement("td");		
-		col.setAttribute('style', 'border: 1px solid;')
-		text = document.createTextNode("Anzahl Kompetenzbereiche: ")
-		col.appendChild(text);
-		
-		input = document.createElement("input");
-		input.setAttribute("id", "rows");
-		input.setAttribute("type", "text");
-		input.setAttribute("onkeyup", "createTable('rows');");
-		input.setAttribute("value", nRows);
-		input.setAttribute("maxlength", "2");
-		input.setAttribute("size", "2");
-		
-		col.appendChild(input);		
+		col.setAttribute('style', 'border: 1px solid;');	
 		row.appendChild(col);
 		
 		//create first row with competencyLevel inputs
 		for(nI = 0; nI < nCols; nI++) {
 			col = document.createElement("td");
 			col.setAttribute('style', 'border: 1px solid;')
+			
+			label = document.createElement("label");
+			label.innerHTML = text_competencylevel;
+			col.appendChild(label);
+			
 			input = document.createElement("input");
 			input.setAttribute("id", "competencyLevel_"+nI);
 			input.setAttribute("onkeyup", "updateActualCombinationCompetencyLevel("+nI+");");
+			input.setAttribute("size", "10");
 						
 			//restore inputs if there are any
 			if(nI < arrCompetencyLevel.length)
@@ -213,22 +193,6 @@
 			row.appendChild(col);
 		}
 		
-		//add input field to change the column count
-		col = document.createElement("td");		
-		col.setAttribute('style', 'border: 1px solid;')
-		text = document.createTextNode("Anzahl Niveaustufen ")
-		col.appendChild(text);	
-		
-		input = document.createElement("input");
-		input.setAttribute("id", "cols");
-		input.setAttribute("type", "text");
-		input.setAttribute("onkeyup", "validateNumericKey(event); createTable('cols');");
-		input.setAttribute("value", nCols);
-		input.setAttribute("maxlength", "2");
-		input.setAttribute("size", "2");
-		
-		col.appendChild(input);
-		row.appendChild(col);
 		table.appendChild(row);
 		
 		//create rows
@@ -241,35 +205,22 @@
 			
 			//Input for CompetencyName
 			label = document.createElement("label");
-			label.innerHTML = "Kompetenzname:";
+			label.innerHTML = text_competencyname;
 			col.appendChild(label);
 			
 			input = document.createElement("input");
 			input.setAttribute("id", "competencyName_"+nI);
 			input.setAttribute("onkeyup", "updateActualCombinationCompetencyName("+nI+");");
+			input.setAttribute("size", "10");
 
 			//restore inputs if there are any
 			if(nI < arrCompetencyName.length)
 				input.setAttribute("value", arrCompetencyName[nI]);
 			
 			col.appendChild(input);			
-			
-			//Input for CompentencyNameComment
-			input = document.createElement("input");
-			input.setAttribute("id", "competencyNameComment_"+nI);
-			input.setAttribute("class", "competency");
-			input.setAttribute("onkeyup", "updateCompetencyNameComment("+nI+");");
-
-			//restore inputs if there are any
-			if(nI < arrCompetencyNameComment.length)
-				input.setAttribute("value", arrCompetencyNameComment[nI]);
-			
+						
 			br = document.createElement("br");
 			col.appendChild(br);
-			
-			label = document.createElement("label");
-			label.innerHTML = "Kommentar:";
-			col.appendChild(label);
 			
 			col.appendChild(input);			
 			
@@ -281,7 +232,7 @@
 				col.setAttribute('style', 'border: 1px solid;')
 				var id =  nI+'_'+nJ;
 				col.setAttribute("id", id);				
-				col.innerHTML = "<a href='#' onclick='editCanDo("+nI+","+nJ+");'>Kompetenzen (Can Do-Statements)</a>";
+				col.innerHTML = "<a href='#' onclick='editCanDo("+nI+","+nJ+");'>"+text_cando_statement+"s</a>";
 				row.appendChild(col);
 			}
 			
@@ -328,10 +279,6 @@
 		updateValuationLevelInputFields();
 	}
 	
-	function updateCompetencyNameComment(nI) {
-		arrCompetencyNameComment[nI] = document.getElementById("competencyNameComment_"+nI).value;
-	}
-	
 	//Shows the canDo statements belonging to a certain competencyName / Level combination
 	//In this case competencyName and competencyLevel are the IDs of the fields
 	//which are numbered ascending from left to right and top to bottom
@@ -369,20 +316,6 @@
 		table = document.createElement("table");
 		table.setAttribute("id", "canDoTable");
 		
-		tr = document.createElement("tr");
-		
-		td1 = document.createElement("td");
-		td2 = document.createElement("td");
-		td3 = document.createElement("td");
-		
-		td2.innerHTML = "CanDo Statement";
-		td3.innerHTML = "Aufgaben Link";
-			
-		tr.appendChild(td1);
-		tr.appendChild(td2);
-		tr.appendChild(td3);
-		
-		table.appendChild(tr);
 		
 		document.getElementById("canDos").appendChild(table);
 		
@@ -400,38 +333,76 @@
 	
 		tr = document.createElement("tr");
 			
-		td1 = document.createElement("td");
+		th = document.createElement("th");
 		td2 = document.createElement("td");
-		td3 = document.createElement("td");
+		
+		th.setAttribute("width", "200");
 		
 		label = document.createElement("label");
 		label.setAttribute("id", "lable_"+id);
-		label.innerHTML = "CanDo "+(id+1);
-		td1.appendChild(label);
+		label.setAttribute("for", competencyName+"_"+competencyLevel+"_"+id);
+		label.innerHTML = text_cando_statement+"&nbsp;"+(id+1);
+		th.appendChild(label);
 		
 		id = competencyName+"_"+competencyLevel+"_"+id;
 		
 		input = document.createElement("input");		
 		input.setAttribute("type", "text");
+		input.setAttribute("size", "25");		
 		input.setAttribute("id", id);
 		input.setAttribute("value", arrCanDo[competencyName][competencyLevel][nI]);
 		input.setAttribute("onkeyup", "saveCurrentChangedCanDo("+competencyName+","+competencyLevel+","+nI+")");
 		td2.appendChild(input);
 		
+		tr.appendChild(th);
+		tr.appendChild(td2);
+		document.getElementById("canDoTable").appendChild(tr);
+		
+		
+		
+		tr = document.createElement("tr");
+			
+		th = document.createElement("th");
+		td2 = document.createElement("td");
+		
+		th.setAttribute("width", "200");
+		
+		label = document.createElement("label");
+		label.setAttribute("id", "lable_task_link"+id);
+		label.setAttribute("for", competencyName+"_"+competencyLevel+"_"+id);
+		label.innerHTML = text_tasklink+"&nbsp;"+(nI+1);
+		th.appendChild(label);
+				
 		id = 'taskLink_' + id;
 		
 		input = document.createElement("input");		
-		input.setAttribute("type", "text");				
+		input.setAttribute("type", "text");	
+		input.setAttribute("size", "25");				
 		input.setAttribute("id", id);
 		input.setAttribute("value", arrCanDoTaskLinks[competencyName][competencyLevel][nI]);
 		input.setAttribute("onkeyup", "saveCurrentChangedCanDoLink("+competencyName+","+competencyLevel+","+nI+")");			
-		td3.appendChild(input);
+		td2.appendChild(input);
 		
-		tr.appendChild(td1);
+		tr.appendChild(th);
 		tr.appendChild(td2);
-		tr.appendChild(td3);
 		
-		document.getElementById("canDoTable").appendChild(tr);	
+		document.getElementById("canDoTable").appendChild(tr);
+		
+		
+		
+		tr = document.createElement("tr");
+			
+		th = document.createElement("th");
+		td2 = document.createElement("td");
+		
+		th.setAttribute("width", "200");
+		th.setAttribute("height", "15");
+		
+		
+		tr.appendChild(th);
+		tr.appendChild(td2);
+		
+		document.getElementById("canDoTable").appendChild(tr);
 	}
 	
 	//Stores the canDo statement which was currently updated in the array at the certain position
@@ -476,152 +447,48 @@
 	}
 	
 	function updateValuationLevelInputFields() {
-				
-		document.getElementById("valuationLevelContainer").innerHTML = "";
 		
 		if(!document.getElementById("valuationLevelNumItems").value)
 			return;			
 		
-	
-		div = document.createElement("div");
-		
-		//get the amount of fields necessary for valuation
-		switch(nActValuationDegreeId) {
-			case 1:		//valuation for whole grid
-				//number of input fields = count(nuances)
-				valuationLevelInputfields = document.getElementById("valuationLevelNumItems").value;
-				for(nI = 0; nI < valuationLevelInputfields; nI++) {
-			
-					if(arrValuationLevelGlobal[nI] == null)
-						arrValuationLevelGlobal[nI] = "";
-						
-					inDiv = document.createElement("div");						
-								
-					label = document.createElement("label");
-					label.innerHTML = "Skalenwert "+(nI+1);
-					div.appendChild(label);
-					
-					input = document.createElement("input");		
-					input.setAttribute("type", "text");
-					input.setAttribute("id", "valuationLevelGlobal_"+nI);
-					
-					input.setAttribute("value", arrValuationLevelGlobal[nI]);
-					input.setAttribute("onkeyup", "saveValuationsGlobal("+nI+")");
-					
-					inDiv.appendChild(input);
-					
-					div.appendChild(inDiv);			
-					
-				}
-			break;
-			
-			case 2:		//valuation equal for one competency
-				//number of input fields = count(nuances) * count(competencies)
-				valuationLevelInputfields = document.getElementById("valuationLevelNumItems").value;
-				
-				for(nJ = 0; nJ < document.getElementById("rows").value; nJ++) {
-					if(!arrValuationLevelCompetencyName[nJ] instanceof Array == false) 
-						arrValuationLevelCompetencyName[nJ] = new Array("");
-						
-						
-					if(!arrCompetencyName[nJ])
-						arrCompetencyName[nJ] = "empty string";
-						
-					
-					label = document.createElement("label");
-					label.innerHTML = "<b>Kompetenzbereich "+nJ+": "+arrCompetencyName[nJ]+"</b>";
-					div.appendChild(label);
-							
-					for(nI = 0; nI < valuationLevelInputfields; nI++) {
-			
-						if(arrValuationLevelCompetencyName[nJ][nI] == null)
-							arrValuationLevelCompetencyName[nJ][nI] = "";
-					
-						inDiv = document.createElement("div");
-						
-						label = document.createElement("label");
-						label.innerHTML = "Skalenwert "+(nI+1);
-						inDiv.appendChild(label);
-						
-						input = document.createElement("input");		
-						input.setAttribute("type", "text");
-						input.setAttribute("id", "valuationLevelCompetencyName_"+nJ+"_"+nI);
-						
-						input.setAttribute("value", arrValuationLevelCompetencyName[nJ][nI]);
-						input.setAttribute("onkeyup", "saveValuationsCompetencyName("+nJ+","+ nI+")");
-						
-						inDiv.appendChild(input);
-						
-						div.appendChild(inDiv);			
-						
-					}
-					sinDiv = document.createElement("div");
-					
-					label = document.createElement("label");
-					label.innerHTML = "---";
-					sinDiv.appendChild(label);
-					
-					div.appendChild(sinDiv);	
-				}
-				
-				div.removeChild(sinDiv);
-				break;					
-				case 3:		//valuation equal for one level
-				//number of input fields = count(nuances) * count(levels)
-				valuationLevelInputfields = document.getElementById("valuationLevelNumItems").value;
-				
-				for(nJ = 0; nJ < document.getElementById("cols").value; nJ++) {
-					if(!arrValuationLevelCompetencyLevel[nJ] instanceof Array == false) 
-						arrValuationLevelCompetencyLevel[nJ] = new Array("");
-						
-						
-					if(!arrCompetencyLevel[nJ])
-						arrCompetencyLevel[nJ] = "empty string";
-						
-					
-					label = document.createElement("label");
-					label.innerHTML = "<b>Kompetenzniveau "+nJ+": "+arrCompetencyLevel[nJ]+"</b>";
-					div.appendChild(label);
-							
-					for(nI = 0; nI < valuationLevelInputfields; nI++) {
-			
-						if(arrValuationLevelCompetencyLevel[nJ][nI] == null)
-							arrValuationLevelCompetencyLevel[nJ][nI] = "";
-					
-						inDiv = document.createElement("div");
-						
-						label = document.createElement("label");
-						label.innerHTML = "Skalenwert "+(nI+1);
-						inDiv.appendChild(label);
-						
-						input = document.createElement("input");		
-						input.setAttribute("type", "text");
-						input.setAttribute("id", "valuationLevelCompetencyLevel_"+nJ+"_"+nI);
-						
-						input.setAttribute("value", arrValuationLevelCompetencyLevel[nJ][nI]);
-						input.setAttribute("onkeyup", "saveValuationsCompetencyLevel("+nJ+","+ nI+")");
-						
-						inDiv.appendChild(input);
-						
-						div.appendChild(inDiv);			
-						
-					}
-					sinDiv = document.createElement("div");
-					
-					label = document.createElement("label");
-					label.innerHTML = "---";
-					sinDiv.appendChild(label);
-					
-					div.appendChild(sinDiv);	
-				}
-				
-				div.removeChild(sinDiv);
-				break;
-				
-			
+		var table = document.getElementById("valuation_level_table");
+
+		while ( table.hasChildNodes() ) { 
+			table.removeChild( table.firstChild );
 		}
+
+		//number of input fields = count(nuances)
+		valuationLevelInputfields = document.getElementById("valuationLevelNumItems").value;
+		for(nI = 0; nI < valuationLevelInputfields; nI++) {
 	
-		document.getElementById("valuationLevelContainer").appendChild(div);
+			if(arrValuationLevelGlobal[nI] == null)
+				arrValuationLevelGlobal[nI] = "";
+				
+			tr 	= document.createElement("tr");	
+			th	= document.createElement("th");
+			td 	= document.createElement("td");	
+			
+			th.setAttribute("width", "200");
+						
+			label 	= document.createElement("label");
+			label.setAttribute("for", "valuationLevelGlobal_"+nI);
+			label.innerHTML 	= text_valuationlevel+(nI+1);
+			
+			input = document.createElement("input");		
+			input.setAttribute("type", "text");
+			input.setAttribute("size", "25");
+			input.setAttribute("id", "valuationLevelGlobal_"+nI);					
+			input.setAttribute("value", arrValuationLevelGlobal[nI]);
+			input.setAttribute("onkeyup", "saveValuationsGlobal("+nI+")");
+								
+			td.appendChild(input);
+			th.appendChild(label);					
+			tr.appendChild(th);
+			tr.appendChild(td);
+			
+			document.getElementById("valuation_level_table").appendChild(tr);					
+		}
+
 	}
 	
 	function saveValuationsGlobal(nI) {
