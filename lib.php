@@ -72,36 +72,6 @@ class PluginArtefactEpos extends PluginArtefact {
                 'url' => 'artefact/epos/checklist.php',
                 'weight' => 32,
             ),
-            array(
-                'path' => 'dossier',
-                'title' => get_string('dossier', 'artefact.epos'),
-                'url' => 'artefact/file/',
-                'weight' => 34,
-            ),
-            /*array(
-                'path' => 'diary',
-                'title' => get_string('diary', 'artefact.epos'),
-                'url' => 'artefact/blog',
-                'weight' => 36,
-            ),*/
-            /*array(
-                'path' => 'biography',
-                'title' => get_string('biography', 'artefact.epos'),
-                'url' => 'artefact/resume/',
-                'weight' => 38,
-            ),*/
-            /*array(
-                'path' => 'biography/resume',
-                'title' => get_string('biography', 'artefact.epos'),
-                'url' => 'artefact/resume/',
-                'weight' => 10,
-            ),
-            array(
-                'path' => 'biography/myexperience',
-                'title' => get_string('myexperience', 'artefact.epos'),
-                'url' => 'artefact/epos/experience.php',
-                'weight' => 38,
-            )*/
         );
     }
 }
