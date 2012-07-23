@@ -324,7 +324,8 @@ EOF;
             $competences[$desc->competence][$desc->level][$desc->id] = array(
                     'name' => $desc->name,
                     'evaluations' => $desc->evaluations,
-                    'goal' => $desc->goal_available
+                    'goal' => $desc->goal_available,
+                    'link' => $desc->link
             );
         }
         return $competences;

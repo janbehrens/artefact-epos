@@ -159,6 +159,11 @@ if ($haslanguages) {
                 if ($goal_count == 0) {
                     unset($elements['header_goal']);
                 }
+                //link
+                if ($set[$competence][$level][$k]['link'] != '') {
+                    $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '" target="_blank">(Aufgabe)</a>';
+                    $elements['item' . $k . '_goal']['title'] = $elements['item' . $k]['title'];
+                }
                 $no = $k;
             }
             $elements['competence'] = array(
