@@ -37,6 +37,7 @@ $string['biography'] = 'Biography';
 $string['mylanguages'] = 'My Languages';
 $string['myexperience'] = 'My Experience';
 $string['mydiary'] = 'My Diary';
+$string['templates'] = 'Templates';
 
 //interaction
 $string['add'] = 'Add';

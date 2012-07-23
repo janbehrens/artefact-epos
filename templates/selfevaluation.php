@@ -26,12 +26,10 @@
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'selfevaluation');
-define('SECTION_PLUGINTYPE', 'artefact');
-define('SECTION_PLUGINNAME', 'epos');
-define('SECTION_PAGE', 'create_selfevaluation');
+define('INSTITUTIONALSTAFF', 1);
+define('MENUITEM', 'templates/selfevaluation');
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 define('TITLE', get_string('create_selfevaluation', 'artefact.epos'));
 require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
