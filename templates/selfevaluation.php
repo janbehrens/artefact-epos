@@ -67,7 +67,7 @@ function submitTemplate() {
 	var jsonTypeOfValuation					= JSON.stringify(nActValuationDegreeId);
 	
 	
-	sendjsonrequest('create_selfevaluation.json.php',
+	sendjsonrequest('selfevaluation.json.php',
             {'arrCompetencyNames': jsonCompetencyName,
 				'arrCompetencyLevel': jsonCompetencyLevel,
 				'arrCanDo': jsonCanDo,
