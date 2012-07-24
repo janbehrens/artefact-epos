@@ -32,14 +32,16 @@ safe_require('artefact', 'epos');
 function xmldb_artefact_epos_upgrade($oldversion=0) {
     
     if ($oldversion < 2012060500) {
-        //note: tested with Postgres only
-        
         $plugindir = get_config('docroot') . 'artefact/epos/';
         
         //-------artefact-------
         
-        execute_sql('ALTER TABLE artefact
-                DROP CONSTRAINT arte_art_fk');
+        if (is_postgres()) {
+            execute_sql('ALTER TABLE artefact DROP CONSTRAINT arte_art_fk');
+        }
+        else {
+            execute_sql('ALTER TABLE artefact DROP FOREIGN KEY arte_art_fk');
+        }
         execute_sql("UPDATE artefact SET artefacttype = 'subject' WHERE artefacttype = 'learnedlanguage'");
         execute_sql("UPDATE artefact_installed_type SET name = 'subject' WHERE name = 'learnedlanguage'");
         execute_sql('ALTER TABLE artefact
@@ -52,7 +54,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table = new XMLDBTable('artefact_epos_subject');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
-        $table->addFieldInfo('institution', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
+        $table->addFieldInfo('institution', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL);
         $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
         $table->addKeyInfo('institutionfk', XMLDB_KEY_FOREIGN, array('institution'), 'institution', array('name'));
         if (!create_table($table)) {
@@ -66,7 +68,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         
         $table = new XMLDBTable('artefact_epos_artefact_subject');
         $table->addFieldInfo('artefact', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
-        $table->addFieldInfo('subject', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, $subject_id);
+        $table->addFieldInfo('subject', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addKeyInfo('artefactfk', XMLDB_KEY_FOREIGN, array('artefact'), 'artefact', array('id'));
         $table->addKeyInfo('subjectfk', XMLDB_KEY_FOREIGN, array('subject'), 'artefact_epos_subject', array('id'));
         if (!create_table($table)) {
@@ -74,7 +76,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         }
         
         execute_sql("INSERT INTO artefact_epos_artefact_subject 
-                SELECT id as artefact FROM artefact WHERE artefacttype = 'subject'");
+                SELECT id as artefact, $subject_id FROM artefact WHERE artefacttype = 'subject'");
         execute_sql("ALTER TABLE artefact_epos_artefact_subject
                 ALTER subject DROP DEFAULT");
                 
@@ -189,12 +191,18 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 DROP COLUMN id');
         execute_sql('DELETE FROM artefact_epos_checklist_item 
                 WHERE descriptorint IS NULL');
-        execute_sql('ALTER TABLE artefact_epos_checklist_item 
-                ALTER COLUMN descriptorint SET NOT NULL');
-        execute_sql('ALTER TABLE artefact_epos_checklist_item 
-                RENAME descriptorint TO descriptor');
-        execute_sql('ALTER TABLE artefact_epos_checklist_item 
-                ALTER COLUMN goal DROP NOT NULL');
+        if (is_postgres()) {
+            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+                    ALTER COLUMN descriptorint SET NOT NULL');
+            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+                    RENAME descriptorint TO descriptor');
+            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+                    ALTER COLUMN goal DROP NOT NULL');
+        }
+        else {
+            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+                    CHANGE descriptorint descriptor bigint');
+        }
         execute_sql('ALTER TABLE artefact_epos_checklist_item
                 ADD CONSTRAINT arteeposchecitem_des_fk FOREIGN KEY (descriptor) 
                 REFERENCES artefact_epos_descriptor (id) 
