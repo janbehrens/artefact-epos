@@ -201,7 +201,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         }
         else {
             execute_sql('ALTER TABLE artefact_epos_checklist_item 
-                    CHANGE descriptorint descriptor bigint');
+                    CHANGE descriptorint descriptor bigint(10) NOT NULL');
+            execute_sql('ALTER TABLE artefact_epos_checklist_item
+                    MODIFY goal bigint(10)');
         }
         execute_sql('ALTER TABLE artefact_epos_checklist_item
                 ADD CONSTRAINT arteeposchecitem_des_fk FOREIGN KEY (descriptor) 
