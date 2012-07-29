@@ -33,7 +33,6 @@ safe_require('artefact', 'epos');
 
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
-$type = param_alpha('type');
 $view = param_integer('view', 0);
 
 $owner = $USER->get('id');
@@ -45,10 +44,10 @@ $sql = 'SELECT c.title, d.name, d.level, d.competence
 	FROM artefact c
     JOIN artefact_epos_checklist_item ci ON ci.checklist = c.id
     JOIN artefact_epos_descriptor d ON d.id = ci.descriptor
-    WHERE c.parent = ? AND ci.goal = ?
+    WHERE c.parent = ? AND ci.goal = 1
     ORDER BY d.competence, d.level';
 
-if (!$data = get_records_sql_array($sql, array($id, 1))) {
+if (!$data = get_records_sql_array($sql, array($id))) {
     $data = array();
 }
 
@@ -74,14 +73,11 @@ if(!$data_custom_goal = get_records_sql_array($sql, array($owner, $id))) {
 
 $data = array_merge($data, $data_custom_goal);
 
-$count = count($data);
-
 echo json_encode(array(
     'data' => $data,
     'limit' => $limit,
     'offset' => $offset,
-    'count' => $count,
-    'type' => $type,
+    'count' => count($data),
 ));
 
 ?>
