@@ -30,7 +30,7 @@ defined('INTERNAL') || die();
 class PluginBlocktypeGoals extends PluginBlocktype {
 
     public static function single_only() {
-        return true;
+        return false;
     }
 
     public static function get_title() {
@@ -53,18 +53,19 @@ class PluginBlocktypeGoals extends PluginBlocktype {
         }
         return '';
     }
-
+    
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $result = '';
         $configdata = $instance->get('configdata');
+        $id = $configdata['artefactid'];
         
         if (!empty($configdata['artefactid'])) {
-            $jsonpath = get_config('wwwroot') . 'artefact/epos/goals.json.php?id=' . $configdata['artefactid'];
+            $jsonpath = get_config('wwwroot') . 'artefact/epos/goals.json.php?id=' . $id;
             
             $inlinejs = <<<EOF
-        
-tableRenderer = new TableRenderer(
-    'goals_table',
+
+tableRenderer{$id} = new TableRenderer(
+    'goals_table{$id}',
     '{$jsonpath}',
     [
         function (r, d) {
@@ -92,12 +93,13 @@ tableRenderer = new TableRenderer(
     ]
 );
 
-tableRenderer.emptycontent = '';
-tableRenderer.paginate = false;
-tableRenderer.updateOnLoad();
+tableRenderer{$id}.emptycontent = '';
+tableRenderer{$id}.paginate = false;
+tableRenderer{$id}.updateOnLoad();
 EOF;
             
             $smarty = smarty_core();
+            $smarty->assign('id', $id);
             $smarty->assign('JAVASCRIPT', $inlinejs);
             
             $result = $smarty->fetch('artefact:epos:viewgoals.tpl');
@@ -120,6 +122,17 @@ EOF;
         );
     }
     
+    /**
+     * Optional method. If specified, allows the blocktype class to munge the 
+     * artefactchooser element data before it's templated
+     */
+    public static function artefactchooser_get_element_data($artefact) {
+    	$instance = artefact_instance_from_id($artefact->id);
+        $artefact->title = $instance->display_title();
+        $artefact->hovertitle = '';
+        return $artefact;
+    }
+    
     public static function has_instance_config() {
         return true;
     }
@@ -134,6 +147,10 @@ EOF;
     
     public static function default_copy_type() {
         return 'full';
+    }
+
+    public static function has_title_link() {
+        return false;
     }
 }
 
