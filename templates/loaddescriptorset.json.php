@@ -21,7 +21,7 @@
  * @subpackage artefact-epos
  * @author     Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011 Jan Behrens, jb3@informatik.uni-bremen.de
+ * @copyright  (C) 2012 Jan Behrens, jb3@informatik.uni-bremen.de
  *
  */
 
@@ -31,44 +31,12 @@ define('JSON', 1);
 require(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 safe_require('artefact', 'epos');
 
-$data = array();
-
+$file = param_variable('file');
 $dir = dirname(dirname(__FILE__)) . '/db/descriptorsets/';
 
-//read files
-if ($dh = opendir($dir)) {
-    while (($file = readdir($dh)) !== false) {
-        if (substr($file, 0, 1) != '.') {
-            $xmlcontents = file_get_contents($dir . $file);
-            $xmlarr = xmlize($xmlcontents);
-            
-            $data[] = array(
-                    'name' => $xmlarr['DESCRIPTORSET']['@']['NAME'],
-                    'installed' => 'not installed',
-                    'file' => $file,
-            );
-        }
-    }
-    closedir($dh);
-}
+$success = write_descriptor_db($dir . $file);
 
-//read DB
-$sql = 'SELECT * FROM artefact_epos_descriptor_set';
-if (!$dbdata = get_records_sql_array($sql, array())) {
-    $dbdata = array();
-}
-//array_merge($data, $dbdata);
-for ($i = 0; $i < count($data); $i++) {
-    for ($j = 0; $j < count($dbdata); $j++) {
-        if ($dbdata[$j]->name == $data[$i]['name']) {
-            $data[$i]['installed'] = 'installed';
-        }
-    }
-}
-
-echo json_encode(array(
-    'data' => $data,
-    'count' => count($data)
-));
+//reply
+json_reply(!$success, get_string('customlearninggoalupdatesuccess', 'artefact.epos'));
 
 ?>

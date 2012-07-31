@@ -23,7 +23,7 @@
     <div id="learnedlanguageform" class="hidden">{$languageform|safe}</div>
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
 </div>
-{else}No descriptorsets installed! <a href="installdescriptors.php">Install</a>
+{else}No descriptorsets installed! Admins and staff can install descriptorsets <a href="templates/selfevaluation.php">here</a>.
 {/if}
 
 {include file="footer.tpl"}

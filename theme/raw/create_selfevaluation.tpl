@@ -1,5 +1,24 @@
 {include file="header.tpl"}
 
+<table id="descriptorsets">
+    <thead>
+        <tr>
+            <th>{str tag='name' section='mahara'}</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {foreach from=$rows item=row}
+        <tr class="{cycle values='r0,r1'}">
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+
 <table cellspacing="0">
 	<tr>
 		<th width="200"><label for="competencyPatternTitle">{$text_name_valuation_grid}</label></th>
