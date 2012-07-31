@@ -42,6 +42,16 @@
 	var arrCanDoTaskLinks = new Array();	
 	
 	/*
+		arrCanDoCanBeGoal
+		
+		Stores wheter a CanDo statement can be a goal or not
+		
+		Structure:
+		same as arrCanDo
+	*/
+	var arrCanDoCanBeGoal = new Array();
+	
+	/*
 		arrValuationLevelGlobal
 		
 		Stores the valuation levels if checked globally
@@ -53,29 +63,12 @@
 	*/
 	var arrValuationLevelGlobal = new Array();
 	
-	/*
-		equal for competencyName
-		
-		array(array(), array(), ...)
-	*/
-	var arrValuationLevelCompetencyName = new Array(); 
-	
-	/*
-		equal for competencyLevel
-		
-		array(array(), array(), ...)
-	*/
-	var arrValuationLevelCompetencyLevel = new Array(); 	
-	
 	var nActCompetencyName = null;
 	var nActCompetencyLevel = null;
 	
 	var nActValuationId = 1;
 	var nActValuationDegreeId = 1;
-	
-	//TODO: make it language independet
-	var valuationDegree = "Anzahl der Selbsteinsch&auml;tzungsstufen f&uuml;r <b>die gesamte Kompetenzmatrix</b>.";	
-	
+		
 	function onChangeColsRows(lastEdited) {		
 		createTable(lastEdited);
 	}
@@ -305,11 +298,13 @@
 		if(arrCanDo[competencyName] instanceof Array == false) {
 			arrCanDo[competencyName] = new Array("");
 			arrCanDoTaskLinks[competencyName] = new Array("");
+			arrCanDoCanBeGoal[competencyName] = new Array("");
 		}
 		
 		if(arrCanDo[competencyName][competencyLevel] instanceof Array == false) {
 			arrCanDo[competencyName][competencyLevel] = new Array("");
 			arrCanDoTaskLinks[competencyName][competencyLevel] = new Array("");
+			arrCanDoCanBeGoal[competencyName][competencyLevel] = new Array("");
 		}
 		
 		//Create the table for the canDo statements and add it to the div.
@@ -360,6 +355,8 @@
 		
 		
 		
+		id = competencyName+"_"+competencyLevel+"_"+nI;
+		
 		tr = document.createElement("tr");
 			
 		th = document.createElement("th");
@@ -369,7 +366,7 @@
 		
 		label = document.createElement("label");
 		label.setAttribute("id", "lable_task_link"+id);
-		label.setAttribute("for", competencyName+"_"+competencyLevel+"_"+id);
+		label.setAttribute("for", competencyName+"_"+competencyLevel+"_"+nI);
 		label.innerHTML = text_tasklink+"&nbsp;"+(nI+1);
 		th.appendChild(label);
 				
@@ -388,6 +385,38 @@
 		
 		document.getElementById("canDoTable").appendChild(tr);
 		
+		
+		
+		id = competencyName+"_"+competencyLevel+"_"+nI;
+		
+		tr = document.createElement("tr");
+			
+		th = document.createElement("th");
+		td2 = document.createElement("td");
+		
+		th.setAttribute("width", "200");
+		
+		label = document.createElement("label");
+		label.setAttribute("id", "lable_canBeGoal_"+id);
+		label.setAttribute("for", "canBeGoal_"+competencyName+"_"+competencyLevel+"_"+nI);
+		label.innerHTML = text_canBeGoal+"&nbsp;"+(nI+1);
+		th.appendChild(label);
+				
+		id = 'canBeGoal_' + id;
+		
+		input = document.createElement("input");		
+		input.setAttribute("type", "checkbox");	
+		input.setAttribute("style", "margin-left: 0px;");				
+		input.setAttribute("id", id);
+		if(arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true)
+			input.setAttribute("checked", "");
+		input.setAttribute("onclick", "saveCurrentChangedCanDoCanBeGoal("+competencyName+","+competencyLevel+","+nI+")");			
+		td2.appendChild(input);
+		
+		tr.appendChild(th);
+		tr.appendChild(td2);
+		
+		document.getElementById("canDoTable").appendChild(tr);		
 		
 		
 		tr = document.createElement("tr");
@@ -432,6 +461,14 @@
 		arrCanDoTaskLinks[competencyName][competencyLevel][id] = document.getElementById(elementId).value;
 	}
 	
+	//stores the currently changed link which belongs to a certain canDo statement in an array
+	function saveCurrentChangedCanDoCanBeGoal(competencyName, competencyLevel, id) {
+		//save changes to can do array, if it is the last one in the row make a new input field	
+		elementId = 'canBeGoal_'+competencyName+"_"+competencyLevel+"_"+id;
+				
+		arrCanDoCanBeGoal[competencyName][competencyLevel][id] = document.getElementById(elementId).checked;
+	}
+	
 	//Checks wether the typed in value is a number or not
 	function validateNumericKey(evt) {
 		var theEvent = evt || window.event;
@@ -455,6 +492,16 @@
 
 		while ( table.hasChildNodes() ) { 
 			table.removeChild( table.firstChild );
+		}
+		
+		tmpArrVauationLevels = arrValuationLevelGlobal;
+		arrValuationLevelGlobal = Array("");
+		
+		//number of input fields = count(nuances)
+		valuationLevelInputfields = document.getElementById("valuationLevelNumItems").value;
+		for(nI = 0; nI< valuationLevelInputfields; nI++) {
+			//alert(tmpArrVauationLevels[nI]);
+			arrValuationLevelGlobal[nI] = tmpArrVauationLevels[nI];
 		}
 
 		//number of input fields = count(nuances)
@@ -493,37 +540,6 @@
 	
 	function saveValuationsGlobal(nI) {
 		arrValuationLevelGlobal[nI] = document.getElementById("valuationLevelGlobal_"+nI).value;
-	}
-	
-	function saveValuationsCompetencyName(nJ, nI) {	
-		arrValuationLevelCompetencyName[nJ][nI] = document.getElementById("valuationLevelCompetencyName_"+nJ+"_"+nI).value;		
-	}
-	
-	function saveValuationsCompetencyLevel(nJ, nI) {	
-		arrValuationLevelCompetencyLevel[nJ][nI] = document.getElementById("valuationLevelCompetencyLevel_"+nJ+"_"+nI).value;		
-	}
-	
-	function changeValuationLevelDegree(degreeId) {	
-		//something to do here?
-		nActValuationDegreeId = degreeId;
-		
-		switch(degreeId) {
-			case 1:
-			valuationDegree = "Anzahl der Selbsteinsch&auml;tzungsstufen f&uuml;r <b>die gesamte Kompetenzmatrix</b>.";
-			break;
-			
-			case 2:
-				valuationDegree = "Anzahl der Selbsteinsch&auml;tzungsstufen f&uuml;r <b>einen Kompetenzbereich</b>.";
-				break;
-			
-			case 3:
-				valuationDegree = "Anzahl der Selbsteinsch&auml;tzungsstufen f&uuml;r <b>eine Niveaustufe</b>.";
-				break;
-		}
-		nCount = document.getElementById("valuationLevelNumItems").value;
-		document.getElementById("valuationLevelDescNumItems").innerHTML = valuationDegree + '&nbsp;<input type="text" id="valuationLevelNumItems" maxlength="2" onkeypress="validateNumericKey(event);" onkeyup="updateValuationLevelInputFields();" value="'+nCount+'" />';
-	
-		updateValuationLevelInputFields();
 	}
 	
 	function atload() {createTable();}

@@ -110,8 +110,7 @@ function submitTemplate() {
 	var jsonCompetencyLevel 				= JSON.stringify(arrCompetencyLevel);
 	var jsonCanDo 							= JSON.stringify(arrCanDo);
 	var jsonCanDoTaskLink					= JSON.stringify(arrCanDoTaskLinks);
-	var jsonValuationLevelCompetencyName	= JSON.stringify(arrValuationLevelCompetencyName);
-	var jsonValuationLevelCompetencyLevel	= JSON.stringify(arrValuationLevelCompetencyLevel);
+	var jsonCanDoCanBeGoal					= JSON.stringify(arrCanDoCanBeGoal);
 	var jsonValuationLevelGlobal			= JSON.stringify(arrValuationLevelGlobal);
 	var jsonTypeOfValuation					= JSON.stringify(nActValuationDegreeId);
 	
@@ -121,8 +120,7 @@ function submitTemplate() {
 				'arrCompetencyLevel': jsonCompetencyLevel,
 				'arrCanDo': jsonCanDo,
 				'arrCanDoTaskLink': jsonCanDoTaskLink,
-				'arrValuationLevelCompetencyName': jsonValuationLevelCompetencyName,
-				'arrValuationLevelCompetencyLevel': jsonValuationLevelCompetencyLevel,
+				'arrCanDoCanBeGoal': jsonCanDoCanBeGoal,
 				'arrValuationLevelGlobal': jsonValuationLevelGlobal,
 				'jsonTypeOfValuation': jsonTypeOfValuation,
 				'jsonCompetencyPatternTitle': jsonCompetencyPatternTitle
@@ -142,6 +140,7 @@ var text_competencyname 	= "$text_competencyname";
 var text_competencylevel 	= "$text_competencylevel";
 var text_cando_statement	= "$text_cando_statement";
 var text_tasklink			= "$text_tasklink";
+var text_canBeGoal			= "Lernziel?";
 EOF;
 
 $smarty = smarty(array('tablerenderer',

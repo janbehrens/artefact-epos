@@ -36,8 +36,7 @@ $arrCompetencyName 					= param_variable('arrCompetencyNames');
 $arrCompetencyLevel 				= param_variable('arrCompetencyLevel');
 $arrCanDo							= param_variable('arrCanDo');
 $arrCanDoTaskLink					= param_variable('arrCanDoTaskLink');
-$arrValuationLevelCompetencyName	= param_variable('arrValuationLevelCompetencyName');
-$arrValuationLevelCompetencyLevel	= param_variable('arrValuationLevelCompetencyLevel');
+$arrCanDoCanBeGoal					= param_variable('arrCanDoCanBeGoal');
 $arrValuationLevelGlobal			= param_variable('arrValuationLevelGlobal');
 $competencyPatternTitle				= param_variable('jsonCompetencyPatternTitle');
 $typeOfValuation					= param_variable('jsonTypeOfValuation');
@@ -46,8 +45,7 @@ $arrCompetencyName 					= json_decode($arrCompetencyName);
 $arrCompetencyLevel 				= json_decode($arrCompetencyLevel);
 $arrCanDo 							= json_decode($arrCanDo);
 $arrCanDoTaskLink					= json_decode($arrCanDoTaskLink);
-$arrValuationLevelCompetencyName	= json_decode($arrValuationLevelCompetencyName);
-$arrValuationLevelCompetencyLevel	= json_decode($arrValuationLevelCompetencyLevel);
+$arrCanDoCanBeGoal					= json_decode($arrCanDoCanBeGoal);
 $arrValuationLevelGlobal			= json_decode($arrValuationLevelGlobal);
 $competencyPatternTitle				= json_decode($competencyPatternTitle);
 $typeOfValuation					= json_decode($typeOfValuation);
@@ -80,31 +78,22 @@ for($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 			if($nK > 0 && $arrCanDo[$nI][$nJ][$nK] == "" && $arrCanDoTaskLink[$nI][$nJ][$nK] == "")
 				continue;
 			
-			switch($typeOfValuation) {
-				case 1:
-					$arrEvaluationsString = implode("; ", $arrValuationLevelGlobal);
-					break;
-						
-				case 2:
-					$arrEvaluationsString = implode("; ", $arrValuationLevelCompetencyName[$nI]);
-					break;
-						
-				case 3:
-					$arrEvaluationsString = implode("; ", $arrValuationLevelCompetencyLevel[$nJ]);
-					break;
-						
-				default:
-					$arrEvaluationsString = "";
-				break;
-			}	
-			
+			if($arrCanDoCanBeGoal[$nI][$nJ][$nK] == false ||
+				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == null ||
+				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == "" ||
+				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == 0) {
+					
+				$arrCanDoCanBeGoal[$nI][$nJ][$nK] = "0";
+			}
+
+			$arrEvaluationsString = implode("; ", $arrValuationLevelGlobal);			
 				
 			$writer->startElement("DESCRIPTOR");
 			//----------------------------------------------------
 			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$nI]);
 			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$nJ]);
 			$writer->writeAttribute('EVALUATIONS', $arrEvaluationsString);
-			$writer->writeAttribute('GOAL', "1");
+			$writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$nI][$nJ][$nK]);
 			$writer->writeAttribute('NAME', $arrCanDo[$nI][$nJ][$nK]);
 			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$nI][$nJ][$nK]);
 			//----------------------------------------------------
