@@ -39,7 +39,7 @@ class PluginArtefactEpos extends PluginArtefact {
     }
 
     public static function get_block_types() {
-        return array();
+        return array('checklist', 'goals');
     }
 
     public static function get_plugin_name() {
@@ -230,8 +230,6 @@ EOF;
     ]
 );
 
-tableRenderer{$blockid}.type = 'checklist';
-tableRenderer{$blockid}.statevars.push('type');
 tableRenderer{$blockid}.emptycontent = '';
 tableRenderer{$blockid}.updateOnLoad();
 

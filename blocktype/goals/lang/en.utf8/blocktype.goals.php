@@ -28,11 +28,11 @@
 defined('INTERNAL') || die();
 
 //general
-$string['title'] = 'Self-evaluation';
-$string['description'] = 'Display your checklist for a selected language';
-$string['defaulttitledescription'] = 'If you leave this blank, the title of the checklist will be used';
-$string['selectchecklist'] = 'Select the checklist to display';
-$string['checklistnotvisible'] = 'The checklist will be visible after a page reload.'
+$string['title'] = 'Goals';
+$string['description'] = 'Display your goals for a selected subject';
+$string['defaulttitledescription'] = 'If you leave this blank, the title of the subject will be used';
+$string['selectgoals'] = 'Select goals to display';
+$string['nogoals'] = 'No goals to display';
 
 
 ?>
