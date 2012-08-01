@@ -44,7 +44,6 @@ if ($dh = opendir($dir)) {
             
             $data[] = array(
                     'name' => $xmlarr['DESCRIPTORSET']['@']['NAME'],
-                    'installed' => 'not installed',
                     'file' => $file,
             );
         }
@@ -52,23 +51,42 @@ if ($dh = opendir($dir)) {
     closedir($dh);
 }
 
+$institution = $_GET['institution'];
+
 //read DB
-$sql = 'SELECT * FROM artefact_epos_descriptor_set';
-if (!$dbdata = get_records_sql_array($sql, array())) {
+$sql = 'SELECT d.id, d.name, s.name as subject FROM artefact_epos_descriptor_set d
+        JOIN artefact_epos_descriptorset_subject ds ON d.id = ds.descriptorset
+        JOIN artefact_epos_subject s ON s.id = ds.subject
+        JOIN institution i ON i.name = s.institution
+        WHERE i.name = ?';
+if (!$dbdata = get_records_sql_array($sql, array($institution))) {
     $dbdata = array();
 }
-//array_merge($data, $dbdata);
+
 for ($i = 0; $i < count($data); $i++) {
+    $installed = false;
     for ($j = 0; $j < count($dbdata); $j++) {
         if ($dbdata[$j]->name == $data[$i]['name']) {
-            $data[$i]['installed'] = 'installed';
+            $dbdata[$j]->installed = 'installed';
+            $installed = true;
         }
+    }
+    if (!$installed) {
+        $dbdata[] = (object) array(
+                'name' => $data[$i]['name'],
+                'file' => $data[$i]['file'],
+                'installed' => 'not installed'
+        );
     }
 }
 
+usort($dbdata, function ($a, $b) {
+    return strcoll($a->name, $b->name);
+});
+
 echo json_encode(array(
-    'data' => $data,
-    'count' => count($data)
+    'data' => $dbdata,
+    'count' => count($dbdata)
 ));
 
 ?>

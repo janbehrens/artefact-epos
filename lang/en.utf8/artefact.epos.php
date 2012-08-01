@@ -60,6 +60,7 @@ $string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
 $string['descriptorset'] = 'Descriptor set';
 $string['languages'] = 'Languages';
+$string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';
 
@@ -78,7 +79,7 @@ $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you really want to delete this additional learning objectiv?';
 
 //Selfevaluation Template Editor
-$string['create_selfevaluation_template'] = 'Competency grid editor'; 
+$string['create_selfevaluation_template'] = 'Templates for Self-evaluation'; 
 $string['num_evaluation_levels'] = 'Number of evaluation levels';
 $string['name_evaluation_grid'] = 'Name of evaluation grid';
 $string['num_rows'] = 'Number of competences';
@@ -88,5 +89,10 @@ $string['competency_name'] = 'Competence&nbsp;';
 $string['competency_level'] = 'Level&nbsp;';
 $string['cando_statement'] = 'Can-Do statement';
 $string['tasklink'] = 'Task link';
+
+//self-evaluation template management
+$string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
+$string['unloaddescriptorsetsuccess'] = 'Successfully uninstalled descriptor set';
+$string['unloaddescriptorsetfailed'] = 'Uninstalling descriptor set failed: Descriptors are in use.';
 
 ?>

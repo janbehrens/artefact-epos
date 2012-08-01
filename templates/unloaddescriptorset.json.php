@@ -31,12 +31,29 @@ define('JSON', 1);
 require(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 safe_require('artefact', 'epos');
 
-$file = param_variable('file');
-$dir = dirname(dirname(__FILE__)) . '/db/descriptorsets/';
+$id = param_variable('id');
 
-$success = write_descriptor_db($dir . $file, 1);    //FIXME !!
+/*$sql = 'SELECT id FROM artefact_epos_descriptor
+        WHERE descriptorset = ?';
+$data = get_records_sql_array($sql, array($id));
 
-//reply
-json_reply(!$success, get_string('loaddescriptorsetsuccess', 'artefact.epos'));
+foreach ($data as $field) {
+    execute_sql("UPDATE artefact_epos_checklist_item
+            SET descriptor = 0 WHERE descriptor = $field->id");
+}*/
+
+try {
+    delete_records('artefact_epos_descriptor', 'descriptorset', $id);
+    delete_records('artefact_epos_descriptorset_subject', 'descriptorset', $id);
+    delete_records('artefact_epos_descriptor_set', 'id', $id);
+
+    //reply
+    json_reply(false, get_string('unloaddescriptorsetsuccess', 'artefact.epos'));
+}
+catch (Exception $e) {
+    //reply
+    json_reply(true, get_string('unloaddescriptorsetfailed', 'artefact.epos'));
+}
+
 
 ?>

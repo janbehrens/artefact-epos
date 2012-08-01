@@ -361,7 +361,7 @@ class ArtefactTypeCustomGoal extends ArtefactType {
 }
 
 //write descriptors from xml into database
-function write_descriptor_db($xml) {
+function write_descriptor_db($xml, $subjectid) {
     if (file_exists($xml) && is_readable($xml)) {
         $contents = file_get_contents($xml);
         $xmlarr = xmlize($contents);
@@ -373,6 +373,11 @@ function write_descriptor_db($xml) {
         $values['name'] = $descriptorset['@']['NAME'];
         
         $values['descriptorset'] = insert_record($descriptorsettable, (object)$values, 'id', true);
+        
+        insert_record('artefact_epos_descriptorset_subject', array(
+                'descriptorset' => $values['descriptorset'],
+                'subject' => $subjectid
+        ));
         
         foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
             $values['competence'] = $x['@']['COMPETENCE'];

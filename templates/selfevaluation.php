@@ -35,6 +35,48 @@ require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
+$institution = isset($_GET['institution']) ? $_GET['institution'] : '';
+
+//get institutions - TODO: check membership/role
+$sql = "SELECT name, displayname FROM institution ORDER BY displayname";
+
+if (!$data = get_records_sql_array($sql, array())) {
+    $data = array();
+}
+
+$institutionexists = false;
+
+// generate institution list
+if ($data) {
+    // select first institution if GET parameter is not set
+    if ($institution == '') {
+        $institution = $data[0]->name;
+    }
+
+    $links = '<p>' . get_string('institution', 'mahara') . ': ';
+
+    foreach ($data as $field) {
+        if ($field->name == $institution) {
+            $links .= '<b>';
+            $institutionexists = true;
+        }
+        else {
+            $links .= '<a href="?institution=' . $field->name . '">';
+        }
+        $links .= $field->displayname;
+        if ($field->name == $institution) {
+            $links .= '</b> | ';
+        }
+        else {
+            $links .= '</a> | ';
+        }
+    }
+}
+
+if (!$institutionexists) {
+    //TODO: error
+}
+
 
 $text_evaluationlevel	= get_string('evaluationlevel', 'artefact.epos');
 $text_competencyname	= get_string('competency_name', 'artefact.epos');
@@ -64,15 +106,27 @@ function submitLoadDescriptorset(file) {
             });
 }
 
-function submitUnloadDescriptorset(file) {
+function submitUnloadDescriptorset(id) {
+	sendjsonrequest('unloaddescriptorset.json.php',
+            {'id': id},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            },
+            function() {
+            	// @todo error
+            });
 }
 
 tableRenderer = new TableRenderer(
     'descriptorsets',
-    'selfevaluation.json.php',
+    'selfevaluation.json.php?institution={$institution}',
     [
         function (r, d) {
             return TD(null, r.name);
+        },
+        function (r, d) {
+            return TD(null, r.subject);
         },
         function (r, d) {
             return TD(null, SPAN({'style': 'font-style:italic'}, r.installed));
@@ -82,13 +136,14 @@ tableRenderer = new TableRenderer(
                 return TD(null, A({'class': '', 'href': 'javascript: onClick=submitLoadDescriptorset("'+r.file+'");'}, '{$installstr}'));
             }
             else {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=submitUnloadDescriptorset("'+r.file+'");'}, '{$uninstallstr}'));
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=submitUnloadDescriptorset("'+r.id+'");'}, '{$uninstallstr}'));
             }
         },
     ]
 );
 
 tableRenderer.emptycontent = '';
+tableRenderer.paginate = false;
 tableRenderer.updateOnLoad();
 
 
@@ -155,6 +210,7 @@ $smarty->assign('text_num_rows', get_string('num_rows', 'artefact.epos'));
 $smarty->assign('text_num_cols', get_string('num_cols', 'artefact.epos'));
 
 //$smarty->assign('id', $id);
+$smarty->assign('links', $links);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('create_selfevaluation_template', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);

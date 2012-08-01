@@ -111,7 +111,7 @@ $writer->endDocument();
 
 $writer->flush();
 
-write_descriptor_db('my.xml');
+write_descriptor_db('my.xml', 1);    //FIXME !!
 
 //reply
 json_reply(null, $arrCompetencyName[0]);

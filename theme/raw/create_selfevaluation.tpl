@@ -1,10 +1,14 @@
 {include file="header.tpl"}
 
+<div id="institutions_list">{$links|safe}</div>
+
+<h3>Available templates</h3>
 
 <table id="descriptorsets">
     <thead>
         <tr>
             <th>{str tag='name' section='mahara'}</th>
+            <th>{str tag='subject' section='artefact.epos'}</th>
             <th>Status</th>
             <th></th>
         </tr>
@@ -20,6 +24,11 @@
     </tbody>
 </table>
 
+<h3>Load template from file</h3>
+
+under construction ...
+
+<h3>Create new template</h3>
 
 <table cellspacing="0">
 	<tr>
