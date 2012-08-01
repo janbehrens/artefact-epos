@@ -79,13 +79,13 @@ $string['customlearninggoalwanttodelete'] = 'Are you sure you really want to del
 
 //Selfevaluation Template Editor
 $string['create_selfevaluation_template'] = 'Competency grid editor'; 
-$string['num_valuation_levels'] = 'Number of valution levels';
-$string['name_valuation_grid'] = 'Name of valuation grid';
-$string['num_rows'] = 'Number competency names';
-$string['num_cols'] = 'Number competency levels';
-$string['valuationlevel'] = 'Valuation level&nbsp;';
-$string['competency_name'] = 'Competency name&nbsp;';
-$string['competency_level'] = 'Competency level&nbsp;';
+$string['num_evaluation_levels'] = 'Number of evaluation levels';
+$string['name_evaluation_grid'] = 'Name of evaluation grid';
+$string['num_rows'] = 'Number of competences';
+$string['num_cols'] = 'Number of levels';
+$string['evaluationlevel'] = 'Evaluation level&nbsp;';
+$string['competency_name'] = 'Competence&nbsp;';
+$string['competency_level'] = 'Level&nbsp;';
 $string['cando_statement'] = 'Can-Do statement';
 $string['tasklink'] = 'Task link';
 

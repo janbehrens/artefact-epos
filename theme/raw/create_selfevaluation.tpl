@@ -23,7 +23,7 @@
 
 <table cellspacing="0">
 	<tr>
-		<th width="200"><label for="competencyPatternTitle">{$text_name_valuation_grid}</label></th>
+		<th width="200"><label for="competencyPatternTitle">{$text_name_evaluation_grid}</label></th>
 		<td><input type="text" id="competencyPatternTitle" maxlength="255" size="25" /></td>
 	</tr>
 </table>
@@ -32,12 +32,12 @@
 
 <table cellspacing="0">
 	<tr>
-		<th width="200"><label for="valuationLevelNumItems">{$text_num_valuation_levels}</label></th>
-		<td><input type="text" id="valuationLevelNumItems" maxlength="2" size="25" onkeypress="validateNumericKey(event);" onkeyup="updateValuationLevelInputFields();" value="5" /></td>
+		<th width="200"><label for="evaluationLevelNumItems">{$text_num_evaluation_levels}</label></th>
+		<td><input type="text" id="evaluationLevelNumItems" maxlength="2" size="25" onkeypress="validateNumericKey(event);" onkeyup="updateEvaluationLevelInputFields();" value="5" /></td>
 	</tr>
 </table>
 
-<table id="valuation_level_table" cellspacing="0">
+<table id="evaluation_level_table" cellspacing="0">
 </table>
 
 <br />
@@ -76,14 +76,14 @@
 
 <!-- OLD UNUSED STUFF
 <div>
-	<form id="valuationLevelForm" action="#">
+	<form id="evaluationLevelForm" action="#">
 		<p>Die Anzahl der Werte in der Selbsteinsch&auml;tzungsskala <br /> soll f&uuml;r...</p>
 		<ul>
-			<li class="valuationLevelRadioGroup"><input type="radio" id="valuationLevelRadioGroupWhole" name="valuationLevelRadioGroup" value="whole" onclick="changeValuationLevelDegree(1);" checked>...die gesamte Kompetenzmatrix gleich sein.</li>
-			<li class="valuationLevelRadioGroup"><input type="radio" id="valuationLevelRadioGroupCompetency" name="valuationLevelRadioGroup" value="competency" onclick="changeValuationLevelDegree(2);">...einen Kompetenzbereich gleich sein.</li>
-			<li class="valuationLevelRadioGroup"><input type="radio" id="valuationLevelRadioGroupLevel" name="valuationLevelRadioGroup" value="level" onclick="changeValuationLevelDegree(3);">...eine Niveaustufe gleich sein.</li>
+			<li class="evaluationLevelRadioGroup"><input type="radio" id="evaluationLevelRadioGroupWhole" name="evaluationLevelRadioGroup" value="whole" onclick="changeEvaluationLevelDegree(1);" checked>...die gesamte Kompetenzmatrix gleich sein.</li>
+			<li class="evaluationLevelRadioGroup"><input type="radio" id="evaluationLevelRadioGroupCompetency" name="evaluationLevelRadioGroup" value="competency" onclick="changeEvaluationLevelDegree(2);">...einen Kompetenzbereich gleich sein.</li>
+			<li class="evaluationLevelRadioGroup"><input type="radio" id="evaluationLevelRadioGroupLevel" name="evaluationLevelRadioGroup" value="level" onclick="changeEvaluationLevelDegree(3);">...eine Niveaustufe gleich sein.</li>
 		</ul>
-		<p id="valuationLevelDescNumItems">Anzahl der Selbsteinsch&auml;tzungsstufen f&uuml;r <b>die gesamte Kompetenzmatrix</b>.&nbsp;<input type="text" id="valuationLevelNumItems" maxlength="2" onkeypress="validateNumericKey(event);" onkeyup="updateValuationLevelInputFields();" value="5" /></p>
+		<p id="evaluationLevelDescNumItems">Anzahl der Selbsteinsch&auml;tzungsstufen f&uuml;r <b>die gesamte Kompetenzmatrix</b>.&nbsp;<input type="text" id="evaluationLevelNumItems" maxlength="2" onkeypress="validateNumericKey(event);" onkeyup="updateEvaluationLevelInputFields();" value="5" /></p>
 	</form>
 </div>
 -->

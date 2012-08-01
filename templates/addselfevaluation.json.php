@@ -37,18 +37,18 @@ $arrCompetencyLevel 				= param_variable('arrCompetencyLevel');
 $arrCanDo							= param_variable('arrCanDo');
 $arrCanDoTaskLink					= param_variable('arrCanDoTaskLink');
 $arrCanDoCanBeGoal					= param_variable('arrCanDoCanBeGoal');
-$arrValuationLevelGlobal			= param_variable('arrValuationLevelGlobal');
+$arrEvaluationLevelGlobal			= param_variable('arrEvaluationLevelGlobal');
 $competencyPatternTitle				= param_variable('jsonCompetencyPatternTitle');
-$typeOfValuation					= param_variable('jsonTypeOfValuation');
+$typeOfEvaluation					= param_variable('jsonTypeOfEvaluation');
 
 $arrCompetencyName 					= json_decode($arrCompetencyName);
 $arrCompetencyLevel 				= json_decode($arrCompetencyLevel);
 $arrCanDo 							= json_decode($arrCanDo);
 $arrCanDoTaskLink					= json_decode($arrCanDoTaskLink);
 $arrCanDoCanBeGoal					= json_decode($arrCanDoCanBeGoal);
-$arrValuationLevelGlobal			= json_decode($arrValuationLevelGlobal);
+$arrEvaluationLevelGlobal			= json_decode($arrEvaluationLevelGlobal);
 $competencyPatternTitle				= json_decode($competencyPatternTitle);
-$typeOfValuation					= json_decode($typeOfValuation);
+$typeOfEvaluation					= json_decode($typeOfEvaluation);
 
 $arrEvaluationsString = "";
 
@@ -86,7 +86,7 @@ for($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 				$arrCanDoCanBeGoal[$nI][$nJ][$nK] = "0";
 			}
 
-			$arrEvaluationsString = implode("; ", $arrValuationLevelGlobal);			
+			$arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);			
 				
 			$writer->startElement("DESCRIPTOR");
 			//----------------------------------------------------

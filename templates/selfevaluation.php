@@ -36,7 +36,7 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
 
-$text_valuationlevel	= get_string('valuationlevel', 'artefact.epos');
+$text_evaluationlevel	= get_string('evaluationlevel', 'artefact.epos');
 $text_competencyname	= get_string('competency_name', 'artefact.epos');
 $text_competencylevel	= get_string('competency_level', 'artefact.epos');
 $text_cando_statement	= get_string('cando_statement', 'artefact.epos');
@@ -99,9 +99,9 @@ function submitTemplate() {
 	
 	alert(arrCanDoTaskLinks["0_0"]);	
 	alert(arrCompetencyNameComment);	
-	alert(arrValuationLevelCompetencyName[0][0]);
-	alert(arrValuationLevelCompetencyLevel[0][0]);	
-	alert(arrValuationLevelGlobal[0]);
+	alert(arrEvaluationLevelCompetencyName[0][0]);
+	alert(arrEvaluationLevelCompetencyLevel[0][0]);	
+	alert(arrEvaluationLevelGlobal[0]);
 	*/
 	
 	
@@ -111,8 +111,8 @@ function submitTemplate() {
 	var jsonCanDo 							= JSON.stringify(arrCanDo);
 	var jsonCanDoTaskLink					= JSON.stringify(arrCanDoTaskLinks);
 	var jsonCanDoCanBeGoal					= JSON.stringify(arrCanDoCanBeGoal);
-	var jsonValuationLevelGlobal			= JSON.stringify(arrValuationLevelGlobal);
-	var jsonTypeOfValuation					= JSON.stringify(nActValuationDegreeId);
+	var jsonEvaluationLevelGlobal			= JSON.stringify(arrEvaluationLevelGlobal);
+	var jsonTypeOfValuation					= JSON.stringify(nActEvaluationDegreeId);
 	
 	
 	sendjsonrequest('addselfevaluation.json.php',
@@ -121,8 +121,8 @@ function submitTemplate() {
 				'arrCanDo': jsonCanDo,
 				'arrCanDoTaskLink': jsonCanDoTaskLink,
 				'arrCanDoCanBeGoal': jsonCanDoCanBeGoal,
-				'arrValuationLevelGlobal': jsonValuationLevelGlobal,
-				'jsonTypeOfValuation': jsonTypeOfValuation,
+				'arrEvaluationLevelGlobal': jsonEvaluationLevelGlobal,
+				'jsonTypeOfEvaluation': jsonTypeOfEvaluation,
 				'jsonCompetencyPatternTitle': jsonCompetencyPatternTitle
 			
 			},
@@ -135,7 +135,7 @@ function submitTemplate() {
             });
 }
 
-var text_valuationlevel 	= "$text_valuationlevel";
+var text_evaluationlevel 	= "$text_evaluationlevel";
 var text_competencyname 	= "$text_competencyname";
 var text_competencylevel 	= "$text_competencylevel";
 var text_cando_statement	= "$text_cando_statement";
@@ -149,8 +149,8 @@ $smarty = smarty(array('tablerenderer',
 );
 
 //localization assignment to smarty
-$smarty->assign('text_num_valuation_levels', get_string('num_valuation_levels', 'artefact.epos'));
-$smarty->assign('text_name_valuation_grid', get_string('name_valuation_grid', 'artefact.epos'));
+$smarty->assign('text_num_evaluation_levels', get_string('num_evaluation_levels', 'artefact.epos'));
+$smarty->assign('text_name_evaluation_grid', get_string('name_evaluation_grid', 'artefact.epos'));
 $smarty->assign('text_num_rows', get_string('num_rows', 'artefact.epos'));
 $smarty->assign('text_num_cols', get_string('num_cols', 'artefact.epos'));
 

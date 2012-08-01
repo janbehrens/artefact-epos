@@ -52,22 +52,22 @@
 	var arrCanDoCanBeGoal = new Array();
 	
 	/*
-		arrValuationLevelGlobal
+		arrEvaluationLevelGlobal
 		
-		Stores the valuation levels if checked globally
+		Stores the evaluation levels if checked globally
 		
 		Structure:
-		arrValuationLevelGlobal{..., ..., ...}
+		arrEvaluationLevelGlobal{..., ..., ...}
 		
 
 	*/
-	var arrValuationLevelGlobal = new Array();
+	var arrEvaluationLevelGlobal = new Array();
 	
 	var nActCompetencyName = null;
 	var nActCompetencyLevel = null;
 	
-	var nActValuationId = 1;
-	var nActValuationDegreeId = 1;
+	var nActEvaluationId = 1;
+	var nActEvaluationDegreeId = 1;
 		
 	function onChangeColsRows(lastEdited) {		
 		createTable(lastEdited);
@@ -244,8 +244,8 @@
 			document.getElementById(lastEdited).setSelectionRange(2,2);
 		}
 		
-		//update the valuation input fields
-		updateValuationLevelInputFields();
+		//update the evaluation input fields
+		updateEvaluationLevelInputFields();
 	}
 	
 	function updateActualCombinationCompetencyName(nI) {
@@ -257,7 +257,7 @@
 				"<b>" + document.getElementById("competencyLevel_"+nActCompetencyLevel).value + "</b>";
 		}
 		
-		updateValuationLevelInputFields();
+		updateEvaluationLevelInputFields();
 	}
 	
 	function updateActualCombinationCompetencyLevel(nI) {
@@ -269,7 +269,7 @@
 				"<b>" + document.getElementById("competencyLevel_"+nI).value + "</b>";
 		}
 		
-		updateValuationLevelInputFields();
+		updateEvaluationLevelInputFields();
 	}
 	
 	//Shows the canDo statements belonging to a certain competencyName / Level combination
@@ -483,33 +483,33 @@
 		}
 	}
 	
-	function updateValuationLevelInputFields() {
+	function updateEvaluationLevelInputFields() {
 		
-		if(!document.getElementById("valuationLevelNumItems").value)
+		if(!document.getElementById("evaluationLevelNumItems").value)
 			return;			
 		
-		var table = document.getElementById("valuation_level_table");
+		var table = document.getElementById("evaluation_level_table");
 
 		while ( table.hasChildNodes() ) { 
 			table.removeChild( table.firstChild );
 		}
 		
-		tmpArrVauationLevels = arrValuationLevelGlobal;
-		arrValuationLevelGlobal = Array("");
+		tmpArrEvaluationLevels = arrEvaluationLevelGlobal;
+		arrEvaluationLevelGlobal = Array("");
 		
 		//number of input fields = count(nuances)
-		valuationLevelInputfields = document.getElementById("valuationLevelNumItems").value;
-		for(nI = 0; nI< valuationLevelInputfields; nI++) {
-			//alert(tmpArrVauationLevels[nI]);
-			arrValuationLevelGlobal[nI] = tmpArrVauationLevels[nI];
+		evaluationLevelInputfields = document.getElementById("evaluationLevelNumItems").value;
+		for(nI = 0; nI< evaluationLevelInputfields; nI++) {
+			//alert(tmpArrEvaluationLevels[nI]);
+			arrEvaluationLevelGlobal[nI] = tmpArrEvaluationLevels[nI];
 		}
 
 		//number of input fields = count(nuances)
-		valuationLevelInputfields = document.getElementById("valuationLevelNumItems").value;
-		for(nI = 0; nI < valuationLevelInputfields; nI++) {
+		evaluationLevelInputfields = document.getElementById("evaluationLevelNumItems").value;
+		for(nI = 0; nI < evaluationLevelInputfields; nI++) {
 	
-			if(arrValuationLevelGlobal[nI] == null)
-				arrValuationLevelGlobal[nI] = "";
+			if(arrEvaluationLevelGlobal[nI] == null)
+				arrEvaluationLevelGlobal[nI] = "";
 				
 			tr 	= document.createElement("tr");	
 			th	= document.createElement("th");
@@ -518,28 +518,28 @@
 			th.setAttribute("width", "200");
 						
 			label 	= document.createElement("label");
-			label.setAttribute("for", "valuationLevelGlobal_"+nI);
-			label.innerHTML 	= text_valuationlevel+(nI+1);
+			label.setAttribute("for", "evaluationLevelGlobal_"+nI);
+			label.innerHTML 	= text_evaluationlevel+(nI+1);
 			
 			input = document.createElement("input");		
 			input.setAttribute("type", "text");
 			input.setAttribute("size", "25");
-			input.setAttribute("id", "valuationLevelGlobal_"+nI);					
-			input.setAttribute("value", arrValuationLevelGlobal[nI]);
-			input.setAttribute("onkeyup", "saveValuationsGlobal("+nI+")");
+			input.setAttribute("id", "evaluationLevelGlobal_"+nI);					
+			input.setAttribute("value", arrEvaluationLevelGlobal[nI]);
+			input.setAttribute("onkeyup", "saveEvaluationsGlobal("+nI+")");
 								
 			td.appendChild(input);
 			th.appendChild(label);					
 			tr.appendChild(th);
 			tr.appendChild(td);
 			
-			document.getElementById("valuation_level_table").appendChild(tr);					
+			document.getElementById("evaluation_level_table").appendChild(tr);					
 		}
 
 	}
 	
-	function saveValuationsGlobal(nI) {
-		arrValuationLevelGlobal[nI] = document.getElementById("valuationLevelGlobal_"+nI).value;
+	function saveEvaluationsGlobal(nI) {
+		arrEvaluationLevelGlobal[nI] = document.getElementById("evaluationLevelGlobal_"+nI).value;
 	}
 	
 	function atload() {createTable();}
