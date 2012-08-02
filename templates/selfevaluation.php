@@ -167,7 +167,7 @@ function submitTemplate() {
 	var jsonCanDoTaskLink					= JSON.stringify(arrCanDoTaskLinks);
 	var jsonCanDoCanBeGoal					= JSON.stringify(arrCanDoCanBeGoal);
 	var jsonEvaluationLevelGlobal			= JSON.stringify(arrEvaluationLevelGlobal);
-	var jsonTypeOfValuation					= JSON.stringify(nActEvaluationDegreeId);
+	var jsonTypeOfEvaluation				= JSON.stringify(nActEvaluationDegreeId);
 	
 	
 	sendjsonrequest('addselfevaluation.json.php',
