@@ -36,6 +36,10 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
 $institution = isset($_GET['institution']) ? $_GET['institution'] : '';
+$subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
+$links_inst = '';
+$links_subj = '';
+$institution_displayname = '';
 
 //get institutions - TODO: check membership/role
 $sql = "SELECT name, displayname FROM institution ORDER BY displayname";
@@ -53,22 +57,23 @@ if ($data) {
         $institution = $data[0]->name;
     }
 
-    $links = '<p>' . get_string('institution', 'mahara') . ': ';
+    $links_inst = '<p>' . get_string('institution', 'mahara') . ': ';
 
     foreach ($data as $field) {
         if ($field->name == $institution) {
-            $links .= '<b>';
+            $links_inst .= '<b>';
             $institutionexists = true;
+            $institution_displayname = $field->displayname;
         }
         else {
-            $links .= '<a href="?institution=' . $field->name . '">';
+            $links_inst .= '<a href="?institution=' . $field->name . '">';
         }
-        $links .= $field->displayname;
+        $links_inst .= $field->displayname;
         if ($field->name == $institution) {
-            $links .= '</b> | ';
+            $links_inst .= '</b> | ';
         }
         else {
-            $links .= '</a> | ';
+            $links_inst .= '</a> | ';
         }
     }
 }
@@ -77,6 +82,43 @@ if (!$institutionexists) {
     //TODO: error
 }
 
+//get subjects
+$subjects = true;
+
+$sql = "SELECT id, name FROM artefact_epos_subject
+        WHERE institution = ?
+        ORDER BY name";
+
+if (!$data = get_records_sql_array($sql, array($institution))) {
+    $data = array();
+    $subjects = false;
+}
+
+// generate subject list
+if ($data) {
+    // select first subject if GET parameter is not set
+    if ($subject == '') {
+        $subject = $data[0]->id;
+    }
+
+    $links_subj = '<p>' . get_string('subject', 'artefact.epos') . ': ';
+
+    foreach ($data as $field) {
+        if ($field->id == $subject) {
+            $links_subj .= '<b>';
+        }
+        else {
+            $links_subj .= '<a href="?institution=' . $institution . '&subject=' . $field->id . '">';
+        }
+        $links_subj .= $field->name;
+        if ($field->id == $subject) {
+            $links_subj .= '</b> | ';
+        }
+        else {
+            $links_subj .= '</a> | ';
+        }
+    }
+}
 
 $text_evaluationlevel	= get_string('evaluationlevel', 'artefact.epos');
 $text_competencyname	= get_string('competency_name', 'artefact.epos');
@@ -120,13 +162,10 @@ function submitUnloadDescriptorset(id) {
 
 tableRenderer = new TableRenderer(
     'descriptorsets',
-    'selfevaluation.json.php?institution={$institution}',
+    'selfevaluation.json.php?institution={$institution}&subject={$subject}',
     [
         function (r, d) {
             return TD(null, r.name);
-        },
-        function (r, d) {
-            return TD(null, r.subject);
         },
         function (r, d) {
             return TD(null, SPAN({'style': 'font-style:italic'}, r.installed));
@@ -170,7 +209,7 @@ function submitTemplate() {
 	var jsonTypeOfEvaluation				= JSON.stringify(nActEvaluationDegreeId);
 	
 	
-	sendjsonrequest('addselfevaluation.json.php',
+	sendjsonrequest('addselfevaluation.json.php?subject={$subject}',
             {'arrCompetencyNames': jsonCompetencyName,
 				'arrCompetencyLevel': jsonCompetencyLevel,
 				'arrCanDo': jsonCanDo,
@@ -183,7 +222,6 @@ function submitTemplate() {
 			},
             'POST', 
             function() {
-            	alert("send");
             },
             function() {
             	// @todo error
@@ -210,7 +248,11 @@ $smarty->assign('text_num_rows', get_string('num_rows', 'artefact.epos'));
 $smarty->assign('text_num_cols', get_string('num_cols', 'artefact.epos'));
 
 //$smarty->assign('id', $id);
-$smarty->assign('links', $links);
+$smarty->assign('institution', $institution);
+$smarty->assign('institution_displayname', $institution_displayname);
+$smarty->assign('subjects', $subjects);
+$smarty->assign('links_institution', $links_inst);
+$smarty->assign('links_subject', $links_subj);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('create_selfevaluation_template', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);

@@ -32,6 +32,8 @@ require(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
+$subject = $_GET['subject'];
+
 $arrCompetencyName 					= param_variable('arrCompetencyNames');
 $arrCompetencyLevel 				= param_variable('arrCompetencyLevel');
 $arrCanDo							= param_variable('arrCanDo');
@@ -56,12 +58,30 @@ $arrEvaluationsString = "";
 $descriptorsetName = $competencyPatternTitle;
 @date_default_timezone_set("UTC+1");
 
+//prepare saving as file
+$dataroot = realpath(get_config('dataroot'));
+$dirpath = $dataroot . '/artefact/epos/descriptorsets';
+
+if (!is_dir($dirpath)) {
+    mkdir($dirpath, 0700, true);
+}
+
+$descriptorsetFileName = $descriptorsetName;
+$descriptorsetFileName = str_replace('/', '_', $descriptorsetFileName);
+$basename = $dirpath . '/' . $descriptorsetFileName;
+
+while (file_exists($basename . '.xml')) {
+    $basename .= '_1';
+}
+
+$path = $basename . '.xml';
+
+//intitialize XMLWriter
 $writer = new XMLWriter();
-// Output directly to the user
 
-$writer->openURI('my.xml');
+$writer->openURI($path);
+
 $writer->startDocument();
-
 $writer->setIndent(4);
 
 // declare it as an rss document
@@ -105,13 +125,11 @@ for($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 
 // End Descriptoset
 $writer->endElement();
-
-
 $writer->endDocument();
 
 $writer->flush();
 
-write_descriptor_db('my.xml', 1);    //FIXME !!
+write_descriptor_db($path, $subject);
 
 //reply
 json_reply(null, $arrCompetencyName[0]);

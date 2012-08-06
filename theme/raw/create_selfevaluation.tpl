@@ -1,14 +1,16 @@
 {include file="header.tpl"}
 
-<div id="institutions_list">{$links|safe}</div>
+<div id="institutions_list">{$links_institution|safe}</div>
 
+<div id="subjects_list">{$links_subject|safe}</div>
+
+{if $subjects}
 <h3>Available templates</h3>
 
 <table id="descriptorsets">
     <thead>
         <tr>
             <th>{str tag='name' section='mahara'}</th>
-            <th>{str tag='subject' section='artefact.epos'}</th>
             <th>Status</th>
             <th></th>
         </tr>
@@ -16,7 +18,6 @@
     <tbody>
         {foreach from=$rows item=row}
         <tr class="{cycle values='r0,r1'}">
-            <td></td>
             <td></td>
             <td></td>
         </tr>
@@ -77,6 +78,9 @@ under construction ...
 <br />
 
 <a href="#" onClick="submitTemplate();" />Dumped</a>
+{else}
+There are no subjects configured in {$institution_displayname}. Go to <a href="../subjects/?institution={$institution}">Subjects administration</a> to add one.
+{/if}
 
 
 {include file="footer.tpl"}
