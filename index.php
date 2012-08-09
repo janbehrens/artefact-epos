@@ -249,7 +249,7 @@ function process_languageform(Pieform $form, $values) {
         // load descriptors
         $descriptors = array();
         
-        $sql = 'SELECT d.id FROM artefact_epos_descriptor d
+        $sql = 'SELECT d.id, d.goal_available FROM artefact_epos_descriptor d
                 JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset
                 WHERE s.name = ?';
         
@@ -259,11 +259,13 @@ function process_languageform(Pieform $form, $values) {
         
         $values['checklist'] = $a->get('id');
         $values['evaluation'] = 0;
-        $values['goal'] = 0;
         
         // update artefact_epos_checklist_item
         foreach ($descriptors as $field) {
             $values['descriptor'] = $field->id;
+            if ($field->goal_available == 1) {
+                $values['goal'] = 0;
+            }
             insert_record('artefact_epos_checklist_item', (object)$values);
         }
     }

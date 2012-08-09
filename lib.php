@@ -305,13 +305,13 @@ EOF;
      * will return something like
      *     array(
      *         'evaluation' => array(
-     *             'cercles_li_a1_1' => 0,
-     *             'cercles_li_a1_2' => 2,
+     *             33 => 0,
+     *             34 => 2,
      *             etc.
      *         ),
      *         'goal' => array(
-     *             'cercles_li_a1_1' => 0,
-     *             'cercles_li_a1_2' => 1,
+     *             33 => 0,
+     *             34 => 1,
      *             etc.
      *         )
      *     )
