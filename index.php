@@ -35,15 +35,29 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
 define('TITLE', get_string('mylanguages', 'artefact.epos'));
 require_once('pieforms/pieform.php');
 
-$addsubject = isset($_GET['addsubject']) ? $_GET['addsubject'] : 0;
-$accessdenied = false;
-
 $optionssubject = get_subjects();
+$accessdenied = false;
+$nodescriptorsets = false;
+
+if (isset($_GET['addsubject'])) {
+    $addsubject = $_GET['addsubject'];
+
+    //check if user is allowed to use the subject indicated by GET parameter
+    if ($addsubject != 0 && !in_array($addsubject, array_keys($optionssubject))) {
+        $accessdenied = true;
+    }
+}
+else {
+    foreach (array_keys($optionssubject) as $id) {
+        $addsubject = $id;
+        break;
+    }
+}
+
 $optionsdescriptors = get_descriptorsets();
 
-//check if user is allowed to use the subject indicated by GET parameter
-if ($addsubject != 0 && !in_array($addsubject, array_keys($optionssubject))) {
-    $accessdenied = true;
+if (count($optionsdescriptors) == 0) {
+    $nodescriptorsets = true;
 }
 
 $addstr = get_string('add', 'artefact.epos');
@@ -126,7 +140,7 @@ function refreshDescriptorsets() {
 EOF;
 
 //pieform
-if (count($optionssubject) > 0 && count($optionsdescriptors) > 0) {
+if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
     $elements = array(
         'subject' => array(
             'type' => 'select',
@@ -164,8 +178,9 @@ if (count($optionssubject) > 0 && count($optionsdescriptors) > 0) {
 }
 
 $smarty = smarty(array('tablerenderer', 'jquery'));
-$smarty->assign('addsubject', $addsubject != 0);
+$smarty->assign('addsubjectset', isset($_GET['addsubject']));
 $smarty->assign('accessdenied', $accessdenied);
+$smarty->assign('nodescriptorsets', $nodescriptorsets);
 $smarty->assign_by_ref('languageform', $languageform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', TITLE);
@@ -182,8 +197,7 @@ function get_subjects() {
     $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
             JOIN usr_institution ui ON ui.institution = s.institution
             JOIN institution i ON i.name = s.institution
-            WHERE ui.usr = ?
-            ORDER BY s.name";
+            WHERE ui.usr = ?";
     
     if (!$data = get_records_sql_array($sql, array($USER->id))) {
         $data = array();
@@ -191,14 +205,17 @@ function get_subjects() {
     
     $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
             JOIN institution i ON i.name = s.institution
-            WHERE s.institution = 'mahara'
-            ORDER BY s.name";
+            WHERE s.institution = 'mahara'";
     
     if (!$data1 = get_records_sql_array($sql, null)) {
         $data1 = array();
     }
     
     $data = array_merge($data, $data1);
+    
+    usort($data, function ($a, $b) {
+        return strcoll($a->name, $b->name);
+    });
     
     foreach ($data as $field) {
         $subjects[$field->id] = $field->name . " ($field->displayname)";
@@ -217,7 +234,7 @@ function get_descriptorsets() {
     if ($addsubject != 0) {
         $sql = "SELECT d.id, d.name FROM artefact_epos_descriptor_set d
                 JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
-                WHERE ds.subject = ?
+                WHERE ds.subject = ? AND d.active = 1
                 ORDER BY name";
         
         if (!$data = get_records_sql_array($sql, array($addsubject))) {

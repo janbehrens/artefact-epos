@@ -94,6 +94,9 @@ $string['cando_statement'] = 'Can-Do statement';
 $string['tasklink'] = 'Task link';
 
 //self-evaluation template management
+$string['activate'] = 'Activate';
+$string['deactivate'] = 'Deactivate';
+$string['export'] = 'Export';
 $string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
 $string['unloaddescriptorsetsuccess'] = 'Successfully uninstalled descriptor set';
 $string['unloaddescriptorsetfailed'] = 'Uninstalling descriptor set failed: Descriptors are in use.';

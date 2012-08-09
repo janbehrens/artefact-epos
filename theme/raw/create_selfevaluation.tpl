@@ -11,7 +11,7 @@
     <thead>
         <tr>
             <th>{str tag='name' section='mahara'}</th>
-            <th>Status</th>
+            <th></th>
             <th></th>
         </tr>
     </thead>

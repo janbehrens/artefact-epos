@@ -126,17 +126,34 @@ $text_competencylevel	= get_string('competency_level', 'artefact.epos');
 $text_cando_statement	= get_string('cando_statement', 'artefact.epos');
 $text_tasklink			= get_string('tasklink', 'artefact.epos');
 
-$addstr = get_string('add', 'artefact.epos');
-$cancelstr = get_string('cancel', 'artefact.epos');
-$delstr = get_string('del', 'artefact.epos');
-$installstr = 'Install';//get_string('install', 'artefact.epos');
-$uninstallstr = 'Uninstall';//get_string('install', 'artefact.epos');
-$confirmdelstr = get_string('confirmdel', 'artefact.epos');
+$activatestr = get_string('activate', 'artefact.epos');
+$deactivatestr = get_string('deactivate', 'artefact.epos');
+$installstr = get_string('install', 'artefact.epos');
+$uninstallstr = get_string('install', 'artefact.epos');
+$exportstr = get_string('export', 'artefact.epos');
 
 //JS stuff
 $inlinejs = <<<EOF
 
-function submitLoadDescriptorset(file) {
+function activateDescriptorset(id) {
+	sendjsonrequest('activatedescriptorset.json.php?activate=1',
+            {'id': id},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            });
+}
+
+function deactivateDescriptorset(id) {
+	sendjsonrequest('activatedescriptorset.json.php?activate=0',
+            {'id': id},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            });
+}
+
+/*function submitLoadDescriptorset(file) {
 	sendjsonrequest('loaddescriptorset.json.php',
             {'file': file},
             'POST', 
@@ -158,7 +175,7 @@ function submitUnloadDescriptorset(id) {
             function() {
             	// @todo error
             });
-}
+}*/
 
 tableRenderer = new TableRenderer(
     'descriptorsets',
@@ -168,15 +185,23 @@ tableRenderer = new TableRenderer(
             return TD(null, r.name);
         },
         function (r, d) {
-            return TD(null, SPAN({'style': 'font-style:italic'}, r.installed));
+            if (r.active == 1) {
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateDescriptorset("'+r.id+'");'}, '{$deactivatestr}'));
+            }
+            else {
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateDescriptorset("'+r.id+'");'}, '{$activatestr}'));
+            }
         },
-        function (r, d) {
+        /*function (r, d) {
             if (r.installed == 'not installed') {
                 return TD(null, A({'class': '', 'href': 'javascript: onClick=submitLoadDescriptorset("'+r.file+'");'}, '{$installstr}'));
             }
             else {
                 return TD(null, A({'class': '', 'href': 'javascript: onClick=submitUnloadDescriptorset("'+r.id+'");'}, '{$uninstallstr}'));
             }
+        },*/
+        function (r, d) {
+            return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file='+r.file}, '{$exportstr}'));
         },
     ]
 );

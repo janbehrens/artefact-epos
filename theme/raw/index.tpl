@@ -21,7 +21,7 @@
     </tbody>
 </table>
 <div>
-    {if $addsubject}
+    {if $addsubjectset}
     <div id="learnedlanguageform">{$languageform|safe}</div>
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='cancel'}</button>
     {else}
@@ -29,7 +29,7 @@
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
     {/if}
 </div>
-{else}No descriptorsets installed! Admins and staff can install descriptorsets <a href="templates/selfevaluation.php">here</a>.
+{else}No subjects are configured for your institutions! Admins and staff can fix this <a href="subjects/">here</a>.
 {/if}
 {else}Wrong subject ID!
 {/if}
