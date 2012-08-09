@@ -40,7 +40,7 @@ $id = $_GET['id'];
 
 $data = array();
 
-$sql = 'SELECT c.title, d.name, d.level, d.competence
+$sql = 'SELECT c.title as descriptorset, d.name as descriptor, d.level, d.competence
 	FROM artefact c
     JOIN artefact_epos_checklist_item ci ON ci.checklist = c.id
     JOIN artefact_epos_descriptor d ON d.id = ci.descriptor
@@ -49,16 +49,6 @@ $sql = 'SELECT c.title, d.name, d.level, d.competence
 
 if (!$data = get_records_sql_array($sql, array($id))) {
     $data = array();
-}
-
-//substitute strings
-if ($data) {
-    foreach ($data as $field) {
-        $field->descriptor = $field->name;
-        $field->descriptorset = $field->title;
-        $field->competence = $field->competence;
-        $field->level = $field->level;
-    }
 }
 
 //Collect custom goals for certain language

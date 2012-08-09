@@ -294,6 +294,7 @@ function process_checklistform(Pieform $form, $values) {
                 $values['goal'] = $values['item' . $k . '_goal'] == 1 ? 1 : 0;
             }
             else {
+                unset($values['goal']);
                 $values['evaluation'] = $values['item' . $k];
             }
             update_record($table, (object)$values, array('checklist', 'descriptor'));
