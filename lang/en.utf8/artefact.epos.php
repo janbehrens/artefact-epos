@@ -53,6 +53,9 @@ $string['deletedlanguage'] = 'Language has been deleted.';
 $string['nolanguageselected1'] = 'You have not selected any languages. Go to "';
 $string['nolanguageselected2'] = '" to add one.';
 $string['savedchecklist'] = 'Your checklist has been saved.';
+$string['titlenotvalid'] = 'Title is not valid.';
+$string['descriptorsetnotvalid'] = 'Descriptorset is not valid.';
+$string['pleasechoosesubject'] = 'Please choose a subject first';
 
 //vocabulary
 $string['competence'] = 'Competence';
