@@ -319,22 +319,29 @@ function importform_submit(Pieform $form, $values) {
     safe_require('artefact', 'file');
     
     try {
+        //import to database
+        
+        $new_descriptorset = write_descriptor_db($values['file']['tmp_name'], true, $subject);
+        
         //save file
         
         $dataroot = realpath(get_config('dataroot'));
         $dirpath = "$dataroot/artefact/epos/descriptorsets";
-        $basename = str_replace('/', '_', $values['name']);
-        $basename = $dirpath . '/' . $basename;
+        $basename = str_replace('/', '_', $new_descriptorset['name']);
+        $basefilepath = $dirpath . '/' . $basename;
         
-        while (file_exists($basename . '.xml')) {
-            $basename .= '_1';
+        while (file_exists($basefilepath . '.xml')) {
+            $basefilepath .= '_1';
         }
         
-        move_uploaded_file($values['file']['tmp_name'], $basename . '.xml');
+        move_uploaded_file($values['file']['tmp_name'], $basefilepath . '.xml');
         
-        //import to database
-        
-        write_descriptor_db($basename . '.xml', $subject);
+        //fix file name in database entry
+        update_record(
+                'artefact_epos_descriptor_set',
+                array('file' => $basename . '.xml'),
+                array('id' => $new_descriptorset['id'])
+        );
     }
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());
