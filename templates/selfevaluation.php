@@ -210,6 +210,9 @@ tableRenderer.emptycontent = '';
 tableRenderer.paginate = false;
 tableRenderer.updateOnLoad();
 
+function importformCallback() {
+    tableRenderer.doupdate();
+}
 
 function submitTemplate() {
 	/*
@@ -247,6 +250,7 @@ function submitTemplate() {
 			},
             'POST', 
             function() {
+                tableRenderer.doupdate();
             },
             function() {
             	// @todo error
@@ -260,6 +264,32 @@ var text_cando_statement	= "$text_cando_statement";
 var text_tasklink			= "$text_tasklink";
 var text_canBeGoal			= "Lernziel?";
 EOF;
+
+$importform = pieform(array(
+        'name' => 'importform',
+        'plugintype' => 'artefact',
+        'pluginname' => 'epos',
+        'elements' => array(
+                //name field not needed for XML files
+                /*'name' => array(
+                        'type' => 'text',
+                        'title' => get_string('name', 'mahara'),
+                        'rules' => array('required' => true),
+                ),*/
+                'file' => array(
+                        'type' => 'file',
+                        'title' => get_string('xmlfile', 'artefact.epos'),
+                        'rules' => array('required' => true),
+                        'maxfilesize' => 250000,
+                ),
+                'submit' => array(
+                    'type' => 'submit',
+                    'value' => get_string('upload', 'mahara'),
+                ),
+        ),
+        'jsform' => true,
+        'jssuccesscallback' => 'importformCallback'
+));
 
 $smarty = smarty(array('tablerenderer',
     				   'jquery',
@@ -278,11 +308,38 @@ $smarty->assign('institution_displayname', $institution_displayname);
 $smarty->assign('subjects', $subjects);
 $smarty->assign('links_institution', $links_inst);
 $smarty->assign('links_subject', $links_subj);
+$smarty->assign('importform', $importform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('create_selfevaluation_template', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:create_selfevaluation.tpl');
 
-
+function importform_submit(Pieform $form, $values) {
+    global $subject;
+    safe_require('artefact', 'file');
+    
+    try {
+        //save file
+        
+        $dataroot = realpath(get_config('dataroot'));
+        $dirpath = "$dataroot/artefact/epos/descriptorsets";
+        $basename = str_replace('/', '_', $values['name']);
+        $basename = $dirpath . '/' . $basename;
+        
+        while (file_exists($basename . '.xml')) {
+            $basename .= '_1';
+        }
+        
+        move_uploaded_file($values['file']['tmp_name'], $basename . '.xml');
+        
+        //import to database
+        
+        write_descriptor_db($basename . '.xml', $subject);
+    }
+    catch (Exception $e) {
+        $form->json_reply(PIEFORM_ERR, $e->getMessage());
+    }
+    $form->json_reply(PIEFORM_OK, get_string('importeddescriptorset', 'artefact.epos'));
+}
 
 ?>

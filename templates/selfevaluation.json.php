@@ -37,7 +37,7 @@ $dataroot = realpath(get_config('dataroot'));
 $dir = $dataroot . '/artefact/epos/descriptorsets/';
 
 //read files
-if ($dh = opendir($dir)) {
+/*if ($dh = opendir($dir)) {
     while (($file = readdir($dh)) !== false) {
         if (substr($file, 0, 1) != '.') {
             $xmlcontents = file_get_contents($dir . $file);
@@ -50,7 +50,7 @@ if ($dh = opendir($dir)) {
         }
     }
     closedir($dh);
-}
+}*/
 
 $institution = $_GET['institution'];
 $subject = $_GET['subject'];

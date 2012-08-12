@@ -27,7 +27,7 @@
 
 <h3>Load template from file</h3>
 
-under construction ...
+<div id="learnedlanguageform">{$importform|safe}</div>
 
 <h3>Create new template</h3>
 

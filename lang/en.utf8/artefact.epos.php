@@ -100,5 +100,7 @@ $string['export'] = 'Export';
 $string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
 $string['unloaddescriptorsetsuccess'] = 'Successfully uninstalled descriptor set';
 $string['unloaddescriptorsetfailed'] = 'Uninstalling descriptor set failed: Descriptors are in use.';
+$string['xmlfile'] = 'XML file';
+$string['importeddescriptorset'] = 'Successfully imported descriptor set';
 
 ?>

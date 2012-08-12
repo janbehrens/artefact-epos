@@ -371,6 +371,8 @@ function write_descriptor_db($xml, $subjectid) {
         
         $descriptorset = $xmlarr['DESCRIPTORSET'];
         $values['name'] = $descriptorset['@']['NAME'];
+        $values['file'] = $xml;
+        $values['active'] = 1;
         
         $values['descriptorset'] = insert_record($descriptorsettable, (object)$values, 'id', true);
         
