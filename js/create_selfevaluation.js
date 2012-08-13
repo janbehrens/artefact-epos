@@ -383,9 +383,7 @@
 		tr.appendChild(th);
 		tr.appendChild(td2);
 		
-		document.getElementById("canDoTable").appendChild(tr);
-		
-		
+		document.getElementById("canDoTable").appendChild(tr);			
 		
 		id = competencyName+"_"+competencyLevel+"_"+nI;
 		
@@ -416,8 +414,7 @@
 		tr.appendChild(th);
 		tr.appendChild(td2);
 		
-		document.getElementById("canDoTable").appendChild(tr);		
-		
+		document.getElementById("canDoTable").appendChild(tr);			
 		
 		tr = document.createElement("tr");
 			
@@ -456,16 +453,14 @@
 	//stores the currently changed link which belongs to a certain canDo statement in an array
 	function saveCurrentChangedCanDoLink(competencyName, competencyLevel, id) {
 		//save changes to can do array, if it is the last one in the row make a new input field	
-		elementId = 'taskLink_'+competencyName+"_"+competencyLevel+"_"+id;
-		
+		elementId = 'taskLink_'+competencyName+"_"+competencyLevel+"_"+id;		
 		arrCanDoTaskLinks[competencyName][competencyLevel][id] = document.getElementById(elementId).value;
 	}
 	
 	//stores the currently changed link which belongs to a certain canDo statement in an array
 	function saveCurrentChangedCanDoCanBeGoal(competencyName, competencyLevel, id) {
 		//save changes to can do array, if it is the last one in the row make a new input field	
-		elementId = 'canBeGoal_'+competencyName+"_"+competencyLevel+"_"+id;
-				
+		elementId = 'canBeGoal_'+competencyName+"_"+competencyLevel+"_"+id;				
 		arrCanDoCanBeGoal[competencyName][competencyLevel][id] = document.getElementById(elementId).checked;
 	}
 	
