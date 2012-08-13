@@ -80,14 +80,14 @@ $string['customlearninggoalwanttodelete'] = 'Are you sure you really want to del
 
 //Selfevaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation'; 
-$string['num_evaluation_levels'] = 'Number of evaluation levels';
-$string['name_evaluation_grid'] = 'Name of evaluation grid';
+$string['num_evaluation_levels'] = 'Number of self-evaluation levels';
+$string['name_evaluation_grid'] = 'Name of competece grid';
 $string['num_rows'] = 'Number of competences';
-$string['num_cols'] = 'Number of levels';
-$string['evaluationlevel'] = 'Evaluation level&nbsp;';
+$string['num_cols'] = 'Number of competence levels';
+$string['evaluationlevel'] = 'Self-evaluation level&nbsp;';
 $string['competency_name'] = 'Competence&nbsp;';
 $string['competency_level'] = 'Level&nbsp;';
-$string['cando_statement'] = 'Can-Do statement';
+$string['cando_statement'] = 'Can-do-Statement';
 $string['tasklink'] = 'Task link';
 
 //self-evaluation template management
