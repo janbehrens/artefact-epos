@@ -29,8 +29,6 @@
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="file"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="active"            TYPE="int" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />

@@ -1,6 +1,5 @@
 {include file="header.tpl"}
 
-{if !$accessdenied}
 {if $languageform}
 <table id="learnedlanguagelist">
     <thead>
@@ -21,17 +20,10 @@
     </tbody>
 </table>
 <div>
-    {if $addsubjectset}
-    <div id="learnedlanguageform">{$languageform|safe}</div>
-    <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='cancel'}</button>
-    {else}
     <div id="learnedlanguageform" class="hidden">{$languageform|safe}</div>
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
-    {/if}
 </div>
-{else}No subjects are configured for your institutions! Admins and staff can fix this <a href="subjects/">here</a>.
-{/if}
-{else}Wrong subject ID!
+{else}No descriptorsets installed! Admins and staff can install descriptorsets <a href="templates/selfevaluation.php">here</a>.
 {/if}
 
 {include file="footer.tpl"}

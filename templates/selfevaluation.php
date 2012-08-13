@@ -126,34 +126,17 @@ $text_competencylevel	= get_string('competency_level', 'artefact.epos');
 $text_cando_statement	= get_string('cando_statement', 'artefact.epos');
 $text_tasklink			= get_string('tasklink', 'artefact.epos');
 
-$activatestr = get_string('activate', 'artefact.epos');
-$deactivatestr = get_string('deactivate', 'artefact.epos');
-$installstr = get_string('install', 'artefact.epos');
-$uninstallstr = get_string('install', 'artefact.epos');
-$exportstr = get_string('export', 'artefact.epos');
+$addstr = get_string('add', 'artefact.epos');
+$cancelstr = get_string('cancel', 'artefact.epos');
+$delstr = get_string('del', 'artefact.epos');
+$installstr = 'Install';//get_string('install', 'artefact.epos');
+$uninstallstr = 'Uninstall';//get_string('install', 'artefact.epos');
+$confirmdelstr = get_string('confirmdel', 'artefact.epos');
 
 //JS stuff
 $inlinejs = <<<EOF
 
-function activateDescriptorset(id) {
-	sendjsonrequest('activatedescriptorset.json.php?activate=1',
-            {'id': id},
-            'POST', 
-            function() {
-            	tableRenderer.doupdate();
-            });
-}
-
-function deactivateDescriptorset(id) {
-	sendjsonrequest('activatedescriptorset.json.php?activate=0',
-            {'id': id},
-            'POST', 
-            function() {
-            	tableRenderer.doupdate();
-            });
-}
-
-/*function submitLoadDescriptorset(file) {
+function submitLoadDescriptorset(file) {
 	sendjsonrequest('loaddescriptorset.json.php',
             {'file': file},
             'POST', 
@@ -175,7 +158,7 @@ function submitUnloadDescriptorset(id) {
             function() {
             	// @todo error
             });
-}*/
+}
 
 tableRenderer = new TableRenderer(
     'descriptorsets',
@@ -185,23 +168,15 @@ tableRenderer = new TableRenderer(
             return TD(null, r.name);
         },
         function (r, d) {
-            if (r.active == 1) {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateDescriptorset("'+r.id+'");'}, '{$deactivatestr}'));
-            }
-            else {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateDescriptorset("'+r.id+'");'}, '{$activatestr}'));
-            }
+            return TD(null, SPAN({'style': 'font-style:italic'}, r.installed));
         },
-        /*function (r, d) {
+        function (r, d) {
             if (r.installed == 'not installed') {
                 return TD(null, A({'class': '', 'href': 'javascript: onClick=submitLoadDescriptorset("'+r.file+'");'}, '{$installstr}'));
             }
             else {
                 return TD(null, A({'class': '', 'href': 'javascript: onClick=submitUnloadDescriptorset("'+r.id+'");'}, '{$uninstallstr}'));
             }
-        },*/
-        function (r, d) {
-            return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file='+r.file}, '{$exportstr}'));
         },
     ]
 );
@@ -210,9 +185,6 @@ tableRenderer.emptycontent = '';
 tableRenderer.paginate = false;
 tableRenderer.updateOnLoad();
 
-function importformCallback() {
-    tableRenderer.doupdate();
-}
 
 function submitTemplate() {
 	/*
@@ -250,7 +222,6 @@ function submitTemplate() {
 			},
             'POST', 
             function() {
-                tableRenderer.doupdate();
             },
             function() {
             	// @todo error
@@ -264,32 +235,6 @@ var text_cando_statement	= "$text_cando_statement";
 var text_tasklink			= "$text_tasklink";
 var text_canBeGoal			= "Lernziel?";
 EOF;
-
-$importform = pieform(array(
-        'name' => 'importform',
-        'plugintype' => 'artefact',
-        'pluginname' => 'epos',
-        'elements' => array(
-                //name field not needed for XML files
-                /*'name' => array(
-                        'type' => 'text',
-                        'title' => get_string('name', 'mahara'),
-                        'rules' => array('required' => true),
-                ),*/
-                'file' => array(
-                        'type' => 'file',
-                        'title' => get_string('xmlfile', 'artefact.epos'),
-                        'rules' => array('required' => true),
-                        'maxfilesize' => 250000,
-                ),
-                'submit' => array(
-                    'type' => 'submit',
-                    'value' => get_string('upload', 'mahara'),
-                ),
-        ),
-        'jsform' => true,
-        'jssuccesscallback' => 'importformCallback'
-));
 
 $smarty = smarty(array('tablerenderer',
     				   'jquery',
@@ -308,45 +253,11 @@ $smarty->assign('institution_displayname', $institution_displayname);
 $smarty->assign('subjects', $subjects);
 $smarty->assign('links_institution', $links_inst);
 $smarty->assign('links_subject', $links_subj);
-$smarty->assign('importform', $importform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('create_selfevaluation_template', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:create_selfevaluation.tpl');
 
-function importform_submit(Pieform $form, $values) {
-    global $subject;
-    safe_require('artefact', 'file');
-    
-    try {
-        //import to database
-        
-        $new_descriptorset = write_descriptor_db($values['file']['tmp_name'], true, $subject);
-        
-        //save file
-        
-        $dataroot = realpath(get_config('dataroot'));
-        $dirpath = "$dataroot/artefact/epos/descriptorsets";
-        $basename = str_replace('/', '_', $new_descriptorset['name']);
-        $basefilepath = $dirpath . '/' . $basename;
-        
-        while (file_exists($basefilepath . '.xml')) {
-            $basefilepath .= '_1';
-        }
-        
-        move_uploaded_file($values['file']['tmp_name'], $basefilepath . '.xml');
-        
-        //fix file name in database entry
-        update_record(
-                'artefact_epos_descriptor_set',
-                array('file' => $basename . '.xml'),
-                array('id' => $new_descriptorset['id'])
-        );
-    }
-    catch (Exception $e) {
-        $form->json_reply(PIEFORM_ERR, $e->getMessage());
-    }
-    $form->json_reply(PIEFORM_OK, get_string('importeddescriptorset', 'artefact.epos'));
-}
+
 
 ?>
