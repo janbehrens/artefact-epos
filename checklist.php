@@ -108,8 +108,10 @@ if ($haslanguages) {
      * 	array(
      * 		'header',
      * 		'header_goal',
-     * 		'cercles_li_a1_1',
-     * 		'cercles_li_a1_2',
+     * 		'item33',
+     *      'item33_goal',
+     * 		'item34',
+     *      'item34_goal',
      * 		etc.,
      * 		'competence',
      * 		'level',
@@ -156,15 +158,16 @@ if ($haslanguages) {
                     );
                     $goal_count++;
                 }
-                if ($goal_count == 0) {
-                    unset($elements['header_goal']);
-                }
                 //link
                 if ($set[$competence][$level][$k]['link'] != '') {
                     $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '" target="_blank">(Aufgabe)</a>';
-                    $elements['item' . $k . '_goal']['title'] = $elements['item' . $k]['title'];
+                    if ($set[$competence][$level][$k]['goal'] == 1) {
+                        $elements['item' . $k . '_goal']['title'] = $elements['item' . $k]['title'];
+                    }
                 }
-                $no = $k;
+            }
+            if ($goal_count == 0) {
+                unset($elements['header_goal']);
             }
             $elements['competence'] = array(
                 'type'  => 'hidden',
@@ -279,23 +282,22 @@ function process_checklistform(Pieform $form, $values) {
     
     $elements = $form->get_elements();
     
-    //identify changed fields and write them to database
-    foreach (array_keys($set[$competence][$level]) as $k) {
-        foreach ($elements as $element) {
-            if ($element['name'] == 'item' . $k) {
-                foreach ($elements as $elementgoal) {
-                    if ($elementgoal['name'] == 'item' . $k . '_goal') {
-                        $values['descriptor'] = $k;
-                        $values['evaluation'] = $values['item' . $k];
-                        $values['goal'] = $values['item' . $k . '_goal'] == 1 ? 1 : 0;
-                        
-                        if ($values['evaluation'] != $element['defaultvalue']
-                            || $values['goal'] != $elementgoal['defaultvalue']) {
-                            update_record($table, (object)$values, array('checklist', 'descriptor'));
-                        }
-                    }
-                }
+    //write fields to database
+    foreach ($elements as $element) {
+        if (substr($element['name'], 0, 4) == 'item') {
+            $k = explode('_', $element['name']);
+            $k = $k[0];
+            $k = substr($k, 4);
+            $values['descriptor'] = $k;
+            
+            if ($element['name'] == 'item' . $k . '_goal') {
+                $values['goal'] = $values['item' . $k . '_goal'] == 1 ? 1 : 0;
             }
+            else {
+                unset($values['goal']);
+                $values['evaluation'] = $values['item' . $k];
+            }
+            update_record($table, (object)$values, array('checklist', 'descriptor'));
         }
     }
 }

@@ -11,7 +11,7 @@
     <thead>
         <tr>
             <th>{str tag='name' section='mahara'}</th>
-            <th>Status</th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -27,7 +27,7 @@
 
 <h3>Load template from file</h3>
 
-under construction ...
+<div id="learnedlanguageform">{$importform|safe}</div>
 
 <h3>Create new template</h3>
 

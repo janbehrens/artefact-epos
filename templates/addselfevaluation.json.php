@@ -66,9 +66,9 @@ if (!is_dir($dirpath)) {
     mkdir($dirpath, 0700, true);
 }
 
-$descriptorsetFileName = $descriptorsetName;
-$descriptorsetFileName = str_replace('/', '_', $descriptorsetFileName);
-$basename = $dirpath . '/' . $descriptorsetFileName;
+$descriptorsetfilename = $descriptorsetName;
+$descriptorsetfilename = str_replace('/', '_', $descriptorsetfilename);
+$basename = $dirpath . '/' . $descriptorsetfilename;
 
 while (file_exists($basename . '.xml')) {
     $basename .= '_1';
@@ -129,7 +129,7 @@ $writer->endDocument();
 
 $writer->flush();
 
-write_descriptor_db($path, $subject);
+write_descriptor_db($path, false, $subject);
 
 //reply
 json_reply(null, $arrCompetencyName[0]);
