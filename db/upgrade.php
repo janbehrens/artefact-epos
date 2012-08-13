@@ -85,6 +85,8 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table = new XMLDBTable('artefact_epos_descriptor_set');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
+        $table->addFieldInfo('file', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
+        $table->addFieldInfo('active', XMLDB_TYPE_INTEGER, null, null, XMLDB_NOTNULL);
         $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
@@ -144,7 +146,8 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         );
         
         foreach ($descriptorsets as $set) {
-            $xml = $plugindir . 'db/descriptorsets/' . $set . '.xml';
+            $dataroot = realpath(get_config('dataroot'));
+            $xml = "$dataroot/artefact/epos/descriptorsets/$set.xml";
             $xmlcontents = file_get_contents($xml);
             $xmlarr = xmlize($xmlcontents);
             
@@ -152,6 +155,8 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
             $descriptortable = 'artefact_epos_descriptor';
             
             $descriptorset_newname = $values['name'] = $xmlarr['DESCRIPTORSET']['@']['NAME'];
+            $values['file'] = "$set.xml";
+            $values['active'] = 1;
             $values['descriptorset'] = insert_record($descriptorsettable, (object)($values), 'id', true);
             
             insert_record('artefact_epos_descriptorset_subject', (object)($values));

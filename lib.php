@@ -305,13 +305,13 @@ EOF;
      * will return something like
      *     array(
      *         'evaluation' => array(
-     *             'cercles_li_a1_1' => 0,
-     *             'cercles_li_a1_2' => 2,
+     *             33 => 0,
+     *             34 => 2,
      *             etc.
      *         ),
      *         'goal' => array(
-     *             'cercles_li_a1_1' => 0,
-     *             'cercles_li_a1_2' => 1,
+     *             33 => 0,
+     *             34 => 1,
      *             etc.
      *         )
      *     )
@@ -360,8 +360,13 @@ class ArtefactTypeCustomGoal extends ArtefactType {
     public static function get_links($id) {}
 }
 
-//write descriptors from xml into database
-function write_descriptor_db($xml, $subjectid) {
+/*
+ * write descriptors from xml into database
+ * @param $xml path to the xml file
+ *        $fileistemporary whether the file will be moved to its final destination later
+ *        $subjectid Id of the subject the descriptorset shall be associated with
+ */
+function write_descriptor_db($xml, $fileistemporary, $subjectid) {
     if (file_exists($xml) && is_readable($xml)) {
         $contents = file_get_contents($xml);
         $xmlarr = xmlize($contents);
@@ -370,8 +375,19 @@ function write_descriptor_db($xml, $subjectid) {
         $descriptortable = 'artefact_epos_descriptor';
         
         $descriptorset = $xmlarr['DESCRIPTORSET'];
-        $values['name'] = $descriptorset['@']['NAME'];
+        $values['name'] = $descriptorsetname = $descriptorset['@']['NAME'];
+        if ($fileistemporary) {
+            $values['file'] = 'unknown'; //file name may not be known yet
+        }
+        else {
+            $path = explode('/', $xml);
+            foreach ($path as $word) {
+                $values['file'] = $word;
+            }
+        }
+        $values['active'] = 1;
         
+        //insert
         $values['descriptorset'] = insert_record($descriptorsettable, (object)$values, 'id', true);
         
         insert_record('artefact_epos_descriptorset_subject', array(
@@ -389,7 +405,7 @@ function write_descriptor_db($xml, $subjectid) {
             
             insert_record($descriptortable, (object)$values);
         }
-        return true;
+        return array('id' => $values['descriptorset'], 'name' => $descriptorsetname);
     }
     return false;
 }

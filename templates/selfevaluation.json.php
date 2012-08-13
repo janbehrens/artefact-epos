@@ -37,7 +37,7 @@ $dataroot = realpath(get_config('dataroot'));
 $dir = $dataroot . '/artefact/epos/descriptorsets/';
 
 //read files
-if ($dh = opendir($dir)) {
+/*if ($dh = opendir($dir)) {
     while (($file = readdir($dh)) !== false) {
         if (substr($file, 0, 1) != '.') {
             $xmlcontents = file_get_contents($dir . $file);
@@ -50,13 +50,13 @@ if ($dh = opendir($dir)) {
         }
     }
     closedir($dh);
-}
+}*/
 
 $institution = $_GET['institution'];
 $subject = $_GET['subject'];
 
 //read DB
-$sql = 'SELECT d.id, d.name FROM artefact_epos_descriptor_set d
+$sql = 'SELECT d.* FROM artefact_epos_descriptor_set d
         JOIN artefact_epos_descriptorset_subject ds ON d.id = ds.descriptorset
         JOIN artefact_epos_subject s ON s.id = ds.subject
         JOIN institution i ON i.name = s.institution
@@ -65,7 +65,7 @@ if (!$dbdata = get_records_sql_array($sql, array($institution, $subject))) {
     $dbdata = array();
 }
 
-for ($i = 0; $i < count($data); $i++) {
+/*for ($i = 0; $i < count($data); $i++) {
     $installed = false;
     for ($j = 0; $j < count($dbdata); $j++) {
         if ($dbdata[$j]->name == $data[$i]['name']) {
@@ -80,7 +80,7 @@ for ($i = 0; $i < count($data); $i++) {
                 'installed' => 'not installed'
         );
     }
-}
+}*/
 
 usort($dbdata, function ($a, $b) {
     return strcoll($a->name, $b->name);

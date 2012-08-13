@@ -53,6 +53,9 @@ $string['deletedlanguage'] = 'Language has been deleted.';
 $string['nolanguageselected1'] = 'You have not selected any languages. Go to "';
 $string['nolanguageselected2'] = '" to add one.';
 $string['savedchecklist'] = 'Your checklist has been saved.';
+$string['titlenotvalid'] = 'Title is not valid.';
+$string['descriptorsetnotvalid'] = 'Descriptorset is not valid.';
+$string['pleasechoosesubject'] = 'Please choose a subject first';
 
 //vocabulary
 $string['competence'] = 'Competence';
@@ -91,8 +94,13 @@ $string['cando_statement'] = 'Can-do-Statement';
 $string['tasklink'] = 'Task link';
 
 //self-evaluation template management
+$string['activate'] = 'Activate';
+$string['deactivate'] = 'Deactivate';
+$string['export'] = 'Export';
 $string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
 $string['unloaddescriptorsetsuccess'] = 'Successfully uninstalled descriptor set';
 $string['unloaddescriptorsetfailed'] = 'Uninstalling descriptor set failed: Descriptors are in use.';
+$string['xmlfile'] = 'XML file';
+$string['importeddescriptorset'] = 'Successfully imported descriptor set';
 
 ?>
