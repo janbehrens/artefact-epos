@@ -410,7 +410,9 @@
 		input.setAttribute("style", "margin-left: 0px;");				
 		input.setAttribute("id", id);
 		if(arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true ||
-				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "")
+				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "" ||
+				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === null ||
+				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === undefined)
 			input.setAttribute("checked", "");
 		input.setAttribute("onclick", "saveCurrentChangedCanDoCanBeGoal("+competencyName+","+competencyLevel+","+nI+")");			
 		td2.appendChild(input);
