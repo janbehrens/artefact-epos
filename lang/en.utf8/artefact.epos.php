@@ -102,5 +102,10 @@ $string['unloaddescriptorsetsuccess'] = 'Successfully uninstalled descriptor set
 $string['unloaddescriptorsetfailed'] = 'Uninstalling descriptor set failed: Descriptors are in use.';
 $string['xmlfile'] = 'XML file';
 $string['importeddescriptorset'] = 'Successfully imported descriptor set';
+$string['learningobjective_checkbox'] = 'Display checkbox for learning objective';
+$string['fill_in_learning_objectives'] = 'Fill in learning objectives and task links for the certain combination of competency and level.';
+$string['combination_of'] = 'Combination of';
+$string['and'] = 'and';
+
 
 ?>

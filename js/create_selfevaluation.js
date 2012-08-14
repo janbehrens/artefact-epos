@@ -252,9 +252,10 @@
 		arrCompetencyName[nI] = document.getElementById("competencyName_"+nI).value;
 		
 		if(nI == nActCompetencyName) {
-			document.getElementById("actualCombination").innerHTML = "<b>" + document.getElementById("competencyName_"+nI).value + "</b>" +
-				" kreuzt " + 
-				"<b>" + document.getElementById("competencyLevel_"+nActCompetencyLevel).value + "</b>";
+			document.getElementById("actualCombination").innerHTML = text_combination_of + 
+			" <b>" + document.getElementById("competencyName_"+nI).value + "</b> " +
+			text_and + 
+			" <b>" + document.getElementById("competencyLevel_"+nActCompetencyLevel).value + "</b>";
 		}
 		
 		updateEvaluationLevelInputFields();
@@ -264,9 +265,10 @@
 		arrCompetencyLevel[nI] = document.getElementById("competencyLevel_"+nI).value;
 		
 		if(nI == nActCompetencyLevel) {
-			document.getElementById("actualCombination").innerHTML = "<b>" + document.getElementById("competencyName_"+nActCompetencyName).value + "</b>" +
-				" kreuzt " + 
-				"<b>" + document.getElementById("competencyLevel_"+nI).value + "</b>";
+			document.getElementById("actualCombination").innerHTML = text_combination_of + 
+			" <b>" + document.getElementById("competencyName_"+nI).value + "</b> " +
+			text_and + 
+			" <b>" + document.getElementById("competencyLevel_"+nActCompetencyLevel).value + "</b>";
 		}
 		
 		updateEvaluationLevelInputFields();
@@ -289,11 +291,12 @@
 		p.setAttribute("id", "canDoDesc");
 		document.getElementById("canDos").appendChild(p);
 		
-		document.getElementById("actualCombination").innerHTML = "<b>" + document.getElementById("competencyName_"+competencyName).value + "</b>" +
-			" kreuzt " + 
-			"<b>" + document.getElementById("competencyLevel_"+competencyLevel).value + "</b>";
+		document.getElementById("actualCombination").innerHTML = text_combination_of + 
+			" <b>" + document.getElementById("competencyName_"+competencyName).value + "</b> " +
+			text_and + 
+			" <b>" + document.getElementById("competencyLevel_"+competencyLevel).value + "</b>";
 			
-		document.getElementById("canDoDesc").innerHTML = "Tragen Sie hier die Can Dos und die dazugeh&ouml;rigen Links zu den Aufgaben ab";			
+		document.getElementById("canDoDesc").innerHTML = text_fill_in_learning_objectives;			
 		
 		if(arrCanDo[competencyName] instanceof Array == false) {
 			arrCanDo[competencyName] = new Array("");
@@ -406,7 +409,8 @@
 		input.setAttribute("type", "checkbox");	
 		input.setAttribute("style", "margin-left: 0px;");				
 		input.setAttribute("id", id);
-		if(arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true)
+		if(arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true ||
+				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "")
 			input.setAttribute("checked", "");
 		input.setAttribute("onclick", "saveCurrentChangedCanDoCanBeGoal("+competencyName+","+competencyLevel+","+nI+")");			
 		td2.appendChild(input);

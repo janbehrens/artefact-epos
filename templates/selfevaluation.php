@@ -120,11 +120,15 @@ if ($data) {
     }
 }
 
-$text_evaluationlevel	= get_string('evaluationlevel', 'artefact.epos');
-$text_competencyname	= get_string('competency_name', 'artefact.epos');
-$text_competencylevel	= get_string('competency_level', 'artefact.epos');
-$text_cando_statement	= get_string('cando_statement', 'artefact.epos');
-$text_tasklink			= get_string('tasklink', 'artefact.epos');
+$text_evaluationlevel	           = get_string('evaluationlevel', 'artefact.epos');
+$text_competencyname	           = get_string('competency_name', 'artefact.epos');
+$text_competencylevel	           = get_string('competency_level', 'artefact.epos');
+$text_cando_statement	           = get_string('cando_statement', 'artefact.epos');
+$text_tasklink			           = get_string('tasklink', 'artefact.epos');
+$text_learningobjectivecheckbox    = get_string('learningobjective_checkbox', 'artefact.epos');
+$text_fill_in_learning_objectives  = get_string('fill_in_learning_objectives', 'artefact.epos');
+$text_combination_of			   = get_string('combination_of', 'artefact.epos');
+$text_and			               = get_string('and', 'artefact.epos');
 
 $activatestr = get_string('activate', 'artefact.epos');
 $deactivatestr = get_string('deactivate', 'artefact.epos');
@@ -257,12 +261,15 @@ function submitTemplate() {
             });
 }
 
-var text_evaluationlevel 	= "$text_evaluationlevel";
-var text_competencyname 	= "$text_competencyname";
-var text_competencylevel 	= "$text_competencylevel";
-var text_cando_statement	= "$text_cando_statement";
-var text_tasklink			= "$text_tasklink";
-var text_canBeGoal			= "Lernziel?";
+var text_evaluationlevel 				= "$text_evaluationlevel";
+var text_competencyname 				= "$text_competencyname";
+var text_competencylevel 				= "$text_competencylevel";
+var text_cando_statement				= "$text_cando_statement";
+var text_tasklink						= "$text_tasklink";
+var text_canBeGoal						= "$text_learningobjectivecheckbox";
+var text_fill_in_learning_objectives	= "$text_fill_in_learning_objectives";
+var text_combination_of					= "$text_combination_of";
+var text_and							= "$text_and";
 EOF;
 
 $importform = pieform(array(
