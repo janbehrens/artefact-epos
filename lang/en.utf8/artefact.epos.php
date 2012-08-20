@@ -101,10 +101,13 @@ $string['and'] = 'and';
 $string['activate'] = 'Activate';
 $string['deactivate'] = 'Deactivate';
 $string['export'] = 'Export';
+$string['xmlfile'] = 'XML file';
+$string['csvfile'] = 'CSV file';
+$string['nameofdescriptorset'] = 'Name of descriptor set';
+$string['csvinvalid'] = 'Error: The CSV file is not well-formed.';
 $string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
 $string['deletedescriptorsetsuccess'] = 'Successfully deleted descriptor set';
 $string['deletedescriptorsetfailed'] = 'Deleting descriptor set failed: Descriptors are being used.';
-$string['xmlfile'] = 'XML file';
 $string['importeddescriptorset'] = 'Successfully imported descriptor set';
 $string['confirmdeletedescriptorset'] = 'Are you sure you want to permanently delete the descriptor set';
 

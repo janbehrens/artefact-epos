@@ -28,8 +28,13 @@
 </table>
 
 <h3>Load template from file</h3>
+<h4>From XML file</h4>
 
-<div id="learnedlanguageform">{$importform|safe}</div>
+<div id="importformxml">{$importformxml|safe}</div>
+
+<h4>From CSV file</h4>
+
+<div id="importformcsv">{$importformcsv|safe}</div>
 
 <h3>Create new template</h3>
 

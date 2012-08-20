@@ -255,20 +255,39 @@ var text_combination_of					= "$text_combination_of";
 var text_and							= "$text_and";
 EOF;
 
-$importform = pieform(array(
-        'name' => 'importform',
+$importformxml = pieform(array(
+        'name' => 'importxml',
         'plugintype' => 'artefact',
         'pluginname' => 'epos',
         'elements' => array(
-                //name field not needed for XML files
-                /*'name' => array(
-                        'type' => 'text',
-                        'title' => get_string('name', 'mahara'),
-                        'rules' => array('required' => true),
-                ),*/
                 'file' => array(
                         'type' => 'file',
                         'title' => get_string('xmlfile', 'artefact.epos'),
+                        'rules' => array('required' => true),
+                        'maxfilesize' => 250000,
+                ),
+                'submit' => array(
+                    'type' => 'submit',
+                    'value' => get_string('upload', 'mahara'),
+                ),
+        ),
+        'jsform' => true,
+        'jssuccesscallback' => 'importformCallback'
+));
+
+$importformcsv = pieform(array(
+        'name' => 'importcsv',
+        'plugintype' => 'artefact',
+        'pluginname' => 'epos',
+        'elements' => array(
+                'name' => array(
+                        'type' => 'text',
+                        'title' => get_string('nameofdescriptorset', 'artefact.epos'),
+                        'rules' => array('required' => true),
+                ),
+                'file' => array(
+                        'type' => 'file',
+                        'title' => get_string('csvfile', 'artefact.epos'),
                         'rules' => array('required' => true),
                         'maxfilesize' => 250000,
                 ),
@@ -298,23 +317,22 @@ $smarty->assign('institution_displayname', $institution_displayname);
 $smarty->assign('subjects', $subjects);
 $smarty->assign('links_institution', $links_inst);
 $smarty->assign('links_subject', $links_subj);
-$smarty->assign('importform', $importform);
+$smarty->assign('importformxml', $importformxml);
+$smarty->assign('importformcsv', $importformcsv);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('create_selfevaluation_template', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:create_selfevaluation.tpl');
 
-function importform_submit(Pieform $form, $values) {
+function importxml_submit(Pieform $form, $values) {
     global $subject;
     safe_require('artefact', 'file');
     
     try {
         //import to database
-        
         $new_descriptorset = write_descriptor_db($values['file']['tmp_name'], true, $subject);
         
         //save file
-        
         $dataroot = realpath(get_config('dataroot'));
         $dirpath = "$dataroot/artefact/epos/descriptorsets";
         $basename = str_replace('/', '_', $new_descriptorset['name']);
@@ -336,6 +354,80 @@ function importform_submit(Pieform $form, $values) {
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());
     }
+    $form->json_reply(PIEFORM_OK, get_string('importeddescriptorset', 'artefact.epos'));
+}
+
+function importcsv_submit(Pieform $form, $values) {
+    global $subject;
+    
+    //prepare saving as file
+    $dataroot = realpath(get_config('dataroot'));
+    $dirpath = $dataroot . '/artefact/epos/descriptorsets';
+    
+    if (!is_dir($dirpath)) {
+        mkdir($dirpath, 0700, true);
+    }
+    
+    $descriptorsetfilename = $values['name'];
+    $descriptorsetfilename = str_replace('/', '_', $descriptorsetfilename);
+    $basename = $dirpath . '/' . $descriptorsetfilename;
+    
+    while (file_exists($basename . '.xml')) {
+        $basename .= '_1';
+    }
+    
+    $path = $basename . '.xml';
+    
+    //intitialize XMLWriter
+    $writer = new XMLWriter();
+    
+    $writer->openURI($path);
+    
+    $writer->startDocument();
+    $writer->setIndent(4);
+    
+    $writer->startElement('DESCRIPTORSET');
+    $writer->writeAttribute('NAME', $values['name']);
+    
+    try {
+        
+        //parse CSV
+        $lines = file($values['file']['tmp_name']);
+        
+        $values = str_getcsv($lines[0]);
+        
+        for ($i = 0; $i < count($values); $i++) {
+            $values[$i] = strtolower($values[$i]);
+        }
+        if ($values !== array("competence", "level", "evaluations", "goal", "name", "link")) {
+            throw new Exception(get_string('csvinvalid', 'artefact.epos'));
+        }
+        unset($lines[0]);
+        
+        foreach ($lines as $line)
+        {
+            $values = str_getcsv($line);
+            
+			$writer->startElement("DESCRIPTOR");
+			$writer->writeAttribute('COMPETENCE', $values[0]);
+			$writer->writeAttribute('LEVEL', $values[1]);
+			$writer->writeAttribute('EVALUATIONS', $values[2]);
+			$writer->writeAttribute('GOAL', $values[3]);
+			$writer->writeAttribute('NAME', $values[4]);
+			$writer->writeAttribute('LINK', $values[5]);
+			$writer->endElement();
+        }
+        $writer->endElement();
+        $writer->endDocument();
+        $writer->flush();
+        
+        //import to database
+        $new_descriptorset = write_descriptor_db($path, false, $subject);
+    }
+    catch (Exception $e) {
+        $form->json_reply(PIEFORM_ERR, $e->getMessage());
+    }
+    error_log("success");
     $form->json_reply(PIEFORM_OK, get_string('importeddescriptorset', 'artefact.epos'));
 }
 
