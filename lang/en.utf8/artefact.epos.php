@@ -92,20 +92,20 @@ $string['competency_name'] = 'Competence&nbsp;';
 $string['competency_level'] = 'Level&nbsp;';
 $string['cando_statement'] = 'Can-do-Statement';
 $string['tasklink'] = 'Task link';
+$string['learningobjective_checkbox'] = 'Display checkbox for learning objective';
+$string['fill_in_learning_objectives'] = 'Fill in learning objectives and task links for the certain combination of competency and level.';
+$string['combination_of'] = 'Combination of';
+$string['and'] = 'and';
 
 //self-evaluation template management
 $string['activate'] = 'Activate';
 $string['deactivate'] = 'Deactivate';
 $string['export'] = 'Export';
 $string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
-$string['unloaddescriptorsetsuccess'] = 'Successfully uninstalled descriptor set';
-$string['unloaddescriptorsetfailed'] = 'Uninstalling descriptor set failed: Descriptors are in use.';
+$string['deletedescriptorsetsuccess'] = 'Successfully deleted descriptor set';
+$string['deletedescriptorsetfailed'] = 'Deleting descriptor set failed: Descriptors are being used.';
 $string['xmlfile'] = 'XML file';
 $string['importeddescriptorset'] = 'Successfully imported descriptor set';
-$string['learningobjective_checkbox'] = 'Display checkbox for learning objective';
-$string['fill_in_learning_objectives'] = 'Fill in learning objectives and task links for the certain combination of competency and level.';
-$string['combination_of'] = 'Combination of';
-$string['and'] = 'and';
-
+$string['confirmdeletedescriptorset'] = 'Are you sure you want to permanently delete the descriptor set';
 
 ?>

@@ -33,26 +33,18 @@ safe_require('artefact', 'epos');
 
 $id = param_variable('id');
 
-/*$sql = 'SELECT id FROM artefact_epos_descriptor
-        WHERE descriptorset = ?';
-$data = get_records_sql_array($sql, array($id));
-
-foreach ($data as $field) {
-    execute_sql("UPDATE artefact_epos_checklist_item
-            SET descriptor = 0 WHERE descriptor = $field->id");
-}*/
-
 try {
     delete_records('artefact_epos_descriptor', 'descriptorset', $id);
     delete_records('artefact_epos_descriptorset_subject', 'descriptorset', $id);
     delete_records('artefact_epos_descriptor_set', 'id', $id);
-
+    execute_sql("UPDATE artefact_epos_descriptor_set SET visible = 0 WHERE id = $id");
+    
     //reply
-    json_reply(false, get_string('unloaddescriptorsetsuccess', 'artefact.epos'));
+    json_reply(false, get_string('deletedescriptorsetsuccess', 'artefact.epos'));
 }
 catch (Exception $e) {
     //reply
-    json_reply(true, get_string('unloaddescriptorsetfailed', 'artefact.epos'));
+    json_reply(true, get_string('deletedescriptorsetfailed', 'artefact.epos'));
 }
 
 

@@ -86,6 +86,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
         $table->addFieldInfo('file', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
+        $table->addFieldInfo('visible', XMLDB_TYPE_INTEGER, null, null, XMLDB_NOTNULL);
         $table->addFieldInfo('active', XMLDB_TYPE_INTEGER, null, null, XMLDB_NOTNULL);
         $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
         if (!create_table($table)) {
@@ -156,6 +157,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
             
             $descriptorset_newname = $values['name'] = $xmlarr['DESCRIPTORSET']['@']['NAME'];
             $values['file'] = "$set.xml";
+            $values['visible'] = 1;
             $values['active'] = 1;
             $values['descriptorset'] = insert_record($descriptorsettable, (object)($values), 'id', true);
             

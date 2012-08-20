@@ -385,6 +385,7 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid) {
                 $values['file'] = $word;
             }
         }
+        $values['visible'] = 1;
         $values['active'] = 1;
         
         //insert

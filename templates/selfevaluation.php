@@ -132,9 +132,10 @@ $text_and			               = get_string('and', 'artefact.epos');
 
 $activatestr = get_string('activate', 'artefact.epos');
 $deactivatestr = get_string('deactivate', 'artefact.epos');
-$installstr = get_string('install', 'artefact.epos');
-$uninstallstr = get_string('install', 'artefact.epos');
+$deletestr = get_string('delete', 'mahara');
 $exportstr = get_string('export', 'artefact.epos');
+$confirmdelstr = get_string('confirmdeletedescriptorset', 'artefact.epos');
+
 
 //JS stuff
 $inlinejs = <<<EOF
@@ -157,29 +158,17 @@ function deactivateDescriptorset(id) {
             });
 }
 
-/*function submitLoadDescriptorset(file) {
-	sendjsonrequest('loaddescriptorset.json.php',
-            {'file': file},
-            'POST', 
-            function() {
-            	tableRenderer.doupdate();
-            },
-            function() {
-            	// @todo error
-            });
+function deleteDescriptorset(id, name) {
+    if (confirm('{$confirmdelstr} "' + name + '"?')) {
+        sendjsonrequest('deletedescriptorset.json.php',
+                {'id': id},
+                'POST', 
+                function() {
+                	tableRenderer.doupdate();
+                });
+    }
+    return false;
 }
-
-function submitUnloadDescriptorset(id) {
-	sendjsonrequest('unloaddescriptorset.json.php',
-            {'id': id},
-            'POST', 
-            function() {
-            	tableRenderer.doupdate();
-            },
-            function() {
-            	// @todo error
-            });
-}*/
 
 tableRenderer = new TableRenderer(
     'descriptorsets',
@@ -190,22 +179,17 @@ tableRenderer = new TableRenderer(
         },
         function (r, d) {
             if (r.active == 1) {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateDescriptorset("'+r.id+'");'}, '{$deactivatestr}'));
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateDescriptorset(' + r.id + ');'}, '{$deactivatestr}'));
             }
             else {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateDescriptorset("'+r.id+'");'}, '{$activatestr}'));
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateDescriptorset(' + r.id + ');'}, '{$activatestr}'));
             }
         },
-        /*function (r, d) {
-            if (r.installed == 'not installed') {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=submitLoadDescriptorset("'+r.file+'");'}, '{$installstr}'));
-            }
-            else {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=submitUnloadDescriptorset("'+r.id+'");'}, '{$uninstallstr}'));
-            }
-        },*/
         function (r, d) {
-            return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file='+r.file}, '{$exportstr}'));
+            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteDescriptorset(' + r.id + ', "' + r.name + '");'}, '{$deletestr}'));
+        },
+        function (r, d) {
+            return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file=' + r.file}, '{$exportstr}'));
         },
     ]
 );
@@ -219,8 +203,7 @@ function importformCallback() {
 }
 
 function submitTemplate() {
-	/*
-	alert(arrCompetencyName);
+	/*alert(arrCompetencyName);
 	alert(arrCompetencyLevel);	
 	
 	alert(arrCanDoTaskLinks["0_0"]);	
