@@ -411,6 +411,24 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid) {
     return false;
 }
 
+function get_manageable_institutions($user) {
+    if ($user->get('staff') == 1 || $user->get('admin') == 1) {
+        $sql = "SELECT name, displayname FROM institution ORDER BY displayname";
+        if (!$data = get_records_sql_array($sql, array())) {
+            $data = array();
+        }
+    }
+    else {
+        $sql = "SELECT i.name, i.displayname FROM institution i
+        JOIN usr_institution ui ON ui.institution = i.name
+        WHERE ui.usr = ? AND (ui.staff = 1 OR ui.admin = 1)
+        ORDER BY i.displayname";
+        if (!$data = get_records_sql_array($sql, array($user->id))) {
+            $data = array();
+        }
+    }
+    return $data;
+}
 
 // comparison functions for sql records
 function cmpByTitle($a, $b) {

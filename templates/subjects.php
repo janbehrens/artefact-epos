@@ -27,36 +27,48 @@
 
 define('INTERNAL', true);
 define('INSTITUTIONALSTAFF', 1);
-define('MENUITEM', 'manageinstitutions/subjects');
+define('MENUITEM', 'templates/subjects');
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 define('TITLE', get_string('subjects', 'artefact.epos'));
 require_once('pieforms/pieform.php');
+safe_require('artefact', 'epos');
 
-$institution = isset($_GET['institution']) ? $_GET['institution'] : '';
+//get institutions
+$institutions = get_manageable_institutions($USER);
+$institutionexists = false;
+$accessdenied = true;
+
+if (isset($_GET['institution'])) {
+    $institution = $_GET['institution'];
+    
+    //check if user is allowed to administer the institution indicated by GET parameter
+    foreach ($institutions as $inst) {
+        if ($institution == $inst->name) {
+            $accessdenied = false;
+        }
+    }
+}
+else {
+    $institution = $institutions[0];
+    $institution = $institution->name;
+    $accessdenied = false;
+}
+
 $subject = isset($_GET['subject']) ? $_GET['subject'] : '';
 $links_inst = '';
 $links_subj = '';
 
-//get institutions - TODO: check membership/role
-$sql = "SELECT name, displayname FROM institution ORDER BY displayname";
-
-if (!$data = get_records_sql_array($sql, array())) {
-    $data = array();
-}
-
-$institutionexists = false;
-
 // generate institution list
-if ($data) {
+if ($institutions) {
     // select first institution if GET parameter is not set
     if ($institution == '') {
-        $institution = $data[0]->name;
+        $institution = $institutions[0]->name;
     }
 
     $links_inst = '<p>' . get_string('institution', 'mahara') . ': ';
 
-    foreach ($data as $field) {
+    foreach ($institutions as $field) {
         if ($field->name == $institution) {
             $links_inst .= '<b>';
             $institutionexists = true;
@@ -156,6 +168,7 @@ $subjectform = pieform(array(
 ));
 
 $smarty = smarty(array('tablerenderer'));
+$smarty->assign('accessdenied', $accessdenied);
 $smarty->assign_by_ref('links_institution', $links_inst);
 $smarty->assign_by_ref('subjectform', $subjectform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);

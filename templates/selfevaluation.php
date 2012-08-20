@@ -35,31 +35,42 @@ require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
-$institution = isset($_GET['institution']) ? $_GET['institution'] : '';
+//get institutions
+$institutions = get_manageable_institutions($USER);
+$institutionexists = false;
+$accessdenied = true;
+
+if (isset($_GET['institution'])) {
+    $institution = $_GET['institution'];
+    
+    //check if user is allowed to administer the institution indicated by GET parameter
+    foreach ($institutions as $inst) {
+        if ($institution == $inst->name) {
+            $accessdenied = false;
+        }
+    }
+}
+else {
+    $institution = $institutions[0];
+    $institution = $institution->name;
+    $accessdenied = false;
+}
+
 $subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
 $links_inst = '';
 $links_subj = '';
 $institution_displayname = '';
 
-//get institutions - TODO: check membership/role
-$sql = "SELECT name, displayname FROM institution ORDER BY displayname";
-
-if (!$data = get_records_sql_array($sql, array())) {
-    $data = array();
-}
-
-$institutionexists = false;
-
 // generate institution list
-if ($data) {
+if ($institutions) {
     // select first institution if GET parameter is not set
     if ($institution == '') {
-        $institution = $data[0]->name;
+        $institution = $institutions[0]->name;
     }
 
     $links_inst = '<p>' . get_string('institution', 'mahara') . ': ';
 
-    foreach ($data as $field) {
+    foreach ($institutions as $field) {
         if ($field->name == $institution) {
             $links_inst .= '<b>';
             $institutionexists = true;
@@ -311,7 +322,7 @@ $smarty->assign('text_name_evaluation_grid', get_string('name_evaluation_grid', 
 $smarty->assign('text_num_rows', get_string('num_rows', 'artefact.epos'));
 $smarty->assign('text_num_cols', get_string('num_cols', 'artefact.epos'));
 
-//$smarty->assign('id', $id);
+$smarty->assign('accessdenied', $accessdenied);
 $smarty->assign('institution', $institution);
 $smarty->assign('institution_displayname', $institution_displayname);
 $smarty->assign('subjects', $subjects);

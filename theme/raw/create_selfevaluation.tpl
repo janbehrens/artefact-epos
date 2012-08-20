@@ -2,6 +2,7 @@
 
 <div id="institutions_list">{$links_institution|safe}</div>
 
+{if !$accessdenied}
 <div id="subjects_list">{$links_subject|safe}</div>
 
 {if $subjects}
@@ -86,7 +87,8 @@
 
 <a href="#" onClick="submitTemplate();" />Dumped</a>
 {else}
-There are no subjects configured in {$institution_displayname}. Go to <a href="../subjects/?institution={$institution}">Subjects administration</a> to add one.
+There are no subjects configured in {$institution_displayname}. Go to <a href="subjects.php?institution={$institution}">Subjects administration</a> to add one.
+{/if}
 {/if}
 
 

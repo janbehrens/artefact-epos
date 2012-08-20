@@ -2,6 +2,7 @@
 
 <div id="institutions_list">{$links_institution|safe}</div>
 
+{if !$accessdenied}
 <table id="subjectslist">
     <thead>
         <tr>
@@ -22,5 +23,6 @@
     <div id="subjectform" class="hidden">{$subjectform|safe}</div>
     <button id="addbutton" onclick="toggleForm();">{str tag='add'}</button>
 </div>
+{/if}
 
 {include file="footer.tpl"}
