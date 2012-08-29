@@ -350,6 +350,7 @@ function importxml_submit(Pieform $form, $values) {
         $basefilepath = $dirpath . '/' . $basename;
         
         while (file_exists($basefilepath . '.xml')) {
+            $basename .= '_1';
             $basefilepath .= '_1';
         }
         

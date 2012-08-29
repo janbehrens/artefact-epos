@@ -273,7 +273,7 @@ EOF;
             JOIN artefact_epos_checklist_item i ON d.id = i.descriptor 
             JOIN artefact a ON a.id = i.checklist 
             WHERE a.id = ?
-            ORDER BY d.id, d.level';
+            ORDER BY d.level, d.competence';
         
         if (!$descriptors = get_records_sql_array($sql, array($this->id))) {
             $descriptors = array();
@@ -385,6 +385,7 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid) {
                 $values['file'] = $word;
             }
         }
+        error_log($values['file']);
         $values['visible'] = 1;
         $values['active'] = 1;
         
