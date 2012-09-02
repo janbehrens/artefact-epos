@@ -4,9 +4,11 @@
 
 {if !$accessdenied}
 <div id="subjects_list">{$links_subject|safe}</div>
+<br/>
 
 {if $subjects}
-<h3>{str tag='availabletemplates' section='artefact.epos'}</h3>
+<fieldset>
+<legend>{str tag='availabletemplates' section='artefact.epos'}</legend>
 
 <table id="descriptorsets">
     <tbody>
@@ -19,8 +21,10 @@
         {/foreach}
     </tbody>
 </table>
+</fieldset><br/>
 
-<h3>{str tag='loadtemplatefromfile' section='artefact.epos'}</h3>
+<fieldset>
+<legend>{str tag='loadtemplatefromfile' section='artefact.epos'}</legend>
 <h4>{str tag='fromxmlfile' section='artefact.epos'}</h4>
 
 <div id="importformxml">{$importformxml|safe}</div>
@@ -28,8 +32,10 @@
 <h4>{str tag='fromcsvfile' section='artefact.epos'}</h4>
 
 <div id="importformcsv">{$importformcsv|safe}</div>
+</fieldset><br/>
 
-<h3>{str tag='createnewtemplate' section='artefact.epos'}</h3>
+<fieldset>
+<legend>{str tag='createnewtemplate' section='artefact.epos'}</legend>
 
 <table cellspacing="0">
 	<tr>
@@ -75,6 +81,7 @@
 <div id="canDos"></div>
 
 <button id="addbutton" onclick="submitTemplate();">{str tag='save'}</button>
+</fieldset>
 {else}
 {str tag='nosubjectsconfigured1' section='artefact.epos'}{$institution_displayname}{str tag='nosubjectsconfigured2' section='artefact.epos'}<a href="subjects.php?institution={$institution}">{str tag='subjectsadministration' section='artefact.epos'}</a>{str tag='nosubjectsconfigured3' section='artefact.epos'}
 {/if}
