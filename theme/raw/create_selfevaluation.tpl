@@ -6,7 +6,7 @@
 <div id="subjects_list">{$links_subject|safe}</div>
 
 {if $subjects}
-<h3>Available templates</h3>
+<h3>{str tag='availabletemplates' section='artefact.epos'}</h3>
 
 <table id="descriptorsets">
     <thead>
@@ -28,16 +28,16 @@
     </tbody>
 </table>
 
-<h3>Load template from file</h3>
-<h4>From XML file</h4>
+<h3>{str tag='loadtemplatefromfile' section='artefact.epos'}</h3>
+<h4>{str tag='fromxmlfile' section='artefact.epos'}</h4>
 
 <div id="importformxml">{$importformxml|safe}</div>
 
-<h4>From CSV file</h4>
+<h4>{str tag='fromcsvfile' section='artefact.epos'}</h4>
 
 <div id="importformcsv">{$importformcsv|safe}</div>
 
-<h3>Create new template</h3>
+<h3>{str tag='createnewtemplate' section='artefact.epos'}</h3>
 
 <table cellspacing="0">
 	<tr>
@@ -82,30 +82,11 @@
 
 <div id="canDos"></div>
 
-<br />
-<br />
-
-<a href="#" onClick="submitTemplate();" />Dumped</a>
+<button id="addbutton" onclick="submitTemplate();">{str tag='save'}</button>
 {else}
-There are no subjects configured in {$institution_displayname}. Go to <a href="subjects.php?institution={$institution}">Subjects administration</a> to add one.
+{str tag='nosubjectsconfigured1' section='artefact.epos'}{$institution_displayname}{str tag='nosubjectsconfigured2' section='artefact.epos'}<a href="subjects.php?institution={$institution}">{str tag='subjectsadministration' section='artefact.epos'}</a>{str tag='nosubjectsconfigured3' section='artefact.epos'}
 {/if}
 {/if}
-
 
 {include file="footer.tpl"}
 
-
-
-<!-- OLD UNUSED STUFF
-<div>
-	<form id="evaluationLevelForm" action="#">
-		<p>Die Anzahl der Werte in der Selbsteinsch&auml;tzungsskala <br /> soll f&uuml;r...</p>
-		<ul>
-			<li class="evaluationLevelRadioGroup"><input type="radio" id="evaluationLevelRadioGroupWhole" name="evaluationLevelRadioGroup" value="whole" onclick="changeEvaluationLevelDegree(1);" checked>...die gesamte Kompetenzmatrix gleich sein.</li>
-			<li class="evaluationLevelRadioGroup"><input type="radio" id="evaluationLevelRadioGroupCompetency" name="evaluationLevelRadioGroup" value="competency" onclick="changeEvaluationLevelDegree(2);">...einen Kompetenzbereich gleich sein.</li>
-			<li class="evaluationLevelRadioGroup"><input type="radio" id="evaluationLevelRadioGroupLevel" name="evaluationLevelRadioGroup" value="level" onclick="changeEvaluationLevelDegree(3);">...eine Niveaustufe gleich sein.</li>
-		</ul>
-		<p id="evaluationLevelDescNumItems">Anzahl der Selbsteinsch&auml;tzungsstufen f&uuml;r <b>die gesamte Kompetenzmatrix</b>.&nbsp;<input type="text" id="evaluationLevelNumItems" maxlength="2" onkeypress="validateNumericKey(event);" onkeyup="updateEvaluationLevelInputFields();" value="5" /></p>
-	</form>
-</div>
--->

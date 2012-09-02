@@ -68,7 +68,7 @@ if ($institutions) {
         $institution = $institutions[0]->name;
     }
 
-    $links_inst = '<p>' . get_string('institution', 'mahara') . ': ';
+    $links_inst = '<p>' . get_string('institution', 'artefact.epos') . ': ';
 
     foreach ($institutions as $field) {
         if ($field->name == $institution) {
@@ -145,7 +145,8 @@ $activatestr = get_string('activate', 'artefact.epos');
 $deactivatestr = get_string('deactivate', 'artefact.epos');
 $deletestr = get_string('delete', 'mahara');
 $exportstr = get_string('export', 'artefact.epos');
-$confirmdelstr = get_string('confirmdeletedescriptorset', 'artefact.epos');
+$confirmdelstr1 = get_string('confirmdeletedescriptorset1', 'artefact.epos');
+$confirmdelstr2 = get_string('confirmdeletedescriptorset2', 'artefact.epos');
 
 
 //JS stuff
@@ -170,7 +171,7 @@ function deactivateDescriptorset(id) {
 }
 
 function deleteDescriptorset(id, name) {
-    if (confirm('{$confirmdelstr} "' + name + '"?')) {
+    if (confirm('{$confirmdelstr1}"' + name + '"{$confirmdelstr2}?')) {
         sendjsonrequest('deletedescriptorset.json.php',
                 {'id': id},
                 'POST', 

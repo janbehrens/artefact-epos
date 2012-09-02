@@ -66,6 +66,7 @@ $string['languages'] = 'Languages';
 $string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';
+$string['institution'] = 'Institution';
 
 //add subject form
 $string['subjectform.subject'] = 'Subject';
@@ -98,6 +99,11 @@ $string['combination_of'] = 'Combination of';
 $string['and'] = 'and';
 
 //self-evaluation template management
+$string['availabletemplates'] = 'Available templates';
+$string['loadtemplatefromfile'] = 'Load template from file';
+$string['fromxmlfile'] = 'From XML file';
+$string['fromcsvfile'] = 'From CSV file';
+$string['createnewtemplate'] = 'Create new template';
 $string['activate'] = 'Activate';
 $string['deactivate'] = 'Deactivate';
 $string['export'] = 'Export';
@@ -109,6 +115,11 @@ $string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
 $string['deletedescriptorsetsuccess'] = 'Successfully deleted descriptor set';
 $string['deletedescriptorsetfailed'] = 'Deleting descriptor set failed: Descriptors are being used.';
 $string['importeddescriptorset'] = 'Successfully imported descriptor set';
-$string['confirmdeletedescriptorset'] = 'Are you sure you want to permanently delete the descriptor set';
+$string['confirmdeletedescriptorset1'] = 'Are you sure you want to permanently delete the descriptor set ';
+$string['confirmdeletedescriptorset2'] = '';
+$string['nosubjectsconfigured1'] = 'There are no subjects configured in ';
+$string['nosubjectsconfigured2'] = '. Go to ';
+$string['nosubjectsconfigured3'] = ' to add one.';
+$string['subjectsadministration'] = 'Subjects administration';
 
 ?>
