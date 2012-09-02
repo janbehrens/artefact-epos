@@ -9,14 +9,6 @@
 <h3>{str tag='availabletemplates' section='artefact.epos'}</h3>
 
 <table id="descriptorsets">
-    <thead>
-        <tr>
-            <th>{str tag='name' section='mahara'}</th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
     <tbody>
         {foreach from=$rows item=row}
         <tr class="{cycle values='r0,r1'}">
