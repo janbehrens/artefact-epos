@@ -146,7 +146,6 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
             'type' => 'select',
             'title' => get_string('subjectform.subject', 'artefact.epos'),
             'options' => $optionssubject,
-            'onclick' => 'refreshDescriptorsets();',
         ),
         'title' => array(
             'type' => 'text',

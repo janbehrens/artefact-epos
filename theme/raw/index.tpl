@@ -34,4 +34,8 @@
 {else}Wrong subject ID!
 {/if}
 
+<script type='text/javascript'>
+jQuery('#addlearnedlanguage_subject').attr('onchange', 'refreshDescriptorsets();');
+</script>
+
 {include file="footer.tpl"}
