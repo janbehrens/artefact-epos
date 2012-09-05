@@ -103,7 +103,6 @@ $string['savesettings'] = 'Save Settings';
 $string['viewbiography'] = 'View Biography';
 $string['youhavenobiographies'] = 'You have no biographies.';
 $string['addbiography'] = 'Create Biography';
-$string['educationhistory'] = 'Education History';
 $string['startdate'] = 'Start date';
 $string['enddate'] = 'End date';
 $string['qualification'] = 'Qualification';
