@@ -240,7 +240,7 @@ function get_descriptorsets() {
             $data = array();
         }
         foreach ($data as $field) {
-            $descriptorsets[$field->name] = $field->name;
+            $descriptorsets[$field->id] = $field->name;
         };
     }
     else {
@@ -276,7 +276,7 @@ function addlearnedlanguage_submit(Pieform $form, $values) {
 }
 
 function process_languageform(Pieform $form, $values) {
-    global $USER;
+    global $USER, $optionsdescriptors;
     $owner = $USER->get('id');
     
     // update artefact 'subject' ...
@@ -310,7 +310,7 @@ function process_languageform(Pieform $form, $values) {
         
         $a = new ArtefactTypeChecklist(0, array(
             'owner' => $owner,
-            'title' => $values['descriptorset'],
+            'title' => $optionsdescriptors[$values['descriptorset']],
             'parent' => $id
         ));
         $a->commit();
@@ -320,7 +320,7 @@ function process_languageform(Pieform $form, $values) {
         
         $sql = 'SELECT d.id, d.goal_available FROM artefact_epos_descriptor d
                 JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset
-                WHERE s.name = ?';
+                WHERE s.id = ?';
         
         if (!$descriptors = get_records_sql_array($sql, array($values['descriptorset']))) {
             $descriptors = array();
