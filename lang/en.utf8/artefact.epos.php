@@ -74,6 +74,40 @@ $string['subjectform.subject'] = 'Subject';
 $string['subjectform.title'] = 'Title';
 $string['subjectform.descriptorset'] = 'Descriptors';
 
+//biography
+$string['biography'] = 'Biography';
+$string['biographies'] = 'Biographies';
+$string['youarenottheownerofthisbiography'] = 'You are not the owner of this biography';
+$string['biographysettings'] = 'Biography Settings';
+$string['deletebiography?'] = 'Are you sure you want to delete this biography?';
+$string['compositedeleteconfirm'] = 'Are you sure you want to delete this?';
+$string['moveup'] = 'Move Up';
+$string['movedown'] = 'Move Down';
+$string['biographyform.name'] = 'Label for the experience';
+$string['biographyform.startdate'] = 'Start date';
+$string['biographyform.enddate'] = 'End date';
+$string['biographyform.place'] = 'Place (school, job, leisure etc.)';
+$string['biographyform.subject'] = 'Language';
+$string['biographyform.level'] = 'Level (A1...C2 or low, medium, high or similar)';
+$string['biographyform.description'] = 'Description of the learning experience and learning outcome';
+$string['compositesaved'] = 'Saved successfully';
+$string['compositesavefailed'] = 'Save failed';
+$string['biographydeleted'] = 'Biography deleted';
+$string['newbiography'] = 'New Biography';
+$string['biographytitle'] = 'Title';
+$string['biographytitledesc'] = 'e.g., ‘School education’.';
+$string['biographydesc'] = 'Description';
+$string['biographydescdesc'] = '';
+$string['createbiography'] = 'Create Biography';
+$string['savesettings'] = 'Save Settings';
+$string['viewbiography'] = 'View Biography';
+$string['youhavenobiographies'] = 'You have no biographies.';
+$string['addbiography'] = 'Create Biography';
+$string['educationhistory'] = 'Education History';
+$string['startdate'] = 'Start date';
+$string['enddate'] = 'End date';
+$string['qualification'] = 'Qualification';
+
 //help text
 $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate your expertise in the selected area of competence and level.';
 

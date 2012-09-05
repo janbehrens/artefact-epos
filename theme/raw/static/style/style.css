@@ -1,7 +1,7 @@
 div#subjects_list p {
 	font-size: 120%;
 }
-form.pieform table {
+.checklistform table {
 	float: right;
 }
 form#addlearnedlanguage table {
@@ -17,38 +17,38 @@ td.radio {
 /** Customgoal specific **/
 
 form.pieform.customgoal table {
-	float: none;
-	width: 100%;
+    float: none;
+    width: 100%;
 }
 
 div#customgoal {
-	margin-top: 10px;
-	width: 100%;
+    margin-top: 10px;
+    width: 100%;
 }
 
 div.customgoalText {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 div.resizable-textarea {
-	width: 500px;
+    width: 500px;
 }
 
 textarea.customgoalta {
-	float: left;
-	width: 100%;
-	rows: 5;
+    float: left;
+    width: 100%;
+    rows: 5;
 }
 
 div.grippie {
-	height: 0px;
-	visibility: hidden;
+    height: 0px;
+    visibility: hidden;
 }
 
 #addcustomgoal_submit_container {
-	text-align: right;
-	padding: 0px;
+    text-align: right;
+    padding: 0px;
 	
 }
 
@@ -58,7 +58,35 @@ div.grippie {
 }
 
 #addcustomgoal_submit {
-	margin: 0px;	
+    margin: 0px;	
 }
 
-/** End: Customgoal specific **/
+ /* Biography list */
+#biographylist td .addicon {
+    margin: 0;
+}
+#biographylist h4 {
+    margin: 0;
+}
+#biographylist #blogdesc p {
+    margin: 0;
+    font-size: .9167em;
+}
+#blogdescription {
+    margin: 0 0 10px 0;
+}
+#blogdescription p {
+    margin: 0;
+}
+td a.btn-add{
+    margin-left:10px;
+    margin-right:10px;
+}
+#biographylist td.buttonscell form,
+#biographylist td.buttonscell form div {
+    display: inline;
+}
+#biographylist th {
+    border-bottom: none;
+}
+
