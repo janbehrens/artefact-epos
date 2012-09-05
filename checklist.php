@@ -160,7 +160,7 @@ if ($haslanguages) {
                 }
                 //link
                 if ($set[$competence][$level][$k]['link'] != '') {
-                    $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '" target="_blank">(Aufgabe)</a>';
+                    $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '" target="_blank">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
                     if ($set[$competence][$level][$k]['goal'] == 1) {
                         $elements['item' . $k . '_goal']['title'] = $elements['item' . $k]['title'];
                     }

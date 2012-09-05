@@ -67,6 +67,7 @@ $string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';
 $string['institution'] = 'Institution';
+$string['exampletask'] = 'example/task';
 
 //add subject form
 $string['subjectform.subject'] = 'Subject';
