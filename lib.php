@@ -360,6 +360,60 @@ class ArtefactTypeCustomGoal extends ArtefactType {
     public static function get_links($id) {}
 }
 
+/**
+ * load_descriptorset()
+ * 
+ * will return something like:
+ *     array(
+ *         'Listening' => array(
+ *             'A1' => array(
+ *                 101 => array(
+ *                     'name' => 'I can something',
+ *                     'evaluations' => 'not at all; satisfactory; good',
+ *                     'goal' => 1
+ *                 102 => array(...),
+ *                 etc.
+ *             ),
+ *             'A2' => array(
+ *                 ...
+ *             ),
+ *             etc.
+ *         ),
+ *         'Reading' => array(
+ *             ...
+ *         ),
+ *         etc.
+ *     )
+ */
+function load_descriptors($id) {
+    $sql = 'SELECT * FROM artefact_epos_descriptor
+        WHERE descriptorset = ?
+        ORDER BY level, competence';
+    
+    if (!$descriptors = get_records_sql_array($sql, array($id))) {
+        $descriptors = array();
+    }
+    
+    $competences = array();
+    
+    // group them by competences and levels:
+    foreach ($descriptors as $desc) {
+        if (!isset($competences[$desc->competence])) {
+            $competences[$desc->competence] = array();
+        }
+        if (!isset($competences[$desc->competence][$desc->level])) {
+            $competences[$desc->competence][$desc->level] = array();
+        }
+        $competences[$desc->competence][$desc->level][$desc->id] = array(
+                'name' => $desc->name,
+                'evaluations' => $desc->evaluations,
+                'goal' => $desc->goal_available,
+                'link' => $desc->link
+        );
+    }
+    return $competences;
+}
+
 /*
  * write descriptors from xml into database
  * @param $xml path to the xml file

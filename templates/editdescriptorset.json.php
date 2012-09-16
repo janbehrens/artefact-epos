@@ -21,36 +21,35 @@
  * @subpackage artefact-epos
  * @author     Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011 Jan Behrens, jb3@informatik.uni-bremen.de
+ * @copyright  (C) 2012 Jan Behrens, jb3@informatik.uni-bremen.de
  *
  */
 
 define('INTERNAL', 1);
-define('JSON', 1);
+//define('JSON', 1);
 
 require(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 safe_require('artefact', 'epos');
 
-$institution = $_GET['institution'];
-$subject = $_GET['subject'];
+$descriptorset = param_variable('id');
 
-//read DB
-$sql = 'SELECT d.* FROM artefact_epos_descriptor_set d
-        JOIN artefact_epos_descriptorset_subject ds ON d.id = ds.descriptorset
-        JOIN artefact_epos_subject s ON s.id = ds.subject
-        JOIN institution i ON i.name = s.institution
-        WHERE i.name = ? AND s.id = ? AND d.visible = 1';
-if (!$dbdata = get_records_sql_array($sql, array($institution, $subject))) {
-    $dbdata = array();
+/*$sql = 'SELECT id,name,link,competence,level,evaluations,goal_available FROM artefact_epos_descriptor
+        WHERE descriptorset = ?';
+if (!$data = get_records_sql_array($sql, array($descriptorset))) {
+    $data = array();
+}*/
+
+$data = load_descriptors($descriptorset);
+
+$sql = 'SELECT name FROM artefact_epos_descriptor_set
+        WHERE id = ?';
+if (!$dsdata = get_records_sql_array($sql, array($descriptorset))) {
+    $dsdata = array();
 }
 
-usort($dbdata, function ($a, $b) {
-    return strcoll($a->name, $b->name);
-});
-
 echo json_encode(array(
-    'data' => $dbdata,
-    'count' => count($dbdata)
+    'data' => array('name' => $dsdata[0]->name, 'descriptors' => $data),
+    'count' => count($data)
 ));
 
 ?>

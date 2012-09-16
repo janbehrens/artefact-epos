@@ -109,7 +109,7 @@
 			
 			
 			//collect old data (competency names, levels)
-			if(oldRowCount > 0) {
+			/*if(oldRowCount > 0) {
 				arrCompetencyName = new Array();
 				for(nI = 0; nI < oldRowCount; nI++) {
 					if(document.getElementById("competencyName_"+nI))
@@ -123,7 +123,7 @@
 					if(document.getElementById("competencyLevel_"+nI))
 						arrCompetencyLevel[nI] = document.getElementById("competencyLevel_"+nI).value;
 				}
-			}
+			}*/
 				
 			document.getElementById("rowCount").value = nRows;
 			document.getElementById("colCount").value = nCols;
@@ -179,8 +179,9 @@
 			input.setAttribute("size", "10");
 						
 			//restore inputs if there are any
-			if(nI < arrCompetencyLevel.length)
+			if(nI < arrCompetencyLevel.length) {
 				input.setAttribute("value", arrCompetencyLevel[nI]);
+			}
 			
 			col.appendChild(input);			
 			row.appendChild(col);
@@ -225,7 +226,7 @@
 				col.setAttribute('style', 'border: 1px solid;')
 				var id =  nI+'_'+nJ;
 				col.setAttribute("id", id);				
-				col.innerHTML = "<a href='#' onclick='editCanDo("+nI+","+nJ+");'>"+text_cando_statement+"s</a>";
+				col.innerHTML = "<a class='icon' onclick='editCanDo("+nI+","+nJ+");'>"+text_cando_statement+"s</a>";
 				row.appendChild(col);
 			}
 			
@@ -407,7 +408,7 @@
 		
 		input = document.createElement("input");		
 		input.setAttribute("type", "checkbox");	
-		input.setAttribute("style", "margin-left: 0px;");				
+		input.setAttribute("style", "margin-left: 0px;");
 		input.setAttribute("id", id);
 		if(arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true ||
 				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "" ||

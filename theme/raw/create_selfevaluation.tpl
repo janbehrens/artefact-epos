@@ -4,10 +4,10 @@
 
 {if !$accessdenied}
 <div id="subjects_list">{$links_subject|safe}</div>
-<br/>
 
 {if $subjects}
-<fieldset>
+{if !$edit}
+<fieldset id="list">
 <legend>{str tag='availabletemplates' section='artefact.epos'}</legend>
 
 <table id="descriptorsets">
@@ -17,13 +17,14 @@
             <td></td>
             <td></td>
             <td></td>
+            <td></td>
         </tr>
         {/foreach}
     </tbody>
 </table>
-</fieldset><br/>
+</fieldset>
 
-<fieldset>
+<fieldset id="load">
 <legend>{str tag='loadtemplatefromfile' section='artefact.epos'}</legend>
 <h4>{str tag='fromxmlfile' section='artefact.epos'}</h4>
 
@@ -32,10 +33,16 @@
 <h4>{str tag='fromcsvfile' section='artefact.epos'}</h4>
 
 <div id="importformcsv">{$importformcsv|safe}</div>
-</fieldset><br/>
+</fieldset>
+{/if}
 
 <fieldset>
+
+{if $edit}
+<legend>{str tag='edittemplate' section='artefact.epos'}</legend>
+{else}
 <legend>{str tag='createnewtemplate' section='artefact.epos'}</legend>
+{/if}
 
 <table cellspacing="0">
 	<tr>
@@ -80,12 +87,84 @@
 
 <div id="canDos"></div>
 
+{if $edit}
+<button id="addbutton" onclick="cancelEditing();">{str tag='cancel'}</button>
+{/if}
 <button id="addbutton" onclick="submitTemplate();">{str tag='save'}</button>
 </fieldset>
+
 {else}
 {str tag='nosubjectsconfigured1' section='artefact.epos'}{$institution_displayname}{str tag='nosubjectsconfigured2' section='artefact.epos'}<a href="subjects.php?institution={$institution}">{str tag='subjectsadministration' section='artefact.epos'}</a>{str tag='nosubjectsconfigured3' section='artefact.epos'}
 {/if}
 {/if}
+
+{if $edit}
+<script type="text/javascript">
+    sendjsonrequest('editdescriptorset.json.php',
+        \{'id': '{$edit}'},
+        'POST',
+        function(data) {
+            jQuery('#competencyPatternTitle').attr('value', data.data.name);
+            
+            for (var comp in data.data.descriptors) {
+                for (var level in data.data.descriptors[comp]) {
+                    for (var id in data.data.descriptors[comp][level]) {
+                        arrEvaluationLevelGlobal = data.data.descriptors[comp][level][id].evaluations.split(";");
+                        break;
+                    }
+                    break;
+                }
+                break;
+            }
+            jQuery('#evaluationLevelNumItems').attr('value', arrEvaluationLevelGlobal.length);
+            
+            arrCompetencyName = Array();
+            var i = 0;
+            for (var comp in data.data.descriptors) {
+                arrCompetencyName.push(comp);
+                //jQuery('#competencyName_' + i).attr('value', comp);
+                i++;
+            }
+            jQuery('#rows').attr('value', arrCompetencyName.length);
+            
+            arrCompetencyLevel = Array();
+            for (var comp in data.data.descriptors) {
+                for (var level in data.data.descriptors[comp]) {
+                    arrCompetencyLevel.push(level);
+                }
+                break;
+            }
+            jQuery('#cols').attr('value', arrCompetencyLevel.length);
+            
+            onChangeColsRows();
+            
+            arrCanDo = Array();
+            arrCanDoTaskLinks = Array();
+            arrCanDoCanBeGoal = Array();
+            var c = 0;
+            for (var comp in data.data.descriptors) {
+                arrCanDo[c] = Array();
+                arrCanDoTaskLinks[c] = Array();
+                arrCanDoCanBeGoal[c] = Array();
+                var l = 0;
+                for (var level in data.data.descriptors[comp]) {
+                    arrCanDo[c][l] = Array();
+                    arrCanDoTaskLinks[c][l] = Array();
+                    arrCanDoCanBeGoal[c][l] = Array();
+                    for (var id in data.data.descriptors[comp][level]) {
+                        arrCanDo[c][l].push(data.data.descriptors[comp][level][id].name);
+                        arrCanDoTaskLinks[c][l].push(data.data.descriptors[comp][level][id].link);
+                        arrCanDoCanBeGoal[c][l].push(data.data.descriptors[comp][level][id].goal);
+                    }
+                    l++;
+                }
+                c++;
+            }
+            
+        });
+</script>
+{/if}
+
 
 {include file="footer.tpl"}
 

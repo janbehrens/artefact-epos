@@ -90,3 +90,7 @@ td a.btn-add{
     border-bottom: none;
 }
 
+fieldset {
+    margin: 5em;
+    color: red;
+}

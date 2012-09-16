@@ -57,6 +57,7 @@ else {
 }
 
 $subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
+$edit = isset($_GET['edit']) ? $_GET['edit'] : 0;
 $links_inst = '';
 $links_subj = '';
 $institution_displayname = '';
@@ -144,6 +145,7 @@ $text_and			               = get_string('and', 'artefact.epos');
 $activatestr = get_string('activate', 'artefact.epos');
 $deactivatestr = get_string('deactivate', 'artefact.epos');
 $deletestr = get_string('delete', 'mahara');
+$editstr = get_string('edit', 'mahara');
 $exportstr = get_string('export', 'artefact.epos');
 $confirmdelstr1 = get_string('confirmdeletedescriptorset1', 'artefact.epos');
 $confirmdelstr2 = get_string('confirmdeletedescriptorset2', 'artefact.epos');
@@ -151,67 +153,8 @@ $confirmdelstr2 = get_string('confirmdeletedescriptorset2', 'artefact.epos');
 
 //JS stuff
 $inlinejs = <<<EOF
-
-function activateDescriptorset(id) {
-	sendjsonrequest('activatedescriptorset.json.php?activate=1',
-            {'id': id},
-            'POST', 
-            function() {
-            	tableRenderer.doupdate();
-            });
-}
-
-function deactivateDescriptorset(id) {
-	sendjsonrequest('activatedescriptorset.json.php?activate=0',
-            {'id': id},
-            'POST', 
-            function() {
-            	tableRenderer.doupdate();
-            });
-}
-
-function deleteDescriptorset(id, name) {
-    if (confirm('{$confirmdelstr1}"' + name + '"{$confirmdelstr2}?')) {
-        sendjsonrequest('deletedescriptorset.json.php',
-                {'id': id},
-                'POST', 
-                function() {
-                	tableRenderer.doupdate();
-                });
-    }
-    return false;
-}
-
-tableRenderer = new TableRenderer(
-    'descriptorsets',
-    'selfevaluation.json.php?institution={$institution}&subject={$subject}',
-    [
-        function (r, d) {
-            return TD(null, r.name);
-        },
-        function (r, d) {
-            if (r.active == 1) {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateDescriptorset(' + r.id + ');'}, '{$deactivatestr}'));
-            }
-            else {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateDescriptorset(' + r.id + ');'}, '{$activatestr}'));
-            }
-        },
-        function (r, d) {
-            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteDescriptorset(' + r.id + ', "' + r.name + '");'}, '{$deletestr}'));
-        },
-        function (r, d) {
-            return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file=' + r.file}, '{$exportstr}'));
-        },
-    ]
-);
-
-tableRenderer.emptycontent = '';
-tableRenderer.paginate = false;
-tableRenderer.updateOnLoad();
-
-function importformCallback() {
-    tableRenderer.doupdate();
+function cancelEditing() {
+    window.location.href = '?institution={$institution}&subject={$subject}';
 }
 
 function submitTemplate() {
@@ -266,6 +209,80 @@ var text_fill_in_learning_objectives	= "$text_fill_in_learning_objectives";
 var text_combination_of					= "$text_combination_of";
 var text_and							= "$text_and";
 EOF;
+
+if (!$edit) {
+    $inlinejs .= <<<EOF
+function activateDescriptorset(id) {
+	sendjsonrequest('activatedescriptorset.json.php?activate=1',
+            {'id': id},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            });
+}
+
+function deactivateDescriptorset(id) {
+	sendjsonrequest('activatedescriptorset.json.php?activate=0',
+            {'id': id},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            });
+}
+
+function editDescriptorset(id, name) {
+    window.location.href = '?institution={$institution}&subject={$subject}&edit=' + id;
+    return false;
+}
+
+function deleteDescriptorset(id, name) {
+    if (confirm('{$confirmdelstr1}"' + name + '"{$confirmdelstr2}?')) {
+        sendjsonrequest('deletedescriptorset.json.php',
+                {'id': id},
+                'POST', 
+                function() {
+                	tableRenderer.doupdate();
+                });
+    }
+    return false;
+}
+
+tableRenderer = new TableRenderer(
+    'descriptorsets',
+    'selfevaluation.json.php?institution={$institution}&subject={$subject}',
+    [
+        function (r, d) {
+            return TD(null, r.name);
+        },
+        function (r, d) {
+            if (r.active == 1) {
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateDescriptorset(' + r.id + ');'}, '{$deactivatestr}'));
+            }
+            else {
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateDescriptorset(' + r.id + ');'}, '{$activatestr}'));
+            }
+        },
+        function (r, d) {
+            return TD(null, A({'class': 'icon btn-edit s', 'href': 'javascript: onClick=editDescriptorset(' + r.id + ', "' + r.name + '");'}, '{$editstr}'));
+        },
+        function (r, d) {
+            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteDescriptorset(' + r.id + ', "' + r.name + '");'}, '{$deletestr}'));
+        },
+        function (r, d) {
+            return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file=' + r.file}, '{$exportstr}'));
+        },
+    ]
+);
+
+tableRenderer.emptycontent = '';
+tableRenderer.paginate = false;
+tableRenderer.updateOnLoad();
+
+function importformCallback() {
+    tableRenderer.doupdate();
+}
+EOF;
+}
 
 $importformxml = pieform(array(
         'name' => 'importxml',
@@ -331,6 +348,7 @@ $smarty->assign('links_institution', $links_inst);
 $smarty->assign('links_subject', $links_subj);
 $smarty->assign('importformxml', $importformxml);
 $smarty->assign('importformcsv', $importformcsv);
+$smarty->assign('edit', $edit);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('create_selfevaluation_template', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);

@@ -138,6 +138,7 @@ $string['loadtemplatefromfile'] = 'Load template from file';
 $string['fromxmlfile'] = 'From XML file';
 $string['fromcsvfile'] = 'From CSV file';
 $string['createnewtemplate'] = 'Create new template';
+$string['edittemplate'] = 'Edit template';
 $string['activate'] = 'Activate';
 $string['deactivate'] = 'Deactivate';
 $string['export'] = 'Export';
