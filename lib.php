@@ -418,9 +418,10 @@ function load_descriptors($id) {
  * write descriptors from xml into database
  * @param $xml path to the xml file
  *        $fileistemporary whether the file will be moved to its final destination later
- *        $subjectid Id of the subject the descriptorset shall be associated with
+ *        $subjectid ID of the subject the descriptorset shall be associated with
+ *        $descriptorsetid = ID of the descriptorset that is to be replaced by a new one
  */
-function write_descriptor_db($xml, $fileistemporary, $subjectid) {
+function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorsetid=null) {
     if (file_exists($xml) && is_readable($xml)) {
         $contents = file_get_contents($xml);
         $xmlarr = xmlize($contents);
@@ -434,12 +435,12 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid) {
             $values['file'] = 'unknown'; //file name may not be known yet
         }
         else {
+            //extract file name from path
             $path = explode('/', $xml);
             foreach ($path as $word) {
                 $values['file'] = $word;
             }
         }
-        error_log($values['file']);
         $values['visible'] = 1;
         $values['active'] = 1;
         
@@ -450,6 +451,14 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid) {
                 'descriptorset' => $values['descriptorset'],
                 'subject' => $subjectid
         ));
+        
+        if ($descriptorsetid != null) {
+            update_record(
+                    $descriptorsettable,
+                    (object) array('id' => $descriptorsetid, 'visible' => 0),
+                    'id'
+            );
+        }
         
         foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
             $values['competence'] = $x['@']['COMPETENCE'];

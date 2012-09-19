@@ -153,46 +153,32 @@ $confirmdelstr2 = get_string('confirmdeletedescriptorset2', 'artefact.epos');
 
 //JS stuff
 $inlinejs = <<<EOF
+
 function cancelEditing() {
     window.location.href = '?institution={$institution}&subject={$subject}';
 }
 
-function submitTemplate() {
-	/*alert(arrCompetencyName);
-	alert(arrCompetencyLevel);	
-	
-	alert(arrCanDoTaskLinks["0_0"]);	
-	alert(arrCompetencyNameComment);	
-	alert(arrEvaluationLevelCompetencyName[0][0]);
-	alert(arrEvaluationLevelCompetencyLevel[0][0]);	
-	alert(arrEvaluationLevelGlobal[0]);
-	*/
-	
-	
-	var jsonCompetencyPatternTitle			= JSON.stringify(document.getElementById('competencyPatternTitle').value);
-	var jsonCompetencyName 					= JSON.stringify(arrCompetencyName);
-	var jsonCompetencyLevel 				= JSON.stringify(arrCompetencyLevel);
-	var jsonCanDo 							= JSON.stringify(arrCanDo);
-	var jsonCanDoTaskLink					= JSON.stringify(arrCanDoTaskLinks);
-	var jsonCanDoCanBeGoal					= JSON.stringify(arrCanDoCanBeGoal);
-	var jsonEvaluationLevelGlobal			= JSON.stringify(arrEvaluationLevelGlobal);
-	var jsonTypeOfEvaluation				= JSON.stringify(nActEvaluationDegreeId);
-	
-	
-	sendjsonrequest('addselfevaluation.json.php?subject={$subject}',
-            {'arrCompetencyNames': jsonCompetencyName,
-				'arrCompetencyLevel': jsonCompetencyLevel,
-				'arrCanDo': jsonCanDo,
-				'arrCanDoTaskLink': jsonCanDoTaskLink,
-				'arrCanDoCanBeGoal': jsonCanDoCanBeGoal,
-				'arrEvaluationLevelGlobal': jsonEvaluationLevelGlobal,
-				'jsonTypeOfEvaluation': jsonTypeOfEvaluation,
-				'jsonCompetencyPatternTitle': jsonCompetencyPatternTitle
-			
-			},
+function getJsonData() {
+    jsonData = { 
+		'jsonCompetencyPatternTitle' : JSON.stringify(document.getElementById('competencyPatternTitle').value),
+        'arrCompetencyNames'         : JSON.stringify(arrCompetencyName),
+		'arrCompetencyLevel'         : JSON.stringify(arrCompetencyLevel),
+		'arrCanDo'                   : JSON.stringify(arrCanDo),
+		'arrCanDoTaskLink'           : JSON.stringify(arrCanDoTaskLinks),
+		'arrCanDoCanBeGoal'          : JSON.stringify(arrCanDoCanBeGoal),
+		'arrEvaluationLevelGlobal'   : JSON.stringify(arrEvaluationLevelGlobal),
+		'jsonTypeOfEvaluation'       : JSON.stringify(nActEvaluationDegreeId),
+    };
+    return jsonData;
+}
+
+function submitTemplate(id) {
+	sendjsonrequest(
+	        'addselfevaluation.json.php?subject={$subject}&id=' + id,
+            getJsonData(),
             'POST', 
             function() {
-                tableRenderer.doupdate();
+                cancelEditing();
             },
             function() {
             	// @todo error
@@ -208,10 +194,12 @@ var text_canBeGoal						= "$text_learningobjectivecheckbox";
 var text_fill_in_learning_objectives	= "$text_fill_in_learning_objectives";
 var text_combination_of					= "$text_combination_of";
 var text_and							= "$text_and";
+
 EOF;
 
 if (!$edit) {
     $inlinejs .= <<<EOF
+
 function activateDescriptorset(id) {
 	sendjsonrequest('activatedescriptorset.json.php?activate=1',
             {'id': id},
@@ -458,7 +446,6 @@ function importcsv_submit(Pieform $form, $values) {
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());
     }
-    error_log("success");
     $form->json_reply(PIEFORM_OK, get_string('importeddescriptorset', 'artefact.epos'));
 }
 

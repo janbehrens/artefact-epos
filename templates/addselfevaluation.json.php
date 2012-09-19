@@ -32,7 +32,8 @@ require(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
-$subject = $_GET['subject'];
+$subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
+$id = isset($_GET['id']) ? $_GET['id'] : 0;
 
 $arrCompetencyName 					= param_variable('arrCompetencyNames');
 $arrCompetencyLevel 				= param_variable('arrCompetencyLevel');
@@ -54,10 +55,6 @@ $typeOfEvaluation					= json_decode($typeOfEvaluation);
 
 $arrEvaluationsString = "";
 
-//WRITE DATA to XML
-$descriptorsetName = $competencyPatternTitle;
-@date_default_timezone_set("UTC+1");
-
 //prepare saving as file
 $dataroot = realpath(get_config('dataroot'));
 $dirpath = $dataroot . '/artefact/epos/descriptorsets';
@@ -66,27 +63,28 @@ if (!is_dir($dirpath)) {
     mkdir($dirpath, 0700, true);
 }
 
-$descriptorsetfilename = $descriptorsetName;
-$descriptorsetfilename = str_replace('/', '_', $descriptorsetfilename);
-$basename = $dirpath . '/' . $descriptorsetfilename;
+$basename = str_replace('/', '_', $competencyPatternTitle);
+$filepath = $dirpath . '/' . $basename . '.xml';
 
-while (file_exists($basename . '.xml')) {
-    $basename .= '_1';
+//prevent from overwriting
+$increment = 1;
+while (file_exists($filepath)) {
+    $filepath = $dirpath . '/' . $basename . '_' . $increment . '.xml';
+    $increment++;
 }
 
-$path = $basename . '.xml';
 
 //intitialize XMLWriter
 $writer = new XMLWriter();
 
-$writer->openURI($path);
+$writer->openURI($filepath);
 
 $writer->startDocument();
 $writer->setIndent(4);
 
 // declare it as an rss document
 $writer->startElement('DESCRIPTORSET');
-$writer->writeAttribute('NAME', $descriptorsetName);
+$writer->writeAttribute('NAME', $competencyPatternTitle);
 
 for($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 	for($nJ = 0; $nJ < count($arrCompetencyLevel); $nJ++) {
@@ -109,27 +107,30 @@ for($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 			$arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);			
 				
 			$writer->startElement("DESCRIPTOR");
-			//----------------------------------------------------
 			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$nI]);
 			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$nJ]);
 			$writer->writeAttribute('EVALUATIONS', $arrEvaluationsString);
 			$writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$nI][$nJ][$nK]);
 			$writer->writeAttribute('NAME', $arrCanDo[$nI][$nJ][$nK]);
 			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$nI][$nJ][$nK]);
-			//----------------------------------------------------
 			$writer->endElement();
 				
 		}
 	}
 }
 
-// End Descriptoset
+// End Descriptorset
 $writer->endElement();
 $writer->endDocument();
 
 $writer->flush();
 
-write_descriptor_db($path, false, $subject);
+if ($id != 0) {
+    write_descriptor_db($filepath, false, $subject, $id);
+}
+else {
+    write_descriptor_db($filepath, false, $subject);
+}
 
 //reply
 json_reply(null, $arrCompetencyName[0]);

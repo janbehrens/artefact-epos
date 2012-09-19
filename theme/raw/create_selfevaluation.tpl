@@ -88,9 +88,12 @@
 <div id="canDos"></div>
 
 {if $edit}
-<button id="addbutton" onclick="cancelEditing();">{str tag='cancel'}</button>
+<button onclick="cancelEditing();">{str tag='cancel'}</button>
 {/if}
-<button id="addbutton" onclick="submitTemplate();">{str tag='save'}</button>
+<button onclick="submitTemplate({$edit});">{str tag='save'}</button>
+{if $edit}
+<button onclick="submitTemplate();">{str tag='saveasnewtemplate' section='artefact.epos'}</button>
+{/if}
 </fieldset>
 
 {else}
@@ -100,44 +103,13 @@
 
 {if $edit}
 <script type="text/javascript">
-    sendjsonrequest('editdescriptorset.json.php',
+sendjsonrequest(
+        'editdescriptorset.json.php',
         \{'id': '{$edit}'},
         'POST',
         function(data) {
-            jQuery('#competencyPatternTitle').attr('value', data.data.name);
-            
-            for (var comp in data.data.descriptors) {
-                for (var level in data.data.descriptors[comp]) {
-                    for (var id in data.data.descriptors[comp][level]) {
-                        arrEvaluationLevelGlobal = data.data.descriptors[comp][level][id].evaluations.split(";");
-                        break;
-                    }
-                    break;
-                }
-                break;
-            }
-            jQuery('#evaluationLevelNumItems').attr('value', arrEvaluationLevelGlobal.length);
-            
             arrCompetencyName = Array();
-            var i = 0;
-            for (var comp in data.data.descriptors) {
-                arrCompetencyName.push(comp);
-                //jQuery('#competencyName_' + i).attr('value', comp);
-                i++;
-            }
-            jQuery('#rows').attr('value', arrCompetencyName.length);
-            
             arrCompetencyLevel = Array();
-            for (var comp in data.data.descriptors) {
-                for (var level in data.data.descriptors[comp]) {
-                    arrCompetencyLevel.push(level);
-                }
-                break;
-            }
-            jQuery('#cols').attr('value', arrCompetencyLevel.length);
-            
-            onChangeColsRows();
-            
             arrCanDo = Array();
             arrCanDoTaskLinks = Array();
             arrCanDoCanBeGoal = Array();
@@ -155,12 +127,31 @@
                         arrCanDo[c][l].push(data.data.descriptors[comp][level][id].name);
                         arrCanDoTaskLinks[c][l].push(data.data.descriptors[comp][level][id].link);
                         arrCanDoCanBeGoal[c][l].push(data.data.descriptors[comp][level][id].goal);
+                        arrEvaluationLevelGlobal = data.data.descriptors[comp][level][id].evaluations.split(";");
+                    }
+                    if (c == 0) {
+                        arrCompetencyLevel.push(level);
+                    }
+                    if (arrCanDo[c][l][0] != "") {
+                        arrCanDo[c][l].push("");
+                        arrCanDoTaskLinks[c][l].push("");
+                        arrCanDoCanBeGoal[c][l].push(true);
                     }
                     l++;
                 }
+                arrCompetencyName.push(comp);
                 c++;
             }
+            for (var i in arrEvaluationLevelGlobal) {
+                arrEvaluationLevelGlobal[i] = arrEvaluationLevelGlobal[i].trim();
+            }
             
+            jQuery('#evaluationLevelNumItems').attr('value', arrEvaluationLevelGlobal.length);
+            jQuery('#competencyPatternTitle').attr('value', data.data.name);
+            jQuery('#rows').attr('value', arrCompetencyName.length);
+            jQuery('#cols').attr('value', arrCompetencyLevel.length);
+            
+            onChangeColsRows();
         });
 </script>
 {/if}
