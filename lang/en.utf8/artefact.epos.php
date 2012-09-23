@@ -83,6 +83,7 @@ $string['deletebiography?'] = 'Are you sure you want to delete this biography?';
 $string['compositedeleteconfirm'] = 'Are you sure you want to delete this?';
 $string['moveup'] = 'Move Up';
 $string['movedown'] = 'Move Down';
+$string['educationhistory'] = 'Learning experience and qualifications';
 $string['biographyform.name'] = 'Label for the experience';
 $string['biographyform.startdate'] = 'Start date';
 $string['biographyform.enddate'] = 'End date';

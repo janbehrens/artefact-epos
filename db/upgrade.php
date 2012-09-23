@@ -220,6 +220,27 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 ALTER subject DROP DEFAULT");
     }
     
+    if ($oldversion < 2012092301) {
+        $table = new XMLDBTable('artefact_epos_biography_educationhistory');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->addFieldInfo('artefact', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addFieldInfo('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
+        $table->addFieldInfo('startdate', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
+        $table->addFieldInfo('enddate', XMLDB_TYPE_TEXT);
+        $table->addFieldInfo('place', XMLDB_TYPE_TEXT);
+        $table->addFieldInfo('subject', XMLDB_TYPE_TEXT);
+        $table->addFieldInfo('level', XMLDB_TYPE_TEXT);
+        $table->addFieldInfo('description', XMLDB_TYPE_TEXT);
+        $table->addFieldInfo('displayorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('artefactfk', XMLDB_KEY_FOREIGN, array('artefact'), 'artefact', array('id'));
+        if (!create_table($table)) {
+            throw new SQLException($table . " could not be created, check log for errors.");
+        }
+
+        execute_sql("INSERT INTO artefact_installed_type VALUES ('biography', 'epos')");
+    }
+    
     return true;
 }
 
