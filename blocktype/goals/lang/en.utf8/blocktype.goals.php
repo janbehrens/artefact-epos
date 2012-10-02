@@ -34,5 +34,4 @@ $string['defaulttitledescription'] = 'If you leave this blank, the title of the 
 $string['selectgoals'] = 'Select goals to display';
 $string['nogoals'] = 'No goals to display';
 
-
 ?>

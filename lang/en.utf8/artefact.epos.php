@@ -34,7 +34,7 @@ $string['selfevaluation'] = 'Self-evaluation';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
 $string['biography'] = 'Biography';
-$string['mylanguages'] = 'My Languages';
+$string['mylanguages'] = 'My Subjects';
 $string['myexperience'] = 'My Experience';
 $string['mydiary'] = 'My Diary';
 $string['templates'] = 'Templates';
@@ -62,7 +62,6 @@ $string['competence'] = 'Competence';
 $string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
 $string['descriptorset'] = 'Descriptor set';
-$string['languages'] = 'Languages';
 $string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
 $string['goal'] = 'Goal';
@@ -113,9 +112,9 @@ $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate y
 
 //custom learning goal
 $string['customlearninggoal'] = 'Additional learning objective';
-$string['customlearninggoalupdatesuccess'] = "Learning objective has been updated.";
+$string['customlearninggoalupdatesuccess'] = 'Learning objective has been updated.';
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
-$string['customlearninggoalwanttodelete'] = 'Are you sure you really want to delete this additional learning objectiv?';
+$string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete this additional learning objective?';
 
 //Selfevaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation'; 
@@ -147,10 +146,10 @@ $string['export'] = 'Export';
 $string['xmlfile'] = 'XML file';
 $string['csvfile'] = 'CSV file';
 $string['nameofdescriptorset'] = 'Name of descriptor set';
-$string['csvinvalid'] = 'Error: The CSV file is not well-formed.';
+$string['csvinvalid'] = 'Error: The CSV file is not well-formed';
 $string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
 $string['deletedescriptorsetsuccess'] = 'Successfully deleted descriptor set';
-$string['deletedescriptorsetfailed'] = 'Deleting descriptor set failed: Descriptors are being used.';
+$string['deletedescriptorsetfailed'] = 'Deleting descriptor set failed: Descriptors are being used';
 $string['importeddescriptorset'] = 'Successfully imported descriptor set';
 $string['confirmdeletedescriptorset1'] = 'Are you sure you want to permanently delete the descriptor set ';
 $string['confirmdeletedescriptorset2'] = '';

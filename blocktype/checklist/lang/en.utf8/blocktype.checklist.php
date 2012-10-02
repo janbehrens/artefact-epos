@@ -34,5 +34,4 @@ $string['defaulttitledescription'] = 'If you leave this blank, the title of the 
 $string['selectchecklist'] = 'Select the checklist to display';
 $string['checklistnotvisible'] = 'The checklist will be visible after a page reload.'
 
-
 ?>
