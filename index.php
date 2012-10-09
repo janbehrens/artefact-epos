@@ -63,7 +63,7 @@ if (count($optionsdescriptors) == 0) {
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
 $delstr = get_string('del', 'artefact.epos');
-$editstr = get_string('edit', 'artefact.epos');
+$selfevalstr = get_string('selfevaluation', 'artefact.epos');
 $confirmdelstr = get_string('confirmdel', 'artefact.epos');
 
 $inlinejs = <<<EOF
@@ -124,7 +124,7 @@ tableRenderer = new TableRenderer(
                 e.stop();
                 return deleteLanguage(r.id);
             });
-            var edit = A({'class': 'icon btn-edit s', 'href': 'checklist.php?id=' + r.id}, '{$editstr}');
+            var edit = A({'class': 'icon btn-edit s', 'href': 'checklist.php?id=' + r.id}, '{$selfevalstr}');
             return TD(null, edit, ' ', del);
         },
     ]
