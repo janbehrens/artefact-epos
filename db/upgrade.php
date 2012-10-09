@@ -55,13 +55,14 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
         $table->addFieldInfo('institution', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL);
+        $table->addFieldInfo('active', XMLDB_TYPE_INTEGER, null, null, XMLDB_NOTNULL);
         $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
         $table->addKeyInfo('institutionfk', XMLDB_KEY_FOREIGN, array('institution'), 'institution', array('name'));
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
         
-        $values = array('id' => null, 'name' => 'Languages', 'institution' => 'mahara');
+        $values = array('id' => null, 'name' => 'Sprachen', 'institution' => 'mahara', 'active' => 1);
         $subject_id = insert_record('artefact_epos_subject', (object)($values), 'id', true);
         
         //-------artefact_epos_artefact_subject-------
