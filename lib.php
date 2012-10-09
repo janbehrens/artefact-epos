@@ -1143,7 +1143,7 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
         if ($descriptorsetid != null) {
             update_record(
                     $descriptorsettable,
-                    (object) array('id' => $descriptorsetid, 'visible' => 0),
+                    (object) array('id' => $descriptorsetid, 'visible' => 0, 'active' => 0),
                     'id'
             );
         }
