@@ -33,5 +33,6 @@ $string['description'] = 'Display your goals for a selected subject';
 $string['defaulttitledescription'] = 'If you leave this blank, the title of the subject will be used';
 $string['selectgoals'] = 'Select goals to display';
 $string['nogoals'] = 'No goals to display';
+$string['goalsnotvisible'] = 'The goals will be visible after a page reload.'
 
 ?>

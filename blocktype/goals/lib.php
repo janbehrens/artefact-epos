@@ -62,7 +62,8 @@ class PluginBlocktypeGoals extends PluginBlocktype {
         if (!empty($configdata['artefactid'])) {
             $jsonpath = get_config('wwwroot') . 'artefact/epos/goals.json.php?id=' . $id;
             
-            $inlinejs = <<<EOF
+            $inlinejs = '(function($){$.fn.goals=function(){';
+            $inlinejs .= <<<EOF
 
 tableRenderer{$id} = new TableRenderer(
     'goals_table{$id}',
@@ -96,6 +97,10 @@ tableRenderer{$id} = new TableRenderer(
 tableRenderer{$id}.emptycontent = '';
 tableRenderer{$id}.paginate = false;
 tableRenderer{$id}.updateOnLoad();
+
+$('#goalsnotvisible{$id}').addClass('hidden');};
+
+$().goals();})(jQuery);
 EOF;
             
             $smarty = smarty_core();
