@@ -26,7 +26,7 @@
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'goals/mylanguages');
+define('MENUITEM', 'subjects');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 define('SECTION_PAGE', 'index');

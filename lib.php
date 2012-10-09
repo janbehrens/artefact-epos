@@ -49,28 +49,28 @@ class PluginArtefactEpos extends PluginArtefact {
     public static function menu_items() {
         return array(
             array(
-                'path' => 'goals',
-                'title' => get_string('goals', 'artefact.epos'),
-                'url' => 'artefact/epos/goals.php',
+                'path' => 'subjects',
+                'title' => get_string('subjects', 'artefact.epos'),
+                'url' => 'artefact/epos/',
+                'weight' => 30,
+            ),
+            array(
+                'path' => 'selfevaluation',
+                'title' => get_string('selfevaluation', 'artefact.epos'),
+                'url' => 'artefact/epos/checklist.php',
                 'weight' => 31,
             ),
             array(
-                'path' => 'goals/mylanguages',
-                'title' => get_string('mylanguages', 'artefact.epos'),
-                'url' => 'artefact/epos/',
-                'weight' => 60,
+                'path' => 'goals',
+                'title' => get_string('goals', 'artefact.epos'),
+                'url' => 'artefact/epos/goals.php',
+                'weight' => 32,
             ),
             array(
                 'path' => 'goals/goals',
                 'title' => get_string('goals', 'artefact.epos'),
                 'url' => 'artefact/epos/goals.php',
                 'weight' => 28,
-            ),
-            array(
-                'path' => 'selfevaluation',
-                'title' => get_string('selfevaluation', 'artefact.epos'),
-                'url' => 'artefact/epos/checklist.php',
-                'weight' => 32,
             ),
             array(
                 'path' => 'biography',
