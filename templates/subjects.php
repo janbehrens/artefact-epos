@@ -191,6 +191,7 @@ function form_submit(Pieform $form, $values) {
 }
 
 function process_form(Pieform $form, $values) {
+    $values['active'] = 1;
     if ($values['name'] != '') {
         $sql = "SELECT name FROM artefact_epos_subject WHERE name = ? AND institution = ?";
         
