@@ -409,23 +409,27 @@ function importcsv_submit(Pieform $form, $values) {
     $writer->writeAttribute('NAME', $values['name']);
     
     try {
+        //set error handler in order to catch warnings from XMLWriter
+        set_error_handler('errorHandler');
         
         //parse CSV
         $lines = file($values['file']['tmp_name']);
+        $line_no = 1;
         
-        $values = str_getcsv($lines[0]);
+        $values = str_getcsv_utf8($lines[0]);
         
         for ($i = 0; $i < count($values); $i++) {
             $values[$i] = strtolower($values[$i]);
         }
         if ($values !== array("competence", "level", "evaluations", "goal", "name", "link")) {
-            throw new Exception(get_string('csvinvalid', 'artefact.epos'));
+            throw new Exception(get_string('csvinvalid', 'artefact.epos') . ": line 1");
         }
         unset($lines[0]);
         
         foreach ($lines as $line)
         {
-            $values = str_getcsv($line);
+            $values = str_getcsv_utf8($line);
+            $line_no++;
             
 			$writer->startElement("DESCRIPTOR");
 			$writer->writeAttribute('COMPETENCE', $values[0]);
@@ -442,11 +446,29 @@ function importcsv_submit(Pieform $form, $values) {
         
         //import to database
         $new_descriptorset = write_descriptor_db($path, false, $subject);
+        
+        restore_error_handler();
     }
     catch (Exception $e) {
-        $form->json_reply(PIEFORM_ERR, $e->getMessage());
+        $form->json_reply(PIEFORM_ERR, get_string('csvinvalid', 'artefact.epos') . ": line $line_no");
     }
     $form->json_reply(PIEFORM_OK, get_string('importeddescriptorset', 'artefact.epos'));
+}
+
+function str_getcsv_utf8($str) {
+    //remove BOM
+    if (substr($str, 0, 3) == pack("CCC", 0xef, 0xbb, 0xbf)) {
+        $str = substr($str, 3);
+    }
+    //convert to UTF-8 if necessary
+    if (mb_detect_encoding($str, 'UTF-8', true) === FALSE) {
+        $str = utf8_encode($str);
+    }
+    return str_getcsv($str);
+}
+
+function errorHandler($errno, $errstr, $errfile, $errline) {
+    throw new Exception($errstr, $errno);
 }
 
 ?>
