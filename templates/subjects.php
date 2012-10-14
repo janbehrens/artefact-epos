@@ -95,6 +95,7 @@ $cancelstr = get_string('cancel', 'artefact.epos');
 $activatestr = get_string('activate', 'artefact.epos');
 $deactivatestr = get_string('deactivate', 'artefact.epos');
 $editstr = get_string('edit', 'artefact.epos');
+$savestr =get_string('save');
 $selfevaluationstr = get_string('selfevaluation', 'artefact.epos');
 
 $inlinejs = <<<EOF
@@ -141,12 +142,52 @@ function deactivateSubject(id) {
             });
 }
 
+var oldText;
+var openToEdit = false;
+
+function editSubject(id) {
+	if(!openToEdit) {
+		openToEdit = true;
+		oldText = document.getElementById("subject" + id).innerHTML;
+		if(oldText.substr(0, 5) != "<form") {
+			document.getElementById("subject" + id).innerHTML = '<form action="javascript: submitEdit('+id+');">' +
+			'<input id="input_'+ id+'" value="' + oldText + '"/>' +
+			'<input class="submitcancel submit" type="submit" value="$savestr" />' +
+			'<input class="submitcancel cancel" type="reset" value="$cancelstr" onClick="javascript: cancelEditing('+id+');"/>' +
+			'</form>';			
+		}
+	}
+}
+
+function cancelEditing(id) {
+	document.getElementById("subject" + id).innerHTML = oldText;
+	openToEdit = false;
+	return true;
+}
+
+function submitEdit(id) {
+	text = document.getElementById('input_'+id).value;	
+	sendjsonrequest('updatesubject.json.php',
+            {'id': id,
+            'text': text},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            },
+            function() {
+            	// @todo error
+            });
+   openToEdit = false;
+}
+
 tableRenderer = new TableRenderer(
     'subjectslist',
     'subjects.json.php?institution={$institution}',
     [
         function (r, d) {
-            return TD(null, r.name);
+            var data =  TD(null);
+        	data.innerHTML = '<div id="subject' + r.id + '">' + r.name + '</div>';
+        	return data;
         },
         function (r, d) {
             if (r.active == 1) {
@@ -155,6 +196,9 @@ tableRenderer = new TableRenderer(
             else {
                 return TD(null, A({'class': '', 'href': 'javascript: onClick=activateSubject(' + r.id + ');'}, '{$activatestr}'));
             }
+        },
+        function (r, d) {
+            return TD(null, A({'class': 'icon btn-edit s', 'href': 'javascript: onClick=editSubject('+r.id+')'}, '{$editstr}'));
         },
         function (r, d) {
             if (r.active == 1) {
