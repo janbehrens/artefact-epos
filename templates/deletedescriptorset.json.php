@@ -34,10 +34,7 @@ safe_require('artefact', 'epos');
 $id = param_variable('id');
 
 try {
-    delete_records('artefact_epos_descriptor', 'descriptorset', $id);
-    delete_records('artefact_epos_descriptorset_subject', 'descriptorset', $id);
-    delete_records('artefact_epos_descriptor_set', 'id', $id);
-    execute_sql("UPDATE artefact_epos_descriptor_set SET visible = 0 WHERE id = $id");
+    execute_sql("UPDATE artefact_epos_descriptor_set SET visible = 0, active = 0 WHERE id = $id");
     
     //reply
     json_reply(false, get_string('deletedescriptorsetsuccess', 'artefact.epos'));

@@ -6,8 +6,8 @@
 <table id="subjectslist">
     <thead>
         <tr>
-            <th>{str tag='subject' section='mahara'}</th>
-            <th></th>
+            <th>{str tag='subject' section='artefact.epos'}</th>
+            <th>{str tag='templates' section='artefact.epos'}</th>
         </tr>
     </thead>
     <tbody>

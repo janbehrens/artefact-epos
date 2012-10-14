@@ -95,6 +95,7 @@ $cancelstr = get_string('cancel', 'artefact.epos');
 $delstr = get_string('del', 'artefact.epos');
 $editstr = get_string('edit', 'artefact.epos');
 $confirmdelstr = get_string('confirmdel', 'artefact.epos');
+$selfevaluationstr = get_string('selfevaluation', 'artefact.epos');
 
 $inlinejs = <<<EOF
 
@@ -130,7 +131,8 @@ tableRenderer = new TableRenderer(
             return TD(null, r.name);
         },
         function (r, d) {
-            return TD(null, A({'class': 'icon btn-edit s', 'href': '../templates/selfevaluation.php?institution=' + '{$institution}' + '&subject=' + r.id}, 'Manage templates for self-evaluation'));
+            link1 = A({'class': 'icon btn-edit s', 'href': '../templates/selfevaluation.php?institution=' + '{$institution}' + '&subject=' + r.id}, '{$selfevaluationstr}');
+            return TD(null, link1);
         },
     ]
 );
