@@ -92,9 +92,9 @@ if (!$institutionexists) {
 
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
-$delstr = get_string('del', 'artefact.epos');
+$activatestr = get_string('activate', 'artefact.epos');
+$deactivatestr = get_string('deactivate', 'artefact.epos');
 $editstr = get_string('edit', 'artefact.epos');
-$confirmdelstr = get_string('confirmdel', 'artefact.epos');
 $selfevaluationstr = get_string('selfevaluation', 'artefact.epos');
 
 $inlinejs = <<<EOF
@@ -123,6 +123,24 @@ function saveCallback(form, data) {
     });
 }
 
+function activateSubject(id) {
+	sendjsonrequest('activatesubject.json.php?activate=1',
+            {'id': id},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            });
+}
+
+function deactivateSubject(id) {
+	sendjsonrequest('activatesubject.json.php?activate=0',
+            {'id': id},
+            'POST', 
+            function() {
+            	tableRenderer.doupdate();
+            });
+}
+
 tableRenderer = new TableRenderer(
     'subjectslist',
     'subjects.json.php?institution={$institution}',
@@ -131,8 +149,18 @@ tableRenderer = new TableRenderer(
             return TD(null, r.name);
         },
         function (r, d) {
-            link1 = A({'class': 'icon btn-edit s', 'href': '../templates/selfevaluation.php?institution=' + '{$institution}' + '&subject=' + r.id}, '{$selfevaluationstr}');
-            return TD(null, link1);
+            if (r.active == 1) {
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateSubject(' + r.id + ');'}, '{$deactivatestr}'));
+            }
+            else {
+                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateSubject(' + r.id + ');'}, '{$activatestr}'));
+            }
+        },
+        function (r, d) {
+            if (r.active == 1) {
+                link1 = A({'class': 'icon btn-edit s', 'href': '../templates/selfevaluation.php?institution=' + '{$institution}' + '&subject=' + r.id}, '{$selfevaluationstr}');
+                return TD(null, link1);
+            }
         },
     ]
 );

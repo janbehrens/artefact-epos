@@ -196,7 +196,7 @@ function get_subjects() {
     $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
             JOIN usr_institution ui ON ui.institution = s.institution
             JOIN institution i ON i.name = s.institution
-            WHERE ui.usr = ?";
+            WHERE ui.usr = ? AND s.active = 1";
     
     if (!$data = get_records_sql_array($sql, array($USER->id))) {
         $data = array();
@@ -204,7 +204,7 @@ function get_subjects() {
     
     $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
             JOIN institution i ON i.name = s.institution
-            WHERE s.institution = 'mahara'";
+            WHERE s.institution = 'mahara' AND s.active = 1";
     
     if (!$data1 = get_records_sql_array($sql, null)) {
         $data1 = array();

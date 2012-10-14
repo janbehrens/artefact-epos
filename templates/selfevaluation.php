@@ -98,7 +98,7 @@ if (!$institutionexists) {
 $subjects = true;
 
 $sql = "SELECT id, name FROM artefact_epos_subject
-        WHERE institution = ?
+        WHERE institution = ? AND active = 1
         ORDER BY name";
 
 if (!$data = get_records_sql_array($sql, array($institution))) {

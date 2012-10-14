@@ -7,12 +7,14 @@
     <thead>
         <tr>
             <th>{str tag='subject' section='artefact.epos'}</th>
+            <th></th>
             <th>{str tag='templates' section='artefact.epos'}</th>
         </tr>
     </thead>
     <tbody>
         {foreach from=$rows item=row}
         <tr class="{cycle values='r0,r1'}">
+            <td></td>
             <td></td>
             <td></td>
         </tr>
