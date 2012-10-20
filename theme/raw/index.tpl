@@ -29,7 +29,7 @@
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
     {/if}
 </div>
-{else}No subjects are configured for your institutions! Admins and staff can fix this <a href="templates/subjects/">here</a>.
+{else}No subjects are configured for your institutions! Admins and staff can fix this <a href="templates/subjects.php">here</a>.
 {/if}
 {else}Wrong subject ID!
 {/if}
