@@ -5,8 +5,8 @@
 <table id="learnedlanguagelist">
     <thead>
         <tr>
-            <th>{str tag='language' section='mahara'}</th>
-            <th>{str tag='descriptors' section='artefact.epos'}</th>
+            <th>{str tag='mysubject' section='artefact.epos'}</th>
+            <th>{str tag='competencegrid' section='artefact.epos'}</th>
             <th></th>
         </tr>
     </thead>
@@ -29,7 +29,7 @@
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
     {/if}
 </div>
-{else}No subjects are configured for your institutions! Admins and staff can fix this <a href="subjects/">here</a>.
+{else}No subjects are configured for your institutions! Admins and staff can fix this <a href="templates/subjects/">here</a>.
 {/if}
 {else}Wrong subject ID!
 {/if}

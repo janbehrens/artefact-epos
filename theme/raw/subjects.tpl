@@ -9,7 +9,7 @@
             <th>{str tag='subject' section='artefact.epos'}</th>
             <th></th>
             <th></th>
-            <th>{str tag='templates' section='artefact.epos'}</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
