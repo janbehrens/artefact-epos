@@ -3,7 +3,7 @@
         <tr>
             <th>{str tag='goal' section='artefact.epos'}</th>
             <th>{str tag='competence' section='artefact.epos'}</th>
-            <th>{str tag='descriptorset' section='artefact.epos'}</th>
+            <th>{str tag='competencegrid' section='artefact.epos'}</th>
             <th></th>
         </tr>
     </thead>

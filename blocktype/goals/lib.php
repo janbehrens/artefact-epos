@@ -49,7 +49,7 @@ class PluginBlocktypeGoals extends PluginBlocktype {
         $configdata = $bi->get('configdata');
 
         if (!empty($configdata['artefactid'])) {
-            return 'Goals for ' . $bi->get_artefact_instance($configdata['artefactid'])->display_title();
+            return get_string('goalsfor', 'blocktype.epos/goals') . $bi->get_artefact_instance($configdata['artefactid'])->display_title();
         }
         return '';
     }
