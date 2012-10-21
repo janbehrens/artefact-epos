@@ -47,21 +47,21 @@ $string['edit'] = 'Edit';
 $string['save'] = 'Save';
 
 //notifications
-$string['addedlanguage'] = 'Language has been added.';
-$string['confirmdel'] = 'Are you sure you want to delete this language?';
-$string['deletedlanguage'] = 'Language has been deleted.';
-$string['nolanguageselected1'] = 'You have not selected any languages. Go to "';
+$string['addedlanguage'] = 'Subject has been added.';
+$string['confirmdel'] = 'Are you sure you want to delete this subject?';
+$string['deletedlanguage'] = 'Subject has been deleted.';
+$string['nolanguageselected1'] = 'You have not selected any subjects. Go to "';
 $string['nolanguageselected2'] = '" to add one.';
 $string['savedchecklist'] = 'Your checklist has been saved.';
 $string['titlenotvalid'] = 'Title is not valid.';
-$string['descriptorsetnotvalid'] = 'Descriptorset is not valid.';
+$string['descriptorsetnotvalid'] = 'Competence grid is not valid.';
 $string['pleasechoosesubject'] = 'Please choose a subject first';
 
 //vocabulary
 $string['competence'] = 'Competence';
 $string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
-$string['descriptorset'] = 'Descriptor set';
+$string['descriptorset'] = 'Competence grid';
 $string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
 $string['mysubject'] = 'My subject';
@@ -73,7 +73,7 @@ $string['exampletask'] = 'example/task';
 //add subject form
 $string['subjectform.subject'] = 'Subject';
 $string['subjectform.title'] = 'Title';
-$string['subjectform.descriptorset'] = 'Descriptors';
+$string['subjectform.descriptorset'] = 'Competence grid';
 
 //biography
 $string['biography'] = 'Biography';
@@ -87,9 +87,9 @@ $string['movedown'] = 'Move Down';
 $string['educationhistory'] = 'Learning experience and qualifications';
 $string['biographyform.name'] = 'Label for the experience';
 $string['biographyform.startdate'] = 'Start date';
-$string['biographyform.enddate'] = 'End date';
-$string['biographyform.place'] = 'Place (school, job, leisure etc.)';
-$string['biographyform.subject'] = 'Language';
+$string['biographyform.enddate'] = 'End date (if already finished)';
+$string['biographyform.place'] = 'Place of experience (school, course, job, leisure etc.)';
+$string['biographyform.subject'] = 'Subject';
 $string['biographyform.level'] = 'Level (A1...C2 or low, medium, high or similar)';
 $string['biographyform.description'] = 'Description of the learning experience and learning outcome';
 $string['compositesaved'] = 'Saved successfully';
@@ -121,39 +121,40 @@ $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete thi
 //Selfevaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation'; 
 $string['num_evaluation_levels'] = 'Number of self-evaluation levels';
-$string['name_evaluation_grid'] = 'Name of competece grid';
+$string['name_evaluation_grid'] = 'Name of competence grid';
 $string['num_rows'] = 'Number of competences';
-$string['num_cols'] = 'Number of competence levels';
+$string['num_cols'] = 'Number of competence level areas';
 $string['evaluationlevel'] = 'Self-evaluation level&nbsp;';
 $string['competency_name'] = 'Competence&nbsp;';
 $string['competency_level'] = 'Level&nbsp;';
-$string['cando_statement'] = 'Can-do-Statement';
+$string['cando_statement'] = 'Can-do statement';
+$string['cando_statements'] = 'Can-do statements';
 $string['tasklink'] = 'Task link';
 $string['learningobjective_checkbox'] = 'Display checkbox for learning objective';
-$string['fill_in_learning_objectives'] = 'Fill in learning objectives and task links for the certain combination of competency and level.';
+$string['fill_in_learning_objectives'] = 'Fill in can-do statements and task links for the given combination of competence and level.';
 $string['combination_of'] = 'Combination of';
 $string['and'] = 'and';
 
 //self-evaluation template management
-$string['availabletemplates'] = 'Available templates';
-$string['loadtemplatefromfile'] = 'Load template from file';
+$string['availabletemplates'] = 'Available competence grids';
+$string['loadtemplatefromfile'] = 'Load competence grid from file';
 $string['fromxmlfile'] = 'From XML file';
 $string['fromcsvfile'] = 'From CSV file';
-$string['createnewtemplate'] = 'Create new template';
-$string['edittemplate'] = 'Edit template';
-$string['saveasnewtemplate'] = 'Save as new template';
+$string['createnewtemplate'] = 'Create new competence grid';
+$string['edittemplate'] = 'Edit competence grid';
+$string['saveasnewtemplate'] = 'Save as new competence grid';
 $string['activate'] = 'Activate';
 $string['deactivate'] = 'Deactivate';
 $string['export'] = 'Export';
 $string['xmlfile'] = 'XML file';
 $string['csvfile'] = 'CSV file';
-$string['nameofdescriptorset'] = 'Name of descriptor set';
+$string['nameofdescriptorset'] = 'Name of competence grid';
 $string['csvinvalid'] = 'Error: The CSV file is not well-formed';
-$string['loaddescriptorsetsuccess'] = 'Successfully installed descriptor set';
-$string['deletedescriptorsetsuccess'] = 'Successfully deleted descriptor set';
-$string['deletedescriptorsetfailed'] = 'Deleting descriptor set failed: Descriptors are being used';
-$string['importeddescriptorset'] = 'Successfully imported descriptor set';
-$string['confirmdeletedescriptorset1'] = 'Are you sure you want to permanently delete the descriptor set ';
+$string['loaddescriptorsetsuccess'] = 'Successfully installed competence grid';
+$string['deletedescriptorsetsuccess'] = 'Successfully deleted competence grid';
+$string['deletedescriptorsetfailed'] = 'Deleting competence grid failed: Competence grid is being used';
+$string['importeddescriptorset'] = 'Successfully imported competence grid';
+$string['confirmdeletedescriptorset1'] = 'Are you sure you want to permanently delete the competence grid ';
 $string['confirmdeletedescriptorset2'] = '';
 $string['nosubjectsconfigured1'] = 'There are no subjects configured in ';
 $string['nosubjectsconfigured2'] = '. Go to ';

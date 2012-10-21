@@ -226,7 +226,7 @@
 				col.setAttribute('style', 'border: 1px solid;')
 				var id =  nI+'_'+nJ;
 				col.setAttribute("id", id);				
-				col.innerHTML = "<a class='icon' onclick='editCanDo("+nI+","+nJ+");'>"+text_cando_statement+"s</a>";
+				col.innerHTML = "<a class='icon' onclick='editCanDo("+nI+","+nJ+");'>"+text_cando_statements+"</a>";
 				row.appendChild(col);
 			}
 			
