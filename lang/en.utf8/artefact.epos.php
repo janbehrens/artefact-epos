@@ -29,14 +29,16 @@ defined('INTERNAL') || die();
 
 //general
 $string['pluginname'] = 'epos';
-$string['goals'] = 'Learning Objectives';
+$string['goals'] = 'Learning objectives';
 $string['selfevaluation'] = 'Self-evaluation';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
 $string['biography'] = 'Biography';
-$string['mylanguages'] = 'My Subjects';
-$string['myexperience'] = 'My Experience';
-$string['mydiary'] = 'My Diary';
+$string['languages'] = 'Subjects';
+$string['mylanguages'] = 'My subjects';
+$string['mylanguage'] = 'My subject';
+$string['myexperience'] = 'My experience';
+$string['mydiary'] = 'My diary';
 $string['templates'] = 'Templates';
 
 //interaction
@@ -62,10 +64,8 @@ $string['competence'] = 'Competence';
 $string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
 $string['descriptorset'] = 'Competence grid';
-$string['languages'] = 'Subjects';
 $string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
-$string['mysubject'] = 'My subject';
 $string['competencegrid'] = 'Competence grid';
 $string['goal'] = 'Goal';
 $string['institution'] = 'Institution';
