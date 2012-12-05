@@ -60,7 +60,7 @@ if ($data) {
         $id = $data[0]->id;
     }
 
-    $languagelinks = '<p>' . get_string('subjects', 'artefact.epos') . ': ';
+    $languagelinks = '<p>' . get_string('languages', 'artefact.epos') . ': ';
     
     foreach ($data as $field) {
         if ($field->id == $id) {
