@@ -62,6 +62,7 @@ $string['competence'] = 'Competence';
 $string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
 $string['descriptorset'] = 'Competence grid';
+$string['languages'] = 'Subjects';
 $string['subject'] = 'Subject';
 $string['subjects'] = 'Subjects';
 $string['mysubject'] = 'My subject';

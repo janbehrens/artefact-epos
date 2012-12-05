@@ -50,7 +50,7 @@ class PluginArtefactEpos extends PluginArtefact {
         return array(
             array(
                 'path' => 'subjects',
-                'title' => get_string('subjects', 'artefact.epos'),
+                'title' => get_string('languages', 'artefact.epos'),
                 'url' => 'artefact/epos/',
                 'weight' => 30,
             ),
