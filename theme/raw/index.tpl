@@ -5,7 +5,7 @@
 <table id="learnedlanguagelist">
     <thead>
         <tr>
-            <th>{str tag='mysubject' section='artefact.epos'}</th>
+            <th>{str tag='language' section='artefact.epos'}</th>
             <th>{str tag='competencegrid' section='artefact.epos'}</th>
             <th></th>
         </tr>
