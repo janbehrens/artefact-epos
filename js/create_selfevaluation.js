@@ -2,16 +2,32 @@
 	/*
 		arrCompetencyName
 		
-		Stores all the competency names filled in the forms in the table vertically.
+		Stores all the competency names filled in in the forms in the table.
 	*/
 	var arrCompetencyName = new Array("");
+
+	/*
+		arrCompetencyNameCached
+		
+		Temporarily stores the competency names filled in in the forms in the table.
+		Will not be submitted when the "Save" button is hit.
+	 */
+	var arrCompetencyNameCached = new Array("");
 	
 	/*
 		arrCompetencyLevel
 		
-		Stores all the competency levels filled in the forms in the table horizontally.
+		Stores all the competency levels filled in in the forms in the table.
 	*/
 	var arrCompetencyLevel = new Array("");
+	
+	/*
+		arrCompetencyLevelCached
+		
+		Temporarily stores the competency levels filled in the forms in the table.
+		Will not be submitted when the "Save" button is hit.
+	 */
+	var arrCompetencyLevelCached = new Array("");
 	
 	/*
 		arrCanDo
@@ -54,14 +70,20 @@
 	/*
 		arrEvaluationLevelGlobal
 		
-		Stores the evaluation levels if checked globally
+		Stores the evaluation levels
 		
 		Structure:
 		arrEvaluationLevelGlobal{..., ..., ...}
-		
-
 	*/
 	var arrEvaluationLevelGlobal = new Array();
+
+	/*
+		arrEvaluationLevelGlobalCached
+		
+		Temporarily stores the evaluation levels.
+		Will not be submitted when the "Save" button is hit.
+	 */
+	var arrEvaluationLevelGlobalCached = new Array();
 	
 	var nActCompetencyName = null;
 	var nActCompetencyLevel = null;
@@ -76,77 +98,47 @@
 	function createTable(lastEdited) {
 		var nRows = 1;
 		var nCols = 1;
-			
+		
 		//If a table already exists
 		//First collect all Data in the Table which is not stored in any way beforehands
-		if(document.getElementById("competenciesTable") != null) {
+		if (document.getElementById("competenciesTable") != null) {
 			nRows = document.getElementById("rows").value;
 			nCols = document.getElementById("cols").value;
 			
-			
-			
 			//prevent from being to big / small
-			if(nCols != "" && nCols < 1)
+			if (nCols != "" && nCols < 1) {
 				nCols = 1;
-				
-			if(nRows != "" && nRows < 1)
+			}
+			if (nRows != "" && nRows < 1) {
 				nRows = 1;
-				
-			if(nCols > 99)
+			}
+			if (nCols > 99) {
 				nCols = 10;
-				
-			if(nRows > 99)
+			}
+			if (nRows > 99) {
 				nRows = 10;
-				
+			}
+			
 			oldRowCount = nRows;
-			oldColCount = nCols;	
-					
-			if(oldRowCount == "")
-				oldRowCount = 0;
-								
-			if(oldColCount == "")
-				oldColCount = 0;		
+			oldColCount = nCols;
 			
-			
-			//collect old data (competency names, levels)
-			/*if(oldRowCount > 0) {
-				arrCompetencyName = new Array();
-				for(nI = 0; nI < oldRowCount; nI++) {
-					if(document.getElementById("competencyName_"+nI))
-						arrCompetencyName.push(document.getElementById("competencyName_"+nI).value);
-				}
-			}	
-			if(oldColCount > 0) {
-				arrCompetencyLevel = new Array();
-				for(nI = 0; nI < oldColCount; nI++) {
-					arrCompetencyLevel.push("");
-					if(document.getElementById("competencyLevel_"+nI))
-						arrCompetencyLevel[nI] = document.getElementById("competencyLevel_"+nI).value;
-				}
-			}*/
-				
 			document.getElementById("rowCount").value = nRows;
 			document.getElementById("colCount").value = nCols;
 			
 			document.getElementById("competencies").innerHTML = "";
-			
-			//clean up of CanDoArray
-			/*
-			var arrBackUpCanDo = arrCanDo;
-			alert(arrBackUpCanDo);
-			arrCanDo = new Array();
-			for(nI = 0; nI < nRows; nI++) {
-				arrCanDo[nI] = new Array();
-				for(nJ = 0; nJ < nCols; nJ++) {
-					arrCanDo[nI][nJ] = new Array();
-					for(nK = 0; nK < arrBackUpCanDo[nI][nJ][nK].length; nK++) {
-						arrCanDo[nI][nJ][nK] = arrBackUpCanDo[nI][nJ][nK];
-					}
-				}
-			}
-			*/
 		}
 		//END: if table already exists		
+		
+		//this will be saved when the 'Save' button is clicked
+		arrCompetencyName = Array("");
+		arrCompetencyLevel = Array("");
+		
+		for (nI = 0; nI< nRows; nI++) {
+			arrCompetencyName[nI] = arrCompetencyNameCached[nI];
+		}
+		for (nI = 0; nI< nCols; nI++) {
+			arrCompetencyLevel[nI] = arrCompetencyLevelCached[nI];
+		}
 		
 		//we always build up a new table
 		var table = document.createElement("table");
@@ -165,7 +157,7 @@
 		row.appendChild(col);
 		
 		//create first row with competencyLevel inputs
-		for(nI = 0; nI < nCols; nI++) {
+		for (nI = 0; nI < nCols; nI++) {
 			col = document.createElement("td");
 			col.setAttribute('style', 'border: 1px solid;')
 			
@@ -179,8 +171,8 @@
 			input.setAttribute("size", "10");
 						
 			//restore inputs if there are any
-			if(nI < arrCompetencyLevel.length) {
-				input.setAttribute("value", arrCompetencyLevel[nI]);
+			if (nI < arrCompetencyLevelCached.length) {
+				input.setAttribute("value", arrCompetencyLevelCached[nI]);
 			}
 			
 			col.appendChild(input);			
@@ -208,8 +200,8 @@
 			input.setAttribute("size", "10");
 
 			//restore inputs if there are any
-			if(nI < arrCompetencyName.length)
-				input.setAttribute("value", arrCompetencyName[nI]);
+			if(nI < arrCompetencyNameCached.length)
+				input.setAttribute("value", arrCompetencyNameCached[nI]);
 			
 			col.appendChild(input);			
 						
@@ -221,7 +213,7 @@
 			row.appendChild(col);
 			
 			//create colls each row
-			for(nJ = 0; nJ < nCols; nJ++) {
+			for (nJ = 0; nJ < nCols; nJ++) {
 				col = document.createElement("td");		
 				col.setAttribute('style', 'border: 1px solid;')
 				var id =  nI+'_'+nJ;
@@ -240,7 +232,7 @@
 		document.getElementById('competencies').appendChild(table);
 		
 		//set the cursor at the end of the last edited input for row or col
-		if(lastEdited != null) {
+		if (lastEdited != null) {
 			document.getElementById(lastEdited).focus();
 			document.getElementById(lastEdited).setSelectionRange(2,2);
 		}
@@ -252,20 +244,22 @@
 	function updateActualCombinationCompetencyName(nI) {
 		arrCompetencyName[nI] = document.getElementById("competencyName_"+nI).value;
 		
-		if(nI == nActCompetencyName) {
+		if (nI == nActCompetencyName) {
 			document.getElementById("actualCombination").innerHTML = text_combination_of + 
 			" <b>" + document.getElementById("competencyName_"+nI).value + "</b> " +
 			text_and + 
 			" <b>" + document.getElementById("competencyLevel_"+nActCompetencyLevel).value + "</b>";
 		}
 		
+		arrCompetencyNameCached[nI] = arrCompetencyName[nI];
+		
 		updateEvaluationLevelInputFields();
 	}
 	
 	function updateActualCombinationCompetencyLevel(nI) {
-		arrCompetencyLevel[nI] = document.getElementById("competencyLevel_"+nI).value;
+		arrCompetencyLevel[nI] = arrCompetencyLevelCached[nI] = document.getElementById("competencyLevel_"+nI).value;
 		
-		if(nI == nActCompetencyLevel) {
+		if (nI == nActCompetencyLevel) {
 			document.getElementById("actualCombination").innerHTML = text_combination_of + 
 			" <b>" + document.getElementById("competencyName_"+nI).value + "</b> " +
 			text_and + 
@@ -299,13 +293,13 @@
 			
 		document.getElementById("canDoDesc").innerHTML = text_fill_in_learning_objectives;			
 		
-		if(arrCanDo[competencyName] instanceof Array == false) {
+		if (arrCanDo[competencyName] instanceof Array == false) {
 			arrCanDo[competencyName] = new Array("");
 			arrCanDoTaskLinks[competencyName] = new Array("");
 			arrCanDoCanBeGoal[competencyName] = new Array("");
 		}
 		
-		if(arrCanDo[competencyName][competencyLevel] instanceof Array == false) {
+		if (arrCanDo[competencyName][competencyLevel] instanceof Array == false) {
 			arrCanDo[competencyName][competencyLevel] = new Array("");
 			arrCanDoTaskLinks[competencyName][competencyLevel] = new Array("");
 			arrCanDoCanBeGoal[competencyName][competencyLevel] = new Array("");
@@ -315,15 +309,12 @@
 		table = document.createElement("table");
 		table.setAttribute("id", "canDoTable");
 		
-		
 		document.getElementById("canDos").appendChild(table);
 		
 		//show existing can dos if any, otherwise one empty slot
-		for(nI = 0; nI < arrCanDo[competencyName][competencyLevel].length; nI++) {
+		for (nI = 0; nI < arrCanDo[competencyName][competencyLevel].length; nI++) {
 			createNewCanDoRow(competencyName, competencyLevel, nI);
 		}
-		
-		
 	}
 	
 	//Creates a new CanDo Table row where the user can enter a new canDo statement and a link if it likes
@@ -356,8 +347,6 @@
 		tr.appendChild(th);
 		tr.appendChild(td2);
 		document.getElementById("canDoTable").appendChild(tr);
-		
-		
 		
 		id = competencyName+"_"+competencyLevel+"_"+nI;
 		
@@ -410,12 +399,13 @@
 		input.setAttribute("type", "checkbox");	
 		input.setAttribute("style", "margin-left: 0px;");
 		input.setAttribute("id", id);
-		if(arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "" ||
+		
+		if (arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "" ||
 				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === null ||
 				arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === undefined) {
 			arrCanDoCanBeGoal[competencyName][competencyLevel][nI] = true;
 		}
-		if(arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true) {
+		if (arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true) {
 			input.setAttribute("checked", "");
 		}
 		input.setAttribute("onclick", "saveCurrentChangedCanDoCanBeGoal("+competencyName+","+competencyLevel+","+nI+")");			
@@ -434,7 +424,6 @@
 		th.setAttribute("width", "200");
 		th.setAttribute("height", "15");
 		
-		
 		tr.appendChild(th);
 		tr.appendChild(td2);
 		
@@ -452,7 +441,7 @@
 		id += 1;
 		var nI = id;
 		
-		if(id == arrCanDo[competencyName][competencyLevel].length) {			
+		if (id == arrCanDo[competencyName][competencyLevel].length) {			
 			arrCanDo[competencyName][competencyLevel][id] = "";
 			arrCanDoTaskLinks[competencyName][competencyLevel][id] = "";
 			
@@ -478,44 +467,40 @@
 	function validateNumericKey(evt) {
 		var theEvent = evt || window.event;
 		var key = theEvent.keyCode || theEvent.which;
-		if(key != 8) {
-			key = String.fromCharCode( key );
+		if (key != 8) {
+			key = String.fromCharCode(key);
 			var regex = /[0-9]/;
-			if( !regex.test(key) ) {
+			if (!regex.test(key)) {
 				theEvent.returnValue = false;
-				if(theEvent.preventDefault) theEvent.preventDefault();
+				if (theEvent.preventDefault) {
+					theEvent.preventDefault();
+				}
 			}
 		}
 	}
 	
 	function updateEvaluationLevelInputFields() {
-		
-		if(!document.getElementById("evaluationLevelNumItems").value)
-			return;			
+		if (!document.getElementById("evaluationLevelNumItems").value) {
+			return;
+		}
 		
 		var table = document.getElementById("evaluation_level_table");
 
-		while ( table.hasChildNodes() ) { 
-			table.removeChild( table.firstChild );
+		while (table.hasChildNodes()) { 
+			table.removeChild(table.firstChild);
 		}
 		
-		tmpArrEvaluationLevels = arrEvaluationLevelGlobal;
+		//number of input fields = count(nuances)
+		evaluationLevelInputfields = document.getElementById("evaluationLevelNumItems").value;
+		
 		arrEvaluationLevelGlobal = Array("");
 		
-		//number of input fields = count(nuances)
-		evaluationLevelInputfields = document.getElementById("evaluationLevelNumItems").value;
-		for(nI = 0; nI< evaluationLevelInputfields; nI++) {
-			//alert(tmpArrEvaluationLevels[nI]);
-			arrEvaluationLevelGlobal[nI] = tmpArrEvaluationLevels[nI];
-		}
-
-		//number of input fields = count(nuances)
-		evaluationLevelInputfields = document.getElementById("evaluationLevelNumItems").value;
-		for(nI = 0; nI < evaluationLevelInputfields; nI++) {
-	
-			if(arrEvaluationLevelGlobal[nI] == null)
-				arrEvaluationLevelGlobal[nI] = "";
-				
+		for (nI = 0; nI < evaluationLevelInputfields; nI++) {
+			if (arrEvaluationLevelGlobalCached[nI] == null) {
+				arrEvaluationLevelGlobalCached[nI] = "";
+			}
+			arrEvaluationLevelGlobal[nI] = arrEvaluationLevelGlobalCached[nI];
+			
 			tr 	= document.createElement("tr");	
 			th	= document.createElement("th");
 			td 	= document.createElement("td");	
@@ -540,11 +525,10 @@
 			
 			document.getElementById("evaluation_level_table").appendChild(tr);					
 		}
-
 	}
 	
 	function saveEvaluationsGlobal(nI) {
-		arrEvaluationLevelGlobal[nI] = document.getElementById("evaluationLevelGlobal_"+nI).value;
+		arrEvaluationLevelGlobal[nI] = arrEvaluationLevelGlobalCached[nI] = document.getElementById("evaluationLevelGlobal_"+nI).value;
 	}
 	
 	function atload() {createTable();}

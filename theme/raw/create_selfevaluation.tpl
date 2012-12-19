@@ -145,6 +145,10 @@ sendjsonrequest(
             for (var i in arrEvaluationLevelGlobal) {
                 arrEvaluationLevelGlobal[i] = arrEvaluationLevelGlobal[i].trim();
             }
+
+            arrCompetencyNameCached = arrCompetencyName;
+            arrCompetencyLevelCached = arrCompetencyLevel;
+            arrEvaluationLevelGlobalCached = arrEvaluationLevelGlobal;
             
             jQuery('#evaluationLevelNumItems').attr('value', arrEvaluationLevelGlobal.length);
             jQuery('#competencyPatternTitle').attr('value', data.data.name);

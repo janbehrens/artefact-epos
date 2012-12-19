@@ -35,7 +35,7 @@ safe_require('artefact', 'epos');
 $subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
 $id = isset($_GET['id']) ? $_GET['id'] : 0;
 
-$arrCompetencyName 					= param_variable('arrCompetencyNames');
+$arrCompetencyName 					= param_variable('arrCompetencyName');
 $arrCompetencyLevel 				= param_variable('arrCompetencyLevel');
 $arrCanDo							= param_variable('arrCanDo');
 $arrCanDoTaskLink					= param_variable('arrCanDoTaskLink');

@@ -162,7 +162,7 @@ function cancelEditing() {
 function getJsonData() {
     jsonData = { 
 		'jsonCompetencyPatternTitle' : JSON.stringify(document.getElementById('competencyPatternTitle').value),
-        'arrCompetencyNames'         : JSON.stringify(arrCompetencyName),
+        'arrCompetencyName'          : JSON.stringify(arrCompetencyName),
 		'arrCompetencyLevel'         : JSON.stringify(arrCompetencyLevel),
 		'arrCanDo'                   : JSON.stringify(arrCanDo),
 		'arrCanDoTaskLink'           : JSON.stringify(arrCanDoTaskLinks),
