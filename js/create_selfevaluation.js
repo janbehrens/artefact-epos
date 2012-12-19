@@ -119,9 +119,6 @@
 				nRows = 10;
 			}
 			
-			oldRowCount = nRows;
-			oldColCount = nCols;
-			
 			document.getElementById("rowCount").value = nRows;
 			document.getElementById("colCount").value = nCols;
 			
@@ -133,10 +130,10 @@
 		arrCompetencyName = Array("");
 		arrCompetencyLevel = Array("");
 		
-		for (nI = 0; nI< nRows; nI++) {
+		for (nI = 0; nI < nRows; nI++) {
 			arrCompetencyName[nI] = arrCompetencyNameCached[nI];
 		}
-		for (nI = 0; nI< nCols; nI++) {
+		for (nI = 0; nI < nCols; nI++) {
 			arrCompetencyLevel[nI] = arrCompetencyLevelCached[nI];
 		}
 		
@@ -200,8 +197,9 @@
 			input.setAttribute("size", "10");
 
 			//restore inputs if there are any
-			if(nI < arrCompetencyNameCached.length)
+			if (nI < arrCompetencyNameCached.length) {
 				input.setAttribute("value", arrCompetencyNameCached[nI]);
+			}
 			
 			col.appendChild(input);			
 						
@@ -222,10 +220,6 @@
 				row.appendChild(col);
 			}
 			
-			//testing whether it works (without hard errors)
-			//col = document.createElement("td");					
-			//row.appendChild(col);
-			
 			tableBody.appendChild(row);			
 		}
 		table.appendChild(tableBody);
@@ -242,18 +236,14 @@
 	}
 	
 	function updateActualCombinationCompetencyName(nI) {
-		arrCompetencyName[nI] = document.getElementById("competencyName_"+nI).value;
-		
+		arrCompetencyName[nI] = arrCompetencyNameCached[nI] = document.getElementById("competencyName_"+nI).value;
+
 		if (nI == nActCompetencyName) {
 			document.getElementById("actualCombination").innerHTML = text_combination_of + 
 			" <b>" + document.getElementById("competencyName_"+nI).value + "</b> " +
 			text_and + 
 			" <b>" + document.getElementById("competencyLevel_"+nActCompetencyLevel).value + "</b>";
 		}
-		
-		arrCompetencyNameCached[nI] = arrCompetencyName[nI];
-		
-		updateEvaluationLevelInputFields();
 	}
 	
 	function updateActualCombinationCompetencyLevel(nI) {
@@ -265,8 +255,6 @@
 			text_and + 
 			" <b>" + document.getElementById("competencyLevel_"+nActCompetencyLevel).value + "</b>";
 		}
-		
-		updateEvaluationLevelInputFields();
 	}
 	
 	//Shows the canDo statements belonging to a certain competencyName / Level combination
@@ -496,10 +484,12 @@
 		arrEvaluationLevelGlobal = Array("");
 		
 		for (nI = 0; nI < evaluationLevelInputfields; nI++) {
-			if (arrEvaluationLevelGlobalCached[nI] == null) {
+			if (arrEvaluationLevelGlobalCached[nI] && arrEvaluationLevelGlobalCached[nI] != "") {
+				arrEvaluationLevelGlobal[nI] = arrEvaluationLevelGlobalCached[nI];
+			}
+			else {
 				arrEvaluationLevelGlobalCached[nI] = "";
 			}
-			arrEvaluationLevelGlobal[nI] = arrEvaluationLevelGlobalCached[nI];
 			
 			tr 	= document.createElement("tr");	
 			th	= document.createElement("th");
@@ -515,7 +505,7 @@
 			input.setAttribute("type", "text");
 			input.setAttribute("size", "25");
 			input.setAttribute("id", "evaluationLevelGlobal_"+nI);					
-			input.setAttribute("value", arrEvaluationLevelGlobal[nI]);
+			input.setAttribute("value", arrEvaluationLevelGlobalCached[nI]);
 			input.setAttribute("onkeyup", "saveEvaluationsGlobal("+nI+")");
 								
 			td.appendChild(input);

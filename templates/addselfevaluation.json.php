@@ -73,7 +73,6 @@ while (file_exists($filepath)) {
     $increment++;
 }
 
-
 //intitialize XMLWriter
 $writer = new XMLWriter();
 
@@ -86,17 +85,32 @@ $writer->setIndent(4);
 $writer->startElement('DESCRIPTORSET');
 $writer->writeAttribute('NAME', $competencyPatternTitle);
 
-for($nI = 0; $nI < count($arrCompetencyName); $nI++) {
-	for($nJ = 0; $nJ < count($arrCompetencyLevel); $nJ++) {
-		//if somebody didn't set any CanDos give an empty set
-		if(count($arrCanDo[$nI][$nJ]) <= 0)
-			$arrCanDo[$nI][$nJ] = Array("");
+$emptyfield = false;
+
+for ($nI = 0; $nI < count($arrCompetencyName); $nI++) {
+	//check if any of the fields is empty
+	if ($arrCompetencyName[$nI] == "") {
+		$emptyfield = true;
+		break;
+	}
+	
+	for ($nJ = 0; $nJ < count($arrCompetencyLevel); $nJ++) {
+		if ($arrCompetencyLevel[$nJ] == "") {
+			$emptyfield = true;
+			break;
+		}
 		
-		for($nK = 0; $nK < count($arrCanDo[$nI][$nJ]); $nK++) {
-			if($nK > 0 && $arrCanDo[$nI][$nJ][$nK] == "" && $arrCanDoTaskLink[$nI][$nJ][$nK] == "")
+		//if somebody didn't set any CanDos give an empty set
+		if(count($arrCanDo[$nI][$nJ]) <= 0) {
+			$arrCanDo[$nI][$nJ] = Array("");
+		}
+		
+		for ($nK = 0; $nK < count($arrCanDo[$nI][$nJ]); $nK++) {
+			if ($nK > 0 && $arrCanDo[$nI][$nJ][$nK] == "" && $arrCanDoTaskLink[$nI][$nJ][$nK] == "") {
 				continue;
+			}
 			
-			if($arrCanDoCanBeGoal[$nI][$nJ][$nK] == false ||
+			if ($arrCanDoCanBeGoal[$nI][$nJ][$nK] == false ||
 				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == null ||
 				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == "" ||
 				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == 0) {
@@ -114,25 +128,30 @@ for($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 			$writer->writeAttribute('NAME', $arrCanDo[$nI][$nJ][$nK]);
 			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$nI][$nJ][$nK]);
 			$writer->endElement();
-				
 		}
 	}
 }
 
-// End Descriptorset
-$writer->endElement();
-$writer->endDocument();
-
-$writer->flush();
-
-if ($id != 0) {
-    write_descriptor_db($filepath, false, $subject, $id);
+if (!$emptyfield) {
+	// End Descriptorset
+	$writer->endElement();
+	$writer->endDocument();
+	
+	$writer->flush();
+	
+	if ($id != 0) {
+	    write_descriptor_db($filepath, false, $subject, $id);
+	}
+	else {
+	    write_descriptor_db($filepath, false, $subject);
+	}
+	
+	//reply
+	json_reply(null, $arrCompetencyName[0]);
 }
 else {
-    write_descriptor_db($filepath, false, $subject);
+	$writer->flush();
+	json_reply(true, 'Error: One of the fields is emtpy');
 }
-
-//reply
-json_reply(null, $arrCompetencyName[0]);
 
 ?>
