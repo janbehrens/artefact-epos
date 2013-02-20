@@ -712,10 +712,10 @@ class ArtefactTypeBiography extends ArtefactType {
         return 'artefact_epos_biography_educationhistory';// . $this->get_artefact_type();
     }
 
-    public static function get_js(array $compositetypes) {
+    public static function get_js(array $compositetypes, $id) {
         $js = self::get_common_js();
         foreach ($compositetypes as $compositetype) {
-            $js .= self::get_artefacttype_js($compositetype);
+            $js .= self::get_artefacttype_js($compositetype, $id);
         }
         return $js;
     }
@@ -782,53 +782,56 @@ function moveComposite(type, id, artefact, direction) {
     );
     return false;
 }
+
 EOF;
         $js .= self::get_showhide_composite_js();
         return $js;
     }
 
     static function get_tablerenderer_title_js($titlestring, $bodystring) {
-        return "
-                function (r, d) {
-                    if (!{$bodystring}) {
-                        return TD(null, {$titlestring});
-                    }
-                    var link = A({'href': ''}, {$titlestring});
-                    connect(link, 'onclick', function (e) {
-                        e.stop();
-                        return showhideComposite(r, {$bodystring});
-                    });
-                    return TD({'id': 'composite-' + r.artefact + '-' + r.id}, link);
-                },
-                ";
+        return <<<EOF
+        function (r, d) {
+            if (!{$bodystring}) {
+                return TD(null, {$titlestring});
+            }
+            var link = A({'href': ''}, {$titlestring});
+            connect(link, 'onclick', function (e) {
+                e.stop();
+                return showhideComposite(r, {$bodystring});
+            });
+            return TD({'id': 'composite-' + r.artefact + '-' + r.id}, link);
+        },
+EOF;
     }
 
     static function get_showhide_composite_js() {
-        return "
-            function showhideComposite(r, content) {
-                // get the reference for the title we just clicked on
-                var titleTD = $('composite-' + r.artefact + '-' + r.id);
-                var theRow = titleTD.parentNode;
-                var bodyRow = $('composite-body-' + r.artefact +  '-' + r.id);
-                if (bodyRow) {
-                    if (hasElementClass(bodyRow, 'hidden')) {
-                        removeElementClass(bodyRow, 'hidden');
-                    }
-                    else {
-                        addElementClass(bodyRow, 'hidden');
-                    }
-                    return false;
-                }
-                // we have to actually create the dom node too
-                var colspan = theRow.childNodes.length;
-                var newRow = TR({'id': 'composite-body-' + r.artefact + '-' + r.id}, 
+        return <<<EOF
+
+function showhideComposite(r, content) {
+    // get the reference for the title we just clicked on
+    var titleTD = $('composite-' + r.artefact + '-' + r.id);
+    var theRow = titleTD.parentNode;
+    var bodyRow = $('composite-body-' + r.artefact +  '-' + r.id);
+    if (bodyRow) {
+        if (hasElementClass(bodyRow, 'hidden')) {
+            removeElementClass(bodyRow, 'hidden');
+        }
+        else {
+            addElementClass(bodyRow, 'hidden');
+        }
+        return false;
+    }
+    // we have to actually create the dom node too
+    var colspan = theRow.childNodes.length;
+    var newRow = TR({'id': 'composite-body-' + r.artefact + '-' + r.id}, 
                     TD({'colspan': colspan}, content)); 
-                insertSiblingNodesAfter(theRow, newRow);
-            }
-        ";
+    insertSiblingNodesAfter(theRow, newRow);
+}
+
+EOF;
     }
 
-    static function get_artefacttype_js($compositetype) {
+    static function get_artefacttype_js($compositetype, $id) {
         global $THEME;
         $editstr = get_string('edit');
         $delstr = get_string('delete');
@@ -840,9 +843,10 @@ EOF;
         $js = self::get_composite_js();
 
         $js .= <<<EOF
+
 tableRenderers.{$compositetype} = new TableRenderer(
     '{$compositetype}list',
-    'composite.json.php',
+    'composite.json.php?id={$id}',
     [
 EOF;
 
@@ -930,13 +934,13 @@ EOF;
     public static function get_tablerenderer_js() {
 
         return "
-                'startdate',
-                'enddate',
-                " . self::get_tablerenderer_title_js(
-                    self::get_tablerenderer_title_js_string(),
-                    self::get_tablerenderer_body_js_string()
-                ) . "
-        ";
+        'startdate',
+        'enddate',
+" . self::get_tablerenderer_title_js(
+                self::get_tablerenderer_title_js_string(),
+                self::get_tablerenderer_body_js_string()
+            ) . "
+";
     }
 
     public static function get_tablerenderer_title_js_string() {
@@ -1017,6 +1021,7 @@ EOF;
     static function get_composite_js() {
         $at = get_string('at');
         return <<<EOF
+
 function formatQualification(name, level, place, subject) {
     var qual = name;
     if (place) {
@@ -1044,6 +1049,7 @@ function formatQualification(name, level, place, subject) {
     }
     return qual;
 }
+
 EOF;
     }
 }

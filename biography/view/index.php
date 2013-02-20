@@ -60,7 +60,7 @@ $offset = param_integer('offset', 0);
 
 
 $compositetypes = array('educationhistory');
-$inlinejs = ArtefactTypeBiography::get_js($compositetypes);
+$inlinejs = ArtefactTypeBiography::get_js($compositetypes, $id);
 $compositeforms = ArtefactTypeBiography::get_forms($compositetypes);
 
 

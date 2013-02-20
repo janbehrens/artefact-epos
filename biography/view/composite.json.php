@@ -31,6 +31,7 @@ define('JSON', 1);
 require(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/init.php');
 safe_require('artefact', 'resume');
 
+$id = param_integer('id');
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
 $type = param_alpha('type');
@@ -45,14 +46,14 @@ $owner = $USER->get('id');
 $sql = 'SELECT ar.*, a.owner
     FROM {artefact} a 
     JOIN {' . $othertable . '} ar ON ar.artefact = a.id
-    WHERE a.owner = ? AND a.artefacttype = ?
+    WHERE a.owner = ? AND a.id = ?
     ORDER BY ar.displayorder';
 
-if (!$data = get_records_sql_array($sql, array($owner, 'biography'))) {
+if (!$data = get_records_sql_array($sql, array($owner, $id))) {
     $data = array();
 }
 
-$count = count_records('artefact', 'owner', $owner, 'artefacttype', 'biography');
+$count = count($data);
 
 json_reply(false, array(
     'data' => $data,
