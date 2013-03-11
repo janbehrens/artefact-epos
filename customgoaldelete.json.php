@@ -19,9 +19,9 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Björn Mellies
+ * @author     Björn Mellies, Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011 Björn Mellies, bmellies@informatik.uni-bremen.de
+ * @copyright  (C) 2011-2013 TZI / Universität Bremen
  *
  */
 

@@ -21,14 +21,14 @@
  * @subpackage artefact-epos
  * @author     Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011 Jan Behrens, jb3@informatik.uni-bremen.de
+ * @copyright  (C) 2011-2013 TZI / Universität Bremen
  *
  */
 
 defined('INTERNAL') || die();
 
 $config = new StdClass;
-$config->version = 2012092301;
-$config->release = '0.2.1';
+$config->version = 2013031100;
+$config->release = '1.0';
 
 ?>

@@ -21,7 +21,7 @@
  * @subpackage blocktype-epos
  * @author     Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011 Jan Behrens, jb3@informatik.uni-bremen.de
+ * @copyright  (C) 2011-2013 TZI / Universität Bremen
  *
  */
 

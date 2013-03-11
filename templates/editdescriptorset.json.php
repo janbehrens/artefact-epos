@@ -21,7 +21,7 @@
  * @subpackage artefact-epos
  * @author     Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2012 Jan Behrens, jb3@informatik.uni-bremen.de
+ * @copyright  (C) 2012-2013 TZI / Universität Bremen
  *
  */
 

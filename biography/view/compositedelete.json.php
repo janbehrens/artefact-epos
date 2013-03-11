@@ -18,10 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
- * @subpackage artefact-resume
- * @author     Catalyst IT Ltd
+ * @subpackage artefact-epos
+ * @author     Catalyst IT Ltd, Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
+ *                 2012-2013 TZI / Universität Bremen
  *
  */
 

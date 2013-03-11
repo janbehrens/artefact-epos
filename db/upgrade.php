@@ -18,10 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
- * @subpackage artefact-internal
- * @author     Catalyst IT Ltd
+ * @subpackage artefact-epos
+ * @author     Jan Behrens
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
+ * @copyright  (C) 2012-2013 TZI / Universität Bremen
  *
  */
 
