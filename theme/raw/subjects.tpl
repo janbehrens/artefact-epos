@@ -10,11 +10,13 @@
             <th></th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         {foreach from=$rows item=row}
         <tr class="{cycle values='r0,r1'}">
+            <td></td>
             <td></td>
             <td></td>
             <td></td>

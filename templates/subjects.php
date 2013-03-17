@@ -97,6 +97,10 @@ $deactivatestr = get_string('deactivate', 'artefact.epos');
 $editstr = get_string('edit', 'artefact.epos');
 $savestr =get_string('save');
 $selfevaluationstr = get_string('selfevaluation', 'artefact.epos');
+$deletestr = get_string('delete', 'mahara');
+$confirmdelstr1 = get_string('confirmdeletesubject1', 'artefact.epos');
+$confirmdelstr2 = get_string('confirmdeletesubject2', 'artefact.epos');
+$confirmdelstr3 = get_string('confirmdeletesubject3', 'artefact.epos');
 
 $inlinejs = <<<EOF
 
@@ -140,6 +144,18 @@ function deactivateSubject(id) {
             function() {
             	tableRenderer.doupdate();
             });
+}
+
+function deleteSubject(id, name) {
+    if (confirm('{$confirmdelstr1}"' + name + '"{$confirmdelstr2}?' + ' {$confirmdelstr3}')) {
+        sendjsonrequest('deletesubject.json.php',
+                {'id': id},
+                'POST', 
+                function() {
+                	tableRenderer.doupdate();
+                });
+    }
+    return false;
 }
 
 var oldText;
@@ -199,6 +215,9 @@ tableRenderer = new TableRenderer(
         },
         function (r, d) {
             return TD(null, A({'class': 'icon btn-edit s', 'href': 'javascript: onClick=editSubject('+r.id+')'}, '{$editstr}'));
+        },
+        function (r, d) {
+            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteSubject(' + r.id + ', "' + r.name + '");'}, '{$deletestr}'));
         },
         function (r, d) {
             if (r.active == 1) {
