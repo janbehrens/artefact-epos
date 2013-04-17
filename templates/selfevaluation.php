@@ -253,10 +253,10 @@ tableRenderer = new TableRenderer(
             }
         },
         function (r, d) {
-            return TD(null, A({'class': 'icon btn-edit s', 'href': 'javascript: onClick=editDescriptorset(' + r.id + ', "' + r.name + '");'}, '{$editstr}'));
+            return TD(null, A({'class': 'icon btn-edit s', 'href': 'javascript: onClick=editDescriptorset(' + r.id + ', ' + JSON.stringify(r.name) + ');'}, '{$editstr}'));
         },
         function (r, d) {
-            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteDescriptorset(' + r.id + ', "' + r.name + '");'}, '{$deletestr}'));
+            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteDescriptorset(' + r.id + ', ' + JSON.stringify(r.name) + ');'}, '{$deletestr}'));
         },
         function (r, d) {
             return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file=' + r.file}, '{$exportstr}'));

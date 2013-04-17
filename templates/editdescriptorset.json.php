@@ -26,18 +26,12 @@
  */
 
 define('INTERNAL', 1);
-//define('JSON', 1);
+define('JSON', 1);
 
 require(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 safe_require('artefact', 'epos');
 
 $descriptorset = param_variable('id');
-
-/*$sql = 'SELECT id,name,link,competence,level,evaluations,goal_available FROM artefact_epos_descriptor
-        WHERE descriptorset = ?';
-if (!$data = get_records_sql_array($sql, array($descriptorset))) {
-    $data = array();
-}*/
 
 $data = load_descriptors($descriptorset);
 
