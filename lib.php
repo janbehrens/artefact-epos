@@ -1082,7 +1082,7 @@ EOF;
 function load_descriptors($id) {
     $sql = 'SELECT * FROM artefact_epos_descriptor
         WHERE descriptorset = ?
-        ORDER BY level, competence';
+        ORDER BY level, competence, id';
     
     if (!$descriptors = get_records_sql_array($sql, array($id))) {
         $descriptors = array();
