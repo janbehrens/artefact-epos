@@ -72,12 +72,12 @@ class PluginArtefactEpos extends PluginArtefact {
                 'url' => 'artefact/epos/goals.php',
                 'weight' => 28,
             ),
-            array(
+            /*array(
                 'path' => 'biography',
                 'title' => get_string('biography', 'artefact.epos'),
                 'url' => 'artefact/epos/biography',
                 'weight' => 38,
-            ),
+            ),*/
         );
     }
 }
