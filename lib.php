@@ -123,6 +123,13 @@ class ArtefactTypeChecklist extends ArtefactType {
         parent::__construct($id, $data);
     }
     
+    public function check_permission() {
+        global $USER;
+        if ($USER->get('id') != $this->owner) {
+            throw new AccessDeniedException(get_string('youarenottheownerofthischecklist', 'artefact.epos'));
+        }
+    }
+    
     public function render_self($options, $blockid = 0) {
         $this->add_to_render_path($options);
         $this->set = $this->load_descriptorset();

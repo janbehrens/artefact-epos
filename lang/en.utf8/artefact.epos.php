@@ -57,6 +57,7 @@ $string['savedchecklist'] = 'Your checklist has been saved.';
 $string['titlenotvalid'] = 'Title is not valid.';
 $string['descriptorsetnotvalid'] = 'Competence grid is not valid.';
 $string['pleasechoosesubject'] = 'Please choose a subject first';
+$string['youarenottheownerofthischecklist'] = 'You are not the owner of this self-evaluation';
 
 //vocabulary
 $string['competence'] = 'Competence';

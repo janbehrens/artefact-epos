@@ -89,7 +89,9 @@ $checklistformsid = array();
 $inlinejs = '';
 
 if ($haslanguages) {
-    $a = artefact_instance_from_id($id);
+    $a = new ArtefactTypeChecklist($id);
+    $a->check_permission();
+    
     $set = $a->set = $a->load_descriptorset();
     $checklistitems = $a->load_checklist();
     
