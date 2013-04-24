@@ -45,7 +45,7 @@ $params = array($owner, 'checklist');
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $a = artefact_instance_from_id($id);
+    $a = new ArtefactTypeChecklist($id);
     if (!$USER->can_view_artefact($a)) {
         throw new AccessDeniedException(get_string('notownerofchecklist', 'artefact.epos'));
     }
@@ -58,7 +58,7 @@ if (!$checklists = get_records_sql_array($sql, $params)) {
 // select first checklist if id is not given
 if (!isset($id)) {
     $id = $checklists[0]->id;
-    $a = artefact_instance_from_id($id);
+    $a = new ArtefactTypeChecklist($id);
 }
 
 $sql = 'SELECT * FROM artefact_epos_descriptor d

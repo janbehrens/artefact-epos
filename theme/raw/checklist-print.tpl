@@ -46,7 +46,7 @@
 	            {foreach $competence.levels name=levels item=comp_level}
 	            <td>
 	                <div class="progressbar">
-	                    <div class="progressbar-value" style="width: 19%;"></div>
+	                    <div class="progressbar-value" style="width: {$comp_level.val}%;"></div>
 		                <span class="progressbar-content">
 		                {foreach $evaluations name=evaluations key=evaluation item=evaluation_index}
 		                    {if array_key_exists($evaluation_index, $comp_level.evaluation_sums)}
@@ -74,3 +74,4 @@
         </span>
     </p>
 </body>
+</html>
