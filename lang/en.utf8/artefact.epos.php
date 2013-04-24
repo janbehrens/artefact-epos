@@ -46,6 +46,7 @@ $string['cancel'] = 'Cancel';
 $string['del'] = 'Delete';
 $string['edit'] = 'Edit';
 $string['save'] = 'Save';
+$string['print'] = 'Print';
 
 //notifications
 $string['addedlanguage'] = 'Subject has been added.';
@@ -57,7 +58,8 @@ $string['savedchecklist'] = 'Your checklist has been saved.';
 $string['titlenotvalid'] = 'Title is not valid.';
 $string['descriptorsetnotvalid'] = 'Competence grid is not valid.';
 $string['pleasechoosesubject'] = 'Please choose a subject first';
-$string['youarenottheownerofthischecklist'] = 'You are not the owner of this self-evaluation';
+$string['youarenottheownerofthischecklist'] = 'You may not view this self-evaluation list, it is owned by someone else';
+$string['nochecklistsforuser'] = 'You do not yet have any self-evaluation lists.';
 
 //vocabulary
 $string['competence'] = 'Competence';
@@ -136,6 +138,8 @@ $string['learningobjective_checkbox'] = 'Display checkbox for learning objective
 $string['fill_in_learning_objectives'] = 'Fill in can-do statements and task links for the given combination of competence and level.';
 $string['combination_of'] = 'Combination of';
 $string['and'] = 'and';
+$string['printchecklist'] = 'Print evaluation';
+$string['enablebackgroundprinting'] = 'Make sure to enable printing of background colors in the printing dialog.';
 
 //self-evaluation template management
 $string['availabletemplates'] = 'Available competence grids';

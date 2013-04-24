@@ -89,3 +89,65 @@ td a.btn-add{
 #biographylist th {
     border-bottom: none;
 }
+
+/* print checklist */
+body.print {
+	background-color: #FFF;
+	color: #333;
+}
+
+.print table#checklist th {
+	color: #333;
+}
+
+.print tr.odd {
+    background-color: #EEE;
+}
+
+.print td {
+    vertical-align: middle;
+}
+
+.print .progressbar {
+	height: 2em;
+    position: relative;
+    border-radius: 4px 4px 4px 4px;
+}
+
+.print .progressbar-value {
+    height: 100%;
+    margin: -1px;
+    background-color: #AAA;
+    position: absolute;
+    border-radius: 4px 4px 4px 4px;
+}
+
+.print .progressbar-content {
+	margin: 6px 15px;
+    position: absolute;
+    color: #333;
+}
+
+.print .progressbar-legend {
+	height: auto;
+	padding: 7px;
+	vertical-align: middle;
+	display:inline-block;
+    background-color: #AAA;
+    border-radius: 4px 4px 4px 4px;
+}
+
+#print-tools {
+	margin: 20px;
+	padding: 10px;
+	background-color: #FBFDF1;
+	border: 1px solid #AAA;
+}
+
+@media print {
+	
+	.dontprint {
+	   display: none;
+	}
+	
+}
