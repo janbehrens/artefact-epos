@@ -25,14 +25,15 @@
     <p>
         {str tag='enablebackgroundprinting' section='artefact.epos'}
     </p>
-    <a href="javascript:self:print()">{str tag='print' section='artefact.epos'}</a>
+    <a class="btn buttondk" href="javascript:self:back()">{str tag='back' section='artefact.epos'}</a>
+    <a class="btn buttondk" href="javascript:self:print()">{str tag='print' section='artefact.epos'}</a>
     </div>
     <h1>Self Evaluation</h1>
     <h2>{$USER|display_name:null:true}: {$subject}</h2>
 	<table id="checklist" width="100%">
 	    <thead>
 	        <tr>
-	            <th width="30%">{str tag='competence' section='artefact.epos'}</th>
+	            <th style="min-width: 30%;">{str tag='competence' section='artefact.epos'}</th>
 	            {foreach $levels name=levels item=level}
 	            <th>{$level}</th>
 	            {/foreach}
@@ -42,7 +43,7 @@
 	        {foreach $competences name=competences item=competence}
 	        {cycle values='odd,even' assign='evenodd'}
 	        <tr class="{$evenodd}">
-	            <td>{$competence.name}</td>
+	            <td style="white-space: nowrap;">{$competence.name}</td>
 	            {foreach $competence.levels name=levels item=comp_level}
 	            <td>
 	                <div class="progressbar">

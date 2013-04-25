@@ -1,12 +1,13 @@
 {include file="header.tpl"}
 
+{if $haslanguages}
 <div class="rbuttons{if $GROUP} pagetabs{/if}">
     <form method="get" action="{$WWWROOT}artefact/epos/checklist-print.php">
         <input type="submit" class="submit" value="{str tag='printchecklist' section='artefact.epos'}">
         <input type="hidden" name="id" value="{$id}">
     </form>
 </div>
-
+{/if}
 
 <div id="subjects_list">{$languagelinks|safe}</div>
 
