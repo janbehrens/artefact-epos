@@ -129,7 +129,7 @@ foreach ($competences as $c) {
 $smarty = smarty();
 $smarty->assign('competences', $competences);
 $smarty->assign('levels', $levels);
-$smarty->assign('evaluations', array_flip($evaluations));
+$smarty->assign('evaluations', $evaluations);
 $smarty->assign('subject', $a->get_parent_instance()->get_name());
 $smarty->assign('PAGEHEADING', get_string('selfevaluationprintout', 'artefact.epos'));
 $smarty->display('artefact:epos:checklist-print.tpl');

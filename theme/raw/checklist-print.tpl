@@ -48,7 +48,7 @@
 	                <div class="progressbar">
 	                    <div class="progressbar-value" style="width: {$comp_level.val}%;"></div>
 		                <span class="progressbar-content">
-		                {foreach $evaluations name=evaluations key=evaluation item=evaluation_index}
+		                {foreach $evaluations name=evaluations key=evaluation_index item=evaluation}
 		                    {if array_key_exists($evaluation_index, $comp_level.evaluation_sums)}
 		                        {$comp_level.evaluation_sums.$evaluation_index}
 		                    {else}
@@ -64,14 +64,17 @@
 	        {/foreach}
 	    </tbody>
 	</table>
-    <p>
-        Legend:
-        <span class="progressbar-legend">
-        {foreach $evaluations name=evaluations key=evaluation item=evaluation_index}
-            {$evaluation}
-            {if !$dwoo.foreach.evaluations.last} / {/if}
-        {/foreach}
-        </span>
-    </p>
+    <div id="legend">
+        <span class="caption">Legend</span>
+        <div class="progressbar">
+            <div class="progressbar-value" style="width: 80%;"></div>
+            <span class="progressbar-content">
+            {foreach $evaluations name=evaluations key=evaluation_index item=evaluation}
+                {$evaluation}
+                {if !$dwoo.foreach.evaluations.last} / {/if}
+            {/foreach}
+        </div>
+        <p>{str tag='legendthenumbers' section='artefact.epos' arg1=$evaluations[0] arg2=$evaluations[1]}</p>
+    </div>
 </body>
 </html>

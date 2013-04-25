@@ -140,6 +140,7 @@ $string['combination_of'] = 'Combination of';
 $string['and'] = 'and';
 $string['printchecklist'] = 'Print evaluation';
 $string['enablebackgroundprinting'] = 'Make sure to enable printing of background colors in the printing dialog.';
+$string['legendthenumbers'] = 'The numbers indicate how many "Can-Do statements" have been selected, respectively. The first number shows the number of "%s", the second refers to "%s" etc.';
 
 //self-evaluation template management
 $string['availabletemplates'] = 'Available competence grids';
