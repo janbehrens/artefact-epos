@@ -22,11 +22,8 @@
 </head>
 <body class="print">
     <div id="print-tools" class="dontprint">
-    <p>
-        {str tag='enablebackgroundprinting' section='artefact.epos'}
-    </p>
-    <a class="btn buttondk" href="javascript:self:back()">{str tag='back' section='artefact.epos'}</a>
-    <a class="btn buttondk" href="javascript:self:print()">{str tag='print' section='artefact.epos'}</a>
+        <a class="btn buttondk" href="javascript:self:back()">{str tag='back' section='artefact.epos'}</a>
+        <a class="btn buttondk" href="javascript:self:print()">{str tag='print' section='artefact.epos'}</a>
     </div>
     <h1>Self Evaluation</h1>
     <h2>{$USER|display_name:null:true}: {$subject}</h2>

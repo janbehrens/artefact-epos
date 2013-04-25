@@ -104,7 +104,7 @@ foreach ($descriptors as $descriptor) {
     if (!in_array($descriptor->level, $levels)) {
         $levels []= $descriptor->level;
     }
-    $descriptor->evaluations = explode('; ', $descriptor->evaluations);
+    $descriptor->evaluations = array_map(trim, explode(';', $descriptor->evaluations));
     $evaluations = array_replace($evaluations, $descriptor->evaluations);
     $comp_level = &$competences[$descriptor->competence]['levels'][$descriptor->level];
     $comp_level['val'] += (float)$descriptor->evaluation;
@@ -114,12 +114,9 @@ foreach ($descriptors as $descriptor) {
 }
 
 //calculate percentage
-foreach ($competences as $c) {
-    foreach (array_keys($c) as $l) {
-        if (is_array($c[$l])) {
-            $c[$l]['val'] = round(100 * $c[$l]['val'] / $c[$l]['max']);
-
-        }
+foreach ($competences as &$competence) {
+    foreach ($competence['levels'] as &$level) {
+        $level['val'] = round(100 * $level['val'] / $level['max']);
     }
 }
 

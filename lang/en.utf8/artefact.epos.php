@@ -141,7 +141,7 @@ $string['combination_of'] = 'Combination of';
 $string['and'] = 'and';
 $string['printchecklist'] = 'Print evaluation';
 $string['enablebackgroundprinting'] = 'Make sure to enable printing of background colors in the printing dialog.';
-$string['legendthenumbers'] = 'The numbers indicate how many "Can-Do statements" have been selected, respectively. The first number shows the number of "%s", the second refers to "%s" etc.';
+$string['legendthenumbers'] = 'The figures in the bars indicate the number of "Can-Do Statements" rated with the respective evaluation levels. The first figure is the number of statements rated with "%s", the second one refers to "%s" etc.';
 
 //self-evaluation template management
 $string['availabletemplates'] = 'Available competence grids';
