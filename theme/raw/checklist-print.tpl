@@ -44,7 +44,9 @@
 	            {foreach $competence.levels name=levels item=comp_level}
 	            <td>
 	                <div class="progressbar">
-	                    <div class="progressbar-value" style="width: {$comp_level.val}%;"></div>
+	                    <div class="progressbar-value" style="width: {$comp_level.val}%;">
+                            <img src="{$WWWROOT}artefact/epos/images/progressbar-fill.png" />
+                        </div>
 		                <span class="progressbar-content">
 		                {foreach $evaluations name=evaluations key=evaluation_index item=evaluation}
 		                    {if array_key_exists($evaluation_index, $comp_level.evaluation_sums)}
@@ -65,7 +67,9 @@
     <div id="legend">
         <span class="caption">Legend</span>
         <div class="progressbar">
-            <div class="progressbar-value" style="width: 80%;"></div>
+            <div class="progressbar-value" style="width: 80%;">
+                <img src="{$WWWROOT}artefact/epos/images/progressbar-fill.png" />
+            </div>
             <span class="progressbar-content">
             {foreach $evaluations name=evaluations key=evaluation_index item=evaluation}
                 {$evaluation}

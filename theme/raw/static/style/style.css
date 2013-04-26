@@ -124,9 +124,9 @@ body.print {
 
 .print .progressbar-value {
     height: 100%;
-    background-color: #AAA;
     position: absolute;
     border-radius: 3px;
+    overflow: hidden;
 }
 
 .print .progressbar-content {
@@ -151,17 +151,17 @@ body.print {
 }
 
 #print-tools {
-	margin: 20px;
-	padding: 10px;
-	/*background-color: #FBFDF1;
+    margin: 20px;
+    padding: 10px;
+    /*background-color: #FBFDF1;
     border: 1px solid #AAA;*/
     float: right;
 }
 
 @media print {
-	
-	.dontprint {
-	   display: none;
-	}
-	
+
+    .dontprint {
+       display: none;
+    }
+
 }
