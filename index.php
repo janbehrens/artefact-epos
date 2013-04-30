@@ -170,7 +170,7 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
         'name' => 'addlearnedlanguage',
         'plugintype' => 'artefact',
         'pluginname' => 'epos',
-        'elements' => $elements, 
+        'elements' => $elements,
         'jsform' => true,
         'jssuccesscallback' => 'languageSaveCallback',
     ));
@@ -218,7 +218,7 @@ function get_subjects() {
     
     foreach ($data as $field) {
         $subjects[$field->id] = $field->name . " ($field->displayname)";
-    };
+    }
     
     return $subjects;
 }
@@ -241,7 +241,7 @@ function get_descriptorsets() {
         }
         foreach ($data as $field) {
             $descriptorsets[$field->id] = $field->name;
-        };
+        }
     }
     else {
         $descriptorsets[''] = get_string('pleasechoosesubject', 'artefact.epos');
@@ -277,67 +277,7 @@ function addlearnedlanguage_submit(Pieform $form, $values) {
 
 function process_languageform(Pieform $form, $values) {
     global $USER, $optionsdescriptors;
+    safe_require('artefact', 'epos');
     $owner = $USER->get('id');
-    
-    // update artefact 'subject' ...
-    $sql = "SELECT * FROM artefact WHERE owner = ? AND artefacttype = 'subject' AND title = ?";
-    if ($langs = get_records_sql_array($sql, array($owner, $values['title']))) {
-        $a = artefact_instance_from_id($langs[0]->id);
-        $a->set('mtime', time());
-        $a->commit();
-    }
-    // ... or create it if it doesn't exist
-    else {
-        safe_require('artefact', 'epos');
-        $a = new ArtefactTypeSubject(0, array(
-                'owner' => $owner,
-                'title' => $values['title'],
-            )
-        );
-        $a->commit();
-        
-        //insert: artefact_epos_artefact_subject
-        $values_artefact_subject = array('artefact' => $a->get('id'), 'subject' => $values['subject']);
-        insert_record('artefact_epos_artefact_subject', (object)$values_artefact_subject);
-    }
-
-    $id = $a->get('id');
-    
-    // create checklist artefact
-    $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
-    
-    if (!get_records_sql_array($sql, array($id, $values['descriptorset']))) {
-        
-        $a = new ArtefactTypeChecklist(0, array(
-            'owner' => $owner,
-            'title' => $optionsdescriptors[$values['descriptorset']],
-            'parent' => $id
-        ));
-        $a->commit();
-
-        // load descriptors
-        $descriptors = array();
-        
-        $sql = 'SELECT d.id, d.goal_available FROM artefact_epos_descriptor d
-                JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset
-                WHERE s.id = ?';
-        
-        if (!$descriptors = get_records_sql_array($sql, array($values['descriptorset']))) {
-            $descriptors = array();
-        }
-        
-        $values['checklist'] = $a->get('id');
-        $values['evaluation'] = 0;
-        
-        // update artefact_epos_checklist_item
-        foreach ($descriptors as $field) {
-            $values['descriptor'] = $field->id;
-            if ($field->goal_available == 1) {
-                $values['goal'] = 0;
-            }
-            insert_record('artefact_epos_checklist_item', (object)$values);
-        }
-    }
+    create_subject_for_user($values['subject'], $values['title'], $values['descriptorset'], $optionsdescriptors[$values['descriptorset']], $owner);
 }
-
-?>
