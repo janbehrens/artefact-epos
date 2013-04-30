@@ -1290,6 +1290,9 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
         if ($descriptor->goal_available == 1) {
             $checklist_item['goal'] = 0;
         }
+        else {
+            unset($checklist_item['goal']);
+        }
         insert_record('artefact_epos_checklist_item', (object)$checklist_item);
     }
 }
