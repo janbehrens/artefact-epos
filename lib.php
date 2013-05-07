@@ -1221,6 +1221,83 @@ function biographyformedit_submit(Pieform $form, $values) {
     redirect($goto);
 }
 
+/**
+ * Create a subject artefact for a user with a checklist assigned
+ * @param $subject_id The subject the user chooses to partake in
+ * @param $subject_title The title the user assigns to that subject's instance
+ * @param $descriptorset_id The descriptorset to use as checklist in this instance
+ * @param $checklist_title The title of the checklist created for this subject
+ * @param $user_id The user to create the subject artefact for, defaults to the current user
+ */
+function create_subject_for_user($subject_id, $subject_title, $descriptorset_id, $checklist_title, $user_id=null) {
+    if (!isset($user_id)) {
+        global $USER;
+        $user_id = $USER->get('id');
+    }
+    
+    // update artefact 'subject' ...
+    $sql = "SELECT * FROM artefact WHERE owner = ? AND artefacttype = 'subject' AND title = ?";
+    if ($subjects = get_records_sql_array($sql, array($owner, $subject_title))) {
+        $subject = artefact_instance_from_id($subjects[0]->id);
+        $subject->set('mtime', time());
+        $subject->commit();
+        $id = $subject->get('id');
+    }
+    // ... or create it if it doesn't exist
+    else {
+        safe_require('artefact', 'epos');
+        $subject = new ArtefactTypeSubject(0, array(
+                'owner' => $user_id,
+                'title' => $subject_title,
+            )
+        );
+        $subject->commit();
+        $id = $subject->get('id');
+        //insert: artefact_epos_artefact_subject
+        $values_artefact_subject = array('artefact' => $id, 'subject' => $subject_id);
+        insert_record('artefact_epos_artefact_subject', (object)$values_artefact_subject);
+    }
+    
+    /*
+    // if there is already a checklist with the given title, don't create another one
+    $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
+    if (get_records_sql_array($sql, array($id, $checklist_title))) {
+        return;
+    }
+    */
+
+    // create checklist artefact
+    $checklist = new ArtefactTypeChecklist(0, array(
+        'owner' => $user_id,
+        'title' => $checklist_title,
+        'parent' => $id
+    ));
+    $checklist->commit();
+
+    // load descriptors
+    $descriptors = array();
+    $sql = 'SELECT d.id, d.goal_available FROM artefact_epos_descriptor d
+            JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset
+            WHERE s.id = ?';
+    if (!$descriptors = get_records_sql_array($sql, array($descriptorset_id))) {
+        $descriptors = array();
+    }
+    
+    // update artefact_epos_checklist_item
+    $checklist_item = array('checklist' => $checklist->get('id'), 'evaluation' => 0);
+    foreach ($descriptors as $descriptor) {
+        $checklist_item['descriptor'] = $descriptor->id;
+        if ($descriptor->goal_available == 1) {
+            $checklist_item['goal'] = 0;
+        }
+        else {
+            unset($checklist_item['goal']);
+        }
+        insert_record('artefact_epos_checklist_item', (object)$checklist_item);
+    }
+}
+
+
 // comparison functions for sql records
 function cmpByTitle($a, $b) {
     return strcoll($a->title, $b->title);
