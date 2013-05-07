@@ -90,6 +90,11 @@ td a.btn-add{
     border-bottom: none;
 }
 
+/* checklist */
+.ui-progressbar-value {
+	cursor: pointer;
+}
+
 /* print checklist */
 body.print {
     background-color: #FFF;
