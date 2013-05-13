@@ -190,7 +190,7 @@ function createTable(lastEdited) {
 		input = document.createElement("input");
 		input.setAttribute("id", "competencyLevel_"+nI);
 		input.setAttribute("onkeyup", "updateActualCombinationCompetencyLevel("+nI+");");
-		input.setAttribute("size", "10");
+		input.setAttribute("size", "30");
 					
 		//restore inputs if there are any
 		if (nI < arrCompetencyLevelCached.length) {
@@ -219,7 +219,7 @@ function createTable(lastEdited) {
 		input = document.createElement("input");
 		input.setAttribute("id", "competencyName_"+nI);
 		input.setAttribute("onkeyup", "updateActualCombinationCompetencyName("+nI+");");
-		input.setAttribute("size", "10");
+		input.setAttribute("size", "40");
 
 		//restore inputs if there are any
 		if (nI < arrCompetencyNameCached.length) {
@@ -348,13 +348,12 @@ function createNewCanDoRow(competencyName, competencyLevel, id) {
 	th.appendChild(label);
 	
 	id = competencyName+"_"+competencyLevel+"_"+id;
-	
-	input = document.createElement("input");		
-	input.setAttribute("type", "text");
-	input.setAttribute("size", "25");		
+	input = document.createElement("textarea");		
+	input.setAttribute("rows", "1");
+	input.setAttribute("cols", "80");		
 	input.setAttribute("id", id);
-	input.setAttribute("value", arrCanDo[competencyName][competencyLevel][nI]);
 	input.setAttribute("onkeyup", "saveCurrentChangedCanDo("+competencyName+","+competencyLevel+","+nI+")");
+	input.value = arrCanDo[competencyName][competencyLevel][nI];
 	td2.appendChild(input);
 	
 	tr.appendChild(th);
@@ -380,7 +379,7 @@ function createNewCanDoRow(competencyName, competencyLevel, id) {
 	
 	input = document.createElement("input");		
 	input.setAttribute("type", "text");	
-	input.setAttribute("size", "25");				
+	input.setAttribute("size", "90");				
 	input.setAttribute("id", id);
 	input.setAttribute("value", arrCanDoTaskLinks[competencyName][competencyLevel][nI]);
 	input.setAttribute("onkeyup", "saveCurrentChangedCanDoLink("+competencyName+","+competencyLevel+","+nI+")");			
