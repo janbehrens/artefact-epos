@@ -48,6 +48,7 @@ $string['edit'] = 'Edit';
 $string['save'] = 'Save';
 $string['print'] = 'Print';
 $string['back'] = 'Back';
+$string['close'] = 'Close';
 
 //notifications
 $string['addedlanguage'] = 'Subject has been added.';

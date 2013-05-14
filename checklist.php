@@ -166,7 +166,7 @@ if ($haslanguages) {
                     if (substr($set[$competence][$level][$k]['link'], 0, 7) != "http://" && substr($set[$competence][$level][$k]['link'], 0, 8) != "https://") {
                         $set[$competence][$level][$k]['link'] = "http://" . $set[$competence][$level][$k]['link'];
                     }
-                    $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
+                    $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '"  onclick="openPopup(\'' . $set[$competence][$level][$k]['link'] . '\'); return false;">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
                     if ($set[$competence][$level][$k]['goal'] == 1) {
                         $elements['item' . $k . '_goal']['title'] = $elements['item' . $k]['title'];
                     }
@@ -236,6 +236,11 @@ function toggleLanguageForm(comp, level) {
 function checklistSaveCallback(form, data) {
     tableRenderer{$id}.doupdate();
 }
+            
+function openPopup(url) {
+    jQuery('<div id="example_popup"></div>').modal({overlayClose:true, closeHTML:''});
+    jQuery('<iframe src="' + url + '">').appendTo('#example_popup');
+}
 
 EOF;
     
@@ -246,7 +251,8 @@ $smarty = smarty(array('tablerenderer',
     				   'jquery',
                        'artefact/epos/js/jquery/ui/minified/jquery.ui.core.min.js',
                        'artefact/epos/js/jquery/ui/minified/jquery.ui.widget.min.js',
-                       'artefact/epos/js/jquery/ui/minified/jquery.ui.progressbar.min.js')
+                       'artefact/epos/js/jquery/ui/minified/jquery.ui.progressbar.min.js',
+                       'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js')
 );
 
 $smarty->assign('id', $id);
