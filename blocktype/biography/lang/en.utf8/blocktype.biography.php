@@ -18,35 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
- * @subpackage artefact-epos
- * @author     Catalyst IT Ltd, Jan Behrens, Tim-Christian Mundt
+ * @subpackage blocktype-entireresume
+ * @author     Catalyst IT Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
- *                 2012-2013 TZI / Universität Bremen
  *
  */
 
-define('INTERNAL', 1);
-define('JSON', 1);
+defined('INTERNAL') || die();
 
-require(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/init.php');
-require_once(get_config('docroot') . 'artefact/lib.php');
+$string['description'] = 'Your experiences and certificates.';
+$string['selectbiography'] = 'Select the biography to display';
 
-$id = param_integer('id');
-$artefact = param_integer('artefact');
-$type = param_alpha('type');
-safe_require('artefact', 'epos');
-if (!in_array($type, ArtefactTypeBiography::get_type_names())) {
-    throw new ParameterException();
-}
-
-$a = artefact_instance_from_id($artefact);
-if ($a->get('owner') != $USER->get('id')) {
-    throw new AccessDeniedException(get_string('notartefactowner', 'error'));
-}
-
-delete_records($a->get_table_name($type), 'id', $id);
-$a->set('mtime', time());
-$a->commit();
-
-json_reply(null, get_string('compositedeleted', 'artefact.resume'));
+$string['History'] = 'History';

@@ -19,7 +19,7 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Catalyst IT Ltd, Jan Behrens
+ * @author     Catalyst IT Ltd, Jan Behrens, Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *                 2012-2013 TZI / Universität Bremen
@@ -37,41 +37,29 @@ define('TITLE', get_string('viewbiography','artefact.epos'));
 safe_require('artefact', 'epos');
 require_once(get_config('libroot') . 'pieforms/pieform.php');
 
-
 $id = param_integer('id', null);
 if (is_null($id)) {
     if (!$records = get_records_select_array(
             'artefact',
-            "artefacttype = 'biography' AND \"owner\" = ?",
+            "artefacttype = 'biography' AND owner = ?",
             array($USER->get('id')),
-            'id ASC'
+            'id ASC', '*', 0, 1
         )) {
         throw new ParameterException();
     }
     $id = $records[0]->id;
-    $blog = new ArtefactTypeBiography($id, $records[0]);
 }
-else {
-    $blog = new ArtefactTypeBiography($id);
-}
-$blog->check_permission();
+$bio = new ArtefactTypeBiography($id);
+$bio->check_permission();
 
-$limit = param_integer('limit', 5);
-$offset = param_integer('offset', 0);
-
-
-$compositetypes = array('educationhistory');
+$compositetypes = array('educationhistory', 'certificates');
 $inlinejs = ArtefactTypeBiography::get_js($compositetypes, $id);
 $compositeforms = ArtefactTypeBiography::get_forms($compositetypes);
 
-
 $smarty = smarty(array('tablerenderer','jquery')); 
-$smarty->assign('PAGEHEADING', $blog->get('title'));
+$smarty->assign('PAGEHEADING', $bio->get('title'));
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('controls', TRUE);
 $smarty->assign('compositeforms', $compositeforms);
-
-$smarty->assign_by_ref('blog', $blog);
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:biographyview.tpl');
-

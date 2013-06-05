@@ -19,7 +19,7 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Catalyst IT Ltd, Jan Behrens
+ * @author     Catalyst IT Ltd, Jan Behrens, Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *                 2012-2013 TZI / Universität Bremen
@@ -37,11 +37,11 @@ require_once('pieforms/pieform.php');
 safe_require('artefact', 'epos');
 
 $form = pieform(array(
-    'name' => 'newblog',
+    'name' => 'newbio',
     'method' => 'post',
     'action' => '',
     'plugintype' => 'artefact',
-    'pluginname' => 'blog',
+    'pluginname' => 'biography',
     'elements' => array(
         'title' => array(
             'type'        => 'text',
@@ -78,28 +78,26 @@ $form = pieform(array(
     )
 ));
 
-$smarty =& smarty();
+$smarty = smarty();
 $smarty->assign_by_ref('form', $form);
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('form.tpl');
-exit;
 
 /**
- * This function gets called to submit the new blog.
+ * This function gets called to submit the new biography.
  *
  * @param array
  */
-function newblog_submit(Pieform $form, $values) {
+function newbio_submit(Pieform $form, $values) {
     global $USER;
-
-    ArtefactTypeBiography::new_blog($USER, $values);
+    ArtefactTypeBiography::new_biography($USER, $values);
     redirect('/artefact/epos/biography/');
 }
 
 /**
  * This function gets called to cancel a submission.
  */
-function newblog_cancel_submit() {
+function newbio_cancel_submit() {
     redirect('/artefact/epos/biography/');
 }

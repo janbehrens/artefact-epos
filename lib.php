@@ -19,7 +19,7 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Jan Behrens
+ * @author     Jan Behrens, Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2011-2013 TZI / Universität Bremen
  *
@@ -384,7 +384,7 @@ class ArtefactTypeBiography extends ArtefactType {
     const pagination = 10;
 
     /**
-     * We override the constructor to fetch the extra data.
+     * We override the constructor to set as container.
      *
      * @param integer
      * @param object
@@ -425,10 +425,10 @@ class ArtefactTypeBiography extends ArtefactType {
         if (empty($this->id)) {
             return;
         }
-
-        $table = $this->get_other_table_name();
         db_begin();
-        delete_records($table, 'artefact', $this->id);
+        foreach (self::get_type_names() as $type) {
+            delete_records(self::get_table_name($type), 'artefact', $this->id);
+        }
         db_commit();
 
         // Delete the artefact and all children.
@@ -450,6 +450,25 @@ class ArtefactTypeBiography extends ArtefactType {
 
     public function describe_size() {
         return $this->count_children() . ' ' . get_string('posts', 'artefact.blog');
+    }
+    
+    public function get_entries() {
+        global $USER;
+        $owner = $USER->get('id');
+        $entries = array();
+        foreach (self::get_type_names() as $type) {
+            $othertable = 'artefact_epos_biography_' . $type;
+            $sql = 'SELECT ar.*, a.owner
+                    FROM {artefact} a
+                    JOIN {' . $othertable . '} ar ON ar.artefact = a.id
+                    WHERE a.owner = ? AND a.id = ?
+                    ORDER BY ar.displayorder';
+            $data = get_records_sql_array($sql, array($owner, $this->id));
+            if ($data) {
+                $entries[$type] = $data;
+            }
+        }
+        return $entries;
     }
 
     /**
@@ -581,12 +600,12 @@ class ArtefactTypeBiography extends ArtefactType {
     }
 
     /**
-     * This function creates a new blog.
+     * This function creates a new biography.
      *
      * @param User
      * @param array
      */
-    public static function new_blog(User $user, array $values) {
+    public static function new_biography(User $user, array $values) {
         $artefact = new ArtefactTypeBiography();
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
@@ -596,21 +615,19 @@ class ArtefactTypeBiography extends ArtefactType {
     }
 
     /**
-     * This function updates an existing blog.
+     * This function updates the settings of the biography.
      *
      * @param User
      * @param array
      */
-    public static function edit_blog(User $user, array $values) {
+    public static function save_settings(User $user, array $values) {
         if (empty($values['id']) || !is_numeric($values['id'])) {
             return;
         }
-
         $artefact = new ArtefactTypeBiography($values['id']);
         if ($user->get('id') != $artefact->get('owner')) {
             return;
         }
-        
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
         $artefact->set('tags', $values['tags']);
@@ -619,7 +636,6 @@ class ArtefactTypeBiography extends ArtefactType {
 
     public static function get_links($id) {
         $wwwroot = get_config('wwwroot');
-
         return array(
             '_default'                                  => $wwwroot . 'artefact/epos/biography/view/?id=' . $id,
             get_string('biographysettings', 'artefact.epos') => $wwwroot . 'artefact/epos/biography/settings/?id=' . $id,
@@ -713,10 +729,14 @@ class ArtefactTypeBiography extends ArtefactType {
     }
 
     /** 
-    * returns the name of the supporting table
+    * returns the name of the supporting tables
     */
-    public function get_other_table_name() {
-        return 'artefact_epos_biography_educationhistory';// . $this->get_artefact_type();
+    public static function get_type_names() {
+        return array('educationhistory', 'certificates');
+    }
+    
+    public static function get_table_name($type) {
+        return 'artefact_epos_biography_' . $type;
     }
 
     public static function get_js(array $compositetypes, $id) {
@@ -763,7 +783,7 @@ function compositeSaveCallback(form, data) {
 function deleteComposite(type, id, artefact) {
     if (confirm('{$confirmdelstr}')) {
         sendjsonrequest('compositedelete.json.php',
-            {'id': id, 'artefact': artefact},
+            {'id': id, 'artefact': artefact, 'type': type},
             'GET',
             function(data) {
                 tableRenderers[type].doupdate();
@@ -882,11 +902,11 @@ EOF;
         },
 EOF;
 
-        $js .= self::get_tablerenderer_js();
+        $js .= self::get_tablerenderer_js($compositetype);
 
         $js .= <<<EOF
         function (r, d) {
-            var editlink = A({'href': '../edit.php?id=' + r.id + '&artefact=' + r.artefact, 'title': '{$editstr}'}, IMG({'src': config.theme['images/edit.gif'], 'alt':'{$editstr}'}));
+            var editlink = A({'href': '../edit.php?id=' + r.id + '&artefact=' + r.artefact + '&type=$compositetype', 'title': '{$editstr}'}, IMG({'src': config.theme['images/edit.gif'], 'alt':'{$editstr}'}));
             var dellink = A({'href': '', 'title': '{$delstr}'}, IMG({'src': config.theme['images/icon_close.gif'], 'alt': '[x]'}));
             connect(dellink, 'onclick', function (e) {
                 e.stop();
@@ -910,7 +930,7 @@ EOF;
         require_once(get_config('libroot') . 'pieforms/pieform.php');
         $compositeforms = array();
         foreach ($compositetypes as $compositetype) {
-            $elements = self::get_addform_elements();
+            $elements = self::get_addform_elements($compositetype);
             $elements['submit'] = array(
                 'type' => 'submit',
                 'value' => get_string('save'),
@@ -938,16 +958,26 @@ EOF;
     protected $level;
     protected $place;
 
-    public static function get_tablerenderer_js() {
-
-        return "
-        'startdate',
-        'enddate',
-" . self::get_tablerenderer_title_js(
-                self::get_tablerenderer_title_js_string(),
-                self::get_tablerenderer_body_js_string()
-            ) . "
-";
+    public static function get_tablerenderer_js($biotype) {
+        if ($biotype == "educationhistory") {
+            return "
+            'startdate',
+            'enddate',
+            " . self::get_tablerenderer_title_js(
+                            self::get_tablerenderer_title_js_string(),
+                            self::get_tablerenderer_body_js_string()
+                        ) . "
+            ";
+        }
+        if ($biotype == "certificates") {
+            return "
+            'date',
+            " . self::get_tablerenderer_title_js(
+                            self::get_tablerenderer_title_js_string(),
+                            self::get_tablerenderer_body_js_string()
+                        ) . "
+            ";
+        }
     }
 
     public static function get_tablerenderer_title_js_string() {
@@ -976,53 +1006,98 @@ EOF;
         return " r.description"; 
     }
 
-    public static function get_addform_elements() {
-        return array(
-            'name' => array(
-                'type' => 'text',
-                'rules' => array(
-                    'required' => true,
+    public static function get_addform_elements($type) {
+        if ($type == 'educationhistory') {
+            return array(
+                'name' => array(
+                    'type' => 'text',
+                    'rules' => array(
+                        'required' => true,
+                    ),
+                    'title' => get_string('biographyform.name', 'artefact.epos'),
+                    'size' => 50,
                 ),
-                'title' => get_string('biographyform.name', 'artefact.epos'),
-                'size' => 50,
-            ),
-            'startdate' => array(
-                'type' => 'text',
-                'rules' => array(
-                    'required' => true,
+                'startdate' => array(
+                    'type' => 'text',
+                    'rules' => array(
+                        'required' => true,
+                    ),
+                    'title' => get_string('biographyform.startdate', 'artefact.epos'),
+                    'size' => 20,
+                    'help' => true,
                 ),
-                'title' => get_string('biographyform.startdate', 'artefact.epos'),
-                'size' => 20,
-                'help' => true,
-            ),
-            'enddate' => array(
-                'type' => 'text', 
-                'title' => get_string('biographyform.enddate', 'artefact.epos'),
-                'size' => 20,
-            ),
-            'place' => array(
-                'type' => 'text',
-                'title' => get_string('biographyform.place', 'artefact.epos'),
-                'size' => 50,
-            ),
-            'subject' => array(
-                'type' => 'text',
-                'title' => get_string('biographyform.subject', 'artefact.epos'),
-                'size' => 50,
-            ),
-            'level' => array(
-                'type' => 'text',
-                'title' => get_string('biographyform.level', 'artefact.epos'),
-                'size' => 50,
-            ),
-            'description' => array(
-                'type' => 'textarea',
-                'rows' => 10,
-                'cols' => 50,
-                'resizable' => false,
-                'title' => get_string('biographyform.description', 'artefact.epos'),
-            ),
-        );
+                'enddate' => array(
+                    'type' => 'text', 
+                    'title' => get_string('biographyform.enddate', 'artefact.epos'),
+                    'size' => 20,
+                ),
+                'place' => array(
+                    'type' => 'text',
+                    'title' => get_string('biographyform.place', 'artefact.epos'),
+                    'size' => 50,
+                ),
+                'subject' => array(
+                    'type' => 'text',
+                    'title' => get_string('biographyform.subject', 'artefact.epos'),
+                    'size' => 50,
+                ),
+                'level' => array(
+                    'type' => 'text',
+                    'title' => get_string('biographyform.level', 'artefact.epos'),
+                    'size' => 50,
+                ),
+                'description' => array(
+                    'type' => 'textarea',
+                    'rows' => 10,
+                    'cols' => 50,
+                    'resizable' => false,
+                    'title' => get_string('biographyform.description', 'artefact.epos'),
+                ),
+            );
+        }
+        if ($type == 'certificates') {
+            return array(
+                'name' => array(
+                    'type' => 'text',
+                    'rules' => array(
+                        'required' => true,
+                    ),
+                    'title' => get_string('biographyform.name', 'artefact.epos'),
+                    'size' => 50,
+                ),
+                'date' => array(
+                    'type' => 'text',
+                    'rules' => array(
+                        'required' => true,
+                    ),
+                    'title' => get_string('biographyform.date', 'artefact.epos'),
+                    'size' => 20,
+                    'help' => true,
+                ),
+                'place' => array(
+                    'type' => 'text',
+                    'title' => get_string('biographyform.place', 'artefact.epos'),
+                    'size' => 50,
+                ),
+                'subject' => array(
+                    'type' => 'text',
+                    'title' => get_string('biographyform.subject', 'artefact.epos'),
+                    'size' => 50,
+                ),
+                'level' => array(
+                    'type' => 'text',
+                    'title' => get_string('biographyform.level', 'artefact.epos'),
+                    'size' => 50,
+                ),
+                'description' => array(
+                    'type' => 'textarea',
+                    'rows' => 10,
+                    'cols' => 50,
+                    'resizable' => false,
+                    'title' => get_string('biographyform.description', 'artefact.epos'),
+                ),
+            );
+        }
     }
 
     static function get_composite_js() {

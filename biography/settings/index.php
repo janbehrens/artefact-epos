@@ -19,7 +19,7 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Catalyst IT Ltd, Jan Behrens
+ * @author     Catalyst IT Ltd, Jan Behrens, Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *                 2012-2013 TZI / Universität Bremen
@@ -37,19 +37,18 @@ require_once('pieforms/pieform.php');
 safe_require('artefact', 'epos');
 
 $id = param_integer('id');
-$blog = new ArtefactTypeBiography($id);
-$blog->check_permission();
-if ($blog->get('locked')) {
+$bio = new ArtefactTypeBiography($id);
+$bio->check_permission();
+if ($bio->get('locked')) {
     throw new AccessDeniedException(get_string('submittedforassessment', 'view'));
 }
-
 
 $form = pieform(array(
     'name' => 'editblog',
     'method' => 'post',
     'action' => '',
     'plugintype' => 'artefact',
-    'pluginname' => 'blog',
+    'pluginname' => 'biography',
     'elements' => array(
         'id' => array(
             'type'          => 'hidden',
@@ -62,7 +61,7 @@ $form = pieform(array(
             'rules' => array(
                 'required'    => true
             ),
-            'defaultvalue'  => $blog->get('title')
+            'defaultvalue'  => $bio->get('title')
         ),
         'description' => array(
             'type'          => 'wysiwyg',
@@ -74,10 +73,10 @@ $form = pieform(array(
                 'maxlength'   => 65536,
                 'required'    => false
             ),
-            'defaultvalue'  => $blog->get('description')
+            'defaultvalue'  => $bio->get('description')
         ),
         'tags'       => array(
-            'defaultvalue' => $blog->get('tags'),
+            'defaultvalue' => $bio->get('tags'),
             'type'         => 'tags',
             'title'        => get_string('tags'),
             'description'  => get_string('tagsdescprofile'),
@@ -94,28 +93,23 @@ $form = pieform(array(
 ));
 
 $smarty = smarty();
-
 $smarty->assign_by_ref('editform', $form);
-$smarty->assign_by_ref('blog', $blog);
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:biographysettings.tpl');
-exit;
 
 /**
- * This function is called to update the blog details.
+ * This function is called to update the biography details.
  */
 function editblog_submit(Pieform $form, $values) {
     global $USER;
-    
-    ArtefactTypeBiography::edit_blog($USER, $values);
-
+    ArtefactTypeBiography::save_settings($USER, $values);
     redirect('/artefact/epos/biography/view/?id=' . $values['id']);
 }
 
 /**
  * This function is called to cancel the form submission. It redirects the user
- * back to the blog.
+ * back to the biography.
  */
 function editblog_cancel_submit() {
     $id = param_integer('id');

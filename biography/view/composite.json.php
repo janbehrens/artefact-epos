@@ -19,7 +19,7 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Catalyst IT Ltd, Jan Behrens
+ * @author     Catalyst IT Ltd, Jan Behrens, Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *                 2012-2013 TZI / Universität Bremen
@@ -36,12 +36,7 @@ $id = param_integer('id');
 $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
 $type = param_alpha('type');
-
-$data = array();
-$count = 0;
-
 $othertable = 'artefact_epos_biography_' . $type;
-
 $owner = $USER->get('id');
 
 $sql = 'SELECT ar.*, a.owner
@@ -53,7 +48,6 @@ $sql = 'SELECT ar.*, a.owner
 if (!$data = get_records_sql_array($sql, array($owner, $id))) {
     $data = array();
 }
-
 $count = count($data);
 
 json_reply(false, array(

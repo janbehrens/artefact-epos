@@ -91,9 +91,11 @@ $string['compositedeleteconfirm'] = 'Are you sure you want to delete this?';
 $string['moveup'] = 'Move Up';
 $string['movedown'] = 'Move Down';
 $string['educationhistory'] = 'Learning experience and qualifications';
+$string['certificates'] = 'Certificates and Diplomas';
 $string['biographyform.name'] = 'Label for the experience';
 $string['biographyform.startdate'] = 'Start date';
 $string['biographyform.enddate'] = 'End date (if already finished)';
+$string['biographyform.date'] = 'Date';
 $string['biographyform.place'] = 'Place of experience (school, course, job, leisure etc.)';
 $string['biographyform.subject'] = 'Subject';
 $string['biographyform.level'] = 'Level (A1...C2 or low, medium, high or similar)';
@@ -113,6 +115,7 @@ $string['youhavenobiographies'] = 'You have no biographies.';
 $string['addbiography'] = 'Create Biography';
 $string['startdate'] = 'Start date';
 $string['enddate'] = 'End date';
+$string['date'] = 'Date';
 $string['qualification'] = 'Qualification';
 
 //help text

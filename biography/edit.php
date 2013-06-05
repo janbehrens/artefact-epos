@@ -19,7 +19,7 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Catalyst IT Ltd, Jan Behrens
+ * @author     Catalyst IT Ltd, Jan Behrens, Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *                 2012-2013 TZI / Universität Bremen
@@ -43,13 +43,16 @@ $id = param_integer('id');
 $artefact = param_integer('artefact');
 
 $a = artefact_instance_from_id($artefact);
-$type = 'educationhistory';
+$type = param_alpha('type');
+if (!in_array($type, ArtefactTypeBiography::get_type_names())) {
+    throw new ParameterException();
+}
 
 if ($a->get('owner') != $USER->get('id')) {
     throw new AccessDeniedException(get_string('notartefactowner', 'error'));
 }
 
-$elements = ArtefactTypeBiography::get_addform_elements();
+$elements = ArtefactTypeBiography::get_addform_elements($type);
 $elements['submit'] = array(
     'type' => 'submitcancel',
     'value' => array(get_string('save'), get_string('cancel')),
