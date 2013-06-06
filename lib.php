@@ -221,8 +221,8 @@ EOF;
                 
                 $inlinejs .= <<<EOF
 
-            var str2 = 'progressbar_' + r.index + "_$count";
-            var str3 = '#progressbar_' + r.previous + "_$count";
+            var str2 = 'progressbar_$blockid' + '_' + r.index + "_$count";
+            var str3 = '#progressbar_$blockid' + '_' + r.previous + "_$count";
             var data = TD({'onclick': str1});
             data.innerHTML = '<div id="' + str2 + '"></div>';
             if (prevValue.hasOwnProperty('$level')) {
