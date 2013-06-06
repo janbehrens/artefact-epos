@@ -1,7 +1,7 @@
 {include file="header.tpl"}
 <div id="resumewrap">
 <fieldset>{if !$hidetitle}<legend class="resumeh3">{str tag='educationhistory' section='artefact.epos'}
-{if $controls}
+{if false}
     {contextualhelp plugintype='artefact' pluginname='epos' section='addeducationhistory'}
 {/if}
 </legend>{/if}
@@ -39,7 +39,7 @@
 </div>
 </fieldset>
 <fieldset>{if !$hidetitle}<legend class="resumeh3">{str tag='certificates' section='artefact.epos'}
-{if $controls}
+{if false}
     {contextualhelp plugintype='artefact' pluginname='epos' section='addeducationhistory'}
 {/if}
 </legend>{/if}

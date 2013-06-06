@@ -1062,7 +1062,7 @@ EOF;
                     'rules' => array(
                         'required' => true,
                     ),
-                    'title' => get_string('biographyform.name', 'artefact.epos'),
+                    'title' => get_string('biographyform.certificatename', 'artefact.epos'),
                     'size' => 50,
                 ),
                 'date' => array(
@@ -1072,11 +1072,10 @@ EOF;
                     ),
                     'title' => get_string('biographyform.date', 'artefact.epos'),
                     'size' => 20,
-                    'help' => true,
                 ),
                 'place' => array(
                     'type' => 'text',
-                    'title' => get_string('biographyform.place', 'artefact.epos'),
+                    'title' => get_string('biographyform.awardingbody', 'artefact.epos'),
                     'size' => 50,
                 ),
                 'subject' => array(
@@ -1094,7 +1093,7 @@ EOF;
                     'rows' => 10,
                     'cols' => 50,
                     'resizable' => false,
-                    'title' => get_string('biographyform.description', 'artefact.epos'),
+                    'title' => get_string('biographyform.certificatedetails', 'artefact.epos'),
                 ),
             );
         }
