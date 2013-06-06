@@ -28,10 +28,6 @@
 defined('INTERNAL') || die();
 
 class PluginBlocktypeBiography extends PluginBlocktype {
-
-    public static function single_only() {
-        return true;
-    }
     
     public static function get_title() {
         return get_string('biography', 'artefact.epos');

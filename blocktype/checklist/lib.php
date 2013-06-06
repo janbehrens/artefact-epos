@@ -29,10 +29,6 @@ defined('INTERNAL') || die();
 
 class PluginBlocktypeChecklist extends PluginBlocktype {
 
-    public static function single_only() {
-        return true;
-    }
-
     public static function get_title() {
         return get_string('title', 'blocktype.epos/checklist');
     }
