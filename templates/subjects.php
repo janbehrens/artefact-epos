@@ -155,7 +155,6 @@ function deleteSubject(id, name) {
                 	tableRenderer.doupdate();
                 });
     }
-    return false;
 }
 
 var oldText;

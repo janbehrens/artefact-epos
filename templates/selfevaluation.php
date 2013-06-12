@@ -61,6 +61,19 @@ $edit = isset($_GET['edit']) ? $_GET['edit'] : 0;
 $links_inst = '';
 $links_subj = '';
 $institution_displayname = '';
+$form_submitted = false;
+
+//form submission action
+if (isset($_POST['save']) or isset($_POST['saveas'])) {
+    $form_submitted = true;
+    
+    //move uploaded file
+    if (count($_FILES) > 0 && $_FILES['examplesfile']['name'] != "") {
+        $dataroot = realpath(get_config('dataroot'));
+        $dirpath = "$dataroot/artefact/epos/examples";
+        move_uploaded_file($_FILES['examplesfile']['tmp_name'], "$dirpath/examples.zip");
+    }
+}
 
 // generate institution list
 if ($institutions) {
@@ -159,24 +172,10 @@ function cancelEditing() {
     window.location.href = '?institution={$institution}&subject={$subject}';
 }
 
-function getJsonData() {
-    jsonData = { 
-		'jsonCompetencyPatternTitle' : JSON.stringify(document.getElementById('competencyPatternTitle').value),
-        'arrCompetencyName'          : JSON.stringify(arrCompetencyName),
-		'arrCompetencyLevel'         : JSON.stringify(arrCompetencyLevel),
-		'arrCanDo'                   : JSON.stringify(arrCanDo),
-		'arrCanDoTaskLink'           : JSON.stringify(arrCanDoTaskLinks),
-		'arrCanDoCanBeGoal'          : JSON.stringify(arrCanDoCanBeGoal),
-		'arrEvaluationLevelGlobal'   : JSON.stringify(arrEvaluationLevelGlobal),
-		'jsonTypeOfEvaluation'       : JSON.stringify(nActEvaluationDegreeId),
-    };
-    return jsonData;
-}
-
 function submitTemplate(id) {
-	sendjsonrequest(
-	        'addselfevaluation.json.php?subject={$subject}&id=' + id,
-            getJsonData(),
+    sendjsonrequest(
+            'addselfevaluation.json.php?subject={$subject}&id=' + id,
+            getPostData(),
             'POST', 
             function() {
                 cancelEditing();
@@ -198,6 +197,91 @@ var text_combination_of					= "$text_combination_of";
 var text_and							= "$text_and";
 
 EOF;
+
+if ($form_submitted) {
+    $arrCompetencyName = array();
+    $arrCompetencyLevel = array();
+    $arrCanDo = array();
+    $arrCanDoTaskLink = array();
+    $arrCanDoCanBeGoal = array();
+    $arrEvaluationLevelGlobal = array();
+    
+    /*
+     * POST data needs to be transformed to javascript arrays. It looks like:
+     *  ["competencyPatternTitle"]=> "CercleS descriptors in English (ext., IC-Lolipop)"
+     *  ["competencyName_0"]=> "Intercultural communication"
+     *  ["competencyLevel_0"]=> "A1" 
+     *  ["0_0_0"]=> "I can give some examples of facts about the other country"
+     *  ["taskLink_0_0_0"]=> "ic-a1-01.htm"
+     *  ["canBeGoal_0_0_0"]=> "on"
+     *  ["evaluationLevelGlobal_0"]=> "not at all"
+     *  
+     * The arrays are reconstructed according to the indices given in the key names.
+     */
+    foreach (array_keys($_POST) as $key) {
+        $parts = split('_', $key);
+        
+        if ($parts[0] == 'competencyName') {
+            $arrCompetencyName[$parts[1]] = $_POST[$key];
+        }
+        else if ($parts[0] == 'competencyLevel') {
+            $arrCompetencyLevel[$parts[1]] = $_POST[$key];
+        }
+        else if ($parts[0] == 'evaluationLevelGlobal') {
+            $arrEvaluationLevelGlobal[$parts[1]] = $_POST[$key];
+        }
+        else if ($parts[0] == 'canDo') {
+            if (!array_key_exists($parts[1], $arrCanDo)) $arrCanDo[$parts[1]] = array();
+            if (!array_key_exists($parts[2], $arrCanDo[$parts[1]])) $arrCanDo[$parts[1]][$parts[2]] = array();
+            $arrCanDo[$parts[1]][$parts[2]][] = $_POST[$key];
+        }
+        else if ($parts[0] == 'taskLink') {
+            if (!array_key_exists($parts[1], $arrCanDoTaskLink)) $arrCanDoTaskLink[$parts[1]] = array();
+            if (!array_key_exists($parts[2], $arrCanDoTaskLink[$parts[1]])) $arrCanDoTaskLink[$parts[1]][$parts[2]] = array();
+            $arrCanDoTaskLink[$parts[1]][$parts[2]][] = $_POST[$key];
+        }
+        else if ($parts[0] == 'canBeGoal') {
+            if (!array_key_exists($parts[1], $arrCanDoCanBeGoal)) $arrCanDoCanBeGoal[$parts[1]] = array();
+            if (!array_key_exists($parts[2], $arrCanDoCanBeGoal[$parts[1]])) $arrCanDoCanBeGoal[$parts[1]][$parts[2]] = array();
+            $arrCanDoCanBeGoal[$parts[1]][$parts[2]][] = $_POST[$key] == 'on';
+        }
+    }
+    $arrCompetencyNameJson        = json_encode($arrCompetencyName);
+    $arrCompetencyLevelJson       = json_encode($arrCompetencyLevel);
+    $arrCanDoJson                 = json_encode($arrCanDo);
+    $arrCanDoTaskLinkJson         = isset($arrCanDoTaskLink[0]) ? json_encode($arrCanDoTaskLink) : '[""]';
+    $arrCanDoCanBeGoalJson        = isset($arrCanDoCanBeGoal[0]) ? json_encode($arrCanDoCanBeGoal) : '[""]';
+    $arrEvaluationLevelGlobalJson = json_encode($arrEvaluationLevelGlobal);
+    
+    $inlinejs .= <<<EOF
+function getPostData() {
+    postData = { 
+		'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
+        'arrCompetencyName'          : JSON.stringify($arrCompetencyNameJson),
+		'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
+		'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),
+	    'arrCanDo'                   : JSON.stringify($arrCanDoJson),
+		'arrCanDoTaskLink'           : JSON.stringify($arrCanDoTaskLinkJson),
+		'arrCanDoCanBeGoal'          : JSON.stringify($arrCanDoCanBeGoalJson)
+    };
+    return postData;
+}
+
+EOF;
+    
+    if (isset($_POST['save'])) {
+        $inlinejs .= "
+window.onload = function() {
+    submitTemplate({$edit});
+}";
+    }
+    else {
+        $inlinejs .= "
+window.onload = function() {
+    submitTemplate();
+}";
+    }
+}
 
 if (!$edit) {
     $inlinejs .= <<<EOF
@@ -234,7 +318,6 @@ function deleteDescriptorset(id, name) {
                 	tableRenderer.doupdate();
                 });
     }
-    return false;
 }
 
 tableRenderer = new TableRenderer(
@@ -339,6 +422,7 @@ $smarty->assign('links_subject', $links_subj);
 $smarty->assign('importformxml', $importformxml);
 $smarty->assign('importformcsv', $importformcsv);
 $smarty->assign('edit', $edit);
+$smarty->assign('form_submitted', $form_submitted);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('create_selfevaluation_template', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);

@@ -44,10 +44,11 @@
 <legend>{str tag='createnewtemplate' section='artefact.epos'}</legend>
 {/if}
 
+<form enctype="multipart/form-data" action="" method="POST">
 <table cellspacing="0">
 	<tr>
 		<th width="200"><label for="competencyPatternTitle">{$text_name_evaluation_grid}</label></th>
-		<td><input type="text" id="competencyPatternTitle" maxlength="255" size="25" /></td>
+		<td><input type="text" name="competencyPatternTitle" id="competencyPatternTitle" maxlength="255" size="25" /></td>
 	</tr>
 </table>
 
@@ -56,7 +57,7 @@
 <table cellspacing="0">
 	<tr>
 		<th width="200"><label for="evaluationLevelNumItems">{$text_num_evaluation_levels}</label></th>
-		<td><input type="text" id="evaluationLevelNumItems" maxlength="2" size="25" onkeypress="validateNumericKey(event);" onkeyup="updateEvaluationLevelInputFields();" value="5" /></td>
+		<td><input type="text" name="evaluationLevelNumItems" id="evaluationLevelNumItems" maxlength="2" size="25" onkeypress="validateNumericKey(event);" onkeyup="updateEvaluationLevelInputFields();" value="5" /></td>
 	</tr>
 </table>
 
@@ -65,17 +66,17 @@
 
 <br />
 
-<input type="hidden" id="rowCount" value="1"/>
-<input type="hidden" id="colCount" value="1"/>
+<input type="hidden" name="rowCount" id="rowCount" value="1"/>
+<input type="hidden" name="colCount" id="colCount" value="1"/>
 
 <table cellspacing="0">
 	<tr>
 		<th width="200"><label for="rows">{$text_num_rows}</label></th>
-		<td><input type="text" id="rows" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('rows');" /></td>
+		<td><input type="text" name="rows" id="rows" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('rows');" /></td>
 	</tr>
 	<tr>
 		<th width="200"><label for="cols">{$text_num_cols}</label></th>
-		<td><input type="text" id="cols" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('cols');" /></td>
+		<td><input type="text" name="cols" id="cols" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('cols');" /></td>
 	</tr>
 </table>
 
@@ -87,13 +88,19 @@
 
 <div id="canDos"></div>
 
+<label for="examples_file">Beispieldateien (im ZIP-Archiv)</label>
+<input type="hidden" name="MAX_FILE_SIZE" value="250000"/>
+<input type="file" id="examples_file" name="examplesfile" />
+<br /><br/>
+
 {if $edit}
 <button onclick="cancelEditing();">{str tag='cancel'}</button>
 {/if}
-<button onclick="submitTemplate({$edit});">{str tag='save'}</button>
+<button type="submit" name="save">{str tag='save'}</input>
 {if $edit}
-<button onclick="submitTemplate();">{str tag='saveasnewtemplate' section='artefact.epos'}</button>
+<button type="submit" name="saveas">{str tag='saveasnewtemplate' section='artefact.epos'}</button>
 {/if}
+</form>
 </fieldset>
 
 {else}
@@ -101,7 +108,7 @@
 {/if}
 {/if}
 
-{if $edit}
+{if $edit && !$form_submitted}
 <script type="text/javascript">
 sendjsonrequest(
         'editdescriptorset.json.php',
@@ -157,9 +164,9 @@ sendjsonrequest(
             
             onChangeColsRows();
         });
+createTable();
 </script>
 {/if}
-
 
 {include file="footer.tpl"}
 

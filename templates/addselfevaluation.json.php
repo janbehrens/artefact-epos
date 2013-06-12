@@ -35,42 +35,42 @@ safe_require('artefact', 'epos');
 $subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
 $id = isset($_GET['id']) ? $_GET['id'] : 0;
 
-$arrCompetencyName 					= param_variable('arrCompetencyName');
-$arrCompetencyLevel 				= param_variable('arrCompetencyLevel');
-$arrCanDo							= param_variable('arrCanDo');
-$arrCanDoTaskLink					= param_variable('arrCanDoTaskLink');
-$arrCanDoCanBeGoal					= param_variable('arrCanDoCanBeGoal');
-$arrEvaluationLevelGlobal			= param_variable('arrEvaluationLevelGlobal');
-$competencyPatternTitle				= param_variable('jsonCompetencyPatternTitle');
-$typeOfEvaluation					= param_variable('jsonTypeOfEvaluation');
-
-$arrCompetencyName 					= json_decode($arrCompetencyName);
-$arrCompetencyLevel 				= json_decode($arrCompetencyLevel);
-$arrCanDo 							= json_decode($arrCanDo);
-$arrCanDoTaskLink					= json_decode($arrCanDoTaskLink);
-$arrCanDoCanBeGoal					= json_decode($arrCanDoCanBeGoal);
-$arrEvaluationLevelGlobal			= json_decode($arrEvaluationLevelGlobal);
-$competencyPatternTitle				= json_decode($competencyPatternTitle);
-$typeOfEvaluation					= json_decode($typeOfEvaluation);
-
-$arrEvaluationsString = "";
+$competencyPatternTitle				= json_decode(param_variable('jsonCompetencyPatternTitle'));
+$arrCompetencyName 					= json_decode(param_variable('arrCompetencyName'));
+$arrCompetencyLevel 				= json_decode(param_variable('arrCompetencyLevel'));
+$arrCanDo							= json_decode(param_variable('arrCanDo'));
+$arrCanDoTaskLink					= json_decode(param_variable('arrCanDoTaskLink'));
+$arrCanDoCanBeGoal					= json_decode(param_variable('arrCanDoCanBeGoal'));
+$arrEvaluationLevelGlobal			= json_decode(param_variable('arrEvaluationLevelGlobal'));
+$arrEvaluationsString               = "";
 
 //prepare saving as file
 $dataroot = realpath(get_config('dataroot'));
 $dirpath = $dataroot . '/artefact/epos/descriptorsets';
+$dirpath_examples = $dataroot . '/artefact/epos/examples';
 
 if (!is_dir($dirpath)) {
     mkdir($dirpath, 0700, true);
 }
+if (count($arrCanDoTaskLink) > 0 && !is_dir($dirpath_examples)) {
+    mkdir($dirpath_examples, 0700, true);
+}
 
 $basename = str_replace('/', '_', $competencyPatternTitle);
 $filepath = $dirpath . '/' . $basename . '.xml';
+$filepath_examples = $dirpath_examples . '/' . $basename;
 
 //prevent from overwriting
 $increment = 1;
 while (file_exists($filepath)) {
     $filepath = $dirpath . '/' . $basename . '_' . $increment . '.xml';
+    $filepath_examples = $dirpath_examples . '/' . $basename . '_' . $increment;
     $increment++;
+}
+
+//make directory for examples/task links
+if (count($arrCanDoTaskLink) > 0 && !is_dir($filepath_examples)) {
+    mkdir($filepath_examples, 0700, true);
 }
 
 //intitialize XMLWriter
@@ -95,39 +95,36 @@ for ($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 	}
 	
 	for ($nJ = 0; $nJ < count($arrCompetencyLevel); $nJ++) {
+	    //check if any of the fields is empty
 		if ($arrCompetencyLevel[$nJ] == "") {
 			$emptyfield = true;
 			break;
 		}
 		
-		//if somebody didn't set any CanDos give an empty set
-		if(count($arrCanDo[$nI][$nJ]) <= 0) {
-			$arrCanDo[$nI][$nJ] = Array("");
-		}
-		
-		for ($nK = 0; $nK < count($arrCanDo[$nI][$nJ]); $nK++) {
-			if ($nK > 0 && $arrCanDo[$nI][$nJ][$nK] == "" && $arrCanDoTaskLink[$nI][$nJ][$nK] == "") {
-				continue;
-			}
-			
-			if ($arrCanDoCanBeGoal[$nI][$nJ][$nK] == false ||
-				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == null ||
-				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == "" ||
-				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == 0) {
-					
-				$arrCanDoCanBeGoal[$nI][$nJ][$nK] = "0";
-			}
-
-			$arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);			
-				
-			$writer->startElement("DESCRIPTOR");
-			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$nI]);
-			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$nJ]);
-			$writer->writeAttribute('EVALUATIONS', $arrEvaluationsString);
-			$writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$nI][$nJ][$nK]);
-			$writer->writeAttribute('NAME', $arrCanDo[$nI][$nJ][$nK]);
-			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$nI][$nJ][$nK]);
-			$writer->endElement();
+		if (array_key_exists($nI, $arrCanDo) && array_key_exists($nJ, $arrCanDo[$nI])) {
+    		for ($nK = 0; $nK < count($arrCanDo[$nI][$nJ]); $nK++) {
+    			if ($nK > 0 && $arrCanDo[$nI][$nJ][$nK] == "" && $arrCanDoTaskLink[$nI][$nJ][$nK] == "") {
+    				continue;
+    			}
+    			
+    			if ($arrCanDoCanBeGoal[$nI][$nJ][$nK] == false ||
+        				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == null ||
+        				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == "" ||
+        				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == 0) {
+    				$arrCanDoCanBeGoal[$nI][$nJ][$nK] = "0";
+    			}
+    
+    			$arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);
+    				
+    			$writer->startElement("DESCRIPTOR");
+    			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$nI]);
+    			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$nJ]);
+    			$writer->writeAttribute('EVALUATIONS', $arrEvaluationsString);
+    			$writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$nI][$nJ][$nK]);
+    			$writer->writeAttribute('NAME', $arrCanDo[$nI][$nJ][$nK]);
+    			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$nI][$nJ][$nK]);
+    			$writer->endElement();
+    		}
 		}
 	}
 }
@@ -139,6 +136,7 @@ if (!$emptyfield) {
 	
 	$writer->flush();
 	
+	//write to database and dataroot (create new rows/files if $id is not given, otherwise overwrite)
 	if ($id != 0) {
 	    write_descriptor_db($filepath, false, $subject, $id);
 	}
@@ -146,12 +144,25 @@ if (!$emptyfield) {
 	    write_descriptor_db($filepath, false, $subject);
 	}
 	
+	unzipExamplesFiles();
+
 	//reply
-	json_reply(null, $arrCompetencyName[0]);
+	json_reply(null, "OK");
 }
 else {
 	$writer->flush();
-	json_reply(true, 'Error: One of the fields is emtpy');
+	json_reply(true, 'Error: One of the fields is empty');
+}
+
+function unzipExamplesFiles() {
+    global $dirpath_examples, $filepath_examples;
+    
+    try {
+        system("unzip $dirpath_examples/examples.zip -d \"$filepath_examples\" > /dev/null");
+    }
+    catch (Exception $e) {
+        json_reply(true, $e->getMessage());
+    }
 }
 
 ?>
