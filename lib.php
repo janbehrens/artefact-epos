@@ -491,6 +491,7 @@ EOF;
         $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
     }
 
+
     /**
      * load_descriptorset()
      *
@@ -1575,12 +1576,28 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
         return;
     }
     */
+    create_checklist_for_user($descriptorset_id, $checklist_title, $id, $user_id);
+}
+
+
+/**
+ * Create a checlist artefact for a user
+ * @param $descriptorset_id The descriptorset to use as checklist in this instance
+ * @param $checklist_title The title of the checklist created for this subject
+ * @param $parent The parent item (e.g. subject)
+ * @param $user_id The user to create the subject artefact for, defaults to the current user
+ */
+function create_checklist_for_user($descriptorset_id, $checklist_title, $parent, $user_id=null) {
+    if (!isset($user_id)) {
+        global $USER;
+        $user_id = $USER->get('id');
+    }
 
     // create checklist artefact
     $checklist = new ArtefactTypeChecklist(0, array(
         'owner' => $user_id,
         'title' => $checklist_title,
-        'parent' => $id
+        'parent' => $parent
     ));
     $checklist->commit();
 
@@ -1606,7 +1623,6 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
         insert_record('artefact_epos_checklist_item', (object)$checklist_item);
     }
 }
-
 
 // comparison functions for sql records
 function cmpByTitle($a, $b) {
