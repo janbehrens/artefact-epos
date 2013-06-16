@@ -92,7 +92,9 @@ if ($haslanguages) {
     $a = new ArtefactTypeChecklist($id);
     $a->check_permission();
     
-    $set = $a->set = $a->load_descriptorset();
+    $set = $a->load_descriptorset();
+    $descriptorsetfile = substr($set['file'], 0, count($set['file']) - 5);
+    $set = $a->set = $set['competences'];
     $checklistitems = $a->load_checklist();
     
     $addstr = get_string('add', 'artefact.epos');
@@ -164,7 +166,7 @@ if ($haslanguages) {
                 if ($set[$competence][$level][$k]['link'] != '') {
                     //check if http(s):// is present in link
                     if (substr($set[$competence][$level][$k]['link'], 0, 7) != "http://" && substr($set[$competence][$level][$k]['link'], 0, 8) != "https://") {
-                        $set[$competence][$level][$k]['link'] = "http://" . $set[$competence][$level][$k]['link'];
+                        $set[$competence][$level][$k]['link'] = "example.php?d=" . $descriptorsetfile . "&l=" . $set[$competence][$level][$k]['link'];
                     }
                     $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '"  onclick="openPopup(\'' . $set[$competence][$level][$k]['link'] . '\'); return false;">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
                     if ($set[$competence][$level][$k]['goal'] == 1) {

@@ -281,10 +281,11 @@ EOF;
      *     )
      */
     function load_descriptorset() {
-        $sql = 'SELECT DISTINCT d.*
-            FROM artefact_epos_descriptor d
-            JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
-            JOIN artefact a ON a.id = i.checklist
+        $sql = 'SELECT DISTINCT d.*, s.file
+            FROM artefact_epos_descriptor_set s
+            JOIN artefact_epos_descriptor d ON s.id = d.descriptorset
+            JOIN artefact_epos_checklist_item i ON d.id = i.descriptor 
+            JOIN artefact a ON a.id = i.checklist 
             WHERE a.id = ?
             ORDER BY d.level, d.competence';
 
@@ -309,7 +310,10 @@ EOF;
                     'link' => $desc->link
             );
         }
-        return $competences;
+        return array(
+                'competences' => $competences,
+                'file' => $descriptors[0]->file
+                );
     }
 
     /**
