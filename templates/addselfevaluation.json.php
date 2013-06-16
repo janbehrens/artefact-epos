@@ -43,6 +43,7 @@ $arrCanDoTaskLink					= json_decode(param_variable('arrCanDoTaskLink'));
 $arrCanDoCanBeGoal					= json_decode(param_variable('arrCanDoCanBeGoal'));
 $arrEvaluationLevelGlobal			= json_decode(param_variable('arrEvaluationLevelGlobal'));
 $arrEvaluationsString               = "";
+$file_submitted                     = param_variable('file_submitted') == 'true';
 
 //prepare saving as file
 $dataroot = realpath(get_config('dataroot'));
@@ -69,7 +70,7 @@ while (file_exists($filepath)) {
 }
 
 //make directory for examples/task links
-if (count($arrCanDoTaskLink) > 0 && !is_dir($filepath_examples)) {
+if ($file_submitted && count($arrCanDoTaskLink) > 0 && !is_dir($filepath_examples)) {
     mkdir($filepath_examples, 0700, true);
 }
 
@@ -144,7 +145,19 @@ if (!$emptyfield) {
 	    write_descriptor_db($filepath, false, $subject);
 	}
 	
-	unzipExamplesFiles();
+	if ($file_submitted) {
+	    unzipExamplesFiles();
+	}
+	else {
+	    //get filename of current descriptorset and link the examples files to the new one
+	    $sql = 'SELECT file FROM artefact_epos_descriptor_set
+                WHERE id = ?';
+	    if (!$dbdata = get_records_sql_array($sql, array($id))) {
+	        $dbdata = array();
+	    }
+	    $oldfilepath = substr($dbdata[0]->file, 0, count($dbdata[0]->file) - 5);
+	    symlink($dirpath_examples . '/' . $oldfilepath, $filepath_examples);
+	}
 
 	//reply
 	json_reply(null, "OK");

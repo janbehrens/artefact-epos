@@ -62,6 +62,7 @@ $links_inst = '';
 $links_subj = '';
 $institution_displayname = '';
 $form_submitted = false;
+$file_submitted = false;
 
 //form submission action
 if (isset($_POST['save']) or isset($_POST['saveas'])) {
@@ -69,6 +70,7 @@ if (isset($_POST['save']) or isset($_POST['saveas'])) {
     
     //move uploaded file
     if (count($_FILES) > 0 && $_FILES['examplesfile']['name'] != "") {
+        $file_submitted = true;
         $dataroot = realpath(get_config('dataroot'));
         $dirpath = "$dataroot/artefact/epos/examples";
         move_uploaded_file($_FILES['examplesfile']['tmp_name'], "$dirpath/examples.zip");
@@ -252,6 +254,7 @@ if ($form_submitted) {
     $arrCanDoTaskLinkJson         = isset($arrCanDoTaskLink[0]) ? json_encode($arrCanDoTaskLink) : '[""]';
     $arrCanDoCanBeGoalJson        = isset($arrCanDoCanBeGoal[0]) ? json_encode($arrCanDoCanBeGoal) : '[""]';
     $arrEvaluationLevelGlobalJson = json_encode($arrEvaluationLevelGlobal);
+    $file_submitted               = $file_submitted ? 'true' : 'false';
     
     $inlinejs .= <<<EOF
 function getPostData() {
@@ -262,7 +265,8 @@ function getPostData() {
 		'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),
 	    'arrCanDo'                   : JSON.stringify($arrCanDoJson),
 		'arrCanDoTaskLink'           : JSON.stringify($arrCanDoTaskLinkJson),
-		'arrCanDoCanBeGoal'          : JSON.stringify($arrCanDoCanBeGoalJson)
+		'arrCanDoCanBeGoal'          : JSON.stringify($arrCanDoCanBeGoalJson),
+		'file_submitted'             : JSON.stringify($file_submitted)
     };
     return postData;
 }
