@@ -266,7 +266,9 @@ EOF;
         $checklistforms = array();
         $checklistformsid = array();
         $inlinejs = '';
-        $this->set = $set = $this->load_descriptorset();
+        $set = $this->load_descriptorset();
+        $descriptorsetfile = substr($set['file'], 0, count($set['file']) - 5);
+        $set = $this->set = $set['competences'];
         $checklistitems = $this->load_checklist();
         $id = $this->id;
 
@@ -338,7 +340,7 @@ EOF;
                     if ($set[$competence][$level][$k]['link'] != '') {
                         //check if http(s):// is present in link
                         if (substr($set[$competence][$level][$k]['link'], 0, 7) != "http://" && substr($set[$competence][$level][$k]['link'], 0, 8) != "https://") {
-                            $set[$competence][$level][$k]['link'] = "http://" . $set[$competence][$level][$k]['link'];
+                            $set[$competence][$level][$k]['link'] = "example.php?d=" . $descriptorsetfile . "&l=" . $set[$competence][$level][$k]['link'];
                         }
                         $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '"  onclick="openPopup(\'' . $set[$competence][$level][$k]['link'] . '\'); return false;">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
                         if ($set[$competence][$level][$k]['goal'] == 1) {
@@ -518,8 +520,9 @@ EOF;
      *     )
      */
     function load_descriptorset() {
-        $sql = 'SELECT DISTINCT d.*
-            FROM artefact_epos_descriptor d
+        $sql = 'SELECT DISTINCT d.*, s.file
+            FROM artefact_epos_descriptor_set s
+            JOIN artefact_epos_descriptor d ON s.id = d.descriptorset
             JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
             JOIN artefact a ON a.id = i.checklist
             WHERE a.id = ?
@@ -546,7 +549,10 @@ EOF;
                     'link' => $desc->link
             );
         }
-        return $competences;
+        return array(
+                'competences' => $competences,
+                'file' => $descriptors[0]->file
+                );
     }
 
     /**

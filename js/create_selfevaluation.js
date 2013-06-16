@@ -189,6 +189,7 @@ function createTable(lastEdited) {
 		
 		input = document.createElement("input");
 		input.setAttribute("id", "competencyLevel_"+nI);
+		input.setAttribute("name", "competencyLevel_"+nI);
 		input.setAttribute("onkeyup", "updateActualCombinationCompetencyLevel("+nI+");");
 		input.setAttribute("size", "30");
 					
@@ -203,8 +204,28 @@ function createTable(lastEdited) {
 	
 	table.appendChild(row);
 	
+	canDoDiv = document.getElementById("canDos");
+	canDoDiv.innerHTML = "";
+	
+	p = document.createElement("p");
+	p.setAttribute("id", "actualCombination");
+	canDoDiv.appendChild(p);
+	
+	p = document.createElement("p");
+	p.setAttribute("id", "canDoDesc");
+	canDoDiv.appendChild(p);
+	
+	document.getElementById("canDoDesc").innerHTML = text_fill_in_learning_objectives;			
+	
+	//Create the table for the canDo statements and add it to the div.
+	canDoTable = document.createElement("table");
+	canDoTable.setAttribute("id", "canDoTable");
+	
+	canDoDiv.appendChild(canDoTable);
+	canDoDiv.setAttribute("style", "display:none");
+	
 	//create rows
-	for(nI = 0; nI < nRows; nI++) {
+	for (nI = 0; nI < nRows; nI++) {
 		row = document.createElement("tr");
 		
 		//add first column seperately for the competencyName input
@@ -218,6 +239,7 @@ function createTable(lastEdited) {
 		
 		input = document.createElement("input");
 		input.setAttribute("id", "competencyName_"+nI);
+		input.setAttribute("name", "competencyName_"+nI);
 		input.setAttribute("onkeyup", "updateActualCombinationCompetencyName("+nI+");");
 		input.setAttribute("size", "40");
 
@@ -243,6 +265,8 @@ function createTable(lastEdited) {
 			col.setAttribute("id", id);				
 			col.innerHTML = "<a class='icon' onclick='editCanDo("+nI+","+nJ+");'>"+text_cando_statements+"</a>";
 			row.appendChild(col);
+			
+			initCanDo(nI, nJ);
 		}
 		
 		tableBody.appendChild(row);			
@@ -282,30 +306,7 @@ function updateActualCombinationCompetencyLevel(nI) {
 	}
 }
 
-//Shows the canDo statements belonging to a certain competencyName / Level combination
-//In this case competencyName and competencyLevel are the IDs of the fields
-//which are numbered ascending from left to right and top to bottom
-function editCanDo(competencyName, competencyLevel) {
-	nActCompetencyName = competencyName;
-	nActCompetencyLevel = competencyLevel;
-			
-	document.getElementById("canDos").innerHTML = "";
-	
-	p = document.createElement("p");
-	p.setAttribute("id", "actualCombination");
-	document.getElementById("canDos").appendChild(p);
-	
-	p = document.createElement("p");
-	p.setAttribute("id", "canDoDesc");
-	document.getElementById("canDos").appendChild(p);
-	
-	document.getElementById("actualCombination").innerHTML = text_combination_of + 
-		" <b>" + document.getElementById("competencyName_"+competencyName).value + "</b> " +
-		text_and + 
-		" <b>" + document.getElementById("competencyLevel_"+competencyLevel).value + "</b>";
-		
-	document.getElementById("canDoDesc").innerHTML = text_fill_in_learning_objectives;			
-	
+function initCanDo(competencyName, competencyLevel) {
 	if (arrCanDo[competencyName] instanceof Array == false) {
 		arrCanDo[competencyName] = new Array("");
 		arrCanDoTaskLinks[competencyName] = new Array("");
@@ -318,135 +319,135 @@ function editCanDo(competencyName, competencyLevel) {
 		arrCanDoCanBeGoal[competencyName][competencyLevel] = new Array("");
 	}
 	
-	//Create the table for the canDo statements and add it to the div.
-	table = document.createElement("table");
-	table.setAttribute("id", "canDoTable");
-	
-	document.getElementById("canDos").appendChild(table);
-	
 	//show existing can dos if any, otherwise one empty slot
-	for (nI = 0; nI < arrCanDo[competencyName][competencyLevel].length; nI++) {
-		createNewCanDoRow(competencyName, competencyLevel, nI);
+	for (i = 0; i < arrCanDo[competencyName][competencyLevel].length; i++) {
+		createNewCanDoRow(competencyName, competencyLevel, i);
 	}
 }
 
-//Creates a new CanDo Table row where the user can enter a new canDo statement and a link if it likes
-function createNewCanDoRow(competencyName, competencyLevel, id) {
-	nI = id;
+//Shows the canDo statements belonging to a certain competencyName / Level combination
+//In this case competencyName and competencyLevel are the IDs of the fields
+//which are numbered ascending from left to right and top to bottom
+function editCanDo(competencyName, competencyLevel) {
+	nActCompetencyName = competencyName;
+	nActCompetencyLevel = competencyLevel;
 
-	tr = document.createElement("tr");
+	document.getElementById("actualCombination").innerHTML = text_combination_of + 
+		" <b>" + document.getElementById("competencyName_"+competencyName).value + "</b> " +
+		text_and + 
+		" <b>" + document.getElementById("competencyLevel_"+competencyLevel).value + "</b>";
 		
-	th = document.createElement("th");
-	td2 = document.createElement("td");
+
+	child = document.getElementById("canDoTable").firstChild;
+	while (child) {
+		child.setAttribute("style", "display:none");
+		child = child.nextSibling;
+	}
 	
-	th.setAttribute("width", "200");
+	//show existing can dos if any, otherwise one empty slot
+	for (nI = 0; nI < arrCanDo[competencyName][competencyLevel].length; nI++) {
+		showCanDoRow(competencyName, competencyLevel, nI);
+	}
 	
-	label = document.createElement("label");
-	label.setAttribute("id", "lable_"+id);
-	label.setAttribute("for", competencyName+"_"+competencyLevel+"_"+id);
-	label.innerHTML = text_cando_statement+"&nbsp;"+(id+1);
-	th.appendChild(label);
-	
-	id = competencyName+"_"+competencyLevel+"_"+id;
-	input = document.createElement("textarea");		
-	input.setAttribute("rows", "1");
-	input.setAttribute("cols", "80");		
-	input.setAttribute("id", id);
-	input.setAttribute("onkeyup", "saveCurrentChangedCanDo("+competencyName+","+competencyLevel+","+nI+")");
-	input.value = arrCanDo[competencyName][competencyLevel][nI];
-	td2.appendChild(input);
-	
-	tr.appendChild(th);
-	tr.appendChild(td2);
-	document.getElementById("canDoTable").appendChild(tr);
-	
+	canDoDiv = document.getElementById("canDos");
+	canDoDiv.setAttribute("style", "display:block");
+}
+
+//Creates a new CanDo Table row where the user can enter a new canDo statement and a link if it likes
+function createNewCanDoRow(competencyName, competencyLevel, nI) {
 	id = competencyName+"_"+competencyLevel+"_"+nI;
 	
-	tr = document.createElement("tr");
+	tablerows = new Array("canDo", "taskLink", "canBeGoal", "null");
+	
+	for (var i = 0; i < tablerows.length; i++) {
+		elem_id = tablerows[i] + "_" + id;
 		
-	th = document.createElement("th");
-	td2 = document.createElement("td");
+		tr = document.createElement("tr");
+		tr.setAttribute("id", "tr_"+elem_id);
+		tr.setAttribute("style", "display:none");
+		
+		th = document.createElement("th");
+		td2 = document.createElement("td");
+		
+		if (tablerows[i] != "null") {
+			th.setAttribute("width", "200");
 	
-	th.setAttribute("width", "200");
-	
-	label = document.createElement("label");
-	label.setAttribute("id", "lable_task_link"+id);
-	label.setAttribute("for", competencyName+"_"+competencyLevel+"_"+nI);
-	label.innerHTML = text_tasklink+"&nbsp;"+(nI+1);
-	th.appendChild(label);
+			label = document.createElement("label");
+			label.setAttribute("id", "label_"+elem_id);
+			label.setAttribute("for", elem_id);
 			
-	id = 'taskLink_' + id;
+			if (tablerows[i] == "canDo") {
+				label.innerHTML = text_cando_statement+"&nbsp;"+(nI+1);
+				
+				input = document.createElement("textarea");		
+				input.setAttribute("rows", "1");
+				input.setAttribute("cols", "80");
+				input.setAttribute("onkeyup", "saveCurrentChangedCanDo("+competencyName+","+competencyLevel+","+nI+")");
+				input.value = arrCanDo[competencyName][competencyLevel][nI];
+			}
+			else if (tablerows[i] == "taskLink") {
+				label.innerHTML = text_tasklink+"&nbsp;"+(nI+1);
 	
-	input = document.createElement("input");		
-	input.setAttribute("type", "text");	
-	input.setAttribute("size", "90");				
-	input.setAttribute("id", id);
-	input.setAttribute("value", arrCanDoTaskLinks[competencyName][competencyLevel][nI]);
-	input.setAttribute("onkeyup", "saveCurrentChangedCanDoLink("+competencyName+","+competencyLevel+","+nI+")");			
-	td2.appendChild(input);
+				input = document.createElement("input");		
+				input.setAttribute("type", "text");	
+				input.setAttribute("size", "90");
+				input.setAttribute("value", arrCanDoTaskLinks[competencyName][competencyLevel][nI]);
+				input.setAttribute("onkeyup", "saveCurrentChangedCanDoLink("+competencyName+","+competencyLevel+","+nI+")");			
+			}
+			else if (tablerows[i] == "canBeGoal") {
+				label.innerHTML = text_canBeGoal+"&nbsp;"+(nI+1);
 	
-	tr.appendChild(th);
-	tr.appendChild(td2);
-	
-	document.getElementById("canDoTable").appendChild(tr);			
-	
+				input = document.createElement("input");		
+				input.setAttribute("type", "checkbox");	
+				input.setAttribute("style", "margin-left: 0px;");
+				
+				if (arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "" ||
+						arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === null ||
+						arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === undefined) {
+					arrCanDoCanBeGoal[competencyName][competencyLevel][nI] = true;
+				}
+				if (arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true) {
+					input.setAttribute("checked", "");
+				}
+				input.setAttribute("onclick", "saveCurrentChangedCanDoCanBeGoal("+elem_id+")");			
+			}
+			
+			input.setAttribute("id", elem_id);
+			input.setAttribute("name", elem_id);
+			
+			th.appendChild(label);
+			td2.appendChild(input);
+		}
+		else {
+			th.setAttribute("width", "200");
+			th.setAttribute("height", "15");
+		}
+
+		tr.appendChild(th);
+		tr.appendChild(td2);
+		
+		document.getElementById("canDoTable").appendChild(tr);
+	}
+}
+
+function showCanDoRow(competencyName, competencyLevel, id) {
 	id = competencyName+"_"+competencyLevel+"_"+nI;
 	
-	tr = document.createElement("tr");
-		
-	th = document.createElement("th");
-	td2 = document.createElement("td");
-	
-	th.setAttribute("width", "200");
-	
-	label = document.createElement("label");
-	label.setAttribute("id", "lable_canBeGoal_"+id);
-	label.setAttribute("for", "canBeGoal_"+competencyName+"_"+competencyLevel+"_"+nI);
-	label.innerHTML = text_canBeGoal+"&nbsp;"+(nI+1);
-	th.appendChild(label);
-			
-	id = 'canBeGoal_' + id;
-	
-	input = document.createElement("input");		
-	input.setAttribute("type", "checkbox");	
-	input.setAttribute("style", "margin-left: 0px;");
-	input.setAttribute("id", id);
-	
-	if (arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === "" ||
-			arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === null ||
-			arrCanDoCanBeGoal[competencyName][competencyLevel][nI] === undefined) {
-		arrCanDoCanBeGoal[competencyName][competencyLevel][nI] = true;
-	}
-	if (arrCanDoCanBeGoal[competencyName][competencyLevel][nI] == true) {
-		input.setAttribute("checked", "");
-	}
-	input.setAttribute("onclick", "saveCurrentChangedCanDoCanBeGoal("+competencyName+","+competencyLevel+","+nI+")");			
-	td2.appendChild(input);
-	
-	tr.appendChild(th);
-	tr.appendChild(td2);
-	
-	document.getElementById("canDoTable").appendChild(tr);			
-	
-	tr = document.createElement("tr");
-		
-	th = document.createElement("th");
-	td2 = document.createElement("td");
-	
-	th.setAttribute("width", "200");
-	th.setAttribute("height", "15");
-	
-	tr.appendChild(th);
-	tr.appendChild(td2);
-	
-	document.getElementById("canDoTable").appendChild(tr);
+	tr = document.getElementById("tr_canDo_"+id);
+	tr.setAttribute("style", "display");
+	tr = document.getElementById("tr_taskLink_"+id);
+	tr.setAttribute("style", "display");
+	tr = document.getElementById("tr_canBeGoal_"+id);
+	tr.setAttribute("style", "display");
+	tr = document.getElementById("tr_null_"+id);
+	tr.setAttribute("style", "display");
 }
 
 //Stores the canDo statement which was currently updated in the array at the certain position
 //and calls function to create a new row IF the last canDo statement has been edited
 function saveCurrentChangedCanDo(competencyName, competencyLevel, id) {
 	//save changes to can do array, if it is the last one in the row make a new input field	
-	elementId = competencyName+"_"+competencyLevel+"_"+id;
+	elementId = "canDo_" + competencyName+"_"+competencyLevel+"_"+id;
 	
 	arrCanDo[competencyName][competencyLevel][id] = document.getElementById(elementId).value;
 	
@@ -458,6 +459,7 @@ function saveCurrentChangedCanDo(competencyName, competencyLevel, id) {
 		arrCanDoTaskLinks[competencyName][competencyLevel][id] = "";
 		
 		createNewCanDoRow(competencyName, competencyLevel, id);
+		showCanDoRow(competencyName, competencyLevel, id);
 	}
 }
 
@@ -529,6 +531,7 @@ function updateEvaluationLevelInputFields() {
 		input.setAttribute("type", "text");
 		input.setAttribute("size", "25");
 		input.setAttribute("id", "evaluationLevelGlobal_"+nI);					
+		input.setAttribute("name", "evaluationLevelGlobal_"+nI);					
 		input.setAttribute("value", arrEvaluationLevelGlobalCached[nI]);
 		input.setAttribute("onkeyup", "saveEvaluationsGlobal("+nI+")");
 							
@@ -544,6 +547,3 @@ function updateEvaluationLevelInputFields() {
 function saveEvaluationsGlobal(nI) {
 	arrEvaluationLevelGlobal[nI] = arrEvaluationLevelGlobalCached[nI] = document.getElementById("evaluationLevelGlobal_"+nI).value;
 }
-
-function atload() {createTable();}
-window.onload=atload;

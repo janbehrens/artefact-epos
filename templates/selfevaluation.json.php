@@ -45,7 +45,8 @@ if (!$dbdata = get_records_sql_array($sql, array($institution, $subject))) {
 }
 
 usort($dbdata, function ($a, $b) {
-    return strcoll($a->name, $b->name);
+    $byname = strcoll($a->name, $b->name);
+    return $byname == 0 ? strcoll($a->id, $b->id) : $byname;
 });
 
 echo json_encode(array(
