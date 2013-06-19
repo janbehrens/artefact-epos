@@ -1315,7 +1315,7 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
 
     // update artefact 'subject' ...
     $sql = "SELECT * FROM artefact WHERE owner = ? AND artefacttype = 'subject' AND title = ?";
-    if ($subjects = get_records_sql_array($sql, array($owner, $subject_title))) {
+    if ($subjects = get_records_sql_array($sql, array($user_id, $subject_title))) {
         $subject = artefact_instance_from_id($subjects[0]->id);
         $subject->set('mtime', time());
         $subject->commit();
