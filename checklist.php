@@ -51,6 +51,8 @@ if (!$data = get_records_sql_array($sql, array($owner, 'checklist'))) {
     $data = array();
 }
 
+
+
 // generate language links
 if ($data) {
     usort($data, 'cmpByTitle');
@@ -60,28 +62,22 @@ if ($data) {
         $id = $data[0]->id;
     }
 
-    $languagelinks = '<p>' . get_string('languages', 'artefact.epos') . ': ';
-
-    foreach ($data as $field) {
-        if ($field->id == $id) {
-            $languagelinks .= '<b>';
+    $subjectlinks = get_string('languages', 'artefact.epos') . ': ';
+    $subjectlinks .= '<form action="" method="GET"><select name="id">';
+    foreach ($data as $subject) {
+        $selected = '';
+        if ($subject->id == $id) {
+            $selected = 'selected="selected"';
         }
-        else {
-            $languagelinks .= '<a href="checklist.php?id=' . $field->id . '">';
-        }
-        $languagelinks .= $field->title . ' (' . $field->descriptorset . ')';
-        if ($field->id == $id) {
-            $languagelinks .= '</b> | ';
-        }
-        else {
-            $languagelinks .= '</a> | ';
-        }
+        $subjectlinks .= "<option value=\"$subject->id\" $selected>$subject->title ($subject->descriptorset)</option>";
     }
-    $languagelinks .= '<a href="index.php">' . get_string('edit', 'artefact.epos') . '</a></p>';
+    $subjectlinks .= '</select>';
+    $subjectlinks .= '<input type="submit" value="Select" />';
+    $subjectlinks .= '</form>';
 }
 else {
     $haslanguages = false;
-    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
+    $subjectlinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
 
 if ($haslanguages) {
@@ -97,7 +93,7 @@ $smarty = smarty($includejs);
 $smarty->assign('PAGEHEADING', get_string('selfevaluation', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
-$smarty->assign('languagelinks', $languagelinks);
+$smarty->assign('languagelinks', $subjectlinks);
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('selfevaluation', $selfevaluation);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
