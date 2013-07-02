@@ -33,7 +33,6 @@ $string['goals'] = 'Learning objectives';
 $string['selfevaluation'] = 'Self-evaluation';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
-$string['biography'] = 'Biography';
 $string['languages'] = 'Subjects';
 $string['mylanguages'] = 'My subjects';
 $string['myexperience'] = 'My experience';
@@ -81,46 +80,6 @@ $string['subjectform.subject'] = 'Subject';
 $string['subjectform.title'] = 'Title';
 $string['subjectform.descriptorset'] = 'Competence grid';
 
-//biography
-$string['biography'] = 'Biography';
-$string['biographies'] = 'Biographies';
-$string['youarenottheownerofthisbiography'] = 'You are not the owner of this biography';
-$string['biographysettings'] = 'Biography Settings';
-$string['deletebiography?'] = 'Are you sure you want to delete this biography?';
-$string['compositedeleteconfirm'] = 'Are you sure you want to delete this?';
-$string['moveup'] = 'Move Up';
-$string['movedown'] = 'Move Down';
-$string['educationhistory'] = 'Learning experience and qualifications';
-$string['certificates'] = 'Certificates and Diplomas';
-$string['biographyform.name'] = 'Label for your experience';
-$string['biographyform.startdate'] = 'Start date';
-$string['biographyform.enddate'] = 'End date (if finished)';
-$string['biographyform.place'] = 'Place of experience (country, school, ...)';
-$string['biographyform.subject'] = 'Subject';
-$string['biographyform.level'] = 'Level (A1...C2 or low, high, ...)';
-$string['biographyform.description'] = 'Description of your experience';
-$string['biographyform.certificatename'] = 'Title of Certificate';
-$string['biographyform.date'] = 'Date';
-$string['biographyform.awardingbody'] = 'Awarding Body';
-$string['biographyform.certificatedetails'] = 'Certificate Details';
-$string['compositesaved'] = 'Saved successfully';
-$string['compositesavefailed'] = 'Save failed';
-$string['biographydeleted'] = 'Biography deleted';
-$string['newbiography'] = 'New Biography';
-$string['biographytitle'] = 'Title';
-$string['biographytitledesc'] = 'e.g., ‘School education’.';
-$string['biographydesc'] = 'Description';
-$string['biographydescdesc'] = '';
-$string['createbiography'] = 'Create Biography';
-$string['savesettings'] = 'Save Settings';
-$string['viewbiography'] = 'View Biography';
-$string['youhavenobiographies'] = 'You have no biographies.';
-$string['addbiography'] = 'Create Biography';
-$string['startdate'] = 'Start date';
-$string['enddate'] = 'End date';
-$string['date'] = 'Date';
-$string['qualification'] = 'Qualification';
-
 //help text
 $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate your expertise in the selected area of competence and level.';
 
@@ -131,7 +90,7 @@ $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete this additional learning objective?';
 
 //Selfevaluation Template Editor
-$string['create_selfevaluation_template'] = 'Templates for Self-evaluation'; 
+$string['create_selfevaluation_template'] = 'Templates for Self-evaluation';
 $string['num_evaluation_levels'] = 'Number of self-evaluation levels';
 $string['name_evaluation_grid'] = 'Name of competence grid';
 $string['num_rows'] = 'Number of competences';

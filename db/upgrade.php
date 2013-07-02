@@ -30,12 +30,12 @@ defined('INTERNAL') || die();
 safe_require('artefact', 'epos');
 
 function xmldb_artefact_epos_upgrade($oldversion=0) {
-    
+
     if ($oldversion < 2012060500) {
         $plugindir = get_config('docroot') . 'artefact/epos/';
-        
+
         //-------artefact-------
-        
+
         if (is_postgres()) {
             execute_sql('ALTER TABLE artefact DROP CONSTRAINT arte_art_fk');
         }
@@ -48,9 +48,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 ADD CONSTRAINT arte_art_fk FOREIGN KEY (artefacttype)
                 REFERENCES artefact_installed_type (name)
                 MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION');
-        
+
         //-------artefact_epos_subject-------
-        
+
         $table = new XMLDBTable('artefact_epos_subject');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
@@ -61,12 +61,12 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
-        
+
         $values = array('id' => null, 'name' => 'Sprachen', 'institution' => 'mahara', 'active' => 1);
         $subject_id = insert_record('artefact_epos_subject', (object)($values), 'id', true);
-        
+
         //-------artefact_epos_artefact_subject-------
-        
+
         $table = new XMLDBTable('artefact_epos_artefact_subject');
         $table->addFieldInfo('artefact', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('subject', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
@@ -75,14 +75,14 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
-        
-        execute_sql("INSERT INTO artefact_epos_artefact_subject 
+
+        execute_sql("INSERT INTO artefact_epos_artefact_subject
                 SELECT id as artefact, $subject_id FROM artefact WHERE artefacttype = 'subject'");
         execute_sql("ALTER TABLE artefact_epos_artefact_subject
                 ALTER subject DROP DEFAULT");
-                
+
         //-------artefact_epos_descriptor_set-------
-        
+
         $table = new XMLDBTable('artefact_epos_descriptor_set');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL);
@@ -93,9 +93,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
-        
+
         //-------artefact_epos_descriptorset_subject-------
-        
+
         $table = new XMLDBTable('artefact_epos_descriptorset_subject');
         $table->addFieldInfo('descriptorset', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('subject', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, $subject_id);
@@ -104,9 +104,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
-        
+
         //-------artefact_epos_descriptor-------
-        
+
         $table = new XMLDBTable('artefact_epos_descriptor');
         drop_table($table);
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
@@ -122,9 +122,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
-        
+
         //-------artefact_epos_checklist_item-------
-        
+
         execute_sql('ALTER TABLE artefact_epos_checklist_item
                 ADD COLUMN descriptorint bigint');
 
@@ -146,24 +146,24 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 'S’exprimer oralement en continu' => 'sp',
                 'Prendre part à une conversation' => 'si',
         );
-        
+
         foreach ($descriptorsets as $set) {
             $dataroot = realpath(get_config('dataroot'));
             $xml = "$dataroot/artefact/epos/descriptorsets/$set.xml";
             $xmlcontents = file_get_contents($xml);
             $xmlarr = xmlize($xmlcontents);
-            
+
             $descriptorsettable = 'artefact_epos_descriptor_set';
             $descriptortable = 'artefact_epos_descriptor';
-            
+
             $descriptorset_newname = $values['name'] = $xmlarr['DESCRIPTORSET']['@']['NAME'];
             $values['file'] = "$set.xml";
             $values['visible'] = 1;
             $values['active'] = 1;
             $values['descriptorset'] = insert_record($descriptorsettable, (object)($values), 'id', true);
-            
+
             insert_record('artefact_epos_descriptorset_subject', (object)($values));
-            
+
             $i = 0;
             $prev_level = '';
             foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
@@ -173,54 +173,54 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 $values['level']      = $x['@']['LEVEL'];
                 $values['evaluations'] = $x['@']['EVALUATIONS'];
                 $values['goal_available'] = $x['@']['GOAL'];
-                
+
                 $i = $prev_level != $values['level'] ? 1 : $i+1;
                 $prev_level = $values['level'];
-                
+
                 $descriptor_old = str_replace('.', '_', $set) . '_'
                         . $competence_new_to_old[$values['competence']] . '_'
                         . strtolower($values['level']) . '_'
                         . $i;
-                
+
                 $descriptor_new = insert_record($descriptortable, (object)($values), 'id', true);
-                
-                execute_sql("UPDATE artefact_epos_checklist_item 
-                        SET descriptorint=$descriptor_new 
+
+                execute_sql("UPDATE artefact_epos_checklist_item
+                        SET descriptorint=$descriptor_new
                         WHERE descriptor='$descriptor_old'");
             }
-            execute_sql("UPDATE artefact 
-                    SET title = '$descriptorset_newname' 
+            execute_sql("UPDATE artefact
+                    SET title = '$descriptorset_newname'
                     WHERE artefacttype = 'checklist' AND title='$set'");
         }
-        
-        execute_sql('ALTER TABLE artefact_epos_checklist_item 
+
+        execute_sql('ALTER TABLE artefact_epos_checklist_item
                 DROP COLUMN descriptor');
-        execute_sql('ALTER TABLE artefact_epos_checklist_item 
+        execute_sql('ALTER TABLE artefact_epos_checklist_item
                 DROP COLUMN id');
-        execute_sql('DELETE FROM artefact_epos_checklist_item 
+        execute_sql('DELETE FROM artefact_epos_checklist_item
                 WHERE descriptorint IS NULL');
         if (is_postgres()) {
-            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+            execute_sql('ALTER TABLE artefact_epos_checklist_item
                     ALTER COLUMN descriptorint SET NOT NULL');
-            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+            execute_sql('ALTER TABLE artefact_epos_checklist_item
                     RENAME descriptorint TO descriptor');
-            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+            execute_sql('ALTER TABLE artefact_epos_checklist_item
                     ALTER COLUMN goal DROP NOT NULL');
         }
         else {
-            execute_sql('ALTER TABLE artefact_epos_checklist_item 
+            execute_sql('ALTER TABLE artefact_epos_checklist_item
                     CHANGE descriptorint descriptor bigint(10) NOT NULL');
             execute_sql('ALTER TABLE artefact_epos_checklist_item
                     MODIFY goal bigint(10)');
         }
         execute_sql('ALTER TABLE artefact_epos_checklist_item
-                ADD CONSTRAINT arteeposchecitem_des_fk FOREIGN KEY (descriptor) 
-                REFERENCES artefact_epos_descriptor (id) 
+                ADD CONSTRAINT arteeposchecitem_des_fk FOREIGN KEY (descriptor)
+                REFERENCES artefact_epos_descriptor (id)
                 MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION');
         execute_sql("ALTER TABLE artefact_epos_descriptorset_subject
                 ALTER subject DROP DEFAULT");
     }
-    
+
     if ($oldversion < 2012092301) {
         $table = new XMLDBTable('artefact_epos_biography_educationhistory');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
@@ -238,10 +238,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
-
         execute_sql("INSERT INTO artefact_installed_type VALUES ('biography', 'epos')");
     }
-    
+
     if ($oldversion < 2013060500) {
         $table = new XMLDBTable('artefact_epos_biography_certificates');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
@@ -259,7 +258,44 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
             throw new SQLException($table . " could not be created, check log for errors.");
         }
     }
-    
+
+    if ($oldversion < 2013070200) {
+        global $db;
+        // this version does not have the biography any more, but bioigraphy artefacts still exist
+        // so they we temporarily reassign them to internal
+        update_record('artefact_installed_type', (object) array('plugin'=>'internal'), array('name' => 'biography'));
+        // now we create a fake artefact type...
+        insert_record('artefact_installed_type', (object) array(
+            'plugin'=>'internal','name' => 'biography_tmp'
+        ));
+        // .. to which we assign the existing biography artefacts
+        // we cannot use update_record() because it does not allow to use the same columns
+        // for update as for where
+        $sql = "UPDATE " . db_table_name('artefact') . " SET artefacttype='biography_tmp' WHERE artefacttype='biography'";
+        $stmt = $db->Prepare($sql);
+        $rs = $db->Execute($stmt);
+        // same procedure with blocktype: uninstall the plugin but keep the instances
+        insert_record('blocktype_installed', (object) array(
+            'name' => 'biography_tmp',
+            'version' => 0,
+            'release' => '0',
+            'active' => 0
+        ));
+        $sql = "UPDATE " . db_table_name('block_instance') . " SET blocktype='biography_tmp' WHERE blocktype='biography'";
+        $stmt = $db->Prepare($sql);
+        $rs = $db->Execute($stmt);
+        // now, we can delete the biography artefact and block types
+        delete_records('artefact_installed_type', 'plugin', 'internal', 'name', 'biography');
+        delete_records('blocktype_installed_viewtype', 'blocktype', 'biography');
+        delete_records('blocktype_installed_category', 'blocktype', 'biography');
+        delete_records('blocktype_installed', 'name', 'biography');
+        // the biography plugin will pick up form here
+        $table = new XMLDBTable('artefact_epos_biography_educationhistory');
+        rename_table($table, 'artefact_biography_educationhistory');
+        $table = new XMLDBTable('artefact_epos_biography_certificates');
+        rename_table($table, 'artefact_biography_certificates');
+    }
+
     return true;
 }
 

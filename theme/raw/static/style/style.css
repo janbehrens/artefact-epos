@@ -61,35 +61,6 @@ div.grippie {
     margin: 0px;	
 }
 
- /* Biography list */
-#biographylist td .addicon {
-    margin: 0;
-}
-#biographylist h4 {
-    margin: 0;
-}
-#biographylist #blogdesc p {
-    margin: 0;
-    font-size: .9167em;
-}
-#blogdescription {
-    margin: 0 0 10px 0;
-}
-#blogdescription p {
-    margin: 0;
-}
-td a.btn-add{
-    margin-left:10px;
-    margin-right:10px;
-}
-#biographylist td.buttonscell form,
-#biographylist td.buttonscell form div {
-    display: inline;
-}
-#biographylist th {
-    border-bottom: none;
-}
-
 /* checklist */
 .ui-progressbar {
 	cursor: pointer;
