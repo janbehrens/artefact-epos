@@ -127,7 +127,8 @@ class ArtefactTypeChecklist extends ArtefactType {
 
     public function render_self($options, $blockid = 0) {
         $this->add_to_render_path($options);
-        $this->set = $this->load_descriptorset();
+        $set = $this->load_descriptorset();
+        $this->set = $set['competences'];
 
         $inlinejs = $this->returnJS(false, $blockid);
 
@@ -169,22 +170,10 @@ class ArtefactTypeChecklist extends ArtefactType {
 
 var prevValue = {};';
 
-        if(isset($blockid)) {
-            $inlinejs .= <<<EOF
+        $inlinejs .= <<<EOF
 
 tableRenderer{$blockid} = new TableRenderer(
     'checklist{$blockid}',
-EOF;
-        }
-        else {
-            $inlinejs .= <<<EOF
-
-tableRenderer{$this->id} = new TableRenderer(
-    'checklist{$this->id}',
-EOF;
-        }
-
-        $inlinejs .= <<<EOF
 
     '{$jsonpath}',
     [
