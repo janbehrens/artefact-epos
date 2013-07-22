@@ -296,6 +296,130 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         rename_table($table, 'artefact_biography_certificates');
     }
 
+    if ($oldversion < 2013071800) {
+        db_begin();
+        $table = new XMLDBTable('artefact_epos_evaluation');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->addFieldInfo('parent_id', XMLDB_TYPE_INTEGER, '10', null);
+        $table->addFieldInfo('artefact_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('artefactfk', XMLDB_KEY_FOREIGN, array('artefact_id'), 'artefact', array('id'));
+        $table->addKeyInfo('parentfk', XMLDB_KEY_FOREIGN, array('parent_id'), 'artefact_epos_evaluation', array('id'));
+        if (!create_table($table)) {
+            throw new SQLException($table . " could not be created, check log for errors.");
+        }
+        $table = new XMLDBTable('artefact_epos_level');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
+        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptor_set', array('id'));
+        if (!create_table($table)) {
+            throw new SQLException($table . " could not be created, check log for errors.");
+        }
+        $table = new XMLDBTable('artefact_epos_competence');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
+        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptor_set', array('id'));
+        if (!create_table($table)) {
+            throw new SQLException($table . " could not be created, check log for errors.");
+        }
+        $table = new XMLDBTable('artefact_epos_rating');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
+        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptor_set', array('id'));
+        if (!create_table($table)) {
+            throw new SQLException($table . " could not be created, check log for errors.");
+        }
+        // split up artefact_epos_descriptor -> _level + _competence + _rating
+        // first create all level, competence and rating records with proper links to the sets
+        $sets = get_records_array('artefact_epos_descriptor_set');
+        $maps = array();
+        foreach ($sets as $set) {
+            $descriptors = get_records_array('artefact_epos_descriptor', 'descriptorset', $set->id);
+            if (count($descriptors) > 0) {
+                $competences = array();
+                $levels = array();
+                $ratings = array();
+                // gather data
+                foreach ($descriptors as $descriptor) {
+                    $competences[$descriptor->competence] = 0;
+                    $levels[$descriptor->level] = 0;
+                    $ratings[$descriptor->evaluations] = 0;
+                }
+                // write to tables and store id mapping
+                foreach (array_keys($competences) as $competencename) {
+                    $competence = new stdClass();
+                    $competence->name = $competencename;
+                    $competence->descriptorset_id = $set->id;
+                    $cid = insert_record('artefact_epos_competence', $competence, 'id', true);
+                    $competences[$competencename] = $cid;
+                }
+                foreach (array_keys($levels) as $levelname) {
+                    $level = new stdClass();
+                    $level->name = $levelname;
+                    $level->descriptorset_id = $set->id;
+                    $lid = insert_record('artefact_epos_level', $level, 'id', true);
+                    $levels[$levelname] = $lid;
+                }
+                $real_ratings = array();
+                foreach (array_keys($ratings) as $rating) {
+                    $ratingnames = array_map('trim', explode(';', $rating));
+                    foreach ($ratingnames as $ratingname) {
+                        $rating = new stdClass();
+                        $rating->name = $ratingname;
+                        $rating->descriptorset_id = $set->id;
+                        $rid = insert_record('artefact_epos_rating', $rating, 'id', true);
+                        $real_ratings[$ratingname] = $rid;
+                    }
+                }
+                $maps[$set->id] = array('competences' => $competences,
+                                        'levels' => $levels,
+                                        'ratings' => $real_ratings);
+            }
+        }
+        // adjust table layout
+        $table = new XMLDBTable('artefact_epos_descriptor');
+        $competence_field = new XMLDBField('competence_id');
+        $competence_field->type = XMLDB_TYPE_INTEGER;
+        $competence_field->unsigned = true;
+        $competence_field->length = 10;
+        add_field($table, $competence_field);
+        $level_field = new XMLDBField('level_id');
+        $level_field->type = XMLDB_TYPE_INTEGER;
+        $level_field->unsigned = true;
+        $level_field->length = 10;
+        add_field($table, $level_field);
+        // fill the new id columns
+        foreach ($maps as $set_id => $map) {
+            $competences = $map['competences'];
+            $levels = $map['levels'];
+            $descriptors = $map['descriptors'];
+            foreach ($competences as $competence => $competence_id) {
+                $data = (object) array('descriptorset' => $set_id,
+                        'competence' => $competence,
+                        'competence_id' => $competence_id);
+                update_record(artefact_epos_descriptor, $data, array('descriptorset', 'competence'));
+            }
+            foreach ($levels as $level => $level_id) {
+                $data = (object) array('descriptorset' => $set_id,
+                        'level' => $level,
+                        'level_id' => $level_id);
+                update_record(artefact_epos_descriptor, $data, array('descriptorset', 'level'));
+            }
+        }
+        // remove superfluous columns
+        drop_field($table, new XMLDBField('competence'));
+        drop_field($table, new XMLDBField('level'));
+        drop_field($table, new XMLDBField('evaluations'));
+        db_commit();
+    }
+
     return true;
 }
 

@@ -626,14 +626,19 @@ class ArtefactTypeCustomGoal extends ArtefactType {
  *     )
  */
 function load_descriptors($id) {
-    $sql = 'SELECT * FROM artefact_epos_descriptor
+    $sql = 'SELECT d.id, d.name, d.link, d.goal_available, c.name AS competence, l.name AS level FROM artefact_epos_descriptor d
+            LEFT JOIN artefact_epos_competence c ON d.competence_id = c.id
+            LEFT JOIN artefact_epos_level l ON d.level_id = l.id
         WHERE descriptorset = ?
         ORDER BY level, competence, id';
 
     if (!$descriptors = get_records_sql_array($sql, array($id))) {
         $descriptors = array();
     }
-
+    if (!$ratings = get_records_array('artefact_epos_rating', 'descriptorset_id', $id)) {
+        $ratings = array();
+    }
+    $ratings = implode(';', $ratings);
     $competences = array();
 
     // group them by competences and levels:
@@ -646,7 +651,7 @@ function load_descriptors($id) {
         }
         $competences[$desc->competence][$desc->level][$desc->id] = array(
                 'name' => $desc->name,
-                'evaluations' => $desc->evaluations,
+                'evaluations' => $ratings,
                 'goal' => $desc->goal_available,
                 'link' => $desc->link
         );
@@ -685,6 +690,7 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
         $values['active'] = 1;
 
         //insert
+        db_begin();
         $values['descriptorset'] = insert_record($descriptorsettable, (object)$values, 'id', true);
 
         insert_record('artefact_epos_descriptorset_subject', array(
@@ -700,16 +706,41 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
             );
         }
 
-        foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
-            $values['competence'] = $x['@']['COMPETENCE'];
-            $values['level']      = $x['@']['LEVEL'];
-            $values['name']       = $x['@']['NAME'];
-            $values['link']       = $x['@']['LINK'];
-            $values['evaluations'] = $x['@']['EVALUATIONS'];
-            $values['goal_available'] = $x['@']['GOAL'];
+        $competences = array();
+        $levels = array();
 
+        foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
+            $competence = $x['@']['COMPETENCE'];
+            $level = $x['@']['LEVEL'];
+            if (!isset($competences[$competence])) {
+                $cid = insert_record('artefact_epos_competence', (object) array (
+                    'descriptorset_id' => $values['descriptorset'],
+                    'name' => $competence
+                ), 'id');
+                $competences[$competence] = $cid;
+            }
+            if (!isset($levels[$level])) {
+                $lid = insert_record('artefact_epos_level', (object) array (
+                    'descriptorset_id' => $values['descriptorset'],
+                    'name' => $level
+                ), 'id');
+                $levels[$level] = $lid;
+            }
+            $values['competence_id']  = $competences[$competence];
+            $values['level_id']       = $levels[$level];
+            $values['name']           = $x['@']['NAME'];
+            $values['link']           = $x['@']['LINK'];
+            $values['goal_available'] = $x['@']['GOAL'];
             insert_record($descriptortable, (object)$values);
         }
+        $ratings = array_map('trim', explode(';', $x['@']['EVALUATIONS']));
+        foreach ($ratings as $rating) {
+            insert_record('artefact_epos_rating', (object) array(
+                'descriptorset_id' => $values['descriptorset'],
+                'name' => $rating
+            ));
+        }
+        db_commit();
         return array('id' => $values['descriptorset'], 'name' => $descriptorsetname);
     }
     return false;
