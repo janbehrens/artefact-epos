@@ -76,14 +76,14 @@ function toggleLanguageForm() {
     }
     else {
         $('addlearnedlanguagebutton').innerHTML = '{$addstr}';
-        addElementClass(elemName, 'hidden'); 
+        addElementClass(elemName, 'hidden');
     }
 }
 
 function languageSaveCallback(form, data) {
-    tableRenderer.doupdate(); 
+    tableRenderer.doupdate();
     toggleLanguageForm();
-    // Can't reset() the form here, because its values are what were just submitted, 
+    // Can't reset() the form here, because its values are what were just submitted,
     // thanks to pieforms
     forEach(form.elements, function(element) {
         if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
@@ -96,7 +96,7 @@ function deleteLanguage(checklist_id) {
     if (confirm('{$confirmdelstr}')) {
         sendjsonrequest('languagedelete.json.php',
             {'checklist_id': checklist_id},
-            'GET', 
+            'GET',
             function(data) {
                 tableRenderer.doupdate();
             },
@@ -165,7 +165,7 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
         'type' => 'submit',
         'value' => get_string('save', 'artefact.epos'),
     );
-    
+
     $languageform = pieform(array(
         'name' => 'addlearnedlanguage',
         'plugintype' => 'artefact',
@@ -192,34 +192,34 @@ $smarty->display('artefact:epos:index.tpl');
 function get_subjects() {
     global $USER;
     $subjects = array();
-    
+
     $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
             JOIN usr_institution ui ON ui.institution = s.institution
             JOIN institution i ON i.name = s.institution
             WHERE ui.usr = ? AND s.active = 1";
-    
+
     if (!$data = get_records_sql_array($sql, array($USER->id))) {
         $data = array();
     }
-    
+
     $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
             JOIN institution i ON i.name = s.institution
             WHERE s.institution = 'mahara' AND s.active = 1";
-    
+
     if (!$data1 = get_records_sql_array($sql, null)) {
         $data1 = array();
     }
-    
+
     $data = array_merge($data, $data1);
-    
+
     usort($data, function ($a, $b) {
         return strcoll($a->name, $b->name);
     });
-    
+
     foreach ($data as $field) {
         $subjects[$field->id] = $field->name . " ($field->displayname)";
     }
-    
+
     return $subjects;
 }
 
@@ -229,13 +229,13 @@ function get_subjects() {
 function get_descriptorsets() {
     global $addsubject;
     $descriptorsets = array();
-    
+
     if ($addsubject != 0) {
         $sql = "SELECT d.id, d.name FROM artefact_epos_descriptor_set d
                 JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
                 WHERE ds.subject = ? AND d.active = 1
                 ORDER BY name";
-        
+
         if (!$data = get_records_sql_array($sql, array($addsubject))) {
             $data = array();
         }
@@ -246,7 +246,7 @@ function get_descriptorsets() {
     else {
         $descriptorsets[''] = get_string('pleasechoosesubject', 'artefact.epos');
     }
-    
+
     return $descriptorsets;
 }
 
@@ -267,17 +267,13 @@ function addlearnedlanguage_validate(Pieform $form, $values) {
  */
 function addlearnedlanguage_submit(Pieform $form, $values) {
     try {
-        process_languageform($form, $values);
+        global $USER, $optionsdescriptors;
+        safe_require('artefact', 'epos');
+        $owner = $USER->get('id');
+        create_subject_for_user($values['subject'], $values['title'], $values['descriptorset'], $optionsdescriptors[$values['descriptorset']], $owner);
     }
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());
     }
     $form->json_reply(PIEFORM_OK, get_string('addedlanguage', 'artefact.epos'));
-}
-
-function process_languageform(Pieform $form, $values) {
-    global $USER, $optionsdescriptors;
-    safe_require('artefact', 'epos');
-    $owner = $USER->get('id');
-    create_subject_for_user($values['subject'], $values['title'], $values['descriptorset'], $optionsdescriptors[$values['descriptorset']], $owner);
 }

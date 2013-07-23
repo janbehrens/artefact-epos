@@ -40,14 +40,27 @@ $id = $_GET['id'];
 
 $descriptors = array();
 
-$sql = 'SELECT *
-    FROM artefact_epos_descriptor d 
-    JOIN artefact_epos_checklist_item ci ON ci.descriptor = d.id
-    WHERE ci.checklist = ?
-    ORDER BY d.level, d.competence';
+$sql = 'SELECT d.name, d.link, c.name AS competence, l.name AS level, ci.evaluation
+        FROM artefact_epos_descriptor d
+        JOIN artefact_epos_checklist_item ci ON ci.descriptor = d.id
+        LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
+        LEFT JOIN artefact_epos_level l ON l.id = d.level_id
+        WHERE ci.checklist = ?
+        ORDER BY level, competence';
 
 if (!$descriptors = get_records_sql_array($sql, array($id))) {
     $descriptors = array();
+}
+
+// get ratings
+$sql = 'SELECT d.descriptorset AS id
+        FROM artefact_epos_descriptor d
+        RIGHT JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
+        WHERE i.checklist = ?
+        LIMIT 1';
+$desc_set = get_record_sql($sql, array($id));
+if (!$ratings = get_records_array('artefact_epos_rating', 'descriptorset_id', $desc_set->id, 'id')) {
+    $ratings = array();
 }
 
 // group by competences and levels
@@ -70,7 +83,7 @@ foreach ($descriptors as $desc) {
         );
     }
     $competences[$desc->competence][$desc->level]['val'] += (float)$desc->evaluation;
-    $competences[$desc->competence][$desc->level]['max'] += count(explode(';', $desc->evaluations)) - 1;
+    $competences[$desc->competence][$desc->level]['max'] += count($ratings) - 1;
 }
 
 $competences['dummy'] = array('index' => $count);
@@ -84,7 +97,7 @@ foreach ($competences as $c) {
     foreach (array_keys($c) as $l) {
         if (is_array($c[$l])) {
             $c[$l]['val'] = round(100 * $c[$l]['val'] / $c[$l]['max']);
-            
+
         }
     }
     $c['previous'] = $previous;

@@ -503,17 +503,33 @@ EOF;
      *     )
      */
     function load_descriptorset() {
-        $sql = 'SELECT DISTINCT d.*, s.file
+        $sql = 'SELECT DISTINCT d.id, d.name, d.goal_available, d.link, c.name AS competence, l.name AS level, s.file
             FROM artefact_epos_descriptor_set s
             JOIN artefact_epos_descriptor d ON s.id = d.descriptorset
+            LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
+            LEFT JOIN artefact_epos_level l ON l.id = d.level_id
             JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
             JOIN artefact a ON a.id = i.checklist
             WHERE a.id = ?
-            ORDER BY d.level, d.competence';
+            ORDER BY level, competence';
 
         if (!$descriptors = get_records_sql_array($sql, array($this->id))) {
             $descriptors = array();
         }
+
+        // TODO: move ratings to up to descriptor set layer
+        $sql = 'SELECT d.descriptorset AS id
+                FROM artefact_epos_descriptor d
+                RIGHT JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
+                RIGHT JOIN artefact a ON a.id = i.checklist
+                WHERE a.id = ?
+                LIMIT 1';
+        $desc_set = get_record_sql($sql, array($this->id));
+        if (!$ratings = get_records_array('artefact_epos_rating', 'descriptorset_id', $desc_set->id, 'id')) {
+            $ratings = array();
+        }
+        $ratings = implode(';', array_map(
+            function($rating) { return $rating->name; }, $ratings));
 
         $competences = array();
 
@@ -527,7 +543,7 @@ EOF;
             }
             $competences[$desc->competence][$desc->level][$desc->id] = array(
                     'name' => $desc->name,
-                    'evaluations' => $desc->evaluations,
+                    'evaluations' => $ratings,
                     'goal' => $desc->goal_available,
                     'link' => $desc->link
             );
@@ -718,14 +734,14 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
                 $cid = insert_record('artefact_epos_competence', (object) array (
                     'descriptorset_id' => $values['descriptorset'],
                     'name' => $competence
-                ), 'id');
+                ), 'id', true);
                 $competences[$competence] = $cid;
             }
             if (!isset($levels[$level])) {
                 $lid = insert_record('artefact_epos_level', (object) array (
                     'descriptorset_id' => $values['descriptorset'],
                     'name' => $level
-                ), 'id');
+                ), 'id', true);
                 $levels[$level] = $lid;
             }
             $values['competence_id']  = $competences[$competence];
@@ -850,7 +866,7 @@ function create_checklist_for_user($descriptorset_id, $checklist_title, $parent,
     foreach ($descriptors as $descriptor) {
         $checklist_item['descriptor'] = $descriptor->id;
         if ($descriptor->goal_available == 1) {
-            $checklist_item['goal'] = 0;
+            $checklist_item['goal'] = 1;
         }
         else {
             unset($checklist_item['goal']);
