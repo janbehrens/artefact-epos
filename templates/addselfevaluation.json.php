@@ -35,12 +35,22 @@ safe_require('artefact', 'epos');
 $subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
 $id = isset($_GET['id']) ? $_GET['id'] : 0;
 
+function object_to_array($mixed) {
+    if (is_object($mixed)) {
+        $mixed = (array) $mixed;
+    }
+    if (is_array($mixed)) {
+        $mixed = array_map(__FUNCTION__, $mixed);
+    }
+    return $mixed;
+}
+
 $competencyPatternTitle				= json_decode(param_variable('jsonCompetencyPatternTitle'));
 $arrCompetencyName 					= json_decode(param_variable('arrCompetencyName'));
 $arrCompetencyLevel 				= json_decode(param_variable('arrCompetencyLevel'));
-$arrCanDo							= json_decode(param_variable('arrCanDo'));
-$arrCanDoTaskLink					= json_decode(param_variable('arrCanDoTaskLink'));
-$arrCanDoCanBeGoal					= json_decode(param_variable('arrCanDoCanBeGoal'));
+$arrCanDo							= object_to_array(json_decode(param_variable('arrCanDo'))); // JSON array with missing index
+$arrCanDoTaskLink					= object_to_array(json_decode(param_variable('arrCanDoTaskLink'))); // gets converted to object
+$arrCanDoCanBeGoal					= object_to_array(json_decode(param_variable('arrCanDoCanBeGoal'))); // so we convert back
 $arrEvaluationLevelGlobal			= json_decode(param_variable('arrEvaluationLevelGlobal'));
 $arrEvaluationsString               = "";
 $file_submitted                     = param_variable('file_submitted') == 'true';
@@ -94,29 +104,29 @@ for ($nI = 0; $nI < count($arrCompetencyName); $nI++) {
 		$emptyfield = true;
 		break;
 	}
-	
+
 	for ($nJ = 0; $nJ < count($arrCompetencyLevel); $nJ++) {
 	    //check if any of the fields is empty
 		if ($arrCompetencyLevel[$nJ] == "") {
 			$emptyfield = true;
 			break;
 		}
-		
+
 		if (array_key_exists($nI, $arrCanDo) && array_key_exists($nJ, $arrCanDo[$nI])) {
     		for ($nK = 0; $nK < count($arrCanDo[$nI][$nJ]); $nK++) {
     			if ($nK > 0 && $arrCanDo[$nI][$nJ][$nK] == "" && $arrCanDoTaskLink[$nI][$nJ][$nK] == "") {
     				continue;
     			}
-    			
+
     			if ($arrCanDoCanBeGoal[$nI][$nJ][$nK] == false ||
         				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == null ||
         				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == "" ||
         				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == 0) {
     				$arrCanDoCanBeGoal[$nI][$nJ][$nK] = "0";
     			}
-    
+
     			$arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);
-    				
+
     			$writer->startElement("DESCRIPTOR");
     			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$nI]);
     			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$nJ]);
@@ -134,9 +144,9 @@ if (!$emptyfield) {
 	// End Descriptorset
 	$writer->endElement();
 	$writer->endDocument();
-	
+
 	$writer->flush();
-	
+
 	//write to database and dataroot (create new rows/files if $id is not given, otherwise overwrite)
 	if ($id != 0) {
 	    write_descriptor_db($filepath, false, $subject, $id);
@@ -144,7 +154,7 @@ if (!$emptyfield) {
 	else {
 	    write_descriptor_db($filepath, false, $subject);
 	}
-	
+
 	if ($file_submitted) {
 	    unzipExamplesFiles();
 	}
@@ -169,7 +179,7 @@ else {
 
 function unzipExamplesFiles() {
     global $dirpath_examples, $filepath_examples;
-    
+
     try {
         system("unzip $dirpath_examples/examples.zip -d \"$filepath_examples\" > /dev/null");
     }
