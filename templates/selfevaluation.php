@@ -42,7 +42,7 @@ $accessdenied = true;
 
 if (isset($_GET['institution'])) {
     $institution = $_GET['institution'];
-    
+
     //check if user is allowed to administer the institution indicated by GET parameter
     foreach ($institutions as $inst) {
         if ($institution == $inst->name) {
@@ -67,7 +67,7 @@ $file_submitted = false;
 //form submission action
 if (isset($_POST['save']) or isset($_POST['saveas'])) {
     $form_submitted = true;
-    
+
     //move uploaded file
     if (count($_FILES) > 0 && $_FILES['examplesfile']['name'] != "") {
         $file_submitted = true;
@@ -178,7 +178,7 @@ function submitTemplate(id) {
     sendjsonrequest(
             'addselfevaluation.json.php?subject={$subject}&id=' + id,
             getPostData(),
-            'POST', 
+            'POST',
             function() {
                 cancelEditing();
             },
@@ -207,22 +207,22 @@ if ($form_submitted) {
     $arrCanDoTaskLink = array();
     $arrCanDoCanBeGoal = array();
     $arrEvaluationLevelGlobal = array();
-    
+
     /*
      * POST data needs to be transformed to javascript arrays. It looks like:
      *  ["competencyPatternTitle"]=> "CercleS descriptors in English (ext., IC-Lolipop)"
      *  ["competencyName_0"]=> "Intercultural communication"
-     *  ["competencyLevel_0"]=> "A1" 
+     *  ["competencyLevel_0"]=> "A1"
      *  ["0_0_0"]=> "I can give some examples of facts about the other country"
      *  ["taskLink_0_0_0"]=> "ic-a1-01.htm"
      *  ["canBeGoal_0_0_0"]=> "on"
      *  ["evaluationLevelGlobal_0"]=> "not at all"
-     *  
+     *
      * The arrays are reconstructed according to the indices given in the key names.
      */
     foreach (array_keys($_POST) as $key) {
         $parts = split('_', $key);
-        
+
         if ($parts[0] == 'competencyName') {
             $arrCompetencyName[$parts[1]] = $_POST[$key];
         }
@@ -255,10 +255,10 @@ if ($form_submitted) {
     $arrCanDoCanBeGoalJson        = isset($arrCanDoCanBeGoal[0]) ? json_encode($arrCanDoCanBeGoal) : '[""]';
     $arrEvaluationLevelGlobalJson = json_encode($arrEvaluationLevelGlobal);
     $file_submitted               = $file_submitted ? 'true' : 'false';
-    
+
     $inlinejs .= <<<EOF
 function getPostData() {
-    postData = { 
+    postData = {
 		'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
         'arrCompetencyName'          : JSON.stringify($arrCompetencyNameJson),
 		'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
@@ -272,8 +272,8 @@ function getPostData() {
 }
 
 EOF;
-    
-    if (isset($_POST['save'])) {
+
+    if (isset($_POST['saveas'])) {
         $inlinejs .= "
 window.onload = function() {
     submitTemplate({$edit});
@@ -293,7 +293,7 @@ if (!$edit) {
 function activateDescriptorset(id) {
 	sendjsonrequest('activatedescriptorset.json.php?activate=1',
             {'id': id},
-            'POST', 
+            'POST',
             function() {
             	tableRenderer.doupdate();
             });
@@ -302,7 +302,7 @@ function activateDescriptorset(id) {
 function deactivateDescriptorset(id) {
 	sendjsonrequest('activatedescriptorset.json.php?activate=0',
             {'id': id},
-            'POST', 
+            'POST',
             function() {
             	tableRenderer.doupdate();
             });
@@ -317,7 +317,7 @@ function deleteDescriptorset(id, name) {
     if (confirm('{$confirmdelstr1}"' + name + '"{$confirmdelstr2}?')) {
         sendjsonrequest('deletedescriptorset.json.php',
                 {'id': id},
-                'POST', 
+                'POST',
                 function() {
                 	tableRenderer.doupdate();
                 });
@@ -435,24 +435,24 @@ $smarty->display('artefact:epos:create_selfevaluation.tpl');
 function importxml_submit(Pieform $form, $values) {
     global $subject;
     safe_require('artefact', 'file');
-    
+
     try {
         //import to database
         $new_descriptorset = write_descriptor_db($values['file']['tmp_name'], true, $subject);
-        
+
         //save file
         $dataroot = realpath(get_config('dataroot'));
         $dirpath = "$dataroot/artefact/epos/descriptorsets";
         $basename = str_replace('/', '_', $new_descriptorset['name']);
         $basefilepath = $dirpath . '/' . $basename;
-        
+
         while (file_exists($basefilepath . '.xml')) {
             $basename .= '_1';
             $basefilepath .= '_1';
         }
-        
+
         move_uploaded_file($values['file']['tmp_name'], $basefilepath . '.xml');
-        
+
         //fix file name in database entry
         update_record(
                 'artefact_epos_descriptor_set',
@@ -468,46 +468,46 @@ function importxml_submit(Pieform $form, $values) {
 
 function importcsv_submit(Pieform $form, $values) {
     global $subject;
-    
+
     //prepare saving as file
     $dataroot = realpath(get_config('dataroot'));
     $dirpath = $dataroot . '/artefact/epos/descriptorsets';
-    
+
     if (!is_dir($dirpath)) {
         mkdir($dirpath, 0700, true);
     }
-    
+
     $descriptorsetfilename = $values['name'];
     $descriptorsetfilename = str_replace('/', '_', $descriptorsetfilename);
     $basename = $dirpath . '/' . $descriptorsetfilename;
-    
+
     while (file_exists($basename . '.xml')) {
         $basename .= '_1';
     }
-    
+
     $path = $basename . '.xml';
-    
+
     //intitialize XMLWriter
     $writer = new XMLWriter();
-    
+
     $writer->openURI($path);
-    
+
     $writer->startDocument();
     $writer->setIndent(4);
-    
+
     $writer->startElement('DESCRIPTORSET');
     $writer->writeAttribute('NAME', $values['name']);
-    
+
     try {
         //set error handler in order to catch warnings from XMLWriter
         set_error_handler('errorHandler');
-        
+
         //parse CSV
         $lines = file($values['file']['tmp_name']);
         $line_no = 1;
-        
+
         $values = str_getcsv_utf8($lines[0]);
-        
+
         for ($i = 0; $i < count($values); $i++) {
             $values[$i] = strtolower($values[$i]);
         }
@@ -515,12 +515,12 @@ function importcsv_submit(Pieform $form, $values) {
             throw new Exception(get_string('csvinvalid', 'artefact.epos') . ": line 1");
         }
         unset($lines[0]);
-        
+
         foreach ($lines as $line)
         {
             $values = str_getcsv_utf8($line);
             $line_no++;
-            
+
 			$writer->startElement("DESCRIPTOR");
 			$writer->writeAttribute('COMPETENCE', $values[0]);
 			$writer->writeAttribute('LEVEL', $values[1]);
@@ -533,10 +533,10 @@ function importcsv_submit(Pieform $form, $values) {
         $writer->endElement();
         $writer->endDocument();
         $writer->flush();
-        
+
         //import to database
         $new_descriptorset = write_descriptor_db($path, false, $subject);
-        
+
         restore_error_handler();
     }
     catch (Exception $e) {
