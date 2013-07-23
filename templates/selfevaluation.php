@@ -276,13 +276,13 @@ EOF;
     if (isset($_POST['saveas'])) {
         $inlinejs .= "
 window.onload = function() {
-    submitTemplate({$edit});
+    submitTemplate(0);
 }";
     }
     else {
         $inlinejs .= "
 window.onload = function() {
-    submitTemplate();
+    submitTemplate({$edit});
 }";
     }
 }
