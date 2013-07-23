@@ -635,10 +635,12 @@ function load_descriptors($id) {
     if (!$descriptors = get_records_sql_array($sql, array($id))) {
         $descriptors = array();
     }
-    if (!$ratings = get_records_array('artefact_epos_rating', 'descriptorset_id', $id)) {
+    // TODO: move ratings to up to descriptor set layer
+    if (!$ratings = get_records_array('artefact_epos_rating', 'descriptorset_id', $id, 'id')) {
         $ratings = array();
     }
-    $ratings = implode(';', $ratings);
+    $ratings = implode(';', array_map(
+        function($rating) { return $rating->name; }, $ratings));
     $competences = array();
 
     // group them by competences and levels:

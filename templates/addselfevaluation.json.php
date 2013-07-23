@@ -67,6 +67,8 @@ if (count($arrCanDoTaskLink) > 0 && !is_dir($dirpath_examples)) {
     mkdir($dirpath_examples, 0700, true);
 }
 
+
+
 $basename = str_replace('/', '_', $competencyPatternTitle);
 $filepath = $dirpath . '/' . $basename . '.xml';
 $filepath_examples = $dirpath_examples . '/' . $basename;
@@ -98,42 +100,40 @@ $writer->writeAttribute('NAME', $competencyPatternTitle);
 
 $emptyfield = false;
 
-for ($nI = 0; $nI < count($arrCompetencyName); $nI++) {
+for ($iCompetence = 0; $iCompetence < count($arrCompetencyName); $iCompetence++) {
 	//check if any of the fields is empty
-	if ($arrCompetencyName[$nI] == "") {
+	if ($arrCompetencyName[$iCompetence] == "") {
 		$emptyfield = true;
 		break;
 	}
 
-	for ($nJ = 0; $nJ < count($arrCompetencyLevel); $nJ++) {
+	for ($iLevel = 0; $iLevel < count($arrCompetencyLevel); $iLevel++) {
 	    //check if any of the fields is empty
-		if ($arrCompetencyLevel[$nJ] == "") {
+		if ($arrCompetencyLevel[$iLevel] == "") {
 			$emptyfield = true;
 			break;
 		}
 
-		if (array_key_exists($nI, $arrCanDo) && array_key_exists($nJ, $arrCanDo[$nI])) {
-    		for ($nK = 0; $nK < count($arrCanDo[$nI][$nJ]); $nK++) {
-    			if ($nK > 0 && $arrCanDo[$nI][$nJ][$nK] == "" && $arrCanDoTaskLink[$nI][$nJ][$nK] == "") {
+		if (isset($arrCanDo[$iCompetence][$iLevel])) {
+    		for ($iCando = 0; $iCando < count($arrCanDo[$iCompetence][$iLevel]); $iCando++) {
+    			if ($iCando > 0 && $arrCanDo[$iCompetence][$iLevel][$iCando] == "" && $arrCanDoTaskLink[$iCompetence][$iLevel][$iCando] == "") {
     				continue;
     			}
 
-    			if ($arrCanDoCanBeGoal[$nI][$nJ][$nK] == false ||
-        				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == null ||
-        				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == "" ||
-        				$arrCanDoCanBeGoal[$nI][$nJ][$nK] == 0) {
-    				$arrCanDoCanBeGoal[$nI][$nJ][$nK] = "0";
+    			if (!isset($arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]) ||
+        				!$arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]) {
+    				$arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando] = "0";
     			}
 
     			$arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);
 
     			$writer->startElement("DESCRIPTOR");
-    			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$nI]);
-    			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$nJ]);
+    			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$iCompetence]);
+    			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$iLevel]);
     			$writer->writeAttribute('EVALUATIONS', $arrEvaluationsString);
-    			$writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$nI][$nJ][$nK]);
-    			$writer->writeAttribute('NAME', $arrCanDo[$nI][$nJ][$nK]);
-    			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$nI][$nJ][$nK]);
+    			$writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]);
+    			$writer->writeAttribute('NAME', $arrCanDo[$iCompetence][$iLevel][$iCando]);
+    			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$iCompetence][$iLevel][$iCando]);
     			$writer->endElement();
     		}
 		}

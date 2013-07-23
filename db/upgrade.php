@@ -399,18 +399,17 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         foreach ($maps as $set_id => $map) {
             $competences = $map['competences'];
             $levels = $map['levels'];
-            $descriptors = $map['descriptors'];
             foreach ($competences as $competence => $competence_id) {
                 $data = (object) array('descriptorset' => $set_id,
                         'competence' => $competence,
                         'competence_id' => $competence_id);
-                update_record(artefact_epos_descriptor, $data, array('descriptorset', 'competence'));
+                update_record('artefact_epos_descriptor', $data, array('descriptorset', 'competence'));
             }
             foreach ($levels as $level => $level_id) {
                 $data = (object) array('descriptorset' => $set_id,
                         'level' => $level,
                         'level_id' => $level_id);
-                update_record(artefact_epos_descriptor, $data, array('descriptorset', 'level'));
+                update_record('artefact_epos_descriptor', $data, array('descriptorset', 'level'));
             }
         }
         // remove superfluous columns
