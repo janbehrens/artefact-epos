@@ -1,4 +1,4 @@
-<table id="checklist{$id}" style="width: 100%;">
+<table id="checklist{$id}" class="evaluation">
     <thead>
         <tr>
             <th width="30%">{str tag='competence' section='artefact.epos'}</th>
@@ -16,8 +16,7 @@
 {foreach $checklistforms item=checklistform}
     {loop $checklistform}
 <div id="{$name}_div" class="checklistform hidden">
-	<p></p>
-    <h2>{$competence} {$_key}</h2>
+    <h2>{str tag='evaluationformtitle' section='artefact.epos' arg1=$competence arg2=$_key}</h2>
     {$form|safe}
 </div>
     {/loop}

@@ -285,7 +285,6 @@ EOF;
             foreach (array_keys($set[$competence]) as $level) {
                 $elements = array();
                 //headings
-                $title = $competence . ' ' . $level;
                 $elements['header'] = array(
                     'type' => 'html',
                     'title' => ' ',

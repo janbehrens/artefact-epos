@@ -4,6 +4,13 @@ div#subjects_list p {
 .checklistform table {
 	float: right;
 }
+div.checklistform {
+    margin-top: 20px;
+}
+table.evaluation {
+    width: 100%;
+    table-layout:fixed;
+}
 form#addlearnedlanguage table {
     float: left;
 }
