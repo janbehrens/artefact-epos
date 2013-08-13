@@ -163,8 +163,8 @@ $deactivatestr = get_string('deactivate', 'artefact.epos');
 $deletestr = get_string('delete', 'mahara');
 $editstr = get_string('edit', 'mahara');
 $exportstr = get_string('export', 'artefact.epos');
-$confirmdelstr1 = get_string('confirmdeletedescriptorset1', 'artefact.epos');
-$confirmdelstr2 = get_string('confirmdeletedescriptorset2', 'artefact.epos');
+$confirmdelstr = get_string('confirmdeletedescriptorset', 'artefact.epos', "' + name + '");
+$subjectsadministrationstr = get_string('subjectsadministration', 'artefact.epos');
 
 
 //JS stuff
@@ -314,7 +314,7 @@ function editDescriptorset(id, name) {
 }
 
 function deleteDescriptorset(id, name) {
-    if (confirm('{$confirmdelstr1}"' + name + '"{$confirmdelstr2}?')) {
+    if (confirm('{$confirmdelstr}')) {
         sendjsonrequest('deletedescriptorset.json.php',
                 {'id': id},
                 'POST',
@@ -420,6 +420,7 @@ $smarty->assign('text_num_cols', get_string('num_cols', 'artefact.epos'));
 $smarty->assign('accessdenied', $accessdenied);
 $smarty->assign('institution', $institution);
 $smarty->assign('institution_displayname', $institution_displayname);
+$smarty->assign('subjectsadministrationstr', $subjectsadministrationstr);
 $smarty->assign('subjects', $subjects);
 $smarty->assign('links_institution', $links_inst);
 $smarty->assign('links_subject', $links_subj);

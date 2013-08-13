@@ -77,7 +77,7 @@ if ($data) {
 }
 else {
     $haslanguages = false;
-    $subjectlinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
+    $subjectlinks = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
 }
 
 if ($haslanguages) {

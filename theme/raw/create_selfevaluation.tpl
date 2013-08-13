@@ -104,7 +104,7 @@
 </fieldset>
 
 {else}
-{str tag='nosubjectsconfigured1' section='artefact.epos'}{$institution_displayname}{str tag='nosubjectsconfigured2' section='artefact.epos'}<a href="subjects.php?institution={$institution}">{str tag='subjectsadministration' section='artefact.epos'}</a>{str tag='nosubjectsconfigured3' section='artefact.epos'}
+{str tag='nosubjectsconfigured' section='artefact.epos' arg1='$institution_displayname' arg2='<a href="subjects.php?institution=$institution">$subjectsadministrationstr</a>'}
 {/if}
 {/if}
 
