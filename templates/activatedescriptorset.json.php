@@ -36,10 +36,10 @@ $activate = $_GET['activate'];
 
 try {
     if ($activate == 1) {
-        execute_sql("UPDATE artefact_epos_descriptor_set SET active = 1 WHERE id = $id");
+        execute_sql("UPDATE artefact_epos_descriptorset SET active = 1 WHERE id = $id");
     }
     else if ($activate == 0) {
-        execute_sql("UPDATE artefact_epos_descriptor_set SET active = 0 WHERE id = $id");
+        execute_sql("UPDATE artefact_epos_descriptorset SET active = 0 WHERE id = $id");
     }
     //reply
     json_reply(false, array());

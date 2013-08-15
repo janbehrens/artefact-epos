@@ -41,9 +41,9 @@ $count = 0;
 $data = array();
 
 $sql = "SELECT DISTINCT a.id, b.title, s.name as descriptorset FROM artefact b, artefact a 
-        JOIN artefact_epos_checklist_item i ON a.id = i.checklist 
+        JOIN artefact_epos_evaluation_item i ON a.id = i.checklist 
         JOIN artefact_epos_descriptor d ON d.id = i.descriptor 
-        JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset 
+        JOIN artefact_epos_descriptorset s ON s.id = d.descriptorset 
         WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = 'checklist' ORDER BY b.title;";
 
 if (!$data = get_records_sql_array($sql, array($owner))) {

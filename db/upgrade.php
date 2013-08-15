@@ -298,22 +298,11 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
 
     if ($oldversion < 2013071800) {
         db_begin();
-        $table = new XMLDBTable('artefact_epos_evaluation');
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
-        $table->addFieldInfo('parent_id', XMLDB_TYPE_INTEGER, '10', null);
-        $table->addFieldInfo('artefact_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
-        $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
-        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('artefactfk', XMLDB_KEY_FOREIGN, array('artefact_id'), 'artefact', array('id'));
-        $table->addKeyInfo('parentfk', XMLDB_KEY_FOREIGN, array('parent_id'), 'artefact_epos_evaluation', array('id'));
-        if (!create_table($table)) {
-            throw new SQLException($table . " could not be created, check log for errors.");
-        }
         $table = new XMLDBTable('artefact_epos_level');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
-        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptor_set', array('id'));
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
@@ -322,7 +311,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
-        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptor_set', array('id'));
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
@@ -331,7 +320,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
-        $table->addKeyInfo('pk', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptor_set', array('id'));
         if (!create_table($table)) {
             throw new SQLException($table . " could not be created, check log for errors.");
@@ -419,6 +408,44 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         db_commit();
     }
 
+    if ($oldversion < 2013081300) {
+        $table = new XMLDBTable('artefact_epos_descriptor_set');
+        rename_table($table, 'artefact_epos_descriptorset');
+        $table = new XMLDBTable('artefact_epos_checklist_item');
+        $field = new XMLDBField('id');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        add_field($table, $field);
+        rename_table($table, 'artefact_epos_evaluation_item');
+        $table = new XMLDBTable('artefact_epos_evaluation');
+    	if (table_exists($table)) {
+    		drop_table($table);
+    	}
+        $table->addFieldInfo('artefact', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL);
+        $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('artefact'));
+        $table->addKeyInfo('artefactfk', XMLDB_KEY_FOREIGN, array('artefact'), 'artefact', array('id'));
+        $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptorset', array('id'));
+        if (!create_table($table)) {
+        	throw new SQLException($table . " could not be created, check log for errors.");
+        }
+        // fill the new table with data from existing "checklists"
+        $evaluations = get_records_array('artefact', 'artefacttype', 'checklist');
+        foreach ($evaluations as $evaluation) {
+        	$sql = "SELECT d.descriptorset
+        			FROM artefact_epos_descriptor d
+        			RIGHT JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
+        			WHERE i.checklist = ?
+        			LIMIT 1";
+        	$item_record = get_record_sql($sql, array($evaluation->id));
+        	if ($item_record) {
+	        	$data = (object) array(
+	        	    'artefact' => $evaluation->id,
+	        		'descriptorset_id' => $item_record->descriptorset
+	        	);
+	        	insert_record('artefact_epos_evaluation', $data);
+        	}
+        }
+    }
+
     return true;
 }
-

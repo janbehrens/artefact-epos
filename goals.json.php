@@ -42,7 +42,7 @@ $data = array();
 
 $sql = 'SELECT c.title as descriptorset, d.name as descriptor, d.level, d.competence
 	FROM artefact c
-    JOIN artefact_epos_checklist_item ci ON ci.checklist = c.id
+    JOIN artefact_epos_evaluation_item ci ON ci.checklist = c.id
     JOIN artefact_epos_descriptor d ON d.id = ci.descriptor
     WHERE c.parent = ? AND ci.goal = 1
     ORDER BY d.competence, d.level';

@@ -89,8 +89,9 @@ $string['customlearninggoalupdatesuccess'] = 'Learning objective has been update
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete this additional learning objective?';
 
-//Selfevaluation
+//Evaluation
 $string['evaluationformtitle'] = '%s on the level of %s';
+$string['evaluationnotfound'] = 'The requested evaluation cannot be found.';
 
 //Selfevaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation';

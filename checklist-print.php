@@ -62,7 +62,7 @@ if (!isset($id)) {
 }
 
 $sql = 'SELECT * FROM artefact_epos_descriptor d
-        JOIN artefact_epos_checklist_item ci ON ci.descriptor = d.id
+        JOIN artefact_epos_evaluation_item ci ON ci.descriptor = d.id
         WHERE ci.checklist = ?
         ORDER BY d.level, d.competence';
 if (!$descriptors = get_records_sql_array($sql, array($id))) {

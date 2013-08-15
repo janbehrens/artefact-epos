@@ -35,7 +35,7 @@ $descriptorset = param_variable('id');
 
 $data = load_descriptors($descriptorset);
 
-$sql = 'SELECT name FROM artefact_epos_descriptor_set
+$sql = 'SELECT name FROM artefact_epos_descriptorset
         WHERE id = ?';
 if (!$dsdata = get_records_sql_array($sql, array($descriptorset))) {
     $dsdata = array();

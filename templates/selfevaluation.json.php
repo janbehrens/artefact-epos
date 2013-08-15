@@ -35,7 +35,7 @@ $institution = $_GET['institution'];
 $subject = $_GET['subject'];
 
 //read DB
-$sql = 'SELECT d.* FROM artefact_epos_descriptor_set d
+$sql = 'SELECT d.* FROM artefact_epos_descriptorset d
         JOIN artefact_epos_descriptorset_subject ds ON d.id = ds.descriptorset
         JOIN artefact_epos_subject s ON s.id = ds.subject
         JOIN institution i ON i.name = s.institution

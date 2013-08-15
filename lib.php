@@ -106,8 +106,51 @@ class ArtefactTypeChecklist extends ArtefactType {
 
     public $set;
 
+    public $descriptorset_id;
+
+    /**
+     * Override the constructor to fetch extra data.
+     *
+     * @param integer $id The id of the element to load
+     * @param object $data Data to fill the object with instead from the db
+     */
     public function __construct($id = 0, $data = null) {
         parent::__construct($id, $data);
+        if ($this->id) {
+        	$sql = 'SELECT e.descriptorset_id
+                    FROM {artefact} a
+                    LEFT JOIN {artefact_epos_evaluation} e ON a.id = e.artefact
+                    WHERE a.id = ?';
+        	$data = get_record_sql($sql, array($this->id));
+        	if ($data) {
+        		foreach((array)$data as $field => $value) {
+        			if (property_exists($this, $field) && $field != 'id') {
+        				$this->{$field} = $value;
+        			}
+        		}
+        	}
+        	else {
+        		// This should never happen unless the user is playing around with task IDs in the location bar or similar
+        		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
+        	}
+        }
+    }
+
+    public function commit() {
+        db_begin();
+        $new = empty($this->id);
+    	parent::commit();
+    	$data = (object) array(
+    			'artefact'  => $this->get('id'),
+    			'descriptorset_id'  => $this->descriptorset_id
+    	);
+    	if ($new) {
+    		insert_record('artefact_epos_evaluation', $data);
+    	}
+    	else {
+    		update_record('artefact_epos_evaluation', $data, 'artefact');
+    	}
+    	db_commit();
     }
 
     public static function get_icon($options=null) {}
@@ -442,7 +485,7 @@ EOF;
     public function submit_checklistform(Pieform $form, $values) {
         try {
             global $id, $set, $checklistforms;
-            $table = 'artefact_epos_checklist_item';
+            $table = 'artefact_epos_evaluation_item';
             $values['checklist'] = $id;
 
             //hidden fields
@@ -503,11 +546,11 @@ EOF;
      */
     function load_descriptorset() {
         $sql = 'SELECT DISTINCT d.id, d.name, d.goal_available, d.link, c.name AS competence, l.name AS level, s.file
-            FROM artefact_epos_descriptor_set s
+            FROM artefact_epos_descriptorset s
             JOIN artefact_epos_descriptor d ON s.id = d.descriptorset
             LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
             LEFT JOIN artefact_epos_level l ON l.id = d.level_id
-            JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
+            JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
             JOIN artefact a ON a.id = i.checklist
             WHERE a.id = ?
             ORDER BY level, competence';
@@ -519,7 +562,7 @@ EOF;
         // TODO: move ratings to up to descriptor set layer
         $sql = 'SELECT d.descriptorset AS id
                 FROM artefact_epos_descriptor d
-                RIGHT JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
+                RIGHT JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
                 RIGHT JOIN artefact a ON a.id = i.checklist
                 WHERE a.id = ?
                 LIMIT 1';
@@ -572,7 +615,7 @@ EOF;
      */
     function load_checklist() {
         $sql = 'SELECT *
-            FROM artefact_epos_checklist_item
+            FROM artefact_epos_evaluation_item
             WHERE checklist = ?';
 
         if (!$data = get_records_sql_array($sql, array($this->id))) {
@@ -594,7 +637,7 @@ EOF;
      * Overriding the delete() function to clear the checklist table
      */
     public function delete() {
-        delete_records('artefact_epos_checklist_item', 'checklist', $this->id);
+        delete_records('artefact_epos_evaluation_item', 'checklist', $this->id);
 
         parent::delete();
     }
@@ -688,7 +731,7 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
         $contents = file_get_contents($xml);
         $xmlarr = xmlize($contents);
 
-        $descriptorsettable = 'artefact_epos_descriptor_set';
+        $descriptorsettable = 'artefact_epos_descriptorset';
         $descriptortable = 'artefact_epos_descriptor';
 
         $descriptorset = $xmlarr['DESCRIPTORSET'];
@@ -854,13 +897,13 @@ function create_checklist_for_user($descriptorset_id, $checklist_title, $parent,
     // load descriptors
     $descriptors = array();
     $sql = 'SELECT d.id, d.goal_available FROM artefact_epos_descriptor d
-            JOIN artefact_epos_descriptor_set s ON s.id = d.descriptorset
+            JOIN artefact_epos_descriptorset s ON s.id = d.descriptorset
             WHERE s.id = ?';
     if (!$descriptors = get_records_sql_array($sql, array($descriptorset_id))) {
         $descriptors = array();
     }
 
-    // update artefact_epos_checklist_item
+    // update artefact_epos_evaluation_item
     $checklist_item = array('checklist' => $checklist->get('id'), 'evaluation' => 0);
     foreach ($descriptors as $descriptor) {
         $checklist_item['descriptor'] = $descriptor->id;
@@ -870,7 +913,7 @@ function create_checklist_for_user($descriptorset_id, $checklist_title, $parent,
         else {
             unset($checklist_item['goal']);
         }
-        insert_record('artefact_epos_checklist_item', (object)$checklist_item);
+        insert_record('artefact_epos_evaluation_item', (object)$checklist_item);
     }
 }
 
