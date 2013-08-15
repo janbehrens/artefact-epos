@@ -890,7 +890,8 @@ function create_checklist_for_user($descriptorset_id, $checklist_title, $parent,
     $checklist = new ArtefactTypeChecklist(0, array(
         'owner' => $user_id,
         'title' => $checklist_title,
-        'parent' => $parent
+        'parent' => $parent,
+    	'descriptorset_id' => $descriptorset_id
     ));
     $checklist->commit();
 
