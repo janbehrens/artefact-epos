@@ -450,6 +450,7 @@ class ArtefactTypeChecklist extends ArtefactType {
 
         $eval_table = new HTMLTable_epos($column_titles, $column_definitions);
         $eval_table->add_table_classes('evaluation');
+        $eval_table->always_even = true;
         return $eval_table->render($results);
     }
 
@@ -908,6 +909,9 @@ class HTMLTable_epos {
     public $table_classes = array();
     public $properties = array();
 
+    // if true, appends an empty row in case there's an odd number of rows
+    public $always_even = false;
+
     /**
      *
      * @param array $titles
@@ -927,9 +931,7 @@ class HTMLTable_epos {
 
     public function add_table_classes($classes) {
         if (!is_array($classes)) {
-            $classes = array(
-                    $classes
-            );
+            $classes = array($classes);
         }
         $this->table_classes = array_merge($this->table_classes, $classes);
     }
@@ -947,7 +949,8 @@ class HTMLTable_epos {
     public function render($data) {
         $this->data = $data;
         $classes = ' class="' . implode(" ", $this->table_classes) . '"';
-        $out = "<table$classes>\n";
+        $properties = $this->render_properties($this->properties);
+        $out = "<table $classes $properties>\n";
         $out .= "<thead><tr>\n";
         foreach ($this->titles as $id => $title) {
             $column_id = "column_";
@@ -956,17 +959,19 @@ class HTMLTable_epos {
         }
         $out .= "</tr></thead>\n";
         $out .= "<tbody>\n";
-        while (current($this->data)) {
-            $out .= $this->render_row();
+        while ($row = current($this->data)) {
+            $out .= $this->render_row($row);
             next($this->data);
+        }
+        if ($this->always_even && !$this->even) {
+            $out .= $this->render_empty_row();
         }
         $out .= "</tbody>\n";
         $out .= "</table>\n";
         return $out;
     }
 
-    private function render_row() {
-        $row = current($this->data);
+    private function render_row($row) {
         $classes = $this->zebra_classes();
         $out = "<tr class=\"$classes\">";
         if (is_array($row)) {
@@ -991,11 +996,7 @@ class HTMLTable_epos {
             $properties = "";
             if (is_array($value)) {
                 if (isset($value['properties'])) {
-                    $properties = array();
-                    foreach ($value['properties'] as $property => $propvalue) {
-                        $properties []= "$property=\"$propvalue\"";
-                    }
-                    $properties = implode(" ", $properties);
+                    $properties = $this->render_properties($value['properties']);
                 }
                 $value = $value['content'];
             }
@@ -1003,6 +1004,23 @@ class HTMLTable_epos {
         }
         $out .= "</tr>\n";
         return $out;
+    }
+
+    private function render_empty_row() {
+        $classes = $this->zebra_classes();
+        $colspan = count($this->cols);
+        return "<tr class=\"$classes\"><td colspan=\"$colspan\"></td>\n";
+    }
+
+    private function render_properties($properties) {
+        if (is_object($properties)) {
+            $properties = (array) $properties;
+        }
+        $rendered = array();
+        foreach ($properties as $property => $propvalue) {
+            $rendered []= "$property=\"$propvalue\"";
+        }
+        return implode(" ", $rendered);
     }
 
 }
