@@ -62,11 +62,12 @@ if (!isset($id)) {
 }
 
 $descriptorset = $a->get_descriptorset();
+$ratings = array_values(array_map(function($item) { return $item->name; }, $descriptorset->ratings));
 
 $smarty = smarty();
 $smarty->assign('results', $a->results());
 $smarty->assign('levels', $descriptorset->levels);
-$smarty->assign('evaluations', $evaluations);
+$smarty->assign('ratings', $ratings);
 $smarty->assign('subject', $a->get_parent_instance()->get_name());
 $smarty->assign('PAGEHEADING', get_string('selfevaluationprintout', 'artefact.epos'));
 $smarty->display('artefact:epos:checklist-print.tpl');

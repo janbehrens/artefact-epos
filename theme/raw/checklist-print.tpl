@@ -68,12 +68,12 @@
                 <img src="{$WWWROOT}artefact/epos/images/progressbar-fill.png" />
             </div>
             <span class="progressbar-content">
-            {foreach $evaluations name=evaluations key=evaluation_index item=evaluation}
-                {$evaluation}
-                {if !$dwoo.foreach.evaluations.last} / {/if}
+            {foreach $ratings name=ratings key=rating_index item=rating}
+                {$rating}
+                {if !$dwoo.foreach.ratings.last} / {/if}
             {/foreach}
         </div>
-        <p>{str tag='legendthenumbers' section='artefact.epos' arg1=$evaluations[0] arg2=$evaluations[1]}</p>
+        <p>{str tag='legendthenumbers' section='artefact.epos' arg1=$ratings[0] arg2=$ratings[1]}</p>
     </div>
 </body>
 </html>
