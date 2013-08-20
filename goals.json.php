@@ -43,8 +43,8 @@ $data = array();
 // load all descriptors of a subject's evaluation that are marked as goal
 $sql = 'SELECT a.title as descriptorset, d.name as descriptor, c.name AS competence, l.name AS level
 	FROM artefact a
-    JOIN artefact_epos_evaluation_item ei ON ei.checklist = a.id
-    JOIN artefact_epos_descriptor d ON d.id = ei.descriptor
+    JOIN artefact_epos_evaluation_item ei ON ei.evaluation_id = a.id
+    JOIN artefact_epos_descriptor d ON d.id = ei.descriptor_id
 	LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
     LEFT JOIN artefact_epos_level l ON l.id = d.level_id
     WHERE a.parent = ? AND ei.goal = 1

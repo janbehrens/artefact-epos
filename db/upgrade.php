@@ -453,5 +453,22 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2013082000) {
+        $table = new XMLDBTable('artefact_epos_evaluation_item');
+        $field = new XMLDBField('checklist');
+        rename_field($table, $field, 'evaluation_id');
+        $field = new XMLDBField('evaluation');
+        rename_field($table, $field, 'value');
+        $field = new XMLDBField('descriptor');
+        // allow null
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', false, false);
+        change_field_type($table, $field);
+        rename_field($table, $field, 'descriptor_id');
+        // add a key to arbitrary items
+        $field = new XMLDBField('target_key');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, false);
+        add_field($table, $field);
+    }
+
     return true;
 }

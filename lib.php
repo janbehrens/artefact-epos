@@ -140,10 +140,10 @@ class ArtefactTypeChecklist extends ArtefactType {
         		// This should never happen unless the user is playing around with task IDs in the location bar or similar
         		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
         	}
-        	if ($items = get_records_array('artefact_epos_evaluation_item', 'checklist', $this->id, 'id')) {
+        	if ($items = get_records_array('artefact_epos_evaluation_item', 'evaluation_id', $this->id, 'id')) {
         		foreach ($items as $item) {
         			$this->items[$item->id] = $item;
-        			$this->items_by_descriptor_id[$item->descriptor] = $item;
+        			$this->items_by_descriptor_id[$item->descriptor_id] = $item;
         		}
         	}
         }
@@ -171,7 +171,7 @@ class ArtefactTypeChecklist extends ArtefactType {
      */
     public function delete() {
         db_begin();
-        delete_records('artefact_epos_evaluation_item', 'checklist', $this->id);
+        delete_records('artefact_epos_evaluation_item', 'evaluation_id', $this->id);
         delete_records('artefact_epos_evaluation', 'artefact', $this->id);
         parent::delete();
         db_commit();
@@ -221,14 +221,14 @@ class ArtefactTypeChecklist extends ArtefactType {
             'evaluation_sums' => array_fill(0, $max_rating+1, 0)
         );
         foreach($this->items as $item) {
-            $descriptor = $descriptorset[$item->descriptor];
+            $descriptor = $descriptorset[$item->descriptor_id];
             if (!isset($results[$descriptor->competence_id][$descriptor->level_id])) {
                 $results[$descriptor->competence_id][$descriptor->level_id] = $empty_complevel;
             }
             $complevel = &$results[$descriptor->competence_id][$descriptor->level_id];
-            $complevel['value'] += $item->evaluation;
+            $complevel['value'] += $item->value;
             $complevel['max'] += $max_rating;
-            increase_array_value($complevel['evaluation_sums'], $item->evaluation);
+            increase_array_value($complevel['evaluation_sums'], $item->value);
         }
         foreach ($results as $competence_id => &$levels) {
             ksort($levels);
@@ -299,20 +299,7 @@ class ArtefactTypeChecklist extends ArtefactType {
                         'title' => ' ',
                         'value' => ''
                 );
-                $elements['header_goal'] = array(
-                        'type' => 'html',
-                        'title' => ' ',
-                        'value' => get_string('goal', 'artefact.epos') . '?'
-                );
-                $goals = false;
-                foreach ($descriptorset->get_descriptors($competence->id, $level->id) as $descriptor) {
-                    $item = $this->items_by_descriptor_id[$descriptor->id];
-                    if ($descriptor->goal_available) $goals = true;
-                    $this->form_evaluation_item($elements, $item, $descriptor, $ratings, $descriptorsetfile);
-                }
-                if (!$goals) {
-                    unset($elements['header_goal']);
-                }
+                $this->form_evaluation_descriptors($elements, $ratings, $descriptorsetfile, $competence, $level);
                 $elements['competence'] = array(
                         'type' => 'hidden',
                         'value' => $competence->name
@@ -353,12 +340,38 @@ class ArtefactTypeChecklist extends ArtefactType {
         return $checklistforms;
     }
 
+    /**
+     * Create form elements for each descriptor in this competence and level.
+     * @param array $elements
+     * @param array $ratings
+     * @param string $descriptorsetfile
+     * @param object $competence
+     * @param object $level
+     */
+    private function form_evaluation_descriptors(&$elements, $ratings, $descriptorsetfile, $competence, $level) {
+        $descriptorset = $this->get_descriptorset();
+        $elements['header_goal'] = array(
+                'type' => 'html',
+                'title' => ' ',
+                'value' => get_string('goal', 'artefact.epos') . '?'
+        );
+        $goals = false;
+        foreach ($descriptorset->get_descriptors($competence->id, $level->id) as $descriptor) {
+            $item = $this->items_by_descriptor_id[$descriptor->id];
+            if ($descriptor->goal_available) $goals = true;
+            $this->form_evaluation_item($elements, $item, $descriptor, $ratings, $descriptorsetfile);
+        }
+        if (!$goals) {
+            unset($elements['header_goal']);
+        }
+    }
+
     private function form_evaluation_item(&$elements, $item, $descriptor, $ratings, $descriptorsetfile) {
     	$elements['item' . $item->id] = array(
     			'type' => 'radio',
     			'title' => $descriptor->name,
     			'options' => $ratings,
-    			'defaultvalue' => $item->evaluation,
+    			'defaultvalue' => $item->value,
     	);
     	//goal checkbox
     	if ($descriptor->goal_available) {
@@ -461,19 +474,19 @@ class ArtefactTypeChecklist extends ArtefactType {
         try {
             global $id;
             $data = new stdClass();
-            $data->checklist = $id;
+            $data->evaluation_id = $id;
             $item_pattern = '/^item(\d+)$/';
             foreach ($values as $name => $value) {
                 if (preg_match($item_pattern, $name, $parts)) {
                     $data->id = $parts[1];
-                    $data->evaluation = $value;
+                    $data->value = $value;
                     if (isset($values[$name . '_goal'])) {
                         $data->goal = $values[$name . '_goal'] ? 1 : 0;
                     }
                     else {
                         unset($data->goal);
                     }
-                    update_record('artefact_epos_evaluation_item', $data, array('checklist', 'id'));
+                    update_record('artefact_epos_evaluation_item', $data, array('evaluation_id', 'id'));
                 }
             }
         }
@@ -840,31 +853,31 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
         return;
     }
     */
-    create_checklist_for_user($descriptorset_id, $checklist_title, $id, $user_id);
+    create_evaluation_for_user($descriptorset_id, $checklist_title, $id, $user_id);
 }
 
 
 /**
- * Create a checlist artefact for a user
+ * Create an evaluation artefact for a user
  * @param $descriptorset_id The descriptorset to use as checklist in this instance
- * @param $checklist_title The title of the checklist created for this subject
+ * @param $title The title of the checklist created for this subject
  * @param $parent The parent item (e.g. subject)
  * @param $user_id The user to create the subject artefact for, defaults to the current user
  */
-function create_checklist_for_user($descriptorset_id, $checklist_title, $parent, $user_id=null) {
+function create_evaluation_for_user($descriptorset_id, $title, $parent, $user_id=null) {
     if (!isset($user_id)) {
         global $USER;
         $user_id = $USER->get('id');
     }
 
     // create checklist artefact
-    $checklist = new ArtefactTypeChecklist(0, array(
+    $evaluation = new ArtefactTypeChecklist(0, array(
         'owner' => $user_id,
-        'title' => $checklist_title,
+        'title' => $title,
         'parent' => $parent,
     	'descriptorset_id' => $descriptorset_id
     ));
-    $checklist->commit();
+    $evaluation->commit();
 
     // load descriptors
     $descriptors = array();
@@ -876,16 +889,16 @@ function create_checklist_for_user($descriptorset_id, $checklist_title, $parent,
     }
 
     // update artefact_epos_evaluation_item
-    $checklist_item = array('checklist' => $checklist->get('id'), 'evaluation' => 0);
+    $evaluation_item = array('evaluation_id' => $evaluation->get('id'), 'value' => 0);
     foreach ($descriptors as $descriptor) {
-        $checklist_item['descriptor'] = $descriptor->id;
+        $evaluation_item['descriptor_id'] = $descriptor->id;
         if ($descriptor->goal_available == 1) {
-            $checklist_item['goal'] = 1;
+            $evaluation_item['goal'] = 1;
         }
         else {
-            unset($checklist_item['goal']);
+            unset($evaluation_item['goal']);
         }
-        insert_record('artefact_epos_evaluation_item', (object)$checklist_item);
+        insert_record('artefact_epos_evaluation_item', (object)$evaluation_item);
     }
 }
 

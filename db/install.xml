@@ -110,9 +110,9 @@
         <TABLE NAME="artefact_epos_evaluation_item"> 
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
-                <FIELD NAME="checklist"         TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="evaluation_id"     TYPE="int" LENGTH="10" NOTNULL="true" />
                 <FIELD NAME="type"              TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" />
-                <FIELD NAME="descriptor"        TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="descriptor_id"     TYPE="int" LENGTH="10" NOTNULL="false"/>
                 <FIELD NAME="evaluation"        TYPE="int" NOTNULL="true" />
                 <FIELD NAME="goal"              TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" />
             </FIELDS>
