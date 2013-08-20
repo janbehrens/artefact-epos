@@ -415,6 +415,12 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $field = new XMLDBField('id');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         add_field($table, $field);
+        $field = new XMLDBField('type');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', true, XMLDB_NOTNULL, false, false, null, '0');
+        add_field($table, $field);
+        $field = new XMLDBField('goal');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', true, false, false, false, null, '0');
+        change_field_type($table, $field);
         rename_table($table, 'artefact_epos_evaluation_item');
         $table = new XMLDBTable('artefact_epos_evaluation');
     	if (table_exists($table)) {

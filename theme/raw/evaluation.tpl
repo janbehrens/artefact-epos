@@ -1,17 +1,4 @@
-<table id="checklist{$id}" class="evaluation">
-    <thead>
-        <tr>
-            <th width="30%">{str tag='competence' section='artefact.epos'}</th>
-            {foreach $checklistforms item=competence name=getlevels}
-                {if $dwoo.foreach.getlevels.first}
-                    {loop $competence}
-            <th>{$_key}</th>
-                    {/loop}
-                {/if}
-            {/foreach}
-        </tr>
-    </thead>
-</table>
+{$evaltable|safe}
 
 {foreach $checklistforms item=checklistform}
     {loop $checklistform}

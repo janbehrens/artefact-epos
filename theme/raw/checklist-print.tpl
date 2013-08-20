@@ -32,28 +32,25 @@
 	        <tr>
 	            <th style="min-width: 30%;">{str tag='competence' section='artefact.epos'}</th>
 	            {foreach $levels name=levels item=level}
-	            <th>{$level}</th>
+	            <th>{$level->name}</th>
 	            {/foreach}
 	        </tr>
 	    </thead>
 	    <tbody>
-	        {foreach $competences name=competences item=competence}
+	        {foreach $results name=results item=competence}
 	        {cycle values='odd,even' assign='evenodd'}
 	        <tr class="{$evenodd}">
 	            <td style="white-space: nowrap;">{$competence.name}</td>
-	            {foreach $competence.levels name=levels item=comp_level}
+	            {foreach $levels name=levels key=level_id item=level}
+                {assign $competence.$level_id comp_level}
 	            <td>
 	                <div class="progressbar">
-	                    <div class="progressbar-value" style="width: {$comp_level.val}%;">
-                            <img src="{$WWWROOT}artefact/epos/images/progressbar-fill.png" />
+	                    <div class="progressbar-value" style="width: {$comp_level.average}%;">
+                            <img src="{$WWWROOT}artefact/epos/images/progressbar-fill-print.png" />
                         </div>
 		                <span class="progressbar-content">
-		                {foreach $evaluations name=evaluations key=evaluation_index item=evaluation}
-		                    {if array_key_exists($evaluation_index, $comp_level.evaluation_sums)}
-		                        {$comp_level.evaluation_sums.$evaluation_index}
-		                    {else}
-		                    0
-		                    {/if}
+		                {foreach $comp_level.evaluation_sums name=evaluations key=evaluation_index item=evaluation}
+		                    {$evaluation}
 		                    {if !$dwoo.foreach.evaluations.last} / {/if}
 		                {/foreach}
 		                </span>

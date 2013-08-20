@@ -40,7 +40,7 @@ $id = $_GET['id'];
 
 $descriptors = array();
 
-$sql = 'SELECT d.name, d.link, c.name AS competence, l.name AS level, ci.evaluation
+$sql = 'SELECT d.name, d.link, c.id AS competence_id, c.name AS competence, l.name AS level, ci.evaluation
         FROM artefact_epos_descriptor d
         JOIN artefact_epos_evaluation_item ci ON ci.descriptor = d.id
         LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
@@ -72,6 +72,7 @@ foreach ($descriptors as $desc) {
     if (!array_key_exists($desc->competence, $competences)) {
         $competences[$desc->competence] = array(
                 'competence' => $desc->competence,
+        		'competence_id' => $desc->competence_id,
                 'index' => $count
         );
         $count++;

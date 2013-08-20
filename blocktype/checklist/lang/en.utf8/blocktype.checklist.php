@@ -32,6 +32,3 @@ $string['title'] = 'Self-evaluation';
 $string['description'] = 'Display your checklist for a selected language';
 $string['defaulttitledescription'] = 'If you leave this blank, the title of the checklist will be used';
 $string['selectchecklist'] = 'Select the checklist to display';
-$string['checklistnotvisible'] = 'The checklist will be visible after a page reload.'
-
-?>

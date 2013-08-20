@@ -29,6 +29,9 @@ defined('INTERNAL') || die();
 
 include_once('xmlize.php');
 
+define('EVALUATION_ITEM_TYPE_DESCRIPTOR', 0);
+define('EVALUATION_ITEM_TYPE_COMPLEVEL', 1);
+
 /**
  * PluginArtefactEpos implementing PluginArtefact
  */
@@ -104,9 +107,13 @@ class ArtefactTypeSubject extends ArtefactType {
  */
 class ArtefactTypeChecklist extends ArtefactType {
 
-    public $set;
+    private  $descriptorset_id;
 
-    public $descriptorset_id;
+    private $descriptorset;
+
+    public $items = array();
+
+    private $items_by_descriptor_id = array();
 
     /**
      * Override the constructor to fetch extra data.
@@ -133,6 +140,12 @@ class ArtefactTypeChecklist extends ArtefactType {
         		// This should never happen unless the user is playing around with task IDs in the location bar or similar
         		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
         	}
+        	if ($items = get_records_array('artefact_epos_evaluation_item', 'checklist', $this->id, 'id')) {
+        		foreach ($items as $item) {
+        			$this->items[$item->id] = $item;
+        			$this->items_by_descriptor_id[$item->descriptor] = $item;
+        		}
+        	}
         }
     }
 
@@ -153,6 +166,17 @@ class ArtefactTypeChecklist extends ArtefactType {
     	db_commit();
     }
 
+    /**
+     * Overriding the delete() function to clear the checklist table
+     */
+    public function delete() {
+        db_begin();
+        delete_records('artefact_epos_evaluation_item', 'checklist', $this->id);
+        delete_records('artefact_epos_evaluation', 'artefact', $this->id);
+        parent::delete();
+        db_commit();
+    }
+
     public static function get_icon($options=null) {}
 
     public static function is_singular() {
@@ -160,32 +184,6 @@ class ArtefactTypeChecklist extends ArtefactType {
     }
 
     public static function get_links($id) {}
-
-    public function check_permission() {
-        global $USER;
-        if ($USER->get('id') != $this->owner) {
-            throw new AccessDeniedException(get_string('youarenottheownerofthischecklist', 'artefact.epos'));
-        }
-    }
-
-    public function render_self($options, $blockid = 0) {
-        $this->add_to_render_path($options);
-        $set = $this->load_descriptorset();
-        $this->set = $set['competences'];
-
-        $inlinejs = $this->returnJS(false, $blockid);
-
-        //if this is used in a block, we use the block instance id, artefact id otherwise
-        if($blockid == 0) $blockid = $this->id;
-
-        $smarty = smarty_core();
-
-        $smarty->assign('id', $blockid);
-        $smarty->assign('levels', $this->set);
-        $smarty->assign('JAVASCRIPT', $inlinejs);
-
-        return array('html' => $smarty->fetch('artefact:epos:viewchecklist.tpl'), 'javascript' => '');
-    }
 
     /**
      * This function builds the artefact title from language and checklist information
@@ -196,263 +194,61 @@ class ArtefactTypeChecklist extends ArtefactType {
         return $language . ' (' . $this->title . ')';
     }
 
-    /**
-     * Returns the JS used to build the checklist table
-     * @param unknown_type $editable	whether this is used in the checklist page (editing support) or in a view
-     * @param unknown_type $blockid
-     * @return string
-     */
-    public function returnJS($editable, $blockid = 0) {
-        $jsonpath = get_config('wwwroot') . 'artefact/epos/checklist.json.php?id=' . $this->id;
-
-        //if this is used in a block, we use the block instance id, artefact id otherwise
-        if($blockid == 0) $blockid = $this->id;
-
-        $inlinejs = '
-(function($){$.fn.checklist=function(){
-
-var prevValue = {};';
-
-        $inlinejs .= <<<EOF
-
-tableRenderer{$blockid} = new TableRenderer(
-    'checklist{$blockid}',
-
-    '{$jsonpath}',
-    [
-        function (r, d) {
-            return TD(null, r.competence);
-        },
-EOF;
-
-        foreach (array_keys($this->set) as $competence) {
-            $count = 0;
-            foreach (array_keys($this->set[$competence]) as $level) {
-            //for ($level = 0; $level < count($this->set[$competence]); $level++) {
-                $inlinejs .= <<<EOF
-
-        function (r) {
-EOF;
-                if ($editable) {
-                    $inlinejs .= <<<EOF
-
-            var str1 = 'toggleLanguageForm("' + r.index + '", "$count")';
-EOF;
-                }
-                else {
-                    $inlinejs .= <<<EOF
-
-            var str1 = '';
-EOF;
-                }
-
-                $inlinejs .= <<<EOF
-
-            var str2 = 'progressbar_$blockid' + '_' + r.index + "_$count";
-            var str3 = '#progressbar_$blockid' + '_' + r.previous + "_$count";
-            var data = TD({'onclick': str1});
-            data.innerHTML = '<div id="' + str2 + '"></div>';
-            if (prevValue.hasOwnProperty('$level')) {
-                $(str3).progressbar({ value: prevValue['$level'] });
-            }
-            if ('$level' in r) {
-                prevValue['$level'] = r['$level']['val'];
-            }
-            return data;
-        },
-EOF;
-                $count++;
-            }
-            break;  //we need the column definitions only once
-        }
-
-        $inlinejs .= <<<EOF
-    ]
-);
-
-tableRenderer{$blockid}.emptycontent = '';
-tableRenderer{$blockid}.updateOnLoad();
-
-$('#checklistnotvisible{$blockid}').addClass('hidden');};
-
-$().checklist();})(jQuery);
-
-EOF;
-        return $inlinejs;
+    public function get_descriptorset() {
+		if (!isset($this->descriptorset)) {
+			$this->descriptorset = new Descriptorset($this->descriptorset_id);
+		}
+		return $this->descriptorset;
     }
 
+    public function check_permission() {
+        global $USER;
+        if ($USER->get('id') != $this->owner) {
+            throw new AccessDeniedException(get_string('youarenottheownerofthischecklist', 'artefact.epos'));
+        }
+    }
 
     /**
-     * Get the forms and JS necessary to display the self-evaluation.
-     * @param array $alterform An array containing elements that should override
-     * the values of the generated forms.
-     * @return array ($forms, $inlinejs)
+     * Calculate the results in an array of competences of levels.
      */
-    public function get_evaluation($alterform = array()) {
-        $checklistforms = array();
-        $checklistformsid = array();
-        $inlinejs = '';
-        $set = $this->load_descriptorset();
-        $descriptorsetfile = substr($set['file'], 0, count($set['file']) - 5);
-        $set = $this->set = $set['competences'];
-        $checklistitems = $this->load_checklist();
-        $id = $this->id;
-
-        $addstr = get_string('add', 'artefact.epos');
-        $cancelstr = get_string('cancel', 'artefact.epos');
-        $delstr = get_string('del', 'artefact.epos');
-        $editstr = get_string('edit', 'artefact.epos');
-        $confirmdelstr = get_string('confirmdel', 'artefact.epos');
-
-        /*
-         * build form elements
-         *
-         * for each competence/level combination there will be a form with
-         * $elements:
-         *  array(
-         *      'header',
-         *      'header_goal',
-         *      'item33',
-         *      'item33_goal',
-         *      'item34',
-         *      'item34_goal',
-         *      etc.,
-         *      'competence',
-         *      'level',
-         *      'submit'
-         *  )
-         */
-        $ccount = 0;
-        $lcount = 0;
-        foreach (array_keys($set) as $competence) {
-            foreach (array_keys($set[$competence]) as $level) {
-                $elements = array();
-                //headings
-                $elements['header'] = array(
-                    'type' => 'html',
-                    'title' => ' ',
-                    'value' => '',
-                );
-                $elements['header_goal'] = array(
-                    'type' => 'html',
-                    'title' => ' ',
-                    'value' => get_string('goal', 'artefact.epos') . '?',
-                );
-                foreach (array_keys($set[$competence][$level]) as $k) {
-                    //evaluation
-                    $optionsarray = array();
-                    $evals = explode(';', $set[$competence][$level][$k]['evaluations']);
-                    for ($j = 0; $j < count($evals); $j++) {
-                        $optionsarray[$j] = $evals[$j];
-                    }
-                    $elements['item' . $k] = array(
-                        'type' => 'radio',
-                        'title' => $set[$competence][$level][$k]['name'],
-                        'options' => $optionsarray,
-                        'defaultvalue' => $checklistitems['evaluation'][$k],
-                    );
-                    //goal checkbox
-                    $goal_count = 0;
-                    if ($set[$competence][$level][$k]['goal'] == 1) {
-                        $elements['item' . $k . '_goal'] = array(
-                            'type' => 'checkbox',
-                            'title' => $set[$competence][$level][$k]['name'],
-                            'defaultvalue' => $checklistitems['goal'][$k],
-                        );
-                        $goal_count++;
-                    }
-                    //link
-                    if ($set[$competence][$level][$k]['link'] != '') {
-                        //check if http(s):// is present in link
-                        if (substr($set[$competence][$level][$k]['link'], 0, 7) != "http://" && substr($set[$competence][$level][$k]['link'], 0, 8) != "https://") {
-                            $set[$competence][$level][$k]['link'] = "example.php?d=" . $descriptorsetfile . "&l=" . $set[$competence][$level][$k]['link'];
-                        }
-                        $elements['item' . $k]['title'] .= ' <a href="' . $set[$competence][$level][$k]['link'] . '"  onclick="openPopup(\'' . $set[$competence][$level][$k]['link'] . '\'); return false;">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
-                        if ($set[$competence][$level][$k]['goal'] == 1) {
-                            $elements['item' . $k . '_goal']['title'] = $elements['item' . $k]['title'];
-                        }
-                    }
-                }
-                if ($goal_count == 0) {
-                    unset($elements['header_goal']);
-                }
-                $elements['competence'] = array(
-                    'type'  => 'hidden',
-                    'value' => $competence,
-                );
-                $elements['level'] = array(
-                    'type'  => 'hidden',
-                    'value' => $level,
-                );
-                $elements['submit'] = array(
-                    'type'  => 'submit',
-                    'title' => '',
-                    'value' => get_string('save', 'artefact.epos'),
-                );
-
-                $checklistform = array(
-                    'name'            => 'checklistform_' . $ccount . '_' . $lcount,
-                    'plugintype'      => 'artefact',
-                    'pluginname'      => 'epos',
-                    'jsform'          => true,
-                    'renderer'        => 'multicolumntable',
-                    'elements'        => $elements,
-                    'elementclasses'  => true,
-                    'successcallback' => array('ArtefactTypeChecklist','submit_checklistform'),
-                    'jssuccesscallback' => 'checklistSaveCallback',
-                );
-                foreach ($alterform as $key => $value) {
-                    $checklistform[$key] = $value;
-                }
-                $checklistform = pieform($checklistform);
-
-                // $checklistforms is an associative array that contains all forms
-                // $checklistformsid contains their codes (like 'cercles_li_a1_1')
-                $checklistforms[$competence][$level]['competence'] = $competence;
-                $checklistforms[$competence][$level]['form'] = $checklistform;
-                $checklistforms[$competence][$level]['name'] = 'checklistform_' . $ccount . '_' . $lcount;
-                $checklistformsid[] = $checklistforms[$competence][$level]['name'];
-
-                $lcount++;
+    public function results() {
+        $descriptorset = $this->get_descriptorset();
+        $max_rating = count($descriptorset->ratings) - 1;
+        $results = array();
+        $empty_complevel = array(
+            'value' => 0,
+            'max' => 0,
+            'evaluation_sums' => array_fill(0, $max_rating+1, 0)
+        );
+        foreach($this->items as $item) {
+            $descriptor = $descriptorset[$item->descriptor];
+            if (!isset($results[$descriptor->competence_id][$descriptor->level_id])) {
+                $results[$descriptor->competence_id][$descriptor->level_id] = $empty_complevel;
             }
-            $lcount = 0;
-            $ccount++;
+            $complevel = &$results[$descriptor->competence_id][$descriptor->level_id];
+            $complevel['value'] += $item->evaluation;
+            $complevel['max'] += $max_rating;
+            increase_array_value($complevel['evaluation_sums'], $item->evaluation);
         }
-
-        //JS stuff
-        $inlinejs .= <<<EOF
-    divs = ["
-EOF;
-
-        $inlinejs .= implode('_div", "', $checklistformsid);
-        $inlinejs .= '_div"];';
-        $inlinejs .= <<<EOF
-
-    function toggleLanguageForm(comp, level) {
-        var elemName = 'checklistform_' + comp + '_' + level + '_div';
-        for(var i = 0; i < divs.length; i++) {
-            addElementClass(divs[i], 'hidden');
+        foreach ($results as $competence_id => &$levels) {
+            ksort($levels);
+            foreach ($levels as &$complevel) {
+                $complevel['average'] = round(100 * $complevel['value'] / $complevel['max']);
+            }
+            $levels['name'] = $descriptorset->competences[$competence_id]->name;
         }
-        if (hasElementClass(elemName, 'hidden')) {
-            removeElementClass(elemName, 'hidden');
-        }
+        ksort($results);
+        return $results;
     }
 
-    function checklistSaveCallback(form, data) {
-        tableRenderer{$id}.doupdate();
+    /**
+     * Used by views to display this artefact.
+     * @see ArtefactType::render_self()
+     */
+    public function render_self($options, $blockid = 0) {
+        //$this->add_to_render_path($options);
+        return array('html' => $this->render_evaluation_table(false), 'javascript' => '');
     }
-
-    function openPopup(url) {
-        jQuery('<div id="example_popup"></div>').modal({overlayClose:true, closeHTML:''});
-        jQuery('<iframe src="' + url + '">').appendTo('#example_popup');
-    }
-
-EOF;
-
-        $inlinejs .= $this->returnJS(true);
-        return array($checklistforms, $inlinejs);
-    }
-
 
     /**
      * Get the forms and JS necessary to display the self-evaluation.
@@ -461,15 +257,15 @@ EOF;
      * @return array ($forms, $inlinejs)
      */
     public function render_evaluation($alterform = array()) {
-        list($checklistforms, $inlinejs) = $this->get_evaluation($alterform);
+        $checklistforms = $this->form_evaluation($alterform);
+        $inlinejs = $this->form_evaluation_js();
         $smarty = smarty();
         $smarty->assign('id', $this->get('id'));
         $smarty->assign('checklistforms', $checklistforms);
-        $includejs = array('tablerenderer',
-                       'jquery',
+        $smarty->assign('evaltable', $this->render_evaluation_table());
+        $includejs = array('jquery',
                        'artefact/epos/js/jquery/ui/minified/jquery.ui.core.min.js',
                        'artefact/epos/js/jquery/ui/minified/jquery.ui.widget.min.js',
-                       'artefact/epos/js/jquery/ui/minified/jquery.ui.progressbar.min.js',
                        'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js'
         );
         return array(
@@ -480,35 +276,203 @@ EOF;
     }
 
     /**
+     * Get the forms for the self-evaluation.
+     *
+     * @param array $alterform
+     *            An array containing elements that should override
+     *            the values of the generated forms.
+     * @return array $forms
+     */
+    private function form_evaluation($alterform = array()) {
+        $checklistforms = array();
+        $descriptorset = $this->get_descriptorset();
+        $descriptorsetfile = substr($descriptorset->file, 0, count($descriptorset->file) - 5);
+        $ratings = array();
+        foreach ($descriptorset->ratings as $id => $rating) {
+            $ratings[] = $rating->name;
+        }
+        foreach ($descriptorset->competences as $competence) {
+            foreach ($descriptorset->levels as $level) {
+                $elements = array();
+                $elements['header'] = array(
+                        'type' => 'html',
+                        'title' => ' ',
+                        'value' => ''
+                );
+                $elements['header_goal'] = array(
+                        'type' => 'html',
+                        'title' => ' ',
+                        'value' => get_string('goal', 'artefact.epos') . '?'
+                );
+                $goals = false;
+                foreach ($descriptorset->get_descriptors($competence->id, $level->id) as $descriptor) {
+                    $item = $this->items_by_descriptor_id[$descriptor->id];
+                    if ($descriptor->goal_available) $goals = true;
+                    $this->form_evaluation_item($elements, $item, $descriptor, $ratings, $descriptorsetfile);
+                }
+                if (!$goals) {
+                    unset($elements['header_goal']);
+                }
+                $elements['competence'] = array(
+                        'type' => 'hidden',
+                        'value' => $competence->name
+                );
+                $elements['level'] = array(
+                        'type' => 'hidden',
+                        'value' => $level->name
+                );
+                $elements['submit'] = array(
+                        'type' => 'submit',
+                        'title' => '',
+                        'value' => get_string('save', 'artefact.epos')
+                );
+                $checklistform = array(
+                        'name' => 'checklistform_' . $competence->id . '_' . $level->id,
+                        'plugintype' => 'artefact',
+                        'pluginname' => 'epos',
+                        'jsform' => true,
+                        'renderer' => 'multicolumntable',
+                        'elements' => $elements,
+                        'elementclasses' => true,
+                        'successcallback' => array(
+                                'ArtefactTypeChecklist',
+                                'submit_checklistform'
+                        ),
+                        'jssuccesscallback' => 'checklistSaveCallback'
+                );
+                foreach ($alterform as $key => $value) {
+                    $checklistform[$key] = $value;
+                }
+                $checklistform = pieform($checklistform);
+                $form_name = 'checklistform_' . $competence->id . '_' . $level->id;
+                $checklistforms[$competence->id][$level->name]['competence'] = $competence->name;
+                $checklistforms[$competence->id][$level->name]['form'] = $checklistform;
+                $checklistforms[$competence->id][$level->name]['name'] = $form_name;
+            }
+        }
+        return $checklistforms;
+    }
+
+    private function form_evaluation_item(&$elements, $item, $descriptor, $ratings, $descriptorsetfile) {
+    	$elements['item' . $item->id] = array(
+    			'type' => 'radio',
+    			'title' => $descriptor->name,
+    			'options' => $ratings,
+    			'defaultvalue' => $item->evaluation,
+    	);
+    	//goal checkbox
+    	if ($descriptor->goal_available) {
+    		$elements['item' . $item->id . '_goal'] = array(
+    				'type' => 'checkbox',
+    				'title' => $descriptor->name,
+    				'defaultvalue' => $item->goal,
+    		);
+    	}
+    	//link
+    	if ($descriptor->link != '') {
+    		//check if http(s):// is present in link
+    		if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
+    			$descriptor->link = "example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
+    		}
+    		$elements['item' . $item->id]['title'] .= ' <a href="' . $descriptor->link . '"  onclick="openPopup(\'' . $descriptor->link . '\'); return false;">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
+    		if ($descriptor->goal_available) {
+    			$elements['item' . $item->id . '_goal']['title'] = $elements['item' . $item->id]['title'];
+    		}
+    	}
+    }
+
+    private function form_evaluation_js() {
+        $descriptorset = $this->get_descriptorset();
+        $jsdivs = 'divs = [';
+        foreach ($descriptorset->competences as $competence) {
+            foreach ($descriptorset->levels as $level) {
+                $form_name = 'checklistform_' . $competence->id . '_' . $level->id;
+                $jsdivs .= '"' . $form_name . '_div", ';
+            }
+        }
+        // remove last comma
+        $jsdivs = substr($jsdivs, 0, strlen($jsdivs) - 2);
+        $jsdivs .= '];';
+
+        $inlinejs = $jsdivs;
+        $inlinejs .= "
+
+        function toggleLanguageForm(comp, level) {
+            var elemName = 'checklistform_' + comp + '_' + level + '_div';
+            for(var i = 0; i < divs.length; i++) {
+                addElementClass(divs[i], 'hidden');
+            }
+            if (hasElementClass(elemName, 'hidden')) {
+                removeElementClass(elemName, 'hidden');
+            }
+        }
+
+        function checklistSaveCallback(form, data) {
+            window.location.reload();
+        }
+
+        function openPopup(url) {
+            jQuery('<div id=\"example_popup\"></div>').modal({overlayClose:true, closeHTML:''});
+            jQuery('<iframe src=\"' + url + '\">').appendTo('#example_popup');
+        }
+
+        ";
+        return $inlinejs;
+    }
+
+    public function render_evaluation_table($interactive=true) {
+        $descriptorset = $this->get_descriptorset();
+        $results = $this->results();
+        $rows = array();
+
+        $column_titles = array_map(function ($item) {
+            return $item->name;
+        }, $descriptorset->levels);
+        array_unshift($column_titles, get_string('competence', 'artefact.epos'));
+
+        $column_definitions = array(
+            function ($row) use ($descriptorset) {
+                return $row['name'];
+            }
+        );
+        foreach ($descriptorset->levels as $level) {
+            $column_definitions []= function($row) use ($level, $interactive) {
+                $cell = array('content' => html_progressbar($row[$level->id]['average']));
+                if ($interactive) {
+                    $cell['properties'] = array(
+                            'onclick' => "toggleLanguageForm(" . $row['__id'] . ", $level->id)",
+                            'class' => "interactive"
+                    );
+                }
+                return $cell;
+            };
+        }
+
+        $eval_table = new HTMLTable_epos($column_titles, $column_definitions);
+        $eval_table->add_table_classes('evaluation');
+        return $eval_table->render($results);
+    }
+
+    /**
      * This writes changed checklist items to the database.
      */
-    public function submit_checklistform(Pieform $form, $values) {
+    public static function submit_checklistform(Pieform $form, $values) {
         try {
-            global $id, $set, $checklistforms;
-            $table = 'artefact_epos_evaluation_item';
-            $values['checklist'] = $id;
-
-            //hidden fields
-            $competence = $values['competence'];
-            $level = $values['level'];
-            $elements = $form->get_elements();
-
-            //write fields to database
-            foreach ($elements as $element) {
-                if (substr($element['name'], 0, 4) == 'item') {
-                    $k = explode('_', $element['name']);
-                    $k = $k[0];
-                    $k = substr($k, 4);
-                    $values['descriptor'] = $k;
-
-                    if ($element['name'] == 'item' . $k . '_goal') {
-                        $values['goal'] = $values['item' . $k . '_goal'] == 1 ? 1 : 0;
+            global $id;
+            $data = new stdClass();
+            $data->checklist = $id;
+            $item_pattern = '/^item(\d+)$/';
+            foreach ($values as $name => $value) {
+                if (preg_match($item_pattern, $name, $parts)) {
+                    $data->id = $parts[1];
+                    $data->evaluation = $value;
+                    if (isset($values[$name . '_goal'])) {
+                        $data->goal = $values[$name . '_goal'] ? 1 : 0;
                     }
                     else {
-                        unset($values['goal']);
-                        $values['evaluation'] = $values['item' . $k];
+                        unset($data->goal);
                     }
-                    update_record($table, (object)$values, array('checklist', 'descriptor'));
+                    update_record('artefact_epos_evaluation_item', $data, array('checklist', 'id'));
                 }
             }
         }
@@ -518,129 +482,6 @@ EOF;
         $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
     }
 
-
-    /**
-     * load_descriptorset()
-     *
-     * will return something like:
-     *     array(
-     *         'Listening' => array(
-     *             'A1' => array(
-     *                 101 => array(
-     *                     'name' => 'I can something',
-     *                     'evaluations' => 'not at all; satisfactory; good',
-     *                     'goal' => 1
-     *                 102 => array(...),
-     *                 etc.
-     *             ),
-     *             'A2' => array(
-     *                 ...
-     *             ),
-     *             etc.
-     *         ),
-     *         'Reading' => array(
-     *             ...
-     *         ),
-     *         etc.
-     *     )
-     */
-    function load_descriptorset() {
-        $sql = 'SELECT DISTINCT d.id, d.name, d.goal_available, d.link, c.name AS competence, l.name AS level, s.file
-            FROM artefact_epos_descriptorset s
-            JOIN artefact_epos_descriptor d ON s.id = d.descriptorset
-            LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
-            LEFT JOIN artefact_epos_level l ON l.id = d.level_id
-            JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
-            JOIN artefact a ON a.id = i.checklist
-            WHERE a.id = ?
-            ORDER BY level, competence';
-
-        if (!$descriptors = get_records_sql_array($sql, array($this->id))) {
-            $descriptors = array();
-        }
-
-        // TODO: move ratings to up to descriptor set layer
-        $sql = 'SELECT d.descriptorset AS id
-                FROM artefact_epos_descriptor d
-                RIGHT JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
-                RIGHT JOIN artefact a ON a.id = i.checklist
-                WHERE a.id = ?
-                LIMIT 1';
-        $desc_set = get_record_sql($sql, array($this->id));
-        if (!$ratings = get_records_array('artefact_epos_rating', 'descriptorset_id', $desc_set->id, 'id')) {
-            $ratings = array();
-        }
-        $ratings = implode(';', array_map(
-            function($rating) { return $rating->name; }, $ratings));
-
-        $competences = array();
-
-        // group them by competences and levels:
-        foreach ($descriptors as $desc) {
-            if (!isset($competences[$desc->competence])) {
-                $competences[$desc->competence] = array();
-            }
-            if (!isset($competences[$desc->competence][$desc->level])) {
-                $competences[$desc->competence][$desc->level] = array();
-            }
-            $competences[$desc->competence][$desc->level][$desc->id] = array(
-                    'name' => $desc->name,
-                    'evaluations' => $ratings,
-                    'goal' => $desc->goal_available,
-                    'link' => $desc->link
-            );
-        }
-        return array(
-                'competences' => $competences,
-                'file' => $descriptors[0]->file
-                );
-    }
-
-    /**
-     * load_checklist()
-     *
-     * will return something like
-     *     array(
-     *         'evaluation' => array(
-     *             33 => 0,
-     *             34 => 2,
-     *             etc.
-     *         ),
-     *         'goal' => array(
-     *             33 => 0,
-     *             34 => 1,
-     *             etc.
-     *         )
-     *     )
-     */
-    function load_checklist() {
-        $sql = 'SELECT *
-            FROM artefact_epos_evaluation_item
-            WHERE checklist = ?';
-
-        if (!$data = get_records_sql_array($sql, array($this->id))) {
-            $data = array();
-        }
-
-        $evaluation = array();
-        $goal = array();
-
-        foreach ($data as $field) {
-            $evaluation[$field->descriptor] = $field->evaluation;
-            $goal[$field->descriptor] = $field->goal;
-        }
-
-        return array('evaluation' => $evaluation, 'goal' => $goal);
-    }
-
-    /**
-     * Overriding the delete() function to clear the checklist table
-     */
-    public function delete() {
-        delete_records('artefact_epos_evaluation_item', 'checklist', $this->id);
-
-        parent::delete();
-    }
 }
 
 /**
@@ -655,6 +496,135 @@ class ArtefactTypeCustomGoal extends ArtefactType {
     }
 
     public static function get_links($id) {}
+}
+
+class Descriptorset implements ArrayAccess, Iterator {
+
+	private $id;
+
+	private $name;
+
+	public $file;
+
+	public $visible;
+
+	public $active;
+
+	public $descriptors = array();
+
+	public $ratings = array();
+
+	public $levels = array();
+
+	public $competences = array();
+
+	private $descriptors_by_competence_level = array();
+
+	function __construct($id=0) {
+		// load
+		if (!empty($id)) {
+			if (!$data = get_record('artefact_epos_descriptorset', 'id', $id)) {
+				throw new Exception(get_string('descriptorsetnotfound', 'artefact.epos'));
+			}
+			foreach((array)$data as $field => $value) {
+				if (property_exists($this, $field)) {
+					$this->{$field} = $value;
+				}
+			}
+			if ($descriptors = get_records_array('artefact_epos_descriptor', 'descriptorset', $id, 'competence_id, level_id')) {
+				foreach ($descriptors as $descriptor) {
+					$this->descriptors[$descriptor->id] = $descriptor;
+					$this->descriptors_by_competence_level[$descriptor->competence_id][$descriptor->level_id] []= $descriptor;
+				}
+			}
+			if ($ratings = get_records_array('artefact_epos_rating', 'descriptorset_id', $id, 'id')) {
+				foreach ($ratings as $rating) {
+					$this->ratings[$rating->id] = $rating;
+				}
+			}
+			if ($levels = get_records_array('artefact_epos_level', 'descriptorset_id', $id, 'id')) {
+				foreach ($levels as $level) {
+					$this->levels[$level->id] = $level;
+				}
+			}
+			if ($competences = get_records_array('artefact_epos_competence', 'descriptorset_id', $id, 'id')) {
+				foreach ($competences as $competence) {
+					$this->competences[$competence->id] = $competence;
+				}
+			}
+		}
+	}
+
+	public function commit() {
+		db_begin();
+		$new = empty($this->id);
+		$data = (object)array(
+				'id'  => $this->id,
+		);
+		if ($new) {
+			$success = insert_record('artefact_epos_descriptorset', $data);
+		}
+		else {
+			$success = update_record('artefact_epos_descriptorset', $data, array('id'));
+		}
+		db_commit();
+	}
+
+	public function delete() {
+		if (empty($this->id)) {
+			return;
+		}
+		db_begin();
+		// TODO: delete competences, ratings and levels
+		delete_records('artefact_epos_descriptorset', 'id', $this->id);
+		db_commit();
+	}
+
+	// array interface
+
+	public function offsetExists($offset) {
+		return isset($this->descriptors);
+	}
+
+	public function offsetGet($offset) {
+		return $this->descriptors[$offset];
+	}
+
+	public function offsetSet($offset, $value) {
+		$this->descriptors[$offset] = $value;
+	}
+
+	public function offsetUnset($offset) {
+		unset($this->descriptors[$offset]);
+	}
+
+	// iterator interface
+
+	public function rewind() {
+        return reset($this->descriptors);
+    }
+
+    public function current() {
+        return current($this->descriptors);
+    }
+
+    public function key() {
+        return key($this->descriptors);
+    }
+
+    public function next() {
+        return next($this->descriptors);
+    }
+
+    public function valid() {
+        return current($this->descriptors) !== false;
+    }
+
+    // other
+
+    public function get_descriptors($competence_id, $level_id) {
+    	return $this->descriptors_by_competence_level[$competence_id][$level_id];
+    }
 }
 
 
@@ -918,16 +888,130 @@ function create_checklist_for_user($descriptorset_id, $checklist_title, $parent,
     }
 }
 
-// comparison functions for sql records
-function cmpByTitle($a, $b) {
-    return strcoll($a->title, $b->title);
+function increase_array_value(&$data, $key, $value=1) {
+    if (!array_key_exists($key, $data)) {
+        $data[$key] = $value;
+    }
+    else {
+        $data[$key] += $value;
+    }
 }
 
-function cmpByCompetenceAndLevel($a, $b) {
-    $cmp = strcoll($a->competence, $b->competence);
-    return $cmp == 0 ? strcoll($a->level, $b->level) : $cmp;
+
+class HTMLTable_epos {
+
+    public $titles;
+    public $cols;
+    public $id;
+    public $data;
+    private $even = true;
+    public $table_classes = array();
+    public $properties = array();
+
+    /**
+     *
+     * @param array $titles
+     *            List of column titles
+     * @param array $cols
+     *            Column definition e.g. array('propertyName', callback($row), ...)
+     * @param array $data
+     *            List of objects
+     */
+    public function __construct($titles, $cols) {
+        $this->titles = $titles;
+        $this->cols = $cols;
+        if (count($cols) != count($titles)) {
+            throw new Exception("The number or column definitions does not match the number of column titles.");
+        }
+    }
+
+    public function add_table_classes($classes) {
+        if (!is_array($classes)) {
+            $classes = array(
+                    $classes
+            );
+        }
+        $this->table_classes = array_merge($this->table_classes, $classes);
+    }
+
+    private function zebra_classes() {
+        $this->even = !$this->even;
+        return $this->even ? "even r0" : "odd r1";
+    }
+
+    /**
+     * Generate HTML from a list of data objects (like record sets)
+     *
+     * @param array $data List of objects
+     */
+    public function render($data) {
+        $this->data = $data;
+        $classes = ' class="' . implode(" ", $this->table_classes) . '"';
+        $out = "<table$classes>\n";
+        $out .= "<thead><tr>\n";
+        foreach ($this->titles as $id => $title) {
+            $column_id = "column_";
+            $column_id .= isset($this->id) ? $this->id . '_' . $id : $id;
+            $out .= "<th class=\"$column_id\">$title</th>";
+        }
+        $out .= "</tr></thead>\n";
+        $out .= "<tbody>\n";
+        while (current($this->data)) {
+            $out .= $this->render_row();
+            next($this->data);
+        }
+        $out .= "</tbody>\n";
+        $out .= "</table>\n";
+        return $out;
+    }
+
+    private function render_row() {
+        $row = current($this->data);
+        $classes = $this->zebra_classes();
+        $out = "<tr class=\"$classes\">";
+        if (is_array($row)) {
+            $row['__id'] = key($this->data);
+        }
+        else if (is_object($row)) {
+            $row->__id = key($this->data);
+        }
+        foreach ($this->cols as $col) {
+            if (is_callable($col)) {
+                $value = $col($row);
+            }
+            else if (is_array($row) && isset($row[$col])) {
+                $value = $row[$col];
+            }
+            else if (is_object($row) && isset($row->$col)) {
+                $value = $row->$col;
+            }
+            else {
+                throw new Exception("Unexpected column definition: " . $col);
+            }
+            $properties = "";
+            if (is_array($value)) {
+                if (isset($value['properties'])) {
+                    $properties = array();
+                    foreach ($value['properties'] as $property => $propvalue) {
+                        $properties []= "$property=\"$propvalue\"";
+                    }
+                    $properties = implode(" ", $properties);
+                }
+                $value = $value['content'];
+            }
+            $out .= "<td $properties>$value</td>";
+        }
+        $out .= "</tr>\n";
+        return $out;
+    }
+
 }
 
-function cmpByLevel($a, $b) {
-    return ;
+function html_progressbar($value, $content=null) {
+    $smarty = smarty();
+    $smarty->assign('value', $value);
+    if ($content != null) {
+        $smarty->assign('content', $content);
+    }
+    return $smarty->fetch('artefact:epos:progressbar.tpl');
 }

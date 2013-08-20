@@ -53,8 +53,8 @@
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="link"              TYPE="text" NOTNULL="false" />
-                <FIELD NAME="competence_id"     TYPE="int" NOTNULL="true" UNSIGNED="true"/>
-                <FIELD NAME="level_id"          TYPE="int" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="competence_id"     TYPE="int" NOTNULL="true" UNSIGNED="true" />
+                <FIELD NAME="level_id"          TYPE="int" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="goal_available"    TYPE="int" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -65,7 +65,7 @@
         </TABLE>
         <TABLE NAME="artefact_epos_competence"> 
             <FIELDS>
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -76,7 +76,7 @@
         </TABLE>
         <TABLE NAME="artefact_epos_level"> 
             <FIELDS>
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -87,7 +87,7 @@
         </TABLE>
         <TABLE NAME="artefact_epos_rating"> 
             <FIELDS>
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -109,11 +109,12 @@
         </TABLE>
         <TABLE NAME="artefact_epos_evaluation_item"> 
             <FIELDS>
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="checklist"         TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="type"              TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="descriptor"        TYPE="int" LENGTH="10" NOTNULL="true" />
                 <FIELD NAME="evaluation"        TYPE="int" NOTNULL="true" />
-                <FIELD NAME="goal"              TYPE="int" NOTNULL="false" />
+                <FIELD NAME="goal"              TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />

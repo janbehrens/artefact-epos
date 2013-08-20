@@ -89,6 +89,9 @@ $string['customlearninggoalupdatesuccess'] = 'Learning objective has been update
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete this additional learning objective?';
 
+//Descriptor sets
+$string['descriptorsetnotfound'] = 'Could not find requested descriptor set';
+
 //Evaluation
 $string['evaluationformtitle'] = '%s on the level of %s';
 $string['evaluationnotfound'] = 'The requested evaluation cannot be found.';
@@ -138,5 +141,3 @@ $string['confirmdeletedescriptorset'] = 'Are you sure you want to permanently de
 $string['confirmdeletesubject'] = 'Are you sure you want to permanently delete the subject "%s"? All competence grids associated with this subject will become inaccessible.';
 $string['nosubjectsconfigured'] = 'There are no subjects configured in "%s". Go to %s to add one.';
 $string['subjectsadministration'] = 'Subjects administration';
-
-?>
