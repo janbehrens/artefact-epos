@@ -107,13 +107,15 @@ class ArtefactTypeSubject extends ArtefactType {
  */
 class ArtefactTypeChecklist extends ArtefactType {
 
-    private  $descriptorset_id;
+    protected $descriptorset_id;
 
     private $descriptorset;
 
     public $items = array();
 
     private $items_by_descriptor_id = array();
+
+    private $items_by_competence_level = array();
 
     /**
      * Override the constructor to fetch extra data.
@@ -143,7 +145,12 @@ class ArtefactTypeChecklist extends ArtefactType {
         	if ($items = get_records_array('artefact_epos_evaluation_item', 'evaluation_id', $this->id, 'id')) {
         		foreach ($items as $item) {
         			$this->items[$item->id] = $item;
-        			$this->items_by_descriptor_id[$item->descriptor_id] = $item;
+        			if ($item->type == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+        			    $this->items_by_descriptor_id[$item->descriptor_id] = $item;
+        			}
+        			else if ($item->type == EVALUATION_ITEM_TYPE_COMPLEVEL) {
+        			    $this->items_by_competence_level[$item->target_key] = $item;
+        			}
         		}
         	}
         }
@@ -209,6 +216,20 @@ class ArtefactTypeChecklist extends ArtefactType {
     }
 
     /**
+     * Retrieve the types of evaluation other than the given one.
+     * @param int The type of evaluation which is not to return
+     * @return array A list of evaluation types as id => form title
+     */
+    public static function other_types($type) {
+        $allTypes = array(
+            EVALUATION_ITEM_TYPE_DESCRIPTOR => get_string('evaluationtypedescriptor', 'artefact.epos'),
+            EVALUATION_ITEM_TYPE_COMPLEVEL => get_string('evaluationtypecompetencelevel', 'artefact.epos')
+        );
+        unset($allTypes[$type]);
+        return $allTypes;
+    }
+
+    /**
      * Calculate the results in an array of competences of levels.
      */
     public function results() {
@@ -221,11 +242,18 @@ class ArtefactTypeChecklist extends ArtefactType {
             'evaluation_sums' => array_fill(0, $max_rating+1, 0)
         );
         foreach($this->items as $item) {
-            $descriptor = $descriptorset[$item->descriptor_id];
-            if (!isset($results[$descriptor->competence_id][$descriptor->level_id])) {
-                $results[$descriptor->competence_id][$descriptor->level_id] = $empty_complevel;
+            if ($item->type == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+                $descriptor = $descriptorset[$item->descriptor_id];
+                if (!isset($results[$descriptor->competence_id][$descriptor->level_id])) {
+                    $results[$descriptor->competence_id][$descriptor->level_id] = $empty_complevel;
+                }
+                $competence_id = $descriptor->competence_id;
+                $level_id = $descriptor->level_id;
             }
-            $complevel = &$results[$descriptor->competence_id][$descriptor->level_id];
+            else if ($item->type == EVALUATION_ITEM_TYPE_COMPLEVEL) {
+                list($competence_id, $level_id) = split(";", $item->target_key);
+            }
+            $complevel = &$results[$competence_id][$level_id];
             $complevel['value'] += $item->value;
             $complevel['max'] += $max_rating;
             increase_array_value($complevel['evaluation_sums'], $item->value);
@@ -257,11 +285,10 @@ class ArtefactTypeChecklist extends ArtefactType {
      * @return array ($forms, $inlinejs)
      */
     public function render_evaluation($alterform = array()) {
-        $checklistforms = $this->form_evaluation($alterform);
         $inlinejs = $this->form_evaluation_js();
         $smarty = smarty();
         $smarty->assign('id', $this->get('id'));
-        $smarty->assign('checklistforms', $checklistforms);
+        $smarty->assign('evaluationforms', $this->form_evaluation_all_types($alterform));
         $smarty->assign('evaltable', $this->render_evaluation_table());
         $includejs = array('jquery',
                        'artefact/epos/js/jquery/ui/minified/jquery.ui.core.min.js',
@@ -276,68 +303,126 @@ class ArtefactTypeChecklist extends ArtefactType {
     }
 
     /**
-     * Get the forms for the self-evaluation.
-     *
-     * @param array $alterform
-     *            An array containing elements that should override
-     *            the values of the generated forms.
-     * @return array $forms
+     * Build all forms for all competences > levels > types
+     * @param unknown $alterform
+     * @return Ambigous <multitype:, string>
      */
-    private function form_evaluation($alterform = array()) {
-        $checklistforms = array();
+    private function form_evaluation_all_types($alterform=array()) {
+        $evaluationforms = array();
         $descriptorset = $this->get_descriptorset();
         $descriptorsetfile = substr($descriptorset->file, 0, count($descriptorset->file) - 5);
         $ratings = array();
         foreach ($descriptorset->ratings as $id => $rating) {
             $ratings[] = $rating->name;
         }
+        $types = array(EVALUATION_ITEM_TYPE_DESCRIPTOR, EVALUATION_ITEM_TYPE_COMPLEVEL);
         foreach ($descriptorset->competences as $competence) {
             foreach ($descriptorset->levels as $level) {
-                $elements = array();
-                $elements['header'] = array(
-                        'type' => 'html',
-                        'title' => ' ',
-                        'value' => ''
-                );
-                $this->form_evaluation_descriptors($elements, $ratings, $descriptorsetfile, $competence, $level);
-                $elements['competence'] = array(
-                        'type' => 'hidden',
-                        'value' => $competence->name
-                );
-                $elements['level'] = array(
-                        'type' => 'hidden',
-                        'value' => $level->name
-                );
-                $elements['submit'] = array(
-                        'type' => 'submit',
-                        'title' => '',
-                        'value' => get_string('save', 'artefact.epos')
-                );
-                $checklistform = array(
-                        'name' => 'checklistform_' . $competence->id . '_' . $level->id,
-                        'plugintype' => 'artefact',
-                        'pluginname' => 'epos',
-                        'jsform' => true,
-                        'renderer' => 'multicolumntable',
-                        'elements' => $elements,
-                        'elementclasses' => true,
-                        'successcallback' => array(
-                                'ArtefactTypeChecklist',
-                                'submit_checklistform'
-                        ),
-                        'jssuccesscallback' => 'checklistSaveCallback'
-                );
-                foreach ($alterform as $key => $value) {
-                    $checklistform[$key] = $value;
+                foreach ($types as $type) {
+                    list($evaluationform, $is_default) = $this->form_evaluation($competence, $level, $type, $ratings, $descriptorsetfile, $alterform);
+                    $form_name = "evaluationform_{$competence->id}_{$level->id}_{$type}";
+                    $compleveltype = array();
+                    $compleveltype['form'] = $evaluationform;
+                    $compleveltype['name'] = $form_name;
+                    $compleveltype['is_default'] = $is_default;
+                    $compleveltype['other_types'] = self::other_types($type);
+                    $evaluationforms[$competence->id][$level->name]['forms'][$type] = $compleveltype;
                 }
-                $checklistform = pieform($checklistform);
-                $form_name = 'checklistform_' . $competence->id . '_' . $level->id;
-                $checklistforms[$competence->id][$level->name]['competence'] = $competence->name;
-                $checklistforms[$competence->id][$level->name]['form'] = $checklistform;
-                $checklistforms[$competence->id][$level->name]['name'] = $form_name;
+                $container_name = "evaluationform_{$competence->id}_{$level->id}";
+                $evaluationforms[$competence->id][$level->name]['container'] = $container_name;
+                $evaluationforms[$competence->id][$level->name]['competence'] = $competence;
+                $evaluationforms[$competence->id][$level->name]['level'] = $level;
+                $evaluationforms[$competence->id][$level->name]['title'] = get_string('evaluationformtitle', 'artefact.epos', $competence->name, $level->name);
             }
         }
-        return $checklistforms;
+        return $evaluationforms;
+    }
+
+    /**
+     * Get a form for evaluation.
+     *
+     * @param array $alterform
+     *            An array containing elements that should override
+     *            the values of the generated forms.
+     * @return array $forms
+     */
+    private function form_evaluation($competence, $level, $type, $ratings, $descriptorsetfile, $alterform=array()) {
+        $elements = array();
+        $elements['header'] = array(
+                'type' => 'html',
+                'title' => ' ',
+                'value' => ''
+        );
+        switch ($type) {
+            case EVALUATION_ITEM_TYPE_DESCRIPTOR:
+                $is_default = $this->form_evaluation_descriptors($elements, $ratings, $descriptorsetfile, $competence, $level);
+                break;
+            case EVALUATION_ITEM_TYPE_COMPLEVEL:
+                $is_default = $this->form_evaluation_complevel($elements, $ratings, $competence, $level);
+                break;
+        }
+        $elements['type'] = array(
+                'type' => 'hidden',
+                'value' => $type
+        );
+        $elements['competence'] = array(
+                'type' => 'hidden',
+                'value' => $competence->id
+        );
+        $elements['level'] = array(
+                'type' => 'hidden',
+                'value' => $level->id
+        );
+        $elements['submit'] = array(
+                'type' => 'submit',
+                'title' => '',
+                'value' => get_string('save', 'artefact.epos')
+        );
+        $evaluationform = array(
+                'name' => "evaluationform_{$competence->id}_{$level->id}_{$type}",
+                'plugintype' => 'artefact',
+                'pluginname' => 'epos',
+                'jsform' => true,
+                'renderer' => 'multicolumntable',
+                'elements' => $elements,
+                'elementclasses' => true,
+                'successcallback' => array(
+                        'ArtefactTypeChecklist',
+                        'submit_evaluationform'
+                ),
+                'jssuccesscallback' => 'checklistSaveCallback'
+        );
+        foreach ($alterform as $key => $value) {
+            $evaluationform[$key] = $value;
+        }
+        return array(pieform($evaluationform), $is_default);
+    }
+
+    /**
+     * Create form elements for the overall rating of this competence and level.
+     * @param array $elements
+     * @param array $ratings
+     * @param object $competence
+     * @param object $level
+     */
+    private function form_evaluation_complevel(&$elements, $ratings, $competence, $level) {
+        $key = "$competence->id;$level->id";
+        if (isset($this->items_by_competence_level[$key])) {
+            $item = $this->items_by_competence_level[$key];
+            $value = $item->value;
+            $is_default = true;
+        }
+        else {
+            $value = 0;
+            $is_default = false;
+        }
+        $elements["item_{$competence->id}_{$level->id}"] = array(
+                'type' => 'radio',
+                'title' => get_string('overallrating', 'artefact.epos'),
+                'options' => $ratings,
+                'defaultvalue' => $value,
+        );
+        return $is_default;
     }
 
     /**
@@ -357,17 +442,27 @@ class ArtefactTypeChecklist extends ArtefactType {
         );
         $goals = false;
         foreach ($descriptorset->get_descriptors($competence->id, $level->id) as $descriptor) {
-            $item = $this->items_by_descriptor_id[$descriptor->id];
             if ($descriptor->goal_available) $goals = true;
-            $this->form_evaluation_item($elements, $item, $descriptor, $ratings, $descriptorsetfile);
+            $is_default = $this->form_evaluation_descriptor($elements, $descriptor, $ratings, $descriptorsetfile);
         }
         if (!$goals) {
             unset($elements['header_goal']);
         }
+        return $is_default;
     }
 
-    private function form_evaluation_item(&$elements, $item, $descriptor, $ratings, $descriptorsetfile) {
-    	$elements['item' . $item->id] = array(
+    private function form_evaluation_descriptor(&$elements, $descriptor, $ratings, $descriptorsetfile) {
+        $is_default = true;
+        if (isset($this->items_by_descriptor_id[$descriptor->id])) {
+            $item = $this->items_by_descriptor_id[$descriptor->id];
+        }
+        else {
+            $item = new stdClass();
+            $item->value = 0;
+            $item->goal = 0;
+            $is_default = false;
+        }
+    	$elements['item_' . $descriptor->id] = array(
     			'type' => 'radio',
     			'title' => $descriptor->name,
     			'options' => $ratings,
@@ -375,7 +470,7 @@ class ArtefactTypeChecklist extends ArtefactType {
     	);
     	//goal checkbox
     	if ($descriptor->goal_available) {
-    		$elements['item' . $item->id . '_goal'] = array(
+    		$elements['item_' . $descriptor->id . '_goal'] = array(
     				'type' => 'checkbox',
     				'title' => $descriptor->name,
     				'defaultvalue' => $item->goal,
@@ -387,11 +482,15 @@ class ArtefactTypeChecklist extends ArtefactType {
     		if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
     			$descriptor->link = "example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
     		}
-    		$elements['item' . $item->id]['title'] .= ' <a href="' . $descriptor->link . '"  onclick="openPopup(\'' . $descriptor->link . '\'); return false;">(' . get_string('exampletask', 'artefact.epos') . ')</a>';
+    		$elements['item_' . $descriptor->id]['title'] .=
+    		                    ' <a href="' . $descriptor->link . '"  onclick="openPopup(\''
+    		      		      . $descriptor->link . '\'); return false;">('
+    		      		      . get_string('exampletask', 'artefact.epos') . ')</a>';
     		if ($descriptor->goal_available) {
-    			$elements['item' . $item->id . '_goal']['title'] = $elements['item' . $item->id]['title'];
+    			$elements['item_' . $descriptor->id . '_goal']['title'] = $elements['item_' . $descriptor->id]['title'];
     		}
     	}
+    	return $is_default;
     }
 
     private function form_evaluation_js() {
@@ -399,7 +498,7 @@ class ArtefactTypeChecklist extends ArtefactType {
         $jsdivs = 'divs = [';
         foreach ($descriptorset->competences as $competence) {
             foreach ($descriptorset->levels as $level) {
-                $form_name = 'checklistform_' . $competence->id . '_' . $level->id;
+                $form_name = "evaluationform_{$competence->id}_{$level->id}";
                 $jsdivs .= '"' . $form_name . '_div", ';
             }
         }
@@ -411,13 +510,21 @@ class ArtefactTypeChecklist extends ArtefactType {
         $inlinejs .= "
 
         function toggleLanguageForm(comp, level) {
-            var elemName = 'checklistform_' + comp + '_' + level + '_div';
+            var elemName = 'evaluationform_' + comp + '_' + level + '_div';
             for(var i = 0; i < divs.length; i++) {
                 addElementClass(divs[i], 'hidden');
             }
             if (hasElementClass(elemName, 'hidden')) {
                 removeElementClass(elemName, 'hidden');
             }
+        }
+
+        function switchFormType(comp, level, type) {
+            var allforms = \$j('div[id^=evaluationform_' + comp + '_' + level + '_]');
+            allforms.addClass('hidden');
+            // show the main div and the requested form
+            \$j('div[id=evaluationform_' + comp + '_' + level + '_div]').removeClass('hidden');
+            \$j('div[id=evaluationform_' + comp + '_' + level + '_' + type + '_div]').removeClass('hidden');
         }
 
         function checklistSaveCallback(form, data) {
@@ -468,31 +575,67 @@ class ArtefactTypeChecklist extends ArtefactType {
     }
 
     /**
-     * This writes changed checklist items to the database.
+     * This writes changed evaluation items to the database.
      */
-    public static function submit_checklistform(Pieform $form, $values) {
+    public static function submit_evaluationform(Pieform $form, $values) {
         try {
             global $id;
+            $type = assert_integer($values['type']);
+            $competence = assert_integer($values['competence']);
+            $level = assert_integer($values['level']);
             $data = new stdClass();
             $data->evaluation_id = $id;
-            $item_pattern = '/^item(\d+)$/';
-            foreach ($values as $name => $value) {
-                if (preg_match($item_pattern, $name, $parts)) {
-                    $data->id = $parts[1];
-                    $data->value = $value;
-                    if (isset($values[$name . '_goal'])) {
-                        $data->goal = $values[$name . '_goal'] ? 1 : 0;
-                    }
-                    else {
-                        unset($data->goal);
-                    }
-                    update_record('artefact_epos_evaluation_item', $data, array('evaluation_id', 'id'));
+            $data->type = $type;
+            $where = new stdClass();
+            $where->evaluation_id = $id;
+            $where->type = $type;
+
+            db_begin();
+            foreach (self::other_types($type) as $othertype => $title) {
+                if ($othertype == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+                    $sql = "DELETE FROM artefact_epos_evaluation_item ei
+                            USING artefact_epos_descriptor d
+                            WHERE ei.descriptor_id = d.id
+                                AND ei.evaluation_id = ? AND ei.type = ? AND d.competence_id = ? AND d.level_id = ?";
+                    execute_sql($sql, array($id, $othertype, $competence, $level));
                 }
+                else if ($othertype == EVALUATION_ITEM_TYPE_COMPLEVEL) {
+                    delete_records('artefact_epos_evaluation_item',
+                        'evaluation_id', $id,
+                        'type', $othertype,
+                        'target_key', "$competence;$level");
+                }
+            }
+
+            if ($type == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+                $item_pattern = '/^item_(\d+)$/';
+                foreach ($values as $name => $value) {
+                    if (preg_match($item_pattern, $name, $parts)) {
+                        $data->descriptor_id = $parts[1];
+                        $data->value = $value;
+                        if (isset($values[$name . '_goal'])) {
+                            $data->goal = $values[$name . '_goal'] ? 1 : 0;
+                        }
+                        else {
+                            unset($data->goal);
+                        }
+                        $where->descriptor_id = $data->descriptor_id;
+                        ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
+                    }
+                }
+            }
+            else if ($type == EVALUATION_ITEM_TYPE_COMPLEVEL) {
+                $where->target_key = "$competence;$level";
+                $data->target_key = "$competence;$level";
+                $data->value = assert_integer($values["item_$competence" . "_$level"]);
+                ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
             }
         }
         catch (Exception $e) {
+            db_rollback();
             $form->json_reply(PIEFORM_ERR, $e->getMessage());
         }
+        db_commit();
         $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
     }
 
@@ -1045,4 +1188,12 @@ function html_progressbar($value, $content=null) {
         $smarty->assign('content', $content);
     }
     return $smarty->fetch('artefact:epos:progressbar.tpl');
+}
+
+function assert_integer($value) {
+    $value = trim($value);
+    if (preg_match('/^\d+$/', $value)) {
+        return (int)$value;
+    }
+    throw new ParameterException("$value is not an integer");
 }

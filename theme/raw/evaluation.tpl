@@ -1,10 +1,17 @@
 {$evaltable|safe}
 
-{foreach $checklistforms item=checklistform}
-    {loop $checklistform}
-<div id="{$name}_div" class="checklistform hidden">
-    <h2>{str tag='evaluationformtitle' section='artefact.epos' arg1=$competence arg2=$_key}</h2>
-    {$form|safe}
-</div>
-    {/loop}
+{foreach $evaluationforms item=competence}
+    {foreach $competence item=levelforms}
+        <div id="{$levelforms.container}_div" class="checklistform hidden">
+        {foreach $levelforms.forms item=typeform}
+            <div id="{$typeform.name}_div" class="checklistform {if not $typeform.is_default}hidden{/if}">
+                <h2>{$levelforms.title}</h2>
+                {foreach $typeform.other_types key=type_id item=form_title}
+                <a href="#" onclick="switchFormType({$levelforms.competence->id}, {$levelforms.level->id}, {$type_id}); return false;">({$form_title})</a>
+                {/foreach}
+            {$typeform.form|safe}
+            </div>
+        {/foreach}
+        </div>
+    {/foreach}
 {/foreach}
