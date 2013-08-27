@@ -36,16 +36,16 @@ $activate = $_GET['activate'];
 
 try {
     if ($activate == 1) {
-//         execute_sql("UPDATE artefact_epos_descriptor_set SET active = 1
-//                 FROM artefact_epos_descriptor_set d
+//         execute_sql("UPDATE artefact_epos_descriptorset SET active = 1
+//                 FROM artefact_epos_descriptorset d
 //                 INNER JOIN artefact_epos_descriptorset_subject ds
 //                 ON d.id = ds.descriptorset
 //                 WHERE ds.subject = $id");
         execute_sql("UPDATE artefact_epos_subject SET active = 1 WHERE id = $id");
             }
     else if ($activate == 0) {
-//         execute_sql("UPDATE artefact_epos_descriptor_set SET active = 0
-//                 FROM artefact_epos_descriptor_set d
+//         execute_sql("UPDATE artefact_epos_descriptorset SET active = 0
+//                 FROM artefact_epos_descriptorset d
 //                 INNER JOIN artefact_epos_descriptorset_subject ds
 //                 ON d.id = ds.descriptorset
 //                 WHERE ds.subject = $id");

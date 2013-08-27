@@ -40,9 +40,9 @@ $id = $_GET['id'];
 
 $descriptors = array();
 
-$sql = 'SELECT d.name, d.link, c.name AS competence, l.name AS level, ci.evaluation
+$sql = 'SELECT d.name, d.link, c.id AS competence_id, c.name AS competence, l.name AS level, ci.evaluation
         FROM artefact_epos_descriptor d
-        JOIN artefact_epos_checklist_item ci ON ci.descriptor = d.id
+        JOIN artefact_epos_evaluation_item ci ON ci.descriptor = d.id
         LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
         LEFT JOIN artefact_epos_level l ON l.id = d.level_id
         WHERE ci.checklist = ?
@@ -55,7 +55,7 @@ if (!$descriptors = get_records_sql_array($sql, array($id))) {
 // get ratings
 $sql = 'SELECT d.descriptorset AS id
         FROM artefact_epos_descriptor d
-        RIGHT JOIN artefact_epos_checklist_item i ON d.id = i.descriptor
+        RIGHT JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
         WHERE i.checklist = ?
         LIMIT 1';
 $desc_set = get_record_sql($sql, array($id));
@@ -72,6 +72,7 @@ foreach ($descriptors as $desc) {
     if (!array_key_exists($desc->competence, $competences)) {
         $competences[$desc->competence] = array(
                 'competence' => $desc->competence,
+        		'competence_id' => $desc->competence_id,
                 'index' => $count
         );
         $count++;

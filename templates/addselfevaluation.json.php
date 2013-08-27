@@ -160,7 +160,7 @@ if (!$emptyfield) {
 	}
 	else {
 	    //get filename of current descriptorset and link the examples files to the new one
-	    $sql = 'SELECT file FROM artefact_epos_descriptor_set
+	    $sql = 'SELECT file FROM artefact_epos_descriptorset
                 WHERE id = ?';
 	    if (!$dbdata = get_records_sql_array($sql, array($id))) {
 	        $dbdata = array();

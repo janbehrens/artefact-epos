@@ -61,72 +61,13 @@ if (!isset($id)) {
     $a = new ArtefactTypeChecklist($id);
 }
 
-$sql = 'SELECT * FROM artefact_epos_descriptor d
-        JOIN artefact_epos_checklist_item ci ON ci.descriptor = d.id
-        WHERE ci.checklist = ?
-        ORDER BY d.level, d.competence';
-if (!$descriptors = get_records_sql_array($sql, array($id))) {
-    $descriptors = array();
-}
-
-function increase_array_value(&$data, $key, $value=1) {
-    if (!array_key_exists($key, $data)) {
-        $data[$key] = $value;
-    }
-    else {
-        $data[$key] += $value;
-    }
-}
-
-// group by competences and levels
-$competences = array();
-$levels = array();
-$evaluations = array();
-$count = 0;
-
-foreach ($descriptors as $descriptor) {
-    if (!array_key_exists($descriptor->competence, $competences)) {
-        $competences[$descriptor->competence] = array(
-                'name' => $descriptor->competence,
-                'index' => $count,
-                'levels' => array()
-        );
-        $count++;
-    }
-    if (!array_key_exists($descriptor->level, $competences[$descriptor->competence]['levels'])) {
-        $competences[$descriptor->competence]['levels'][$descriptor->level] = array(
-                'val' => 0.0,
-                'max' => 0,
-                'descriptors' => array(),
-                'evaluation_sums' => array()
-        );
-    }
-    if (!in_array($descriptor->level, $levels)) {
-        $levels []= $descriptor->level;
-    }
-    $descriptor->evaluations = array_map(trim, explode(';', $descriptor->evaluations));
-    $evaluations = array_replace($evaluations, $descriptor->evaluations);
-    $comp_level = &$competences[$descriptor->competence]['levels'][$descriptor->level];
-    $comp_level['val'] += (float)$descriptor->evaluation;
-    $comp_level['max'] += count($descriptor->evaluations) - 1;
-    $comp_level['descriptors'] []= $descriptor;
-    increase_array_value($comp_level['evaluation_sums'], $descriptor->evaluation);
-}
-
-//calculate percentage
-foreach ($competences as &$competence) {
-    foreach ($competence['levels'] as &$level) {
-        $level['val'] = round(100 * $level['val'] / $level['max']);
-    }
-}
-
-//print_r($competences); exit;
-
+$descriptorset = $a->get_descriptorset();
+$ratings = array_values(array_map(function($item) { return $item->name; }, $descriptorset->ratings));
 
 $smarty = smarty();
-$smarty->assign('competences', $competences);
-$smarty->assign('levels', $levels);
-$smarty->assign('evaluations', $evaluations);
+$smarty->assign('results', $a->results());
+$smarty->assign('levels', $descriptorset->levels);
+$smarty->assign('ratings', $ratings);
 $smarty->assign('subject', $a->get_parent_instance()->get_name());
 $smarty->assign('PAGEHEADING', get_string('selfevaluationprintout', 'artefact.epos'));
 $smarty->display('artefact:epos:checklist-print.tpl');

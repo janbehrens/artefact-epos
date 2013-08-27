@@ -1,24 +1,17 @@
-<table id="checklist{$id}" style="width: 100%;">
-    <thead>
-        <tr>
-            <th width="30%">{str tag='competence' section='artefact.epos'}</th>
-            {foreach $checklistforms item=competence name=getlevels}
-                {if $dwoo.foreach.getlevels.first}
-                    {loop $competence}
-            <th>{$_key}</th>
-                    {/loop}
-                {/if}
-            {/foreach}
-        </tr>
-    </thead>
-</table>
+{$evaltable|safe}
 
-{foreach $checklistforms item=checklistform}
-    {loop $checklistform}
-<div id="{$name}_div" class="checklistform hidden">
-	<p></p>
-    <h2>{$competence} {$_key}</h2>
-    {$form|safe}
-</div>
-    {/loop}
+{foreach $evaluationforms item=competence}
+    {foreach $competence item=levelforms}
+        <div id="{$levelforms.container}_div" class="checklistform hidden">
+        {foreach $levelforms.forms item=typeform}
+            <div id="{$typeform.name}_div" class="checklistform {if not $typeform.is_default}hidden{/if}">
+                <h2>{$levelforms.title}</h2>
+                {foreach $typeform.other_types key=type_id item=form_title}
+                <a href="#" onclick="switchFormType({$levelforms.competence->id}, {$levelforms.level->id}, {$type_id}); return false;">({$form_title})</a>
+                {/foreach}
+            {$typeform.form|safe}
+            </div>
+        {/foreach}
+        </div>
+    {/foreach}
 {/foreach}

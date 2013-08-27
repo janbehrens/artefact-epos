@@ -36,7 +36,7 @@
                 <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
             </KEYS>
         </TABLE>
-        <TABLE NAME="artefact_epos_descriptor_set"> 
+        <TABLE NAME="artefact_epos_descriptorset"> 
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
@@ -53,8 +53,8 @@
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="link"              TYPE="text" NOTNULL="false" />
-                <FIELD NAME="competence_id"     TYPE="int" NOTNULL="true" UNSIGNED="true"/>
-                <FIELD NAME="level_id"          TYPE="int" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="competence_id"     TYPE="int" NOTNULL="true" UNSIGNED="true" />
+                <FIELD NAME="level_id"          TYPE="int" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="goal_available"    TYPE="int" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -65,7 +65,7 @@
         </TABLE>
         <TABLE NAME="artefact_epos_competence"> 
             <FIELDS>
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -76,7 +76,7 @@
         </TABLE>
         <TABLE NAME="artefact_epos_level"> 
             <FIELDS>
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -87,7 +87,7 @@
         </TABLE>
         <TABLE NAME="artefact_epos_rating"> 
             <FIELDS>
-                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true"/>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
@@ -96,14 +96,28 @@
                 <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
             </KEYS>
         </TABLE>
-        <TABLE NAME="artefact_epos_checklist_item"> 
+        <TABLE NAME="artefact_epos_evaluation"> 
             <FIELDS>
-                <FIELD NAME="checklist"         TYPE="int" LENGTH="10" NOTNULL="true" />
-                <FIELD NAME="descriptor"        TYPE="int" LENGTH="10" NOTNULL="true" />
-                <FIELD NAME="evaluation"        TYPE="int" NOTNULL="true" />
-                <FIELD NAME="goal"              TYPE="int" NOTNULL="false" />
+                <FIELD NAME="artefact"          TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="descriptorset_id"  TYPE="int" LENGTH="10" NOTNULL="true" />
             </FIELDS>
             <KEYS>
+                <KEY NAME="primary"             TYPE="primary" FIELDS="artefact" />
+                <KEY NAME="artefactfk"          TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset_id" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_epos_evaluation_item"> 
+            <FIELDS>
+                <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
+                <FIELD NAME="evaluation_id"     TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="type"              TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" />
+                <FIELD NAME="descriptor_id"     TYPE="int" LENGTH="10" NOTNULL="false"/>
+                <FIELD NAME="evaluation"        TYPE="int" NOTNULL="true" />
+                <FIELD NAME="goal"              TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
                 <KEY NAME="checklistfk"         TYPE="foreign" FIELDS="checklist" REFTABLE="artefact" REFFIELDS="id" />
                 <KEY NAME="descriptorfk"        TYPE="foreign" FIELDS="descriptor" REFTABLE="artefact_epos_descriptor" REFFIELDS="id" />
             </KEYS>

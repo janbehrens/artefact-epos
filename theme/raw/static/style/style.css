@@ -1,9 +1,46 @@
+.progressbar {
+    height: 26px;
+    position: relative;
+    border-radius: 4px;
+    border: 1px solid #AAAAAA;
+    background-color: white;
+}
+.progressbar-value {
+	background: url("") repeat-x scroll 50% 50% #CCCCCC;
+    height: 100%;
+    margin: -1px;
+    position: absolute;
+    border: 1px solid #AAAAAA;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.progressbar-content {
+    padding: 6px 15px;
+    position: absolute;
+    color: #333;
+}
+
+.interactive {
+    cursor: pointer;
+}
+
 div#subjects_list p {
 	font-size: 120%;
 }
 .checklistform table {
 	float: right;
 }
+div.checklistform {
+    margin-top: 20px;
+}
+table.evaluation {
+    width: 100%;
+    table-layout:fixed;
+}
+table.evaluation .column_0 {
+	width: 30%;
+}
+
 form#addlearnedlanguage table {
     float: left;
 }
@@ -105,24 +142,12 @@ body.print {
 }
 
 .print .progressbar {
-    height: 26px;
-    position: relative;
-    border-radius: 4px;
     border: 1px solid #333;
-    background-color: white;
 }
 
 .print .progressbar-value {
-    height: 100%;
-    position: absolute;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.print .progressbar-content {
-    padding: 6px 15px;
-    position: absolute;
-    color: #333;
+    border: 0;
+    margin: 0;
 }
 
 .print #legend {

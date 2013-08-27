@@ -51,7 +51,10 @@ if (!$data = get_records_sql_array($sql, array($owner, 'checklist'))) {
     $data = array();
 }
 
-
+// comparison functions for sql records
+function cmpByTitle($a, $b) {
+    return strcoll($a->title, $b->title);
+}
 
 // generate language links
 if ($data) {

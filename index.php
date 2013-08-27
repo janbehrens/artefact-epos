@@ -231,7 +231,7 @@ function get_descriptorsets() {
     $descriptorsets = array();
 
     if ($addsubject != 0) {
-        $sql = "SELECT d.id, d.name FROM artefact_epos_descriptor_set d
+        $sql = "SELECT d.id, d.name FROM artefact_epos_descriptorset d
                 JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
                 WHERE ds.subject = ? AND d.active = 1
                 ORDER BY name";

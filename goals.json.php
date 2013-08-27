@@ -40,20 +40,23 @@ $id = $_GET['id'];
 
 $data = array();
 
-$sql = 'SELECT c.title as descriptorset, d.name as descriptor, d.level, d.competence
-	FROM artefact c
-    JOIN artefact_epos_checklist_item ci ON ci.checklist = c.id
-    JOIN artefact_epos_descriptor d ON d.id = ci.descriptor
-    WHERE c.parent = ? AND ci.goal = 1
-    ORDER BY d.competence, d.level';
+// load all descriptors of a subject's evaluation that are marked as goal
+$sql = 'SELECT a.title as descriptorset, d.name as descriptor, c.name AS competence, l.name AS level
+	FROM artefact a
+    JOIN artefact_epos_evaluation_item ei ON ei.evaluation_id = a.id
+    JOIN artefact_epos_descriptor d ON d.id = ei.descriptor_id
+	LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
+    LEFT JOIN artefact_epos_level l ON l.id = d.level_id
+    WHERE a.parent = ? AND ei.goal = 1
+    ORDER BY competence, level';
 
 if (!$data = get_records_sql_array($sql, array($id))) {
     $data = array();
 }
 
-//Collect custom goals for certain language
+// collect custom goals for certain language
 $data_custom_goal = array();
-$sql = "SELECT id, description 
+$sql = "SELECT id, description
 		FROM artefact
 		WHERE artefacttype = 'customgoal' AND owner = ? AND parent = ?";
 
@@ -69,5 +72,3 @@ echo json_encode(array(
     'offset' => $offset,
     'count' => count($data),
 ));
-
-?>

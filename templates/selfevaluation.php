@@ -456,7 +456,7 @@ function importxml_submit(Pieform $form, $values) {
 
         //fix file name in database entry
         update_record(
-                'artefact_epos_descriptor_set',
+                'artefact_epos_descriptorset',
                 array('file' => $basename . '.xml'),
                 array('id' => $new_descriptorset['id'])
         );
