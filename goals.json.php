@@ -48,7 +48,7 @@ $sql = 'SELECT a.title as descriptorset, d.name as descriptor, c.name AS compete
 	LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
     LEFT JOIN artefact_epos_level l ON l.id = d.level_id
     WHERE a.parent = ? AND ei.goal = 1
-    ORDER BY competence, level';
+    ORDER BY competence, level, d.id';
 
 if (!$data = get_records_sql_array($sql, array($id))) {
     $data = array();

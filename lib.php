@@ -244,14 +244,14 @@ class ArtefactTypeChecklist extends ArtefactType {
         foreach($this->items as $item) {
             if ($item->type == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
                 $descriptor = $descriptorset[$item->descriptor_id];
-                if (!isset($results[$descriptor->competence_id][$descriptor->level_id])) {
-                    $results[$descriptor->competence_id][$descriptor->level_id] = $empty_complevel;
-                }
                 $competence_id = $descriptor->competence_id;
                 $level_id = $descriptor->level_id;
             }
             else if ($item->type == EVALUATION_ITEM_TYPE_COMPLEVEL) {
                 list($competence_id, $level_id) = split(";", $item->target_key);
+            }
+            if (!isset($results[$competence_id][$level_id])) {
+                $results[$competence_id][$level_id] = $empty_complevel;
             }
             $complevel = &$results[$competence_id][$level_id];
             $complevel['value'] += $item->value;
@@ -678,6 +678,7 @@ class Descriptorset implements ArrayAccess, Iterator {
 	private $descriptors_by_competence_level = array();
 
 	function __construct($id=0) {
+		global $USER;
 		// load
 		if (!empty($id)) {
 			if (!$data = get_record('artefact_epos_descriptorset', 'id', $id)) {
@@ -688,7 +689,10 @@ class Descriptorset implements ArrayAccess, Iterator {
 					$this->{$field} = $value;
 				}
 			}
-			if ($descriptors = get_records_array('artefact_epos_descriptor', 'descriptorset', $id, 'competence_id, level_id')) {
+			$descriptor_sql = "SELECT * FROM artefact_epos_descriptor
+			        WHERE descriptorset = ? AND (owner IS NULL OR owner = ?)
+			        ORDER BY competence_id, level_id, id";
+			if ($descriptors = get_records_sql_array($descriptor_sql, array($this->id, $USER->get('id')))) {
 				foreach ($descriptors as $descriptor) {
 					$this->descriptors[$descriptor->id] = $descriptor;
 					$this->descriptors_by_competence_level[$descriptor->competence_id][$descriptor->level_id] []= $descriptor;
@@ -814,7 +818,7 @@ function load_descriptors($id) {
     $sql = 'SELECT d.id, d.name, d.link, d.goal_available, c.name AS competence, l.name AS level FROM artefact_epos_descriptor d
             LEFT JOIN artefact_epos_competence c ON d.competence_id = c.id
             LEFT JOIN artefact_epos_level l ON d.level_id = l.id
-        WHERE descriptorset = ?
+        WHERE descriptorset = ? AND owner IS NULL
         ORDER BY level, competence, id';
 
     if (!$descriptors = get_records_sql_array($sql, array($id))) {

@@ -464,13 +464,23 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         rename_field($table, $field, 'value');
         $field = new XMLDBField('descriptor');
         // allow null
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', false, false);
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10');
         change_field_type($table, $field);
         rename_field($table, $field, 'descriptor_id');
         // add a key to arbitrary items
         $field = new XMLDBField('target_key');
-        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, false);
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255');
         add_field($table, $field);
+    }
+
+    if ($oldversion < 2013082800) {
+        $table = new XMLDBTable('artefact_epos_descriptor');
+        $field = new XMLDBField('owner');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED);
+        add_field($table, $field);
+        $key = new XMLDBKey('ownerfk');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('owner'), 'usr', array('id'));
+        add_key($table, $key);
     }
 
     return true;
