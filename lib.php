@@ -1036,7 +1036,7 @@ function create_evaluation_for_user($descriptorset_id, $title, $parent, $user_id
     foreach ($descriptors as $descriptor) {
         $evaluation_item['descriptor_id'] = $descriptor->id;
         if ($descriptor->goal_available == 1) {
-            $evaluation_item['goal'] = 1;
+            $evaluation_item['goal'] = 0;
         }
         else {
             unset($evaluation_item['goal']);
