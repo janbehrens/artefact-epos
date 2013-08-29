@@ -91,6 +91,7 @@ $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete thi
 
 //Descriptor sets
 $string['descriptorsetnotfound'] = 'Could not find requested descriptor set';
+$string['customdescriptor'] = 'Additional descriptor';
 
 //Evaluation
 $string['evaluationformtitle'] = '%s on the level of %s';

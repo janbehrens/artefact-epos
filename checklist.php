@@ -84,9 +84,9 @@ else {
 }
 
 if ($haslanguages) {
-    $a = new ArtefactTypeChecklist($id);
-    $a->check_permission();
-    $render = $a->render_evaluation();
+    $evaluation = new ArtefactTypeChecklist($id);
+    $evaluation->check_permission();
+    $render = $evaluation->render_evaluation();
     $selfevaluation = $render['html'];
     $inlinejs = $render['inlinejs'];
     $includejs = $render['includejs'];

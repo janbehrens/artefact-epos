@@ -28,7 +28,7 @@ div#subjects_list p {
 	font-size: 120%;
 }
 .checklistform table {
-	float: right;
+	/*float: right;*/
 }
 div.checklistform {
     margin-top: 20px;
@@ -39,6 +39,9 @@ table.evaluation {
 }
 table.evaluation .column_0 {
 	width: 30%;
+}
+#customdescriptorform {
+	margin-top: 30px;
 }
 
 form#addlearnedlanguage table {
