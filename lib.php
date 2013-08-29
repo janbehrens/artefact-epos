@@ -304,23 +304,21 @@ class ArtefactTypeChecklist extends ArtefactType {
      * Get the forms and JS necessary to display the self-evaluation.
      * @param array $alterform An array containing elements that should override
      * the values of the generated forms.
-     * @return array ($forms, $inlinejs)
+     * @return array ($html, $includejs)
      */
     public function render_evaluation($alterform = array()) {
-        $inlinejs = $this->form_evaluation_js();
         $smarty = smarty();
         $smarty->assign('id', $this->get('id'));
         $smarty->assign('evaluationforms', $this->form_evaluation_all_types($alterform));
         $smarty->assign('customdescriptorform', Descriptorset::form_custom_descriptor());
         $smarty->assign('evaltable', $this->render_evaluation_table());
-        $includejs = array('jquery',
-                       'artefact/epos/js/jquery/ui/minified/jquery.ui.core.min.js',
-                       'artefact/epos/js/jquery/ui/minified/jquery.ui.widget.min.js',
-                       'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js'
+        $includejs = array(
+            'jquery',
+            'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js',
+            'artefact/epos/js/evaluation.js'
         );
         return array(
             'html' => $smarty->fetch('artefact:epos:evaluation.tpl'),
-            'inlinejs' => $inlinejs,
             'includejs' => $includejs
         );
     }
@@ -508,52 +506,6 @@ class ArtefactTypeChecklist extends ArtefactType {
 		if ($descriptor->goal_available) {
 			$elements['item_' . $descriptor->id . '_goal']['title'] = $elements['item_' . $descriptor->id]['title'];
 		}
-    }
-
-    private function form_evaluation_js() {
-        $descriptorset = $this->get_descriptorset();
-        $jsdivs = 'divs = [';
-        foreach ($descriptorset->competences as $competence) {
-            foreach ($descriptorset->levels as $level) {
-                foreach (array(EVALUATION_ITEM_TYPE_DESCRIPTOR, EVALUATION_ITEM_TYPE_COMPLEVEL) as $type) {
-                    $form_name = "evaluationform_{$competence->id}_{$level->id}_$type";
-                    $jsdivs .= '"' . $form_name . '_div", ';
-                }
-            }
-        }
-        // remove last comma
-        $jsdivs = substr($jsdivs, 0, strlen($jsdivs) - 2);
-        $jsdivs .= '];';
-
-        $inlinejs = $jsdivs;
-        $inlinejs .= "
-
-        function toggleEvaluationForm(comp, level, type) {
-            var formDivId = '#evaluationform_' + comp + '_' + level + '_' + type + '_div';
-            var allforms = \$j('div[id^=evaluationform_]');
-            allforms.addClass('hidden');
-            \$j(formDivId).removeClass('hidden');
-            if (type == 0) {
-                \$j('#customdescriptorform').removeClass('hidden');
-            }
-            if (type == 1) {
-                \$j('#customdescriptorform').addClass('hidden');
-            }
-            \$j('#adddescriptor_competence').val(comp);
-            \$j('#adddescriptor_level').val(level);
-        }
-
-        function checklistSaveCallback(form, data) {
-            window.location.reload();
-        }
-
-        function openPopup(url) {
-            jQuery('<div id=\"example_popup\"></div>').modal({overlayClose:true, closeHTML:''});
-            jQuery('<iframe src=\"' + url + '\">').appendTo('#example_popup');
-        }
-
-        ";
-        return $inlinejs;
     }
 
     public function render_evaluation_table($interactive=true) {

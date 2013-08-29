@@ -88,7 +88,6 @@ if ($haslanguages) {
     $evaluation->check_permission();
     $render = $evaluation->render_evaluation();
     $selfevaluation = $render['html'];
-    $inlinejs = $render['inlinejs'];
     $includejs = $render['includejs'];
 }
 
@@ -99,5 +98,4 @@ $smarty->assign('id', $id);
 $smarty->assign('languagelinks', $subjectlinks);
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('selfevaluation', $selfevaluation);
-$smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->display('artefact:epos:checklist.tpl');
