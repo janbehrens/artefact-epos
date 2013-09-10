@@ -231,6 +231,7 @@ class ArtefactTypeChecklist extends ArtefactType {
             $competences = get_records_sql_array($sql, array($this->id));
             foreach ($competences as $competence) {
                 $this->customcompetences[$competence->id] = new ArtefactTypeCustomCompetence(0, $competence);
+                $this->customcompetences[$competence->id]->set('dirty', false);
             }
         }
         return $this->customcompetences;
@@ -346,11 +347,11 @@ class ArtefactTypeChecklist extends ArtefactType {
      */
     public function render_evaluation($alterform = array()) {
         $evaluationforms = $this->form_evaluation_all_types($alterform);
-        $customdescriptorform = ArtefactTypeCustomGoal::form_add_customgoal();
+        $customgoalform = ArtefactTypeCustomGoal::form_add_customgoal();
         $smarty = smarty();
         $smarty->assign('id', $this->get('id'));
         $smarty->assign('evaluationforms', $evaluationforms);
-        $smarty->assign('customdescriptorform', $customdescriptorform);
+        $smarty->assign('customgoalform', $customgoalform);
         $smarty->assign('evaltable', $this->render_evaluation_table());
         $includejs = array(
             'jquery',
@@ -770,7 +771,8 @@ class ArtefactTypeCustomGoal extends ArtefactType {
     }
 
     /**
-     * Make sure the competence for the new custom goal is a custom one.
+     * Make sure the competence for the new custom goal is a custom one and the
+     * new goal does not already exist.
      * @param Pieform $form
      * @param array $values
      */
@@ -778,10 +780,23 @@ class ArtefactTypeCustomGoal extends ArtefactType {
         if (isset($values['customcompetence'])) {
             global $evaluation;
             $descriptorset = $evaluation->get_descriptorset();
+            $name = trim($values['customcompetence']);
             foreach ($descriptorset->competences as $competence) {
-                if ($competence->name == trim($values['customcompetence'])) {
+                if ($competence->name == $name) {
                     $form->set_error("customcompetence", get_string('customgoalsonlyincustomcompetence', 'artefact.epos'));
                     break;
+                }
+            }
+            if (isset($values['customgoal'])) {
+                $alreadyexistsincompetencesql = "
+                        SELECT * FROM artefact acompetence
+                        LEFT JOIN artefact agoal ON acompetence.id = agoal.parent
+                        WHERE agoal.description = ? AND acompetence.title = ?
+                        ";
+                $description = trim($values['customgoal']);
+                $containing_competences = get_records_sql_array($alreadyexistsincompetencesql, array($description, $name));
+                if ($containing_competences) {
+                    $form->set_error('customgoal', get_string('customgoalalreadyexistsincompetence', 'artefact.epos'));
                 }
             }
         }
@@ -806,6 +821,7 @@ class ArtefactTypeCustomGoal extends ArtefactType {
             }
             else {
                 $competence = new ArtefactTypeCustomCompetence(0, $competence);
+                $competence->set('dirty', false);
             }
             $customgoal = new ArtefactTypeCustomGoal();
             $customgoal->set('title', 'customgoal');
@@ -823,7 +839,6 @@ class ArtefactTypeCustomGoal extends ArtefactType {
         }
         $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
     }
-
 
 }
 

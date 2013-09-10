@@ -84,11 +84,13 @@ $string['subjectform.descriptorset'] = 'Competence grid';
 $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate your expertise in the selected area of competence and level.';
 
 //custom learning goal
+$string['addcustomgoalformtitle'] = 'Add further goals';
 $string['customlearninggoal'] = 'Additional learning objective';
 $string['customlearninggoalupdatesuccess'] = 'Learning objective has been updated.';
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete this additional learning objective?';
 $string['customgoalsonlyincustomcompetence'] = 'Additional goals can only be added to your own competences. In order to create a new competence, enter its name.';
+$string['customgoalalreadyexistsincompetence'] = 'The goal you entered already exists in the selected competence area.';
 
 //Descriptor sets
 $string['descriptorsetnotfound'] = 'Could not find requested descriptor set';

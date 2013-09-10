@@ -5,6 +5,7 @@
     border: 1px solid #AAAAAA;
     background-color: white;
 }
+ 
 .progressbar-value {
 	background: url("") repeat-x scroll 50% 50% #CCCCCC;
     height: 100%;
@@ -14,6 +15,7 @@
     border-radius: 3px;
     overflow: hidden;
 }
+
 .progressbar-content {
     padding: 6px 15px;
     position: absolute;
@@ -40,9 +42,6 @@ table.evaluation {
 table.evaluation .column_0 {
 	width: 30%;
 }
-#customdescriptorform {
-	margin-top: 30px;
-}
 
 form#addlearnedlanguage table {
     float: left;
@@ -54,7 +53,15 @@ td.radio {
     white-space: nowrap;
 }
 
-/** Customgoal specific **/
+/** Customgoal **/
+
+#customgoalform {
+    margin-top: 30px;
+}
+
+#customgoalform .text, #customgoalform .textarea {
+    width: 565px;
+}
 
 form.pieform.customgoal table {
     float: none;
@@ -89,7 +96,6 @@ div.grippie {
 #addcustomgoal_submit_container {
     text-align: right;
     padding: 0px;
-	
 }
 
 #addcustomgoal_submit_container td {
@@ -101,7 +107,7 @@ div.grippie {
     margin: 0px;	
 }
 
-/* checklist */
+/* evaluation */
 .ui-progressbar {
 	cursor: pointer;
 }
@@ -120,7 +126,7 @@ div.grippie {
 	border: 0;
 }
 
-/* print checklist */
+/* print evaluation */
 body.print {
     background-color: #FFF;
     color: #333;

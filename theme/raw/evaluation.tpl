@@ -15,7 +15,8 @@
 {/foreach}
 
 
-<div id="customdescriptorform">
+<div id="customgoalform">
     <hr />
-    {$customdescriptorform|safe}
+    <h3>{str tag="addcustomgoalformtitle" section="artefact.epos"}</h3>
+    {$customgoalform|safe}
 </div>
