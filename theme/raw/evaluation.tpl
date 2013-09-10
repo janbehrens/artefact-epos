@@ -6,7 +6,7 @@
             <div id="{$typeform.name}_div" class="checklistform hidden">
                 <h2>{$levelforms.title}</h2>
                 {foreach $typeform.other_types key=type_id item=form_title}
-                <a href="#" onclick="toggleEvaluationForm({$levelforms.competence->id}, {$levelforms.level->id}, {$type_id}); return false;">({$form_title})</a>
+                <a href="#" onclick="toggleEvaluationForm({$levelforms.competence->id}, {$levelforms.level->id}, {$type_id}, null); return false;">({$form_title})</a>
                 {/foreach}
             {$typeform.form|safe}
             </div>
@@ -14,6 +14,8 @@
     {/foreach}
 {/foreach}
 
-<div id="customdescriptorform" class="hidden">
+
+<div id="customdescriptorform">
+    <hr />
     {$customdescriptorform|safe}
 </div>

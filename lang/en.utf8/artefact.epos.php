@@ -88,10 +88,10 @@ $string['customlearninggoal'] = 'Additional learning objective';
 $string['customlearninggoalupdatesuccess'] = 'Learning objective has been updated.';
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete this additional learning objective?';
+$string['customgoalsonlyincustomcompetence'] = 'Additional goals can only be added to your own competences. In order to create a new competence, enter its name.';
 
 //Descriptor sets
 $string['descriptorsetnotfound'] = 'Could not find requested descriptor set';
-$string['customdescriptor'] = 'Additional descriptor';
 
 //Evaluation
 $string['evaluationformtitle'] = '%s on the level of %s';

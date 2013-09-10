@@ -57,7 +57,6 @@
                 <FIELD NAME="level_id"          TYPE="int" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="goal_available"    TYPE="int" NOTNULL="true" />
                 <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
-                <FIELD NAME="owner"             TYPE="int" NOTNULL="false" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />

@@ -33,9 +33,7 @@ define('SECTION_PAGE', 'selfevaluation');
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
 define('TITLE', get_string('selfevaluation', 'artefact.epos'));
-require_once('pieforms/pieform.php');
-require_once(get_config('docroot') . 'artefact/lib.php');
-safe_require('artefact', 'internal');
+
 safe_require('artefact', 'epos');
 
 $haslanguages = true;

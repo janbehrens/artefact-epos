@@ -1,16 +1,11 @@
-function toggleEvaluationForm(comp, level, type) {
+function toggleEvaluationForm(comp, level, type, competence) {
     var formDivId = '#evaluationform_' + comp + '_' + level + '_' + type + '_div';
     var allforms = $j('div[id^=evaluationform_]');
     allforms.addClass('hidden');
     $j(formDivId).removeClass('hidden');
-    if (type == 0) {
-        $j('#customdescriptorform').removeClass('hidden');
+    if (type == 2) {
+    	$j('#addcustomgoal_customcompetence').val(competence);
     }
-    if (type == 1) {
-        $j('#customdescriptorform').addClass('hidden');
-    }
-    $j('#adddescriptor_competence').val(comp);
-    $j('#adddescriptor_level').val(level);
 }
 
 function checklistSaveCallback(form, data) {

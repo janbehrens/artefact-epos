@@ -473,15 +473,5 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         add_field($table, $field);
     }
 
-    if ($oldversion < 2013082800) {
-        $table = new XMLDBTable('artefact_epos_descriptor');
-        $field = new XMLDBField('owner');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED);
-        add_field($table, $field);
-        $key = new XMLDBKey('ownerfk');
-        $key->setAttributes(XMLDB_KEY_FOREIGN, array('owner'), 'usr', array('id'));
-        add_key($table, $key);
-    }
-
     return true;
 }
