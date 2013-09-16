@@ -90,6 +90,9 @@ class PluginArtefactEpos extends PluginArtefact {
                     'customlearninggoalwanttodelete'
                 ),
             ),
+            'create_selfevaluation' => array(
+
+            )
         );
         return $jsstrings[$type];
     }
@@ -1162,7 +1165,7 @@ function load_descriptors($id) {
     $sql = 'SELECT d.id, d.name, d.link, d.goal_available, c.name AS competence, l.name AS level FROM artefact_epos_descriptor d
             LEFT JOIN artefact_epos_competence c ON d.competence_id = c.id
             LEFT JOIN artefact_epos_level l ON d.level_id = l.id
-        WHERE descriptorset = ? AND owner IS NULL
+        WHERE descriptorset = ?
         ORDER BY level, competence, id';
 
     if (!$descriptors = get_records_sql_array($sql, array($id))) {

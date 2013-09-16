@@ -380,7 +380,7 @@ function createNewCanDoRow(competencyName, competencyLevel, nI) {
 				label.innerHTML = text_cando_statement+"&nbsp;"+(nI+1);
 				
 				input = document.createElement("textarea");		
-				input.setAttribute("rows", "1");
+				input.setAttribute("rows", "2");
 				input.setAttribute("cols", "80");
 				input.setAttribute("onkeyup", "saveCurrentChangedCanDo("+competencyName+","+competencyLevel+","+nI+")");
 				input.value = arrCanDo[competencyName][competencyLevel][nI];
