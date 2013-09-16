@@ -60,71 +60,6 @@ $deleteCustomgoal = get_string('delete', 'mahara');
 
 $inlinejs = <<<EOF
 
-var oldTA = new Array();
-var openToEdit = new Array();
-
-function editCustomGoalOut(customgoal_id) {
-	if(!openToEdit[customgoal_id]) {
-		openToEdit[customgoal_id] = true;
-		oldTA[customgoal_id] = customgoal_text = document.getElementById(customgoal_id).innerHTML;
-		if(customgoal_text.substr(0, 5) != "<form") {
-			document.getElementById(customgoal_id).innerHTML = '<form name="bm" action="javascript: submitEditCustomGoal('+customgoal_id+');">' +
-			'<textarea class="customgoalta" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
-			'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" />' +
-			'<input class="submitcancel cancel" type="reset" value="$textCancelCustomgoalchanges" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
-			'</form>';
-		}
-	}
-}
-
-function cancleEditCustomGoalOut(customgoal_id) {
-	document.getElementById(customgoal_id).innerHTML = oldTA[customgoal_id];
-	openToEdit[customgoal_id] = false;
-	return true;
-}
-
-function submitEditCustomGoal(customgoal_id) {
-	ta_id = 'ta_'+customgoal_id;
-	customgoal_text = document.getElementById(ta_id).value;
-	sendjsonrequest('customgoalupdate.json.php',
-            {'customgoal_id': customgoal_id,
-            'customgoal_text': customgoal_text},
-            'POST',
-            function() {
-            	tableRenderer.doupdate();
-            },
-            function() {
-            	// @todo error
-            });
-   openToEdit[customgoal_id] = false;
-}
-
-function customgoalSaveCallback(form, data) {
-    tableRenderer.doupdate();
-    // Can't reset() the form here, because its values are what were just submitted,
-    // thanks to pieforms
-    forEach(form.elements, function(element) {
-        if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
-            element.value = '';
-        }
-    });
-}
-
-function deleteCustomGoal(customgoal_id) {
-    if (confirm('$reallyDeleteCustomGoal')) {
-        sendjsonrequest('customgoaldelete.json.php',
-            {'customgoal_id': customgoal_id},
-            'GET',
-            function(data) {
-                tableRenderer.doupdate();
-            },
-            function() {
-                // @todo error
-            }
-        );
-    }
-}
-
 tableRenderer = new TableRenderer(
     'goals_table',
     'goals.json.php?id={$id}',
@@ -132,7 +67,7 @@ tableRenderer = new TableRenderer(
         function (r, d) {
         	var data = TD(null);
         	if(r.descriptor == null && r.description != null) {
-            	data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
+            	data.innerHTML = '<div class="customgoalText" id="custom_' + r.id + '">' + r.description + '</div>';
             	return data;
 			}
             return TD(null, r.descriptor);
@@ -151,7 +86,7 @@ tableRenderer = new TableRenderer(
         function (r, d) {
         	var data = TD(null);
         	if(r.description != null) {
-        		data.innerHTML = '<div style="width:32px;"><a href="javascript: onClick=editCustomGoalOut('+r.id+');" title="$editCustomgoal"><img src="../../theme/raw/static/images/edit.gif" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal"></a></div>';
+        		data.innerHTML = '<div style="width:32px;"><a href="javascript: onClick=editCustomGoal('+r.id+');" title="$editCustomgoal"><img src="../../theme/raw/static/images/edit.gif" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal"></a></div>';
                 return data;
 			}
 
@@ -167,7 +102,8 @@ tableRenderer.paginate = false;
 tableRenderer.updateOnLoad();
 EOF;
 
-$smarty = smarty(array('tablerenderer'));
+$smarty = smarty(array('tablerenderer',
+                       'artefact/epos/js/customgoals.js'));
 
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('languagelinks', $evaluation_selector['html']);
