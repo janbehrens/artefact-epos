@@ -715,6 +715,48 @@ class ArtefactTypeChecklist extends ArtefactType {
         $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
     }
 
+    /**
+     * Return a selector form for the user's evaluations that navigates
+     * to the current site with id parameter set to the selected evaluation's id.
+     * @param string $owner The owner of the evaluations.
+     * @return boolean|array The 'html' code and 'selected' id of the form or false if no evaluation is found
+     */
+    public static function form_user_evaluation_selector($owner = null) {
+        if (!isset($owner)) {
+            global $USER;
+            $owner = $USER->get('id');
+        }
+        $sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
+            	FROM artefact a, artefact b
+            	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
+
+        if (!$data = get_records_sql_array($sql, array($owner, 'checklist'))) {
+            return false;
+        }
+        // sort alphabetically by title
+        usort($data, function ($a, $b) { return strcoll($a->title, $b->title); });
+        // select first language if GET parameter is not set
+        if (!isset($_GET['id'])) {
+            $id = $data[0]->id;
+        }
+        else {
+            $id = $_GET['id'];
+        }
+        $selectform = get_string('languages', 'artefact.epos') . ': ';
+        $selectform .= '<form action="" method="GET"><select name="id">';
+        foreach ($data as $subject) {
+            $selected = '';
+            if ($subject->id == $id) {
+                $selected = 'selected="selected"';
+            }
+            $selectform .= "<option value=\"$subject->id\" $selected>$subject->title ($subject->descriptorset)</option>";
+        }
+        $selectform .= '</select>';
+        $selectform .= '<input type="submit" value="Select" />';
+        $selectform .= '</form>';
+        return array('html' => $selectform, 'selected' => $id);
+    }
+
 }
 
 

@@ -37,49 +37,13 @@ define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 safe_require('artefact', 'epos');
 
 $haslanguages = true;
-$id = isset($_GET['id']) ? $_GET['id'] : 0;
-$owner = $USER->get('id');
 
-//get user's checklists
-$sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
-	FROM artefact a, artefact b
-	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
-
-if (!$data = get_records_sql_array($sql, array($owner, 'checklist'))) {
-    $data = array();
-}
-
-// comparison functions for sql records
-function cmpByTitle($a, $b) {
-    return strcoll($a->title, $b->title);
-}
-
-// generate language links
-if ($data) {
-    usort($data, 'cmpByTitle');
-
-    // select first language if GET parameter is not set
-    if (!isset($_GET['id'])) {
-        $id = $data[0]->id;
-    }
-
-    $subjectlinks = get_string('languages', 'artefact.epos') . ': ';
-    $subjectlinks .= '<form action="" method="GET"><select name="id">';
-    foreach ($data as $subject) {
-        $selected = '';
-        if ($subject->id == $id) {
-            $selected = 'selected="selected"';
-        }
-        $subjectlinks .= "<option value=\"$subject->id\" $selected>$subject->title ($subject->descriptorset)</option>";
-    }
-    $subjectlinks .= '</select>';
-    $subjectlinks .= '<input type="submit" value="Select" />';
-    $subjectlinks .= '</form>';
-}
-else {
+$evaluation_selector = ArtefactTypeChecklist::form_user_evaluation_selector();
+if (!$evaluation_selector) {
     $haslanguages = false;
     $subjectlinks = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
 }
+$id = $evaluation_selector['selected'];
 
 if ($haslanguages) {
     $evaluation = new ArtefactTypeChecklist($id);
@@ -93,7 +57,7 @@ $smarty = smarty($includejs);
 $smarty->assign('PAGEHEADING', get_string('selfevaluation', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
-$smarty->assign('languagelinks', $subjectlinks);
+$smarty->assign('languagelinks', $evaluation_selector['html']);
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('selfevaluation', $selfevaluation);
 $smarty->display('artefact:epos:checklist.tpl');

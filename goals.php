@@ -40,45 +40,9 @@ safe_require('artefact', 'epos');
 
 $haslanguages = true;
 $id = isset($_GET['id']) ? $_GET['id'] : 0;
-$owner = $USER->get('id');
 
-//get user's languages
-$sql = 'SELECT id, title
-    FROM artefact 
-    WHERE owner = ? and artefacttype = ?
-    ORDER BY title';
-
-if (!$data = get_records_sql_array($sql, array($owner, 'subject'))) {
-    $data = array();
-}
-
-// generate language links
-if ($data) {
-    // select first language if GET parameter is not set
-    if (!isset($_GET['id'])) {
-        $id = $data[0]->id;
-    }
-
-    $languagelinks = '<p>' . get_string('languages', 'artefact.epos') . ': ';
-
-    foreach ($data as $field) {    	
-        if ($field->id == $id) {
-            $languagelinks .= '<b>';
-        }
-        else {
-            $languagelinks .= '<a href="goals.php?id=' . $field->id . '">';
-        }
-        $languagelinks .= $field->title;
-        if ($field->id == $id) {
-            $languagelinks .= '</b> | ';
-        }
-        else {
-            $languagelinks .= '</a> | ';
-        }
-    }
-    $languagelinks .= '<a href="index.php">' . get_string('edit', 'artefact.epos') . '</a></p>';
-}
-else {
+$evaluation_selector = ArtefactTypeChecklist::form_user_evaluation_selector();
+if (!$evaluation_selector) {
     $haslanguages = false;
     $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
@@ -133,7 +97,7 @@ function editCustomGoalOut(customgoal_id) {
 			'<textarea class="customgoalta" id="ta_'+ customgoal_id+'">' + customgoal_text + '</textarea>' +
 			'<input class="submitcancel submit" type="submit" value="$textSaveCustomgoalchanges" />' +
 			'<input class="submitcancel cancel" type="reset" value="$textCancelCustomgoalchanges" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
-			'</form>';			
+			'</form>';
 		}
 	}
 }
@@ -146,11 +110,11 @@ function cancleEditCustomGoalOut(customgoal_id) {
 
 function submitEditCustomGoal(customgoal_id) {
 	ta_id = 'ta_'+customgoal_id;
-	customgoal_text = document.getElementById(ta_id).value;	
+	customgoal_text = document.getElementById(ta_id).value;
 	sendjsonrequest('customgoalupdate.json.php',
             {'customgoal_id': customgoal_id,
             'customgoal_text': customgoal_text},
-            'POST', 
+            'POST',
             function() {
             	tableRenderer.doupdate();
             },
@@ -161,8 +125,8 @@ function submitEditCustomGoal(customgoal_id) {
 }
 
 function customgoalSaveCallback(form, data) {
-    tableRenderer.doupdate();    
-    // Can't reset() the form here, because its values are what were just submitted, 
+    tableRenderer.doupdate();
+    // Can't reset() the form here, because its values are what were just submitted,
     // thanks to pieforms
     forEach(form.elements, function(element) {
         if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
@@ -175,7 +139,7 @@ function deleteCustomGoal(customgoal_id) {
     if (confirm('$reallyDeleteCustomGoal')) {
         sendjsonrequest('customgoaldelete.json.php',
             {'customgoal_id': customgoal_id},
-            'GET', 
+            'GET',
             function(data) {
                 tableRenderer.doupdate();
             },
@@ -192,12 +156,12 @@ tableRenderer = new TableRenderer(
     [
         function (r, d) {
         	var data = TD(null);
-        	if(r.descriptor == null && r.description != null) {	
+        	if(r.descriptor == null && r.description != null) {
             	data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
             	return data;
 			}
             return TD(null, r.descriptor);
-        },        
+        },
         function (r, d) {
         	if(r.competence == null) {
         			r.competence = "";
@@ -207,15 +171,15 @@ tableRenderer = new TableRenderer(
         },
         function (r, d) {
         	return TD(null, r.descriptorset);
-        	
+
         },
         function (r, d) {
         	var data = TD(null);
-        	if(r.description != null) {        		
+        	if(r.description != null) {
         		data.innerHTML = '<div style="width:32px;"><a href="javascript: onClick=editCustomGoalOut('+r.id+');" title="$editCustomgoal"><img src="../../theme/raw/static/images/edit.gif" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal"></a></div>';
                 return data;
 			}
-			
+
 			return TD(null);
 		},
     ]
@@ -231,7 +195,7 @@ EOF;
 $smarty = smarty(array('tablerenderer'));
 
 $smarty->assign('haslanguages', $haslanguages);
-$smarty->assign('languagelinks', $languagelinks);
+$smarty->assign('languagelinks', $evaluation_selector['html']);
 if ($haslanguages) $smarty->assign("custom_goal_form", $addcustomgoalform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('goals', 'artefact.epos'));
@@ -252,7 +216,7 @@ function form_submit(Pieform $form, $values) {
 	$form->json_reply(PIEFORM_OK, get_string('addedcustomgoal', 'artefact.epos'));
 }
 
-/** 
+/**
  * Processs the form values: creates anartefact and writes tecustom goal to the database
  * @param Pieform $form
  * @param unknown_type $values
@@ -260,7 +224,7 @@ function form_submit(Pieform $form, $values) {
 function process_addcustomgoal(Pieform $form, $values) {
 	global $USER, $id;
 	$owner = $USER->get('id');
-	
+
 	//Create an Artefact and commit it to the artefact table
 	safe_require('artefact', 'epos');
 	$a = new ArtefactTypeCustomGoal(0, array(
@@ -270,7 +234,7 @@ function process_addcustomgoal(Pieform $form, $values) {
                 'description' => $values['customgoal_text'],
 		)
 		);
-		
+
 	$a->commit();
 }
 
