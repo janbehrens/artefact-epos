@@ -47,7 +47,10 @@ if (!$evaluation_selector) {
     $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
 
-//pieform for customlearninggoal
+$evaluation = new ArtefactTypeChecklist($evaluation_selector['selected']);
+$evaluation->check_permission();
+
+/*
 $elements = array(
     'customgoal_text' => array(
         'type' => 'textarea',
@@ -74,7 +77,9 @@ $addcustomgoalform = pieform(array(
     'successcallback' => 'form_submit',
     'jssuccesscallback' => 'customgoalSaveCallback',
 ));
-//end: pieform for customlearninggoal
+*/
+
+$addcustomgoalform = ArtefactTypeCustomGoal::form_add_customgoal($is_goal=true, 'customgoalSaveCallback');
 
 $textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
 $textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
@@ -163,15 +168,15 @@ tableRenderer = new TableRenderer(
             return TD(null, r.descriptor);
         },
         function (r, d) {
-        	if(r.competence == null) {
-        			r.competence = "";
-        			r.level = "";
+            var level = "";
+            var competence = "";
+        	if(r.competence != null) {
+        		competence = r.competence;
         	}
-            return TD(null, r.competence + ' ' + r.level);
-        },
-        function (r, d) {
-        	return TD(null, r.descriptorset);
-
+        	if (typeof r.level !== "undefined") {
+        	    level = r.level;
+        	}
+            return TD(null, competence + ' ' + level);
         },
         function (r, d) {
         	var data = TD(null);
@@ -224,18 +229,13 @@ function form_submit(Pieform $form, $values) {
 function process_addcustomgoal(Pieform $form, $values) {
 	global $USER, $id;
 	$owner = $USER->get('id');
-
-	//Create an Artefact and commit it to the artefact table
 	safe_require('artefact', 'epos');
 	$a = new ArtefactTypeCustomGoal(0, array(
          	'owner' => $owner,
-                'title' => 'customgoal',
-                'parent' => $id,
-                'description' => $values['customgoal_text'],
+            'title' => 'customgoal',
+            'parent' => $id,
+            'description' => $values['customgoal_text'],
 		)
-		);
-
+	);
 	$a->commit();
 }
-
-?>

@@ -204,15 +204,31 @@ class ArtefactTypeChecklist extends ArtefactType {
         return $language . ' (' . $this->title . ')';
     }
 
-    public function add_item($type, $descriptor_id=null, $target_key=null) {
+    public function add_item($type, $descriptor_id=null, $target_key=null, $goal=0) {
         $item = new stdClass();
         $item->evaluation_id = $this->id;
         $item->value = 0;
-        $item->goal = 0;
+        $item->goal = $goal ? 1 : 0;
         $item->type = $type;
         $item->descriptor_id = $descriptor_id;
         $item->target_key = $target_key;
         return insert_record('artefact_epos_evaluation_item', $item, 'id', true);
+    }
+
+    public function delete_item($type, $descriptor_id=null, $target_key=null) {
+        $args = array('artefact_epos_evaluation_item', 'type', $type, 'evaluation_id', $this->id);
+        if ($descriptor_id !== null) {
+            if ($target_key !== null) {
+                throw new Exception("You must not specify both, descriptor_id and target_key.");
+            }
+            $args []= 'descriptor_id';
+            $args []= $descriptor_id;
+        }
+        if ($target_key !== null) {
+            $args []= 'target_key';
+            $args []= $target_key;
+        }
+        call_user_func_array('delete_records', $args);
     }
 
     public function get_descriptorset() {
@@ -533,6 +549,11 @@ class ArtefactTypeChecklist extends ArtefactType {
      * @param object $level
      */
     private function form_evaluation_customgoals(&$elements, $ratings, $customcompetence) {
+        $elements['header_goal'] = array(
+                'type' => 'html',
+                'title' => ' ',
+                'value' => get_string('goal', 'artefact.epos') . '?'
+        );
         foreach($customcompetence->get_customgoals() as $goal) {
             $key = (string)$goal->get('id');
             if (isset($this->items_by_target_id[$key])) {
@@ -540,7 +561,7 @@ class ArtefactTypeChecklist extends ArtefactType {
                 $value = $item->value;
             }
             else {
-                $value = 0;
+                throw new Exception("No evaluation item for custom goal " . $goal->get('id'));
             }
             $title = $goal->get('description');
             $title .= " (" . get_string('delete') . ")";
@@ -550,6 +571,11 @@ class ArtefactTypeChecklist extends ArtefactType {
                     'options' => $ratings,
                     'defaultvalue' => $value,
             );
+            $elements['item_' . $goal->get('id') . '_goal'] = array(
+    				'type' => 'checkbox',
+    				'title' => $title,
+    				'defaultvalue' => $item->goal,
+    		);
         }
     }
 
@@ -701,6 +727,12 @@ class ArtefactTypeChecklist extends ArtefactType {
                 foreach ($values as $name => $value) {
                     if (preg_match($item_pattern, $name, $parts)) {
                         $data->value = $value;
+                        if (isset($values[$name . '_goal'])) {
+                            $data->goal = $values[$name . '_goal'] ? 1 : 0;
+                        }
+                        else {
+                            unset($data->goal);
+                        }
                         $where->target_key = $parts[1];
                         ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
                     }
@@ -771,7 +803,7 @@ class ArtefactTypeCustomGoal extends ArtefactType {
 
     public static function get_links($id) {}
 
-    public static function form_add_customgoal() {
+    public static function form_add_customgoal($is_goal=false, $jscallback='checklistSaveCallback') {
         $elements = array();
         $elements['customcompetence'] = array(
             'type' => 'text',
@@ -794,6 +826,10 @@ class ArtefactTypeCustomGoal extends ArtefactType {
                 'value' => -1, // will be set on client side
                 'sesskey' => true // indicate that the value may be changed by the client
         );
+        $elements['is_goal'] = array(
+            'type' => 'hidden',
+            'value' => $is_goal
+        );
         $elements['submit'] = array(
             'type' => 'submit',
             'value' => get_string('add'),
@@ -807,7 +843,7 @@ class ArtefactTypeCustomGoal extends ArtefactType {
             'jsform' => true,
             'validatecallback' => array('ArtefactTypeCustomGoal', 'form_addcustomgoal_validate'),
             'successcallback' => array('ArtefactTypeCustomGoal', 'form_addcustomgoal_submit'),
-            'jssuccesscallback' => 'checklistSaveCallback'
+            'jssuccesscallback' => $jscallback
         ));
         return $customdescriptorform;
     }
@@ -833,10 +869,11 @@ class ArtefactTypeCustomGoal extends ArtefactType {
                 $alreadyexistsincompetencesql = "
                         SELECT * FROM artefact acompetence
                         LEFT JOIN artefact agoal ON acompetence.id = agoal.parent
-                        WHERE agoal.description = ? AND acompetence.title = ?
+                        WHERE agoal.description = ? AND acompetence.title = ? AND acompetence.parent = ?
                         ";
                 $description = trim($values['customgoal']);
-                $containing_competences = get_records_sql_array($alreadyexistsincompetencesql, array($description, $name));
+                $containing_competences = get_records_sql_array($alreadyexistsincompetencesql,
+                        array($description, $name, $evaluation->get('id')));
                 if ($containing_competences) {
                     $form->set_error('customgoal', get_string('customgoalalreadyexistsincompetence', 'artefact.epos'));
                 }
@@ -871,7 +908,7 @@ class ArtefactTypeCustomGoal extends ArtefactType {
             $customgoal->set('parent', $competence->get('id'));
             $customgoal->set('owner', $USER->get('id'));
             $customgoal->commit();
-            $evaluation->add_item(EVALUATION_ITEM_TYPE_CUSTOM_GOAL, null, $customgoal->get('id'));
+            $evaluation->add_item(EVALUATION_ITEM_TYPE_CUSTOM_GOAL, null, $customgoal->get('id'), $values['is_goal']);
             db_commit();
         }
         catch (Exception $e) {
@@ -880,6 +917,20 @@ class ArtefactTypeCustomGoal extends ArtefactType {
             $form->json_reply(PIEFORM_ERR, $e->getMessage());
         }
         $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
+    }
+
+    /**
+     * Delete this goal and also the competence it's in if it becomes empty.
+     * @see ArtefactType::delete()
+     */
+    public function delete() {
+        $competence = $this->get_parent_instance();
+        $evaluation = $competence->get_parent_instance();
+        $evaluation->delete_item(EVALUATION_ITEM_TYPE_CUSTOM_GOAL, null, $this->id);
+        parent::delete();
+        if ($competence->count_customgoals() == 0) {
+            $competence->delete();
+        }
     }
 
 }
@@ -897,7 +948,17 @@ class ArtefactTypeCustomCompetence extends ArtefactType {
     public static function get_links($id) {}
 
     public function get_customgoals() {
-        return $this->get_children_instances();
+        $goals = $this->get_children_instances();
+        if ($goals === false) {
+            return array();
+        }
+        return $goals;
+    }
+
+    public function count_customgoals() {
+        $count = get_record_sql('SELECT COUNT(*) num FROM artefact WHERE artefacttype = ? AND parent = ?',
+                array('customgoal', $this->id));
+        return $count->num;
     }
 
 }

@@ -41,13 +41,13 @@ $id = $_GET['id'];
 $data = array();
 
 // load all descriptors of a subject's evaluation that are marked as goal
-$sql = 'SELECT a.title as descriptorset, d.name as descriptor, c.name AS competence, l.name AS level
-	FROM artefact a
-    JOIN artefact_epos_evaluation_item ei ON ei.evaluation_id = a.id
+$sql = 'SELECT d.name as descriptor, c.name AS competence, l.name AS level
+	FROM artefact evaluation
+    JOIN artefact_epos_evaluation_item ei ON ei.evaluation_id = evaluation.id
     JOIN artefact_epos_descriptor d ON d.id = ei.descriptor_id
 	LEFT JOIN artefact_epos_competence c ON c.id = d.competence_id
     LEFT JOIN artefact_epos_level l ON l.id = d.level_id
-    WHERE a.parent = ? AND ei.goal = 1
+    WHERE evaluation.id = ? AND ei.goal = 1
     ORDER BY competence, level, d.id';
 
 if (!$data = get_records_sql_array($sql, array($id))) {
@@ -56,11 +56,15 @@ if (!$data = get_records_sql_array($sql, array($id))) {
 
 // collect custom goals for certain language
 $data_custom_goal = array();
-$sql = "SELECT id, description
-		FROM artefact
-		WHERE artefacttype = 'customgoal' AND owner = ? AND parent = ?";
+$sql = "SELECT goal.id, goal.description, competence.title AS competence
+		FROM artefact goal
+        LEFT JOIN artefact_epos_evaluation_item ei ON ei.target_key::integer = goal.id
+        LEFT JOIN artefact competence ON goal.parent = competence.id
+        LEFT JOIN artefact evaluation ON competence.parent = evaluation.id
+		WHERE goal.artefacttype = 'customgoal' AND ei.goal = 1
+        AND goal.owner = ? AND evaluation.id = ? AND ei.type = ?";
 
-if(!$data_custom_goal = get_records_sql_array($sql, array($owner, $id))) {
+if(!$data_custom_goal = get_records_sql_array($sql, array($owner, $id, EVALUATION_ITEM_TYPE_CUSTOM_GOAL))) {
 	$data_custom_goal = array();
 }
 

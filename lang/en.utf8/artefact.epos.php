@@ -63,7 +63,7 @@ $string['youarenottheownerofthischecklist'] = 'You may not view this self-evalua
 $string['nochecklistsforuser'] = 'You do not yet have any self-evaluation lists.';
 
 //vocabulary
-$string['competence'] = 'Competence';
+$string['competence'] = 'Competence area';
 $string['level'] = 'Competence level';
 $string['descriptors'] = 'Descriptors';
 $string['descriptorset'] = 'Competence grid';

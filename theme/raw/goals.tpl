@@ -8,7 +8,6 @@
         <tr>
             <th>{str tag='goal' section='artefact.epos'}</th>
             <th>{str tag='competence' section='artefact.epos'}</th>
-            <th>{str tag='descriptorset' section='artefact.epos'}</th>
             <th></th>
         </tr>
     </thead>
@@ -28,6 +27,7 @@
 <div>
 
 <div id="customgoal">
+    <h3>{str tag="addcustomgoalformtitle" section="artefact.epos"}</h3>
     {$custom_goal_form|safe}
 </div>
 
