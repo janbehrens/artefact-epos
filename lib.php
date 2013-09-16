@@ -1362,17 +1362,17 @@ class HTMLTable_epos {
                 throw new Exception("Unexpected column definition: " . $col);
             }
             $properties = "";
+            $break = false;
             if (is_array($value)) {
                 if (isset($value['properties'])) {
                     $properties = $this->render_properties($value['properties']);
                 }
+                $break = isset($value['break']) && $value['break'];
                 $value = $value['content'];
             }
             $out .= "<td $properties>$value</td>";
-            if (is_array($value)) {
-                if (isset($value['break']) && $value['break']) {
-                    break;
-                }
+            if ($break) {
+                break;
             }
         }
         $out .= "</tr>\n";

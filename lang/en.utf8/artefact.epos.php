@@ -86,6 +86,7 @@ $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate y
 //custom learning goal
 $string['addcustomgoalformtitle'] = 'Add further goals';
 $string['customlearninggoal'] = 'Additional learning objective';
+$string['customgoaldefaulttitle'] = 'My additional goals';
 $string['customlearninggoalupdatesuccess'] = 'Learning objective has been updated.';
 $string['customlearninggoaldeleted'] = 'Learning objective has been removed.';
 $string['customlearninggoalwanttodelete'] = 'Are you sure you want to delete this additional learning objective?';
@@ -98,7 +99,7 @@ $string['descriptorsetnotfound'] = 'Could not find requested descriptor set';
 //Evaluation
 $string['evaluationformtitle'] = '%s on the level of %s';
 $string['evaluationnotfound'] = 'The requested evaluation cannot be found.';
-$string['overallrating'] = "Overall rating for this competence area on this level.";
+$string['overallrating'] = "Overall rating for this competence area on this level";
 $string['evaluationtypedescriptor'] = "Switch to detailed evaluation";
 $string['evaluationtypecompetencelevel'] = "Switch to overall evaluation";
 
