@@ -78,6 +78,21 @@ class PluginArtefactEpos extends PluginArtefact {
             ),
         );
     }
+
+    public static function jsstrings($type) {
+        static $jsstrings = array(
+            'customgoals' => array(
+                'mahara' => array(
+                    'save',
+                    'cancel'
+                 ),
+                'artefact.epos' => array(
+                    'customlearninggoalwanttodelete'
+                ),
+            ),
+        );
+        return $jsstrings[$type];
+    }
 }
 
 /**
@@ -372,7 +387,8 @@ class ArtefactTypeChecklist extends ArtefactType {
         $includejs = array(
             'jquery',
             'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js',
-            'artefact/epos/js/evaluation.js'
+            'artefact/epos/js/evaluation.js',
+            'artefact/epos/js/customgoals.js'
         );
         return array(
             'html' => $smarty->fetch('artefact:epos:evaluation.tpl'),
@@ -563,19 +579,36 @@ class ArtefactTypeChecklist extends ArtefactType {
             else {
                 throw new Exception("No evaluation item for custom goal " . $goal->get('id'));
             }
+            $goal_id = $goal->get('id');
             $title = $goal->get('description');
-            $title .= " (" . get_string('delete') . ")";
-            $elements['item_' . $goal->get('id')] = array(
+            $title = "<div id=\"custom_$goal_id\">$title</div>";
+            $editCustomgoal = get_string('edit');
+            $deleteCustomgoal = get_string('delete');
+            $elements['item_' . $goal_id] = array(
                     'type' => 'radio',
                     'title' => $title,
                     'options' => $ratings,
                     'defaultvalue' => $value,
             );
-            $elements['item_' . $goal->get('id') . '_goal'] = array(
+            $elements['item_' . $goal_id . '_goal'] = array(
     				'type' => 'checkbox',
     				'title' => $title,
     				'defaultvalue' => $item->goal,
     		);
+            $elements['item_'. $goal_id . _actions] = array(
+                    'type' => 'html',
+    				'title' => $title,
+                    'value' => <<< EOL
+                        <div style="white-space:nowrap;">
+                            <a href="javascript: onClick=editCustomGoal('$goal_id');" title="$editCustomgoal">
+                                <img src="../../theme/raw/static/images/edit.gif" alt="$editCustomgoal">
+                            </a>
+                            <a href="javascript: deleteCustomGoal('$goal_id');" title="$deleteCustomgoal">
+                                <img src="../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal">
+                            </a>
+                        </div>
+EOL
+            );
         }
     }
 

@@ -50,35 +50,6 @@ if (!$evaluation_selector) {
 $evaluation = new ArtefactTypeChecklist($evaluation_selector['selected']);
 $evaluation->check_permission();
 
-/*
-$elements = array(
-    'customgoal_text' => array(
-        'type' => 'textarea',
-        'rows' => '5',
-        'width' => '565px',
-        'resize' => 'none',
-        'title' => get_string('customlearninggoal', 'artefact.epos'),
-        'defaultvalue' => '',
-    ),
-);
-
-$elements['submit'] = array(
-    'type' => 'submit',
-    'value' => get_string('save', 'artefact.epos'),
-);
-
-$addcustomgoalform = pieform(array(
-    'name' => 'addcustomgoal',
-    'class' => 'customgoal',
-    'plugintype' => 'artefact',
-    'pluginname' => 'epos',
-    'elements' => $elements,
-    'jsform' => true,
-    'successcallback' => 'form_submit',
-    'jssuccesscallback' => 'customgoalSaveCallback',
-));
-*/
-
 $addcustomgoalform = ArtefactTypeCustomGoal::form_add_customgoal($is_goal=true, 'customgoalSaveCallback');
 
 $textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
@@ -206,36 +177,3 @@ $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('goals', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:goals.tpl');
-
-
-/**
-* form submit function
-*/
-function form_submit(Pieform $form, $values) {
-	try {
-		process_addcustomgoal($form, $values);
-	}
-	catch (Exception $e) {
-		$form->json_reply(PIEFORM_ERR, $e->getMessage());
-	}
-	$form->json_reply(PIEFORM_OK, get_string('addedcustomgoal', 'artefact.epos'));
-}
-
-/**
- * Processs the form values: creates anartefact and writes tecustom goal to the database
- * @param Pieform $form
- * @param unknown_type $values
- */
-function process_addcustomgoal(Pieform $form, $values) {
-	global $USER, $id;
-	$owner = $USER->get('id');
-	safe_require('artefact', 'epos');
-	$a = new ArtefactTypeCustomGoal(0, array(
-         	'owner' => $owner,
-            'title' => 'customgoal',
-            'parent' => $id,
-            'description' => $values['customgoal_text'],
-		)
-	);
-	$a->commit();
-}
