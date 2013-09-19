@@ -189,3 +189,15 @@ body.print {
     }
 
 }
+
+/* comparison */
+#other.comparison form {
+	display: inline;
+}
+
+table.comparison {
+    width: 100%;
+    table-layout:fixed;
+    margin-top: 20px;
+}
+

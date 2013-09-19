@@ -103,6 +103,13 @@ $string['overallrating'] = "Overall rating for this competence area on this leve
 $string['evaluationtypedescriptor'] = "Switch to detailed evaluation";
 $string['evaluationtypecompetencelevel'] = "Switch to overall evaluation";
 
+//Comparison
+$string['comparison'] = "Comparison";
+$string['comparisonof'] = "Comparison of";
+$string['and'] = "and";
+$string['nocomparableevaluations'] = "There are no other evaluations you could compare with the currently selected.";
+$string['selectotherevaluation'] = "Select an evaluation to compare with";
+
 //Selfevaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation';
 $string['num_evaluation_levels'] = 'Number of self-evaluation levels';

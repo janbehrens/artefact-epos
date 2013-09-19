@@ -92,6 +92,9 @@ class PluginArtefactEpos extends PluginArtefact {
             ),
             'create_selfevaluation' => array(
 
+            ),
+            'evaluation' => array(
+
             )
         );
         return $jsstrings[$type];
@@ -143,26 +146,29 @@ class ArtefactTypeChecklist extends ArtefactType {
      *
      * @param integer $id The id of the element to load
      * @param object $data Data to fill the object with instead from the db
+     * @param boolean $full_load Indicate whether the evaluation items should be loaded
      */
-    public function __construct($id = 0, $data = null) {
+    public function __construct($id = 0, $data = null, $full_load = true) {
         parent::__construct($id, $data);
-        if ($this->id) {
-        	$sql = 'SELECT e.descriptorset_id
-                    FROM {artefact} a
-                    LEFT JOIN {artefact_epos_evaluation} e ON a.id = e.artefact
-                    WHERE a.id = ?';
-        	$data = get_record_sql($sql, array($this->id));
-        	if ($data) {
-        		foreach((array)$data as $field => $value) {
-        			if (property_exists($this, $field) && $field != 'id') {
-        				$this->{$field} = $value;
-        			}
-        		}
-        	}
-        	else {
-        		// This should never happen unless the user is playing around with task IDs in the location bar or similar
-        		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
-        	}
+        if ($this->id && $full_load) {
+            if (!isset($this->descriptorset_id)) {
+            	$sql = 'SELECT e.descriptorset_id
+                        FROM {artefact} a
+                        LEFT JOIN {artefact_epos_evaluation} e ON a.id = e.artefact
+                        WHERE a.id = ?';
+            	$data = get_record_sql($sql, array($this->id));
+            	if ($data) {
+            		foreach((array)$data as $field => $value) {
+            			if (property_exists($this, $field) && $field != 'id') {
+            				$this->{$field} = $value;
+            			}
+            		}
+            	}
+            	else {
+            		// This should never happen unless the user is playing around with task IDs in the location bar or similar
+            		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
+            	}
+            }
         	if ($items = get_records_array('artefact_epos_evaluation_item', 'evaluation_id', $this->id, 'id')) {
         		foreach ($items as $item) {
         			$this->items[$item->id] = $item;
@@ -251,7 +257,7 @@ class ArtefactTypeChecklist extends ArtefactType {
 
     public function get_descriptorset() {
 		if (!isset($this->descriptorset)) {
-			$this->descriptorset = new Descriptorset($this->descriptorset_id);
+	        $this->descriptorset = Descriptorset::get_instance($this->descriptorset_id);
 		}
 		return $this->descriptorset;
     }
@@ -263,9 +269,11 @@ class ArtefactTypeChecklist extends ArtefactType {
                     WHERE artefacttype='customcompetence'
                     AND parent = ?";
             $competences = get_records_sql_array($sql, array($this->id));
-            foreach ($competences as $competence) {
-                $this->customcompetences[$competence->id] = new ArtefactTypeCustomCompetence(0, $competence);
-                $this->customcompetences[$competence->id]->set('dirty', false);
+            if ($competences) {
+                foreach ($competences as $competence) {
+                    $this->customcompetences[$competence->id] = new ArtefactTypeCustomCompetence(0, $competence);
+                    $this->customcompetences[$competence->id]->set('dirty', false);
+                }
             }
         }
         return $this->customcompetences;
@@ -810,18 +818,11 @@ EOL
         else {
             $id = $_GET['id'];
         }
-        $selectform = get_string('languages', 'artefact.epos') . ': ';
-        $selectform .= '<form action="" method="GET"><select name="id">';
         foreach ($data as $subject) {
-            $selected = '';
-            if ($subject->id == $id) {
-                $selected = 'selected="selected"';
-            }
-            $selectform .= "<option value=\"$subject->id\" $selected>$subject->title ($subject->descriptorset)</option>";
+            $subject->title = "$subject->title ($subject->descriptorset)";
         }
-        $selectform .= '</select>';
-        $selectform .= '<input type="submit" value="Select" />';
-        $selectform .= '</form>';
+        $selectform = get_string('languages', 'artefact.epos') . ': ';
+        $selectform .= html_select($data, "Select", "id", $id);
         return array('html' => $selectform, 'selected' => $id);
     }
 
@@ -1023,7 +1024,7 @@ class Descriptorset implements ArrayAccess, Iterator {
 
 	private $descriptors_by_competence_level = array();
 
-	function __construct($id=0) {
+	private function __construct($id=0) {
 		global $USER;
 		// load
 		if (!empty($id)) {
@@ -1060,6 +1061,14 @@ class Descriptorset implements ArrayAccess, Iterator {
 				}
 			}
 		}
+	}
+
+	public static function get_instance($id) {
+        static $cache = array();
+        if (!isset($cache[$id])) {
+            $cache[$id] = new Descriptorset($id);
+        }
+        return $cache[$id];
 	}
 
 	public function commit() {
@@ -1128,6 +1137,10 @@ class Descriptorset implements ArrayAccess, Iterator {
     }
 
     // other
+
+    public function get_id() {
+        return $this->id;
+    }
 
     public function get_descriptors($competence_id, $level_id) {
     	return $this->descriptors_by_competence_level[$competence_id][$level_id];
@@ -1544,6 +1557,32 @@ function html_progressbar($value, $content=null) {
         $smarty->assign('content', $content);
     }
     return $smarty->fetch('artefact:epos:progressbar.tpl');
+}
+
+/**
+ * Render an html select form.
+ * @param array $data An array of objects with id and title
+ * @param string $value The value of the submit button
+ * @param string $name The name of the select
+ * @param string $selected The id of the selected element if any
+ * @param array $hidden Hidden values to store in the form (array of objects with name and value)
+ */
+function html_select($data, $value, $name, $selected=null, $hidden=array()) {
+    $selectform = '<form action="" method="GET"><select name="' . $name . '">';
+    foreach ($data as $item) {
+        $selected_property = '';
+        if ($item->id == $selected) {
+            $selected_property = 'selected="selected"';
+        }
+        $selectform .= "<option value=\"$item->id\" $selected_property>$item->title</option>";
+    }
+    $selectform .= '</select>';
+    $selectform .= "<input type=\"submit\" value=\"$value\" />";
+    foreach ($hidden as $hidden_input) {
+        $selectform .= '<input type="hidden" name="' . $hidden_input->name . '" value="' . $hidden_input->value . '" />';
+    }
+    $selectform .= '</form>';
+    return $selectform;
 }
 
 function assert_integer($value) {
