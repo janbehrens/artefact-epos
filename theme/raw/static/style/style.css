@@ -195,9 +195,30 @@ body.print {
 	display: inline;
 }
 
-table.comparison {
+table.comparison.results {
     width: 100%;
     table-layout:fixed;
     margin-top: 20px;
 }
 
+.comparison td.progress {
+	padding: 2px 5px;
+}
+
+.comparison th.column_0 {
+    width: 30%;
+}
+
+.comparison div.progressbar {
+	margin: 2px 0;
+	height: 15px;
+}
+
+table.comparison.legend tr {
+	border-collapse:collapse;
+}
+
+.comparison.legend tr {
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+}

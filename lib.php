@@ -1550,9 +1550,13 @@ class HTMLTable_epos {
 
 }
 
-function html_progressbar($value, $content=null) {
+function html_progressbar($value, $content=null, $color="") {
     $smarty = smarty();
     $smarty->assign('value', $value);
+    if ($color) {
+        $color = '-' . $color;
+    }
+    $smarty->assign('color', $color);
     if ($content != null) {
         $smarty->assign('content', $content);
     }

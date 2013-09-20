@@ -105,10 +105,10 @@ $string['evaluationtypecompetencelevel'] = "Switch to overall evaluation";
 
 //Comparison
 $string['comparison'] = "Comparison";
+$string['compare'] = "Compare";
 $string['comparisonof'] = "Comparison of";
-$string['and'] = "and";
 $string['nocomparableevaluations'] = "There are no other evaluations you could compare with the currently selected.";
-$string['selectotherevaluation'] = "Select an evaluation to compare with";
+$string['selectotherevaluation'] = "Select another evaluation to compare with";
 
 //Selfevaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation';

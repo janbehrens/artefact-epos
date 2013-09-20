@@ -63,26 +63,12 @@ $first = join(', ', array_slice($evaluation_titles, 0, -1));
 $both  = array_filter(array_merge(array($first), $last));
 $comparison_of .= ' ' . implode(' ' . get_string('and', 'artefact.epos') . ' ', $both);
 
-$other = $comparison->get_other_matching_evaluations($USER->get('id'));
-$selectform = false;
-if (count($other) > 0) {
-    $data = array();
-    foreach ($other as $evaluation) {
-        $item = new stdClass();
-        $item->id = $evaluation->get('id');
-        $item->title = $evaluation->get_parent_instance()->get('title');
-        $data []= $item;
-    }
-    $current_ids = array();
-    foreach ($comparison->evaluations as $evaluation) {
-        $current_ids []= (object) array('name' => "evaluations[]", 'value' => $evaluation->get('id'));
-    }
-    $selectform = html_select($data, "Select", "evaluations[]", null, $current_ids);
-}
+
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', get_string('comparison', 'artefact.epos'));
 $smarty->assign('comparison_of', $comparison_of);
-$smarty->assign('other', $selectform);
+$smarty->assign('other', $comparison->form_select_other());
 $smarty->assign('table', $comparison->render_table());
+$smarty->assign('compared', $comparison->get_compared_items());
 $smarty->display('artefact:epos:comparison_page.tpl');

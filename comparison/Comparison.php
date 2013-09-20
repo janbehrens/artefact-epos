@@ -33,6 +33,12 @@ class Comparison {
 
     private $descriptorset;
 
+    public static $colors = array('blue', 'red', 'green', 'purple', 'gray');
+
+    public static $colors_html = array('afcae4', 'f0d2d2', 'b4efa4', 'd0afe4', 'cccccc');
+
+    private $color_id = 0;
+
     /**
      * Construct a comparison of evaluations
      * @param array $evaluations An array of evaluations or their ids
@@ -72,6 +78,22 @@ class Comparison {
         return true;
     }
 
+    private function color_reset() {
+        $this->color_id = -1;
+    }
+
+    private function color_next() {
+        $this->color_id++;
+        if ($this->color_id >= count(self::$colors)) {
+            $this->color_id = 0;
+        }
+        return self::$colors[$this->color_id];
+    }
+
+    private function color_html() {
+        return '#' . self::$colors_html[$this->color_id];
+    }
+
     public function get_other_matching_evaluations($owner) {
         $sql = "SELECT * FROM artefact a
                 LEFT JOIN artefact_epos_evaluation e ON a.id = e.artefact
@@ -88,15 +110,77 @@ class Comparison {
         return $evaluations;
     }
 
+    /**
+     * Assemble a list of the compared evaluations.
+     * @return An array of objects with id, title and url_without_this
+     */
+    public function get_compared_items() {
+        $items = array();
+        $this->color_reset();
+        foreach ($this->evaluations as $evaluation) {
+            $evaluation_item = new stdClass();
+            $evaluation_item->id = $evaluation->get('id');
+            $evaluation_item->title = $evaluation->get_parent_instance()->get('title');
+            $evaluation_item->url_without_this = $this->get_url_without($evaluation_item->id);
+            $evaluation_item->color = $this->color_next();
+            $evaluation_item->color_html = $this->color_html();
+            $items[$evaluation_item->id] = $evaluation_item;
+        }
+        return $items;
+    }
+
+    /**
+     * Return the url to the comparison without the given evaluation
+     * @param id $evaluation_id The id of the evaluation to remove from the comparison
+     */
+    public function get_url_without($evaluation_id) {
+        $all_ids = array_fill_keys(array_keys($this->evaluations_by_id), true);
+        unset($all_ids[$evaluation_id]);
+        $url = "";
+        foreach (array_keys($all_ids) as $id) {
+            $url .= "&evaluations[]=$id";
+        }
+        return trim($url, '&');
+    }
+
+    /**
+     * Render a select form to select more evaluations to compare with the currently
+     * selected ones.
+     * @return The HTML of the form ore FALSE if no further evaluations are available
+     */
+    public function form_select_other() {
+        global $USER;
+        $other = $this->get_other_matching_evaluations($USER->get('id'));
+        $selectform = false;
+        if (count($other) > 0) {
+            $data = array();
+            foreach ($other as $evaluation) {
+                $item = new stdClass();
+                $item->id = $evaluation->get('id');
+                $item->title = $evaluation->get_parent_instance()->get('title');
+                $data []= $item;
+            }
+            $current_ids = array();
+            foreach ($this->evaluations as $evaluation) {
+                $current_ids []= (object) array('name' => "evaluations[]", 'value' => $evaluation->get('id'));
+            }
+            $selectform = html_select($data, "Select", "evaluations[]", null, $current_ids);
+        }
+        return $selectform;
+    }
+
     public function render_table() {
         $descriptorset = $this->descriptorset;
         $results = array();
+        $colors = array();
+        $this->color_reset();
         foreach ($this->evaluations as $evaluation) {
             foreach ($evaluation->results() as $competence => $row) {
                 foreach ($row as $level => $complevel) {
-                    $results[$competence][$level][] = $complevel;
+                    $results[$competence][$level][$evaluation->get('id')] = $complevel;
                 }
             }
+            $colors[$evaluation->get('id')] = $this->color_next();
         }
 
         $column_titles = array_map(function ($item) {
@@ -106,12 +190,13 @@ class Comparison {
 
         $column_definitions = array(
             function ($row) use ($descriptorset) {
-                return $row['name'][0];
+                $names = array_values($row['name']);
+                return $names[0];
             }
         );
         $levelcount = count($descriptorset->levels);
         foreach ($descriptorset->levels as $level) {
-            $column_definitions []= function($row) use ($results, $level, $levelcount) {
+            $column_definitions []= function($row) use ($results, $level, $levelcount, $colors) {
                 $bars = "";
                 if (isset($row[$level->id])) {
                     $level_id = $level->id;
@@ -120,14 +205,16 @@ class Comparison {
                     // for EVALUATION_ITEM_TYPE_CUSTOM_GOAL level_id is always 0
                     $level_id = 0;
                 }
-                foreach ($row[$level_id] as $evaluation_row) {
-                    $bars .= html_progressbar($evaluation_row['average']);
+                foreach ($row[$level_id] as $evaluation_id => $evaluation_row) {
+                    $bars .= html_progressbar($evaluation_row['average'], null, $colors[$evaluation_id]);
                 }
-                return $bars;
+                return array('content' => $bars, 'properties' => array(
+                    'class' => 'progress'
+                ));
             };
         }
         $compare_table = new HTMLTable_epos($column_titles, $column_definitions);
-        $compare_table->add_table_classes('comparison');
+        $compare_table->add_table_classes('comparison results');
         $compare_table->always_even = true;
         return $compare_table->render($results);
     }
