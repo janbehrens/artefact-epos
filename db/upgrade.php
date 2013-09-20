@@ -261,8 +261,9 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
 
     if ($oldversion < 2013070200) {
         global $db;
-        // this version does not have the biography any more, but bioigraphy artefacts still exist
-        // so they we temporarily reassign them to internal
+        db_begin();
+        // this version does not have the biography any more, but biography artefacts still exist
+        // so we temporarily reassign them to internal
         update_record('artefact_installed_type', (object) array('plugin'=>'internal'), array('name' => 'biography'));
         // now we create a fake artefact type...
         insert_record('artefact_installed_type', (object) array(
@@ -294,6 +295,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         rename_table($table, 'artefact_biography_educationhistory');
         $table = new XMLDBTable('artefact_epos_biography_certificates');
         rename_table($table, 'artefact_biography_certificates');
+        db_commit();
     }
 
     if ($oldversion < 2013071800) {
