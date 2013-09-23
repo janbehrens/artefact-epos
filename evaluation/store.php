@@ -19,14 +19,30 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Jan Behrens
+ * @author     Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011-2013 TZI / Universität Bremen
+ * @copyright  (C) 2013 TZI / Universität Bremen
  *
  */
 
-defined('INTERNAL') || die();
+define('INTERNAL', true);
+define('MENUITEM', 'evaluation/selfevaluation');
+define('SECTION_PLUGINTYPE', 'artefact');
+define('SECTION_PLUGINNAME', 'epos');
 
-$config = new StdClass;
-$config->version = 2013092301;
-$config->release = '1.1';
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
+define('TITLE', get_string('storeevaluation', 'artefact.epos'));
+safe_require('artefact', 'epos');
+
+$evaluation_id = param_integer('id');
+$evaluation = new ArtefactTypeChecklist($evaluation_id);
+$evaluation->check_permission();
+$subject = $evaluation->get_parent_instance();
+
+$heading = get_string('storeevaluation', 'artefact.epos') . ': '
+        . $subject->get('title') . ' (' . $evaluation->get('title') . ')';
+
+$smarty = smarty();
+$smarty->assign('PAGEHEADING', $heading);
+$smarty->assign('content', ArtefactTypeStoredEvaluation::form_save_evaluation($evaluation_id));
+$smarty->display('artefact:epos:simple.tpl');

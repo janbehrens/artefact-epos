@@ -545,5 +545,14 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         rename_table($table, 'artefact_epos_mysubject');
         db_commit();
     }
+
+    if ($oldversion < 2013092301) {
+        // install new artefact type "stored evaluation"
+        insert_record('artefact_installed_type', (object) array(
+            'name' => 'storedevaluation',
+            'plugin' => 'epos'
+        ));
+    }
+
     return true;
 }

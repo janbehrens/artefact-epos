@@ -30,7 +30,6 @@ defined('INTERNAL') || die();
 //general
 $string['pluginname'] = 'epos';
 $string['goals'] = 'Learning objectives';
-$string['selfevaluation'] = 'Self-evaluation';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
 $string['biography'] = 'Biography';
@@ -97,11 +96,20 @@ $string['customgoalalreadyexistsincompetence'] = 'The goal you entered already e
 $string['descriptorsetnotfound'] = 'Could not find requested descriptor set';
 
 //Evaluation
+$string['evaluation'] = 'Evaluation';
+$string['selfevaluation'] = 'Self-evaluation';
 $string['evaluationformtitle'] = '%s on the level of %s';
 $string['evaluationnotfound'] = 'The requested evaluation cannot be found.';
 $string['overallrating'] = "Overall rating for this competence area on this level";
 $string['evaluationtypedescriptor'] = "Switch to detailed evaluation";
 $string['evaluationtypecompetencelevel'] = "Switch to overall evaluation";
+$string['requestexternalevaluation'] = "Request External Evaluation";
+// Stored Evaluations
+$string['storeevaluation'] = "Store Evaluation";
+$string['storedevaluations'] = "Stored Evaluations";
+$string['evaluationname'] = "Name for evaluation";
+$string['evaluationnamealreadyexists'] = "An evaluation with this name already exists.";
+$string['evaluationsuccessfullystored'] = "Successfully stored your evaluation.";
 
 //Comparison
 $string['comparison'] = "Comparison";
@@ -110,7 +118,7 @@ $string['comparisonof'] = "Comparison of";
 $string['nocomparableevaluations'] = "There are no other evaluations you could compare with the currently selected.";
 $string['selectotherevaluation'] = "Select another evaluation to compare with";
 
-//Selfevaluation Template Editor
+// Evaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation';
 $string['num_evaluation_levels'] = 'Number of self-evaluation levels';
 $string['name_evaluation_grid'] = 'Name of competence grid';
@@ -130,7 +138,7 @@ $string['printchecklist'] = 'Print evaluation';
 $string['enablebackgroundprinting'] = 'Make sure to enable printing of background colors in the printing dialog.';
 $string['legendthenumbers'] = 'The figures in the bars indicate the number of "Can-Do Statements" rated with the respective evaluation levels. The first figure is the number of statements rated with "%s", the second one refers to "%s" etc.';
 
-//self-evaluation template management
+//Descriptor Set Management
 $string['availabletemplates'] = 'Available competence grids';
 $string['loadtemplatefromfile'] = 'Load competence grid from file';
 $string['fromxmlfile'] = 'From XML file';

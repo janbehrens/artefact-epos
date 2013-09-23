@@ -39,7 +39,7 @@ define('EVALUATION_ITEM_TYPE_CUSTOM_GOAL', 2);
 class PluginArtefactEpos extends PluginArtefact {
 
     public static function get_artefact_types() {
-        return array('subject', 'checklist', 'customgoal', 'customcompetence');
+        return array('subject', 'checklist', 'storedevaluation', 'customgoal', 'customcompetence');
     }
 
     public static function get_block_types() {
@@ -59,10 +59,28 @@ class PluginArtefactEpos extends PluginArtefact {
                 'weight' => 30,
             ),
             array(
-                'path' => 'selfevaluation',
-                'title' => get_string('selfevaluation', 'artefact.epos'),
+                'path' => 'evaluation',
+                'title' => get_string('evaluation', 'artefact.epos'),
                 'url' => 'artefact/epos/checklist.php',
                 'weight' => 31,
+            ),
+            array(
+                'path' => 'evaluation/selfevaluation',
+                'title' => get_string('selfevaluation', 'artefact.epos'),
+                'url' => 'artefact/epos/checklist.php',
+                'weight' => 20,
+            ),
+            array(
+                'path' => 'evaluation/stored',
+                'title' => get_string('storedevaluations', 'artefact.epos'),
+                'url' => 'artefact/epos/stored.php',
+                'weight' => 21,
+            ),
+            array(
+                'path' => 'evaluation/request',
+                'title' => get_string('requestexternalevaluation', 'artefact.epos'),
+                'url' => 'artefact/epos/request_external.php',
+                'weight' => 22,
             ),
             array(
                 'path' => 'goals',
@@ -131,15 +149,15 @@ class ArtefactTypeChecklist extends ArtefactType {
 
     protected $descriptorset_id;
 
-    private $descriptorset;
+    protected $descriptorset;
 
-    private $customcompetences;
+    protected $customcompetences;
 
     public $items = array();
 
-    private $items_by_descriptor_id = array();
+    protected $items_by_descriptor_id = array();
 
-    private $items_by_target_id = array();
+    protected $items_by_target_id = array();
 
     /**
      * Override the constructor to fetch extra data.
@@ -192,7 +210,25 @@ class ArtefactTypeChecklist extends ArtefactType {
     			'descriptorset_id'  => $this->descriptorset_id
     	);
     	if ($new) {
+    	    global $USER;
     		insert_record('artefact_epos_evaluation', $data);
+    		$goal_id_map = array();
+    		foreach ($this->customcompetences as $customcompetence) {
+    		    $customcompetence->set('parent', $this->id);
+    		    $customcompetence->set('owner', $USER->get('id'));
+    		    $goal_id_map = $goal_id_map + $customcompetence->commit();
+    		}
+    		foreach ($this->items as $item) {
+    		    $item->evaluation_id = $this->id;
+    		    if ($item->type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL && isset($item->id)) {
+    		        // we are new, but this item has an id => must be cloned, use new id and insert
+    		        if (isset($goal_id_map[$item->target_key])) {
+    		            $item->target_key = $goal_id_map[$item->target_key];
+    		        }
+    		    }
+    		    unset($item->id);
+    		    insert_record('artefact_epos_evaluation_item', $item);
+    		}
     	}
     	else {
     		update_record('artefact_epos_evaluation', $data, 'artefact');
@@ -260,6 +296,10 @@ class ArtefactTypeChecklist extends ArtefactType {
 	        $this->descriptorset = Descriptorset::get_instance($this->descriptorset_id);
 		}
 		return $this->descriptorset;
+    }
+
+    public function get_descriptorset_id() {
+        return $this->descriptorset_id;
     }
 
     public function get_customcompetences() {
@@ -606,7 +646,7 @@ class ArtefactTypeChecklist extends ArtefactType {
     				'title' => $title,
     				'defaultvalue' => $item->goal,
     		);
-            $elements['item_'. $goal_id . _actions] = array(
+            $elements['item_'. $goal_id . '_actions'] = array(
                     'type' => 'html',
     				'title' => $title,
                     'value' => <<< EOL
@@ -829,6 +869,89 @@ EOL
 }
 
 
+class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
+
+    /**
+     * Create a stored evaluation either from its id or from an evaluation.
+     * @param unknown $idOrEvaluation
+     */
+    public function __construct($idOrEvaluation) {
+        if (is_a($idOrEvaluation, 'ArtefactTypeChecklist')) {
+            parent::__construct();
+            // create a new stored evaluation from an evaluation
+            $this->populate_from_evaluation($idOrEvaluation);
+        }
+        else {
+            parent::__construct($idOrEvaluation);
+        }
+    }
+
+    private function populate_from_evaluation(ArtefactTypeChecklist $evaluation) {
+        $this->descriptorset_id = $evaluation->get_descriptorset_id();
+        foreach ($evaluation->items as $item) {
+            $item = clone $item;
+            $item->evaluation_id = null;
+            $this->items []= $item;
+        }
+        foreach ($evaluation->get_customcompetences() as $customcompetence) {
+            // custom competences clone their goals internally
+            $customcompetence = clone $customcompetence;
+            $customcompetence->set('parent', null);
+            $customcompetence->set('id', null);
+            $this->customcompetences []= $customcompetence;
+        }
+        $this->owner = $evaluation->get('owner');
+        $this->parent = $evaluation->get('parent');
+    }
+
+    public static function form_save_evaluation($evaluation_id) {
+        $elements = array();
+        $elements['name'] = array(
+                'type' => 'text',
+                'title' => get_string('evaluationname', 'artefact.epos'),
+                'defaultvalue' => '',
+                'rules' => array('required' => true)
+        );
+        $elements['evaluation'] = array(
+                'type' => 'hidden',
+                'value' => $evaluation_id
+        );
+        $elements['submit'] = array(
+                'type' => 'submit',
+                'value' => get_string('save'),
+        );
+        return pieform(array(
+                'name' => 'save_evaluation',
+                'class' => 'save_evaluation',
+                'plugintype' => 'artefact',
+                'pluginname' => 'epos',
+                'elements' => $elements,
+                'jsform' => false,
+                'validatecallback' => array('ArtefactTypeStoredEvaluation', 'form_save_evaluation_validate'),
+                'successcallback' => array('ArtefactTypeStoredEvaluation', 'form_save_evaluation_submit')
+        ));
+    }
+
+    public static function form_save_evaluation_validate($form, $values) {
+        global $USER;
+        $records = get_records_array('artefact', 'artefacttype', 'storedevaluation',
+                'owner', $USER->get('id'), 'title', $values['name']);
+        if ($records) {
+            $form->set_error("name", get_string('evaluationnamealreadyexists', 'artefact.epos'));
+        }
+    }
+
+    public static function form_save_evaluation_submit($form, $values) {
+        $evaluation = new ArtefactTypeChecklist($values['evaluation']);
+        $evaluation->check_permission();
+        $stored_evaluation = new ArtefactTypeStoredEvaluation($evaluation);
+        $stored_evaluation->set('title', $values['name']);
+        $stored_evaluation->commit();
+        redirect(get_config('wwwroot') . '/artefact/epos/checklist.php?id=' . $values['evaluation']);
+    }
+
+}
+
 
 class ArtefactTypeCustomGoal extends ArtefactType {
 
@@ -976,6 +1099,8 @@ class ArtefactTypeCustomGoal extends ArtefactType {
 
 class ArtefactTypeCustomCompetence extends ArtefactType {
 
+    protected $goals;
+
     public static function get_icon($options=null) {}
 
     public static function is_singular() {
@@ -984,12 +1109,43 @@ class ArtefactTypeCustomCompetence extends ArtefactType {
 
     public static function get_links($id) {}
 
-    public function get_customgoals() {
-        $goals = $this->get_children_instances();
-        if ($goals === false) {
-            return array();
+    public function __clone() {
+        $this->get_customgoals();
+        foreach ($this->goals as &$goal) {
+            $goal = clone $goal;
+            $goal->set('parent', null);
         }
-        return $goals;
+    }
+
+    /**
+     * Commit the changes. Return a map of goal ids (old => new) in case
+     * the competence has been cloned.
+     * @see ArtefactType::commit()
+     */
+    public function commit() {
+        $new = empty($this->id);
+        parent::commit();
+        $id_map = array();
+        foreach ($this->get_customgoals() as $goal) {
+            $old_id = $goal->get('id');
+            if ($new) {
+                $goal->set('id', null);
+                $goal->set('parent', $this->id);
+            }
+            $goal->commit();
+            $id_map[$old_id] = $goal->get('id');
+        }
+        return $id_map;
+    }
+
+    public function get_customgoals() {
+        if (!isset($this->goals)) {
+            $this->goals = $this->get_children_instances();
+            if ($this->goals === false) {
+                $this->goals = array();
+            }
+        }
+        return $this->goals;
     }
 
     public function count_customgoals() {
