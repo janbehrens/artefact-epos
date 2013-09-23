@@ -118,7 +118,7 @@ class ArtefactTypeSubject extends ArtefactType {
      * Overriding the delete() function to clear table references
      */
     public function delete() {
-        delete_records('artefact_epos_artefact_subject', 'artefact', $this->id);
+        delete_records('artefact_epos_mysubject', 'artefact', $this->id);
 
         parent::delete();
     }
@@ -1348,9 +1348,9 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
         );
         $subject->commit();
         $id = $subject->get('id');
-        //insert: artefact_epos_artefact_subject
+        //insert: artefact_epos_mysubject
         $values_artefact_subject = array('artefact' => $id, 'subject' => $subject_id);
-        insert_record('artefact_epos_artefact_subject', (object)$values_artefact_subject);
+        insert_record('artefact_epos_mysubject', (object)$values_artefact_subject);
     }
 
     /*
