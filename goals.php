@@ -38,14 +38,12 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'internal');
 safe_require('artefact', 'epos');
 
-$haslanguages = true;
+$id = param_integer('id', null);
+list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
 
-$evaluation_selector = ArtefactTypeEvaluation::form_user_evaluation_selector();
-if (!$evaluation_selector) {
-    $haslanguages = false;
-    $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
+if (!$selectform) {
+    $selectform = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
-$id = $evaluation_selector['selected'];
 $evaluation = new ArtefactTypeEvaluation($id);
 $evaluation->check_permission();
 
@@ -105,9 +103,9 @@ EOF;
 $smarty = smarty(array('tablerenderer',
                        'artefact/epos/js/customgoals.js'));
 
-$smarty->assign('haslanguages', $haslanguages);
-$smarty->assign('languagelinks', $evaluation_selector['html']);
-if ($haslanguages) $smarty->assign("custom_goal_form", $addcustomgoalform);
+$smarty->assign('haslanguages', $id !== false);
+$smarty->assign('selectform', $selectform);
+if ($id !== false) $smarty->assign("custom_goal_form", $addcustomgoalform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('goals', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);

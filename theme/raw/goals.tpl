@@ -1,6 +1,6 @@
 {include file="header.tpl"}
 
-<div id="subjects_list">{$languagelinks|safe}</div>
+<div id="subjects_list">{$selectform|safe}</div>
 
 {if $haslanguages}
 <table id="goals_table">

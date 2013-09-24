@@ -36,18 +36,18 @@ define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 
 safe_require('artefact', 'epos');
 
-$haslanguages = true;
+$id = param_integer('id', null);
+list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
 
-$evaluation_selector = ArtefactTypeEvaluation::form_user_evaluation_selector();
-if (!$evaluation_selector) {
-    $haslanguages = false;
-    $subjectlinks = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
+if (!$selectform) {
+    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
 }
-$id = $evaluation_selector['selected'];
-
-if ($haslanguages) {
+else {
     $evaluation = new ArtefactTypeEvaluation($id);
     $evaluation->check_permission();
+    if ($evaluation->final) {
+        throw new ParameterException(get_string('evaluationisnoteditable', 'artefact.epos'));
+    }
     $render = $evaluation->render_evaluation();
     $selfevaluation = $render['html'];
     $includejs = $render['includejs'];
@@ -57,7 +57,6 @@ $smarty = smarty($includejs);
 $smarty->assign('PAGEHEADING', get_string('selfevaluation', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
-$smarty->assign('languagelinks', $evaluation_selector['html']);
-$smarty->assign('haslanguages', $haslanguages);
+$smarty->assign('selectform', $selectform);
 $smarty->assign('selfevaluation', $selfevaluation);
 $smarty->display('artefact:epos:evaluation_page.tpl');

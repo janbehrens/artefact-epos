@@ -33,9 +33,7 @@ define('EVALUATION_ITEM_TYPE_DESCRIPTOR', 0);
 define('EVALUATION_ITEM_TYPE_COMPLEVEL', 1);
 define('EVALUATION_ITEM_TYPE_CUSTOM_GOAL', 2);
 
-/**
- * PluginArtefactEpos implementing PluginArtefact
- */
+
 class PluginArtefactEpos extends PluginArtefact {
 
     public static function get_artefact_types() {
@@ -153,46 +151,76 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     protected $items_by_target_id = array();
 
+    public $final = 0;
+
+    public $evaluator;
+
     /**
      * Override the constructor to fetch extra data.
      *
-     * @param integer $id The id of the element to load
+     * @param integer $idOrEvaluation The id of the element to load or an evaluation to clone
      * @param object $data Data to fill the object with instead from the db
      * @param boolean $full_load Indicate whether the evaluation items should be loaded
      */
-    public function __construct($id = 0, $data = null, $full_load = true) {
-        parent::__construct($id, $data);
-        if ($this->id && $full_load) {
-            if (!isset($this->descriptorset_id)) {
-            	$sql = 'SELECT e.descriptorset_id
-                        FROM {artefact} a
-                        LEFT JOIN {artefact_epos_evaluation} e ON a.id = e.artefact
-                        WHERE a.id = ?';
-            	$data = get_record_sql($sql, array($this->id));
-            	if ($data) {
-            		foreach((array)$data as $field => $value) {
-            			if (property_exists($this, $field) && $field != 'id') {
-            				$this->{$field} = $value;
+    public function __construct($idOrEvaluation = 0, $data = null, $full_load = true) {
+        if (is_a($idOrEvaluation, 'ArtefactTypeEvaluation')) {
+            parent::__construct();
+            // create a new evaluation from an evaluation
+            $this->populate_from_evaluation($idOrEvaluation);
+        }
+        else {
+            parent::__construct($idOrEvaluation, $data);
+            if ($this->id && $full_load) {
+                if (!isset($this->descriptorset_id)) {
+                	$sql = 'SELECT e.*
+                            FROM {artefact} a
+                            LEFT JOIN {artefact_epos_evaluation} e ON a.id = e.artefact
+                            WHERE a.id = ?';
+                	$data = get_record_sql($sql, array($this->id));
+                	if ($data) {
+                		foreach((array)$data as $field => $value) {
+                			if (property_exists($this, $field) && $field != 'id') {
+                				$this->{$field} = $value;
+                			}
+                		}
+                	}
+                	else {
+                		// This should never happen unless the user is playing around with task IDs in the location bar or similar
+                		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
+                	}
+                }
+            	if ($items = get_records_array('artefact_epos_evaluation_item', 'evaluation_id', $this->id, 'id')) {
+            		foreach ($items as $item) {
+            			$this->items[$item->id] = $item;
+            			if (isset($item->descriptor_id)) {
+            			    $this->items_by_descriptor_id[$item->descriptor_id] = $item;
+            			}
+            			if (isset($item->target_key)) {
+            			    $this->items_by_target_id[$item->target_key] = $item;
             			}
             		}
             	}
-            	else {
-            		// This should never happen unless the user is playing around with task IDs in the location bar or similar
-            		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
-            	}
             }
-        	if ($items = get_records_array('artefact_epos_evaluation_item', 'evaluation_id', $this->id, 'id')) {
-        		foreach ($items as $item) {
-        			$this->items[$item->id] = $item;
-        			if (isset($item->descriptor_id)) {
-        			    $this->items_by_descriptor_id[$item->descriptor_id] = $item;
-        			}
-        			if (isset($item->target_key)) {
-        			    $this->items_by_target_id[$item->target_key] = $item;
-        			}
-        		}
-        	}
         }
+    }
+
+    private function populate_from_evaluation(ArtefactTypeEvaluation $evaluation) {
+        $this->descriptorset_id = $evaluation->get_descriptorset_id();
+        foreach ($evaluation->items as $item) {
+            $item = clone $item;
+            $item->evaluation_id = null;
+            $this->items []= $item;
+        }
+        foreach ($evaluation->get_customcompetences() as $customcompetence) {
+            // custom competences clone their goals internally
+            $customcompetence = clone $customcompetence;
+            $customcompetence->set('parent', null);
+            $customcompetence->set('id', null);
+            $this->customcompetences []= $customcompetence;
+        }
+        $this->owner = $evaluation->get('owner');
+        $this->parent = $evaluation->get('parent');
+        $this->evaluator = $evaluation->get('evaluator');
     }
 
     public function commit() {
@@ -200,8 +228,10 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $new = empty($this->id);
     	parent::commit();
     	$data = (object) array(
-    			'artefact'  => $this->get('id'),
-    			'descriptorset_id'  => $this->descriptorset_id
+    			'artefact' => $this->get('id'),
+    			'descriptorset_id' => $this->descriptorset_id,
+    	        'evaluator' => $this->evaluator,
+    	        'final' => $this->final
     	);
     	if ($new) {
     	    global $USER;
@@ -833,73 +863,39 @@ EOL
      * Return a selector form for the user's evaluations that navigates
      * to the current site with id parameter set to the selected evaluation's id.
      * @param string $owner The owner of the evaluations.
-     * @return boolean|array The 'html' code and 'selected' id of the form or false if no evaluation is found
+     * @return array ($selectform, $selected)
      */
-    public static function form_user_evaluation_selector($owner = null) {
+    public static function form_user_evaluation_selector($selected = null, $owner = null) {
         if (!isset($owner)) {
             global $USER;
             $owner = $USER->get('id');
         }
         $sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
-            	FROM artefact a, artefact b
-            	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
+            	FROM artefact a, artefact b, artefact_epos_evaluation e
+            	WHERE a.parent = b.id
+                    AND a.id = e.artefact
+                    AND a.owner = ?
+                    AND a.artefacttype = ?
+                    AND e.final = 0";
 
         if (!$data = get_records_sql_array($sql, array($owner, 'evaluation'))) {
-            return false;
+            return array(null, false);
         }
         // sort alphabetically by title
         usort($data, function ($a, $b) { return strcoll($a->title, $b->title); });
-        // select first language if GET parameter is not set
-        if (!isset($_GET['id'])) {
+        // select first language if no selected is given
+        if (!$selected) {
             $id = $data[0]->id;
         }
         else {
-            $id = $_GET['id'];
+            $id = $selected;
         }
         foreach ($data as $subject) {
             $subject->title = "$subject->title ($subject->descriptorset)";
         }
         $selectform = get_string('languages', 'artefact.epos') . ': ';
         $selectform .= html_select($data, "Select", "id", $id);
-        return array('html' => $selectform, 'selected' => $id);
-    }
-
-}
-
-
-class ArtefactTypeStoredEvaluation extends ArtefactTypeEvaluation {
-
-    /**
-     * Create a stored evaluation either from its id or from an evaluation.
-     * @param unknown $idOrEvaluation
-     */
-    public function __construct($idOrEvaluation, $data=null, $full_load=true) {
-        if (is_a($idOrEvaluation, 'ArtefactTypeEvaluation')) {
-            parent::__construct();
-            // create a new stored evaluation from an evaluation
-            $this->populate_from_evaluation($idOrEvaluation);
-        }
-        else {
-            parent::__construct($idOrEvaluation, $data, $full_load);
-        }
-    }
-
-    private function populate_from_evaluation(ArtefactTypeEvaluation $evaluation) {
-        $this->descriptorset_id = $evaluation->get_descriptorset_id();
-        foreach ($evaluation->items as $item) {
-            $item = clone $item;
-            $item->evaluation_id = null;
-            $this->items []= $item;
-        }
-        foreach ($evaluation->get_customcompetences() as $customcompetence) {
-            // custom competences clone their goals internally
-            $customcompetence = clone $customcompetence;
-            $customcompetence->set('parent', null);
-            $customcompetence->set('id', null);
-            $this->customcompetences []= $customcompetence;
-        }
-        $this->owner = $evaluation->get('owner');
-        $this->parent = $evaluation->get('parent');
+        return array($selectform, $id);
     }
 
     public static function get_users_evaluations() {
@@ -939,14 +935,14 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeEvaluation {
                 'elements' => $elements,
                 'jsform' => false,
                 'renderer' => 'oneline',
-                'validatecallback' => array('ArtefactTypeStoredEvaluation', 'form_store_evaluation_validate'),
-                'successcallback' => array('ArtefactTypeStoredEvaluation', 'form_store_evaluation_submit')
+                'validatecallback' => array('ArtefactTypeEvaluation', 'form_store_evaluation_validate'),
+                'successcallback' => array('ArtefactTypeEvaluation', 'form_store_evaluation_submit')
         ));
     }
 
     public static function form_store_evaluation_validate($form, $values) {
         global $USER;
-        $records = get_records_array('artefact', 'artefacttype', 'storedevaluation',
+        $records = get_records_array('artefact', 'artefacttype', 'evaluation',
                 'owner', $USER->get('id'), 'title', $values['name']);
         if ($records) {
             $form->set_error("name", get_string('evaluationnamealreadyexists', 'artefact.epos'));
@@ -954,10 +950,13 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeEvaluation {
     }
 
     public static function form_store_evaluation_submit($form, $values) {
+        global $USER;
         $evaluation = new ArtefactTypeEvaluation($values['evaluation']);
         $evaluation->check_permission();
-        $stored_evaluation = new ArtefactTypeStoredEvaluation($evaluation);
+        $stored_evaluation = new ArtefactTypeEvaluation($evaluation);
         $stored_evaluation->set('title', $values['name']);
+        $stored_evaluation->final = 1;
+        $stored_evaluation->evaluator = $USER->get('id');
         $stored_evaluation->commit();
         redirect(get_config('wwwroot') . '/artefact/epos/evaluation/self-eval.php?id=' . $values['evaluation']);
     }

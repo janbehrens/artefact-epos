@@ -1,6 +1,6 @@
 {include file="header.tpl"}
 
-{if $haslanguages}
+{if $id}
 <div class="rbuttons{if $GROUP} pagetabs{/if}">
     <form method="get" action="{$WWWROOT}artefact/epos/evaluation/self-eval-print.php">
         <input type="submit" class="submit" value="{str tag='printevaluation' section='artefact.epos'}">
@@ -17,9 +17,9 @@
 </div>
 {/if}
 
-<div id="subjects_list">{$languagelinks|safe}</div>
+<div id="subjects_list">{$selectform|safe}</div>
 
-{if $haslanguages}
+{if $id}
 <p>{str tag='helpselfevaluation' section='artefact.epos'}</p>
 
 {$selfevaluation|safe}

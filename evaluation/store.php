@@ -41,7 +41,7 @@ $subject = $evaluation->get_parent_instance();
 
 $heading = get_string('storeevaluation', 'artefact.epos');
 $content = '<h2>' . $subject->get('title') . ' (' . $evaluation->get('title') . ')</h2>';
-$content .= ArtefactTypeStoredEvaluation::form_store_evaluation($evaluation_id);
+$content .= ArtefactTypeEvaluation::form_store_evaluation($evaluation_id);
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', $heading);

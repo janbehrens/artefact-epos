@@ -568,5 +568,25 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         db_commit();
     }
 
+    if ($oldversion < 2013092401) {
+        db_begin();
+        $table = new XMLDBTable('artefact_epos_evaluation');
+        $field = new XMLDBField('final');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', true, XMLDB_NOTNULL, null, null, null, 0);
+        add_field($table, $field);
+        $field = new XMLDBField('evaluator');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, null, null, null, 0);
+        add_field($table, $field);
+        $key = new XMLDBKey('evaluatorfk');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('evaluator'), 'usr', array('id'));
+        add_key($table, $key);
+        execute_sql("
+                UPDATE artefact_epos_evaluation SET evaluator = a.owner
+                FROM artefact_epos_evaluation e
+                INNER JOIN artefact a ON e.artefact = a.id
+        ");
+        db_commit();
+    }
+
     return true;
 }

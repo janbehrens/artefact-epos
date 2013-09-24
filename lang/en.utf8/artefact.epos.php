@@ -110,6 +110,7 @@ $string['storedevaluations'] = "Stored Evaluations";
 $string['evaluationname'] = "Name for evaluation";
 $string['evaluationnamealreadyexists'] = "An evaluation with this name already exists.";
 $string['evaluationsuccessfullystored'] = "Successfully stored your evaluation.";
+$string['evaluationisnoteditable'] = "This evaluation is final and cannot be edited.";
 
 //Comparison
 $string['comparison'] = "Comparison";

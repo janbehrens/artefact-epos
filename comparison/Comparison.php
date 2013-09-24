@@ -125,13 +125,13 @@ class Comparison {
         foreach ($this->evaluations as $evaluation) {
             $evaluation_item = new stdClass();
             $evaluation_item->id = $evaluation->get('id');
-            if (is_a($evaluation, 'ArtefactTypeStoredEvaluation')) {
+            if ($evaluation->final) {
                 $evaluation_item->title = $evaluation->get('title');
-                $evaluation_item->url = get_config('wwwroot') . "/artefact/epos/evaluation/stored.php?id=$evaluation_item->id";
+                $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/stored.php?id=$evaluation_item->id";
             }
             else {
                 $evaluation_item->title = $evaluation->get_parent_instance()->get('title');
-                $evaluation_item->url = get_config('wwwroot') . "/artefact/epos/evaluation/self-eval.php?id=$evaluation_item->id";
+                $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/self-eval.php?id=$evaluation_item->id";
             }
             $evaluation_item->url_without_this = $this->get_url_without($evaluation_item->id);
             $evaluation_item->color = $this->color_next();
