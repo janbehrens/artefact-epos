@@ -192,9 +192,16 @@ class Comparison {
         $colors = array();
         $this->color_reset();
         foreach ($this->evaluations as $evaluation) {
-            foreach ($evaluation->results() as $competence => $row) {
-                foreach ($row as $level => $complevel) {
-                    $results[$competence][$level][$evaluation->get('id')] = $complevel;
+            foreach ($evaluation->results() as $competence_id => $row) {
+                foreach ($row['levels'] as $level_id => $complevel) {
+                    if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+                        $results[$row['name']][$level_id][$evaluation->get('id')] = $complevel;
+                        $results[$row['name']]['name'] = $row['name'];
+                    }
+                    else {
+                        $results[$competence_id][$level_id][$evaluation->get('id')] = $complevel;
+                        $results[$competence_id]['name'] = $row['name'];
+                    }
                 }
             }
             $colors[$evaluation->get('id')] = $this->color_next();
@@ -207,8 +214,7 @@ class Comparison {
 
         $column_definitions = array(
             function ($row) use ($descriptorset) {
-                $names = array_values($row['name']);
-                return $names[0];
+                return $row['name'];
             }
         );
         $levelcount = count($descriptorset->levels);

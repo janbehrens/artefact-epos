@@ -378,38 +378,33 @@ class ArtefactTypeEvaluation extends ArtefactType {
             }
             else if ($item->type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                 $goal = $customgoals[$item->target_key];
-                $competence_id = $this->customcompetences[$goal->get('parent')]->get('title');
+                $competence_id = $goal->get('parent');
                 $level_id = 0; // there is always only one level
             }
-            if (!isset($results[$competence_id][$level_id])) {
-                $results[$competence_id][$level_id] = $empty_complevel;
+            if (!isset($results[$competence_id]['levels'][$level_id])) {
+                $results[$competence_id]['levels'][$level_id] = $empty_complevel;
             }
-            $complevel = &$results[$competence_id][$level_id];
+            $complevel = &$results[$competence_id]['levels'][$level_id];
             $complevel['value'] += $item->value;
             $complevel['max'] += $max_rating;
             $complevel['type'] = $item->type;
             increase_array_value($complevel['evaluation_sums'], $item->value);
         }
-        foreach ($results as $competence_id => &$levels) {
+        foreach ($results as $competence_id => &$competence) {
+            $levels = &$competence['levels'];
             ksort($levels);
             foreach ($levels as &$complevel) {
                 $complevel['average'] = round(100 * $complevel['value'] / $complevel['max']);
             }
+            $competence['type'] = $complevel['type'];
             if ($complevel['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
-                $levels['name'] = $competence_id;
+                $competence['name'] = $this->customcompetences[$competence_id]->get('title');
             }
             else {
-                $levels['name'] = $descriptorset->competences[$competence_id]->name;
+                $competence['name'] = $descriptorset->competences[$competence_id]->name;
             }
         }
-        // string keys (custom competences) should come last
-        uksort($results, function($left, $right) {
-            if ((is_int($left) && is_int($right))
-                || (is_string($left) && is_string($right))) {
-                return $left < $right ? -1 : 1;
-            }
-            return is_numeric($left) ? -1 : 1;
-        });
+        ksort($results);
         return $results;
     }
 
@@ -713,24 +708,26 @@ EOL
         array_unshift($column_titles, get_string('competence', 'artefact.epos'));
 
         $column_definitions = array(
-            function ($row) use ($descriptorset) {
+            function ($row) {
                 return $row['name'];
             }
         );
         $levelcount = count($descriptorset->levels);
         foreach ($descriptorset->levels as $level) {
-            $column_definitions []= function($row) use ($results, $level, $interactive, $levelcount) {
-                if (isset($row[$level->id])) {
-                    $level_id = $level->id;
-                }
-                else {
-                    // for EVALUATION_ITEM_TYPE_CUSTOM_GOAL level_id is always 0
+            $column_definitions []= function($row) use ($level, $interactive, $levelcount) {
+                if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                     $level_id = 0;
                 }
-                $cell = array('content' => html_progressbar($row[$level_id]['average']));
+                else {
+                    $level_id = $level->id;
+                }
+                $cell = array('content' => html_progressbar($row['levels'][$level_id]['average']));
                 if ($interactive) {
                     $competence_id = $row['__id'];
-                    $type = $results[$competence_id][$level_id]['type'];
+                    if (is_string($competence_id)) {
+                        $competence_id = "'$competence_id'";
+                    }
+                    $type = $row['levels'][$level_id]['type'];
                     $name = $row['name'];
                     $cell['properties'] = array(
                             'onclick' => "toggleEvaluationForm($competence_id, $level_id, $type, '$name')",
