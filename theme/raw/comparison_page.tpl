@@ -5,7 +5,7 @@
 <table class="comparison legend">
     {foreach $compared item=evaluation}
     <tr style="background-color: {$evaluation->color_html};">
-        <td><a href="{$evaluation->url}">{$evaluation->title}</a></td>
+        <td><a href="{$evaluation->url}">{$evaluation->title} ({$evaluation->mtime}, {$evaluation->evaluator})</a></td>
         <td>
         {if count($compared) > 1}
             <a href="?{$evaluation->url_without_this}"><img alt="{str tag=remove}" src="../../../theme/raw/static/images/icon_close.gif" /></a>

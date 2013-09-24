@@ -47,6 +47,12 @@ if ($evaluations != null) {
         assert_integer($evaluation_id);
     }
 }
+else {
+    $smarty = smarty();
+    $smarty->assign('content', get_string('noevaluationselected', 'artefact.epos'));
+    $smarty->display('artefact:epos:simple.tpl');
+    exit;
+}
 
 $comparison = new Comparison($evaluations);
 $comparison->check_permission();

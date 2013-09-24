@@ -104,6 +104,7 @@ $string['overallrating'] = "Overall rating for this competence area on this leve
 $string['evaluationtypedescriptor'] = "Switch to detailed evaluation";
 $string['evaluationtypecompetencelevel'] = "Switch to overall evaluation";
 $string['requestexternalevaluation'] = "Request External Evaluation";
+
 // Stored Evaluations
 $string['storeevaluation'] = "Store Evaluation";
 $string['storedevaluations'] = "Stored Evaluations";
@@ -111,6 +112,10 @@ $string['evaluationname'] = "Name for evaluation";
 $string['evaluationnamealreadyexists'] = "An evaluation with this name already exists.";
 $string['evaluationsuccessfullystored'] = "Successfully stored your evaluation.";
 $string['evaluationisnoteditable'] = "This evaluation is final and cannot be edited.";
+$string['creationtime'] = "Time of creation";
+
+// External Evaluations
+$string['evaluator'] = "Evaluator";
 
 //Comparison
 $string['comparison'] = "Comparison";
@@ -118,6 +123,10 @@ $string['compare'] = "Compare";
 $string['comparisonof'] = "Comparison of";
 $string['nocomparableevaluations'] = "There are no other evaluations you could compare with the currently selected.";
 $string['selectotherevaluation'] = "Select another evaluation to compare with";
+$string['useincomparison'] = "Use this evaluation in a comparison.";
+$string['noevaluationselected'] = "You have not selected any evaluation for comparison. Please select at least two evaluations.";
+$string['by'] = "by";
+$string['yourself'] = "yourself";
 
 // Evaluation Template Editor
 $string['create_selfevaluation_template'] = 'Templates for Self-evaluation';

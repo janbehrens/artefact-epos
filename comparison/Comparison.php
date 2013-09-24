@@ -120,6 +120,7 @@ class Comparison {
      * @return An array of objects with id, title and url_without_this
      */
     public function get_compared_items() {
+        global $USER;
         $items = array();
         $this->color_reset();
         foreach ($this->evaluations as $evaluation) {
@@ -132,6 +133,13 @@ class Comparison {
             else {
                 $evaluation_item->title = $evaluation->get_parent_instance()->get('title');
                 $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/self-eval.php?id=$evaluation_item->id";
+            }
+            $evaluation_item->mtime = format_date($evaluation->get('mtime'));
+            if ($USER->get('id') == $evaluation->evaluator) {
+                $evaluation_item->evaluator = get_string('by', 'artefact.epos') . ' ' . get_string('yourself', 'artefact.epos');
+            }
+            else {
+                $evaluation_item->evaluator = get_string('by', 'artefact.epos') . ' ' . $evaluation->evaluator_display_name;
             }
             $evaluation_item->url_without_this = $this->get_url_without($evaluation_item->id);
             $evaluation_item->color = $this->color_next();

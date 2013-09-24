@@ -200,6 +200,18 @@ body.print {
 	margin: 0 10px;
 }
 
+table.stored_evaluations thead {
+	color: gray;
+}
+
+.stored_evaluations td {
+	padding: 3px 10px;
+}
+
+.stored_evaluations td.selectors {
+	text-align: center;
+}
+
 /* comparison */
 #other.comparison form {
 	display: inline;

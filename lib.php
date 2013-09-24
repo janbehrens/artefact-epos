@@ -155,6 +155,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     public $evaluator;
 
+    public $evaluator_display_name;
+
     /**
      * Override the constructor to fetch extra data.
      *
@@ -172,9 +174,10 @@ class ArtefactTypeEvaluation extends ArtefactType {
             parent::__construct($idOrEvaluation, $data);
             if ($this->id && $full_load) {
                 if (!isset($this->descriptorset_id)) {
-                	$sql = 'SELECT e.*
+                	$sql = 'SELECT e.*, u.firstname, u.lastname
                             FROM {artefact} a
                             LEFT JOIN {artefact_epos_evaluation} e ON a.id = e.artefact
+                	        LEFT JOIN {usr} u ON e.evaluator = u.id
                             WHERE a.id = ?';
                 	$data = get_record_sql($sql, array($this->id));
                 	if ($data) {
@@ -183,6 +186,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 				$this->{$field} = $value;
                 			}
                 		}
+                		$this->evaluator_display_name = "$data->firstname $data->lastname";
                 	}
                 	else {
                 		// This should never happen unless the user is playing around with task IDs in the location bar or similar
@@ -959,6 +963,32 @@ EOL
         $stored_evaluation->evaluator = $USER->get('id');
         $stored_evaluation->commit();
         redirect(get_config('wwwroot') . '/artefact/epos/evaluation/self-eval.php?id=' . $values['evaluation']);
+    }
+
+    /**
+     * Get all records (not instances) of evaluations that are final
+     * ordered by mtime
+     * @return array The records: id, title, mtime, subject (title), evaluator (id), firstname, lastname
+     */
+    public static function get_all_stored_evaluations() {
+        global $USER;
+        $evaluations = get_records_sql_array("
+                SELECT a.id, a.title, a.mtime, s.title as subject, e.evaluator, usr.firstname, usr.lastname FROM artefact a
+                INNER JOIN artefact s ON a.parent = s.id
+                INNER JOIN artefact_epos_evaluation e ON a.id = e.artefact
+                LEFT JOIN usr ON e.evaluator = usr.id
+                WHERE a.artefacttype = 'evaluation'
+                    AND a.owner = ?
+                    AND e.final = 1
+                ORDER BY a.mtime
+                ", array($USER->get('id')));
+        if ($evaluations) {
+            foreach ($evaluations as $evaluation) {
+                $evaluation->mtime = format_date(strtotime($evaluation->mtime));
+            }
+            return $evaluations;
+        }
+        return array();
     }
 
 }
