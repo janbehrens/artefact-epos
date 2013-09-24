@@ -190,6 +190,16 @@ body.print {
 
 }
 
+/* stored evaluations */
+#store_evaluation {
+	margin-top: 20px;
+}
+
+#store_evaluation_name {
+	width: 350px;
+	margin: 0 10px;
+}
+
 /* comparison */
 #other.comparison form {
 	display: inline;

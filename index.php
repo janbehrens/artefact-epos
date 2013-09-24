@@ -124,7 +124,7 @@ tableRenderer = new TableRenderer(
                 e.stop();
                 return deleteLanguage(r.id);
             });
-            var edit = A({'class': 'icon btn-edit s', 'href': 'checklist.php?id=' + r.id}, '{$selfevalstr}');
+            var edit = A({'class': 'icon btn-edit s', 'href': 'evaluation/self-eval.php?id=' + r.id}, '{$selfevalstr}');
             return TD(null, edit, ' ', del);
         },
     ]

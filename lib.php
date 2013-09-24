@@ -61,25 +61,25 @@ class PluginArtefactEpos extends PluginArtefact {
             array(
                 'path' => 'evaluation',
                 'title' => get_string('evaluation', 'artefact.epos'),
-                'url' => 'artefact/epos/checklist.php',
+                'url' => 'artefact/epos/evaluation/self-eval.php',
                 'weight' => 31,
             ),
             array(
                 'path' => 'evaluation/selfevaluation',
                 'title' => get_string('selfevaluation', 'artefact.epos'),
-                'url' => 'artefact/epos/checklist.php',
+                'url' => 'artefact/epos/evaluation/self-eval.php',
                 'weight' => 20,
             ),
             array(
                 'path' => 'evaluation/stored',
                 'title' => get_string('storedevaluations', 'artefact.epos'),
-                'url' => 'artefact/epos/stored.php',
+                'url' => 'artefact/epos/evaluation/stored.php',
                 'weight' => 21,
             ),
             array(
                 'path' => 'evaluation/request',
                 'title' => get_string('requestexternalevaluation', 'artefact.epos'),
-                'url' => 'artefact/epos/request_external.php',
+                'url' => 'artefact/epos/evaluation/request_external.php',
                 'weight' => 22,
             ),
             array(
@@ -904,7 +904,7 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
         $this->parent = $evaluation->get('parent');
     }
 
-    public static function form_save_evaluation($evaluation_id) {
+    public static function form_store_evaluation($evaluation_id) {
         $elements = array();
         $elements['name'] = array(
                 'type' => 'text',
@@ -921,18 +921,19 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
                 'value' => get_string('save'),
         );
         return pieform(array(
-                'name' => 'save_evaluation',
-                'class' => 'save_evaluation',
+                'name' => 'store_evaluation',
+                'class' => 'store_evaluation',
                 'plugintype' => 'artefact',
                 'pluginname' => 'epos',
                 'elements' => $elements,
                 'jsform' => false,
-                'validatecallback' => array('ArtefactTypeStoredEvaluation', 'form_save_evaluation_validate'),
-                'successcallback' => array('ArtefactTypeStoredEvaluation', 'form_save_evaluation_submit')
+                'renderer' => 'oneline',
+                'validatecallback' => array('ArtefactTypeStoredEvaluation', 'form_store_evaluation_validate'),
+                'successcallback' => array('ArtefactTypeStoredEvaluation', 'form_store_evaluation_submit')
         ));
     }
 
-    public static function form_save_evaluation_validate($form, $values) {
+    public static function form_store_evaluation_validate($form, $values) {
         global $USER;
         $records = get_records_array('artefact', 'artefacttype', 'storedevaluation',
                 'owner', $USER->get('id'), 'title', $values['name']);
@@ -941,13 +942,13 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
         }
     }
 
-    public static function form_save_evaluation_submit($form, $values) {
+    public static function form_store_evaluation_submit($form, $values) {
         $evaluation = new ArtefactTypeChecklist($values['evaluation']);
         $evaluation->check_permission();
         $stored_evaluation = new ArtefactTypeStoredEvaluation($evaluation);
         $stored_evaluation->set('title', $values['name']);
         $stored_evaluation->commit();
-        redirect(get_config('wwwroot') . '/artefact/epos/checklist.php?id=' . $values['evaluation']);
+        redirect(get_config('wwwroot') . '/artefact/epos/evaluation/self-eval.php?id=' . $values['evaluation']);
     }
 
 }

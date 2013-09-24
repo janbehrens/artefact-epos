@@ -39,10 +39,11 @@ $evaluation = new ArtefactTypeChecklist($evaluation_id);
 $evaluation->check_permission();
 $subject = $evaluation->get_parent_instance();
 
-$heading = get_string('storeevaluation', 'artefact.epos') . ': '
-        . $subject->get('title') . ' (' . $evaluation->get('title') . ')';
+$heading = get_string('storeevaluation', 'artefact.epos');
+$content = '<h2>' . $subject->get('title') . ' (' . $evaluation->get('title') . ')</h2>';
+$content .= ArtefactTypeStoredEvaluation::form_store_evaluation($evaluation_id);
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', $heading);
-$smarty->assign('content', ArtefactTypeStoredEvaluation::form_save_evaluation($evaluation_id));
+$smarty->assign('content', $content);
 $smarty->display('artefact:epos:simple.tpl');
