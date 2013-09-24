@@ -31,14 +31,14 @@ define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 define('SECTION_PAGE', 'selfevaluation');
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
+require_once(dirname(dirname(dirname((dirname(__FILE__))))) . '/init.php');
 define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 
 safe_require('artefact', 'epos');
 
 $haslanguages = true;
 
-$evaluation_selector = ArtefactTypeChecklist::form_user_evaluation_selector();
+$evaluation_selector = ArtefactTypeEvaluation::form_user_evaluation_selector();
 if (!$evaluation_selector) {
     $haslanguages = false;
     $subjectlinks = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
@@ -46,7 +46,7 @@ if (!$evaluation_selector) {
 $id = $evaluation_selector['selected'];
 
 if ($haslanguages) {
-    $evaluation = new ArtefactTypeChecklist($id);
+    $evaluation = new ArtefactTypeEvaluation($id);
     $evaluation->check_permission();
     $render = $evaluation->render_evaluation();
     $selfevaluation = $render['html'];
@@ -60,4 +60,4 @@ $smarty->assign('id', $id);
 $smarty->assign('languagelinks', $evaluation_selector['html']);
 $smarty->assign('haslanguages', $haslanguages);
 $smarty->assign('selfevaluation', $selfevaluation);
-$smarty->display('artefact:epos:checklist.tpl');
+$smarty->display('artefact:epos:evaluation_page.tpl');

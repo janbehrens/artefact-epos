@@ -3,7 +3,7 @@
 {if $haslanguages}
 <div class="rbuttons{if $GROUP} pagetabs{/if}">
     <form method="get" action="{$WWWROOT}artefact/epos/evaluation/self-eval-print.php">
-        <input type="submit" class="submit" value="{str tag='printchecklist' section='artefact.epos'}">
+        <input type="submit" class="submit" value="{str tag='printevaluation' section='artefact.epos'}">
         <input type="hidden" name="id" value="{$id}">
     </form>
     <form method="get" action="{$WWWROOT}artefact/epos/evaluation/store.php">

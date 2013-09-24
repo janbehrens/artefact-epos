@@ -37,28 +37,28 @@ safe_require('artefact', 'epos');
 
 $owner = $USER->get('id');
 
-//get user's checklists
+//get user's evaluations
 $sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
     FROM artefact a, artefact b
     WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
-$params = array($owner, 'checklist');
+$params = array($owner, 'evaluation');
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $a = new ArtefactTypeChecklist($id);
+    $a = new ArtefactTypeEvaluation($id);
     if (!$USER->can_view_artefact($a)) {
-        throw new AccessDeniedException(get_string('notownerofchecklist', 'artefact.epos'));
+        throw new AccessDeniedException(get_string('notownerofevaluation', 'artefact.epos'));
     }
     $sql .= " AND a.id = ?";
     $params []= $id;
 }
-if (!$checklists = get_records_sql_array($sql, $params)) {
-    throw new NotFoundException(get_string('nochecklistsforuser', 'artefact.epos'));
+if (!$evaluations = get_records_sql_array($sql, $params)) {
+    throw new NotFoundException(get_string('noevaluationsforuser', 'artefact.epos'));
 }
-// select first checklist if id is not given
+// select first evaluation if id is not given
 if (!isset($id)) {
-    $id = $checklists[0]->id;
-    $a = new ArtefactTypeChecklist($id);
+    $id = $evaluations[0]->id;
+    $a = new ArtefactTypeEvaluation($id);
 }
 
 $descriptorset = $a->get_descriptorset();
@@ -70,4 +70,4 @@ $smarty->assign('levels', $descriptorset->levels);
 $smarty->assign('ratings', $ratings);
 $smarty->assign('subject', $a->get_parent_instance()->get_name());
 $smarty->assign('PAGEHEADING', get_string('selfevaluationprintout', 'artefact.epos'));
-$smarty->display('artefact:epos:checklist-print.tpl');
+$smarty->display('artefact:epos:evaluation-print.tpl');

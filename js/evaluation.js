@@ -8,7 +8,7 @@ function toggleEvaluationForm(comp, level, type, competence) {
     }
 }
 
-function checklistSaveCallback(form, data) {
+function evaluationSaveCallback(form, data) {
     window.location.reload();
 }
 

@@ -39,11 +39,11 @@ define('EVALUATION_ITEM_TYPE_CUSTOM_GOAL', 2);
 class PluginArtefactEpos extends PluginArtefact {
 
     public static function get_artefact_types() {
-        return array('subject', 'checklist', 'storedevaluation', 'customgoal', 'customcompetence');
+        return array('subject', 'evaluation', 'customgoal', 'customcompetence');
     }
 
     public static function get_block_types() {
-        return array('checklist', 'goals');
+        return array('evaluation', 'goals');
     }
 
     public static function get_plugin_name() {
@@ -138,10 +138,8 @@ class ArtefactTypeSubject extends ArtefactType {
     }
 }
 
-/**
- * ArtefactTypeChecklist implementing ArtefactType
- */
-class ArtefactTypeChecklist extends ArtefactType {
+
+class ArtefactTypeEvaluation extends ArtefactType {
 
     protected $descriptorset_id;
 
@@ -233,7 +231,7 @@ class ArtefactTypeChecklist extends ArtefactType {
     }
 
     /**
-     * Overriding the delete() function to clear the checklist table
+     * Overriding the delete() function to clear the evaluation table
      */
     public function delete() {
         db_begin();
@@ -252,7 +250,7 @@ class ArtefactTypeChecklist extends ArtefactType {
     public static function get_links($id) {}
 
     /**
-     * This function builds the artefact title from language and checklist information
+     * This function builds the artefact title from language and evaluation information
      * @see ArtefactType::display_title()
      */
     public function display_title() {
@@ -318,7 +316,7 @@ class ArtefactTypeChecklist extends ArtefactType {
     public function check_permission() {
         global $USER;
         if ($USER->get('id') != $this->owner) {
-            throw new AccessDeniedException(get_string('youarenottheownerofthischecklist', 'artefact.epos'));
+            throw new AccessDeniedException(get_string('youarenottheownerofthisevaluation', 'artefact.epos'));
         }
     }
 
@@ -550,10 +548,10 @@ class ArtefactTypeChecklist extends ArtefactType {
                 'elements' => $elements,
                 'elementclasses' => true,
                 'successcallback' => array(
-                        'ArtefactTypeChecklist',
+                        'ArtefactTypeEvaluation',
                         'submit_evaluationform'
                 ),
-                'jssuccesscallback' => 'checklistSaveCallback'
+                'jssuccesscallback' => 'evaluationSaveCallback'
         );
         foreach ($alterform as $key => $value) {
             $evaluationform[$key] = $value;
@@ -831,7 +829,7 @@ EOL
             db_rollback();
             $form->json_reply(PIEFORM_ERR, $e->getMessage());
         }
-        $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
+        $form->json_reply(PIEFORM_OK, get_string('savedevaluation', 'artefact.epos'));
     }
 
     /**
@@ -849,7 +847,7 @@ EOL
             	FROM artefact a, artefact b
             	WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
 
-        if (!$data = get_records_sql_array($sql, array($owner, 'checklist'))) {
+        if (!$data = get_records_sql_array($sql, array($owner, 'evaluation'))) {
             return false;
         }
         // sort alphabetically by title
@@ -872,14 +870,14 @@ EOL
 }
 
 
-class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
+class ArtefactTypeStoredEvaluation extends ArtefactTypeEvaluation {
 
     /**
      * Create a stored evaluation either from its id or from an evaluation.
      * @param unknown $idOrEvaluation
      */
     public function __construct($idOrEvaluation, $data=null, $full_load=true) {
-        if (is_a($idOrEvaluation, 'ArtefactTypeChecklist')) {
+        if (is_a($idOrEvaluation, 'ArtefactTypeEvaluation')) {
             parent::__construct();
             // create a new stored evaluation from an evaluation
             $this->populate_from_evaluation($idOrEvaluation);
@@ -889,7 +887,7 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
         }
     }
 
-    private function populate_from_evaluation(ArtefactTypeChecklist $evaluation) {
+    private function populate_from_evaluation(ArtefactTypeEvaluation $evaluation) {
         $this->descriptorset_id = $evaluation->get_descriptorset_id();
         foreach ($evaluation->items as $item) {
             $item = clone $item;
@@ -905,6 +903,19 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
         }
         $this->owner = $evaluation->get('owner');
         $this->parent = $evaluation->get('parent');
+    }
+
+    public static function get_users_evaluations() {
+        global $USER;
+        $evaluations = get_records_sql_array("
+                SELECT e.id, e.title, e.ctime, s.id as s_id, s.title s_title
+                FROM artefact e
+                    LEFT JOIN artefacts ON e.parent = s.id
+                WHERE e.artefacttype = 'storedevaluation'
+                    AND e.owner = ?
+                ORDERY BY s_id, e.ctime
+                ", array($USER->get('id')));
+        // TODO: do sth.
     }
 
     public static function form_store_evaluation($evaluation_id) {
@@ -946,7 +957,7 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
     }
 
     public static function form_store_evaluation_submit($form, $values) {
-        $evaluation = new ArtefactTypeChecklist($values['evaluation']);
+        $evaluation = new ArtefactTypeEvaluation($values['evaluation']);
         $evaluation->check_permission();
         $stored_evaluation = new ArtefactTypeStoredEvaluation($evaluation);
         $stored_evaluation->set('title', $values['name']);
@@ -967,7 +978,7 @@ class ArtefactTypeCustomGoal extends ArtefactType {
 
     public static function get_links($id) {}
 
-    public static function form_add_customgoal($is_goal=false, $jscallback='checklistSaveCallback') {
+    public static function form_add_customgoal($is_goal=false, $jscallback='evaluationSaveCallback') {
         $elements = array();
         $elements['customcompetence'] = array(
             'type' => 'text',
@@ -1080,7 +1091,7 @@ class ArtefactTypeCustomGoal extends ArtefactType {
             throw $e;
             $form->json_reply(PIEFORM_ERR, $e->getMessage());
         }
-        $form->json_reply(PIEFORM_OK, get_string('savedchecklist', 'artefact.epos'));
+        $form->json_reply(PIEFORM_OK, get_string('savedevaluation', 'artefact.epos'));
     }
 
     /**
@@ -1477,14 +1488,14 @@ function get_manageable_institutions($user) {
 }
 
 /**
- * Create a subject artefact for a user with a checklist assigned
+ * Create a subject artefact for a user with a evaluation assigned
  * @param $subject_id The subject the user chooses to partake in
  * @param $subject_title The title the user assigns to that subject's instance
- * @param $descriptorset_id The descriptorset to use as checklist in this instance
- * @param $checklist_title The title of the checklist created for this subject
+ * @param $descriptorset_id The descriptorset to use as evaluation in this instance
+ * @param $evaluation_title The title of the evaluation created for this subject
  * @param $user_id The user to create the subject artefact for, defaults to the current user
  */
-function create_subject_for_user($subject_id, $subject_title, $descriptorset_id, $checklist_title, $user_id=null) {
+function create_subject_for_user($subject_id, $subject_title, $descriptorset_id, $evaluation_title, $user_id=null) {
     if (!isset($user_id)) {
         global $USER;
         $user_id = $USER->get('id');
@@ -1514,20 +1525,20 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
     }
 
     /*
-    // if there is already a checklist with the given title, don't create another one
+    // if there is already a evaluation with the given title, don't create another one
     $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
-    if (get_records_sql_array($sql, array($id, $checklist_title))) {
+    if (get_records_sql_array($sql, array($id, $evaluation_title))) {
         return;
     }
     */
-    create_evaluation_for_user($descriptorset_id, $checklist_title, $id, $user_id);
+    create_evaluation_for_user($descriptorset_id, $evaluation_title, $id, $user_id);
 }
 
 
 /**
  * Create an evaluation artefact for a user
- * @param $descriptorset_id The descriptorset to use as checklist in this instance
- * @param $title The title of the checklist created for this subject
+ * @param $descriptorset_id The descriptorset to use as evaluation in this instance
+ * @param $title The title of the evaluation created for this subject
  * @param $parent The parent item (e.g. subject)
  * @param $user_id The user to create the subject artefact for, defaults to the current user
  */
@@ -1537,8 +1548,8 @@ function create_evaluation_for_user($descriptorset_id, $title, $parent, $user_id
         $user_id = $USER->get('id');
     }
 
-    // create checklist artefact
-    $evaluation = new ArtefactTypeChecklist(0, array(
+    // create evaluation artefact
+    $evaluation = new ArtefactTypeEvaluation(0, array(
         'owner' => $user_id,
         'title' => $title,
         'parent' => $parent,

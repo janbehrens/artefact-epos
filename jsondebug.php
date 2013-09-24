@@ -49,7 +49,7 @@ $descriptors = array();
 $sql = 'SELECT ci.*, d.competence, d.level
     FROM {artefact_epos_descriptor} d 
     JOIN {artefact_epos_evaluation_item} ci ON ci.descriptor = d.name
-    WHERE ci.checklist = ?';
+    WHERE ci.evaluation = ?';
 
 if (!$descriptors = get_records_sql_array($sql, array($id))) {
     $descriptors = array();

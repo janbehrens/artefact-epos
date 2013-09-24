@@ -35,7 +35,7 @@ define('TITLE', get_string('storeevaluation', 'artefact.epos'));
 safe_require('artefact', 'epos');
 
 $evaluation_id = param_integer('id');
-$evaluation = new ArtefactTypeChecklist($evaluation_id);
+$evaluation = new ArtefactTypeEvaluation($evaluation_id);
 $evaluation->check_permission();
 $subject = $evaluation->get_parent_instance();
 

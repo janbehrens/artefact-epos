@@ -16,12 +16,13 @@
                 <KEY NAME="institutionfk"       TYPE="foreign" FIELDS="institution" REFTABLE="institution" REFFIELDS="name" />
             </KEYS>
         </TABLE>
-        <TABLE NAME="artefact_epos_artefact_subject"> 
+        <TABLE NAME="artefact_epos_mysubject"> 
             <FIELDS> 
-                <FIELD NAME="artefact"          TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="artefact"          TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
                 <FIELD NAME="subject"           TYPE="int" LENGTH="10" NOTNULL="true" />
             </FIELDS>
             <KEYS>
+                <KEY NAME="primary"             TYPE="primary" FIELDS="artefact" />
                 <KEY NAME="artefactfk"          TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
                 <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
             </KEYS>
@@ -101,11 +102,14 @@
             <FIELDS>
                 <FIELD NAME="artefact"          TYPE="int" LENGTH="10" NOTNULL="true" />
                 <FIELD NAME="descriptorset_id"  TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="evaluator"         TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="final"             TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="artefact" />
                 <KEY NAME="artefactfk"          TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
                 <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset_id" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="evaluator" REFTABLE="usr" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_evaluation_item"> 

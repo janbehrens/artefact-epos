@@ -3,7 +3,7 @@
 {foreach $evaluationforms item=competence}
     {foreach $competence item=levelforms}
         {foreach $levelforms.forms item=typeform}
-            <div id="{$typeform.name}_div" class="checklistform hidden">
+            <div id="{$typeform.name}_div" class="evaluationform hidden">
                 <h2>{$levelforms.title}</h2>
                 {foreach $typeform.other_types key=type_id item=form_title}
                 <a href="#" onclick="toggleEvaluationForm({$levelforms.competence->id}, {$levelforms.level->id}, {$type_id}, null); return false;">({$form_title})</a>

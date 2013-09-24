@@ -546,12 +546,26 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         db_commit();
     }
 
-    if ($oldversion < 2013092301) {
-        // install new artefact type "stored evaluation"
+    if ($oldversion < 2013092400) {
+        // rename artefact type "checklist" to "evaluation"
+        db_begin();
         insert_record('artefact_installed_type', (object) array(
-            'name' => 'storedevaluation',
+            'name' => 'evaluation',
             'plugin' => 'epos'
         ));
+        // we cannot use update_record() because it does not allow to use the same columns
+        // for update as for where (Mahara bug)
+        execute_sql("UPDATE artefact SET artefacttype = 'evaluation' WHERE artefacttype = 'checklist'");
+        delete_records('artefact_installed_type', 'name', 'checklist', 'plugin', 'epos');
+        // rename checklist blocks, too
+        $blocktype = get_record('blocktype_installed', 'name', 'checklist', 'artefactplugin', 'epos');
+        $blocktype->name = 'evaluation';
+        insert_record('blocktype_installed', $blocktype);
+        execute_sql("UPDATE block_instance SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
+        execute_sql("UPDATE blocktype_installed_viewtype SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
+        execute_sql("UPDATE blocktype_installed_category SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
+        delete_records('blocktype_installed', 'name', 'checklist', 'artefactplugin', 'epos');
+        db_commit();
     }
 
     return true;

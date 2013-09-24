@@ -31,18 +31,18 @@ define('JSON', 1);
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 
-$id = param_integer('checklist_id');
+$id = param_integer('evaluation_id');
 
-$checklistartefact = artefact_instance_from_id($id);
-$languageartefact = $checklistartefact->get_parent_instance();
+$evaluationartefact = artefact_instance_from_id($id);
+$languageartefact = $evaluationartefact->get_parent_instance();
 
 if ($languageartefact->get('owner') != $USER->get('id')) {
     throw new AccessDeniedException(get_string('notartefactowner', 'error'));
 }
 
-$checklistartefact->delete();
+$evaluationartefact->delete();
 
-//delete language artefact if there is no checklist left
+//delete language artefact if there is no evaluation left
 $count = $languageartefact->count_children();
 if (empty($count)) {
     $languageartefact->delete();

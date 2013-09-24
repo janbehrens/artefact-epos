@@ -40,13 +40,13 @@ safe_require('artefact', 'epos');
 
 $haslanguages = true;
 
-$evaluation_selector = ArtefactTypeChecklist::form_user_evaluation_selector();
+$evaluation_selector = ArtefactTypeEvaluation::form_user_evaluation_selector();
 if (!$evaluation_selector) {
     $haslanguages = false;
     $languagelinks = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
 }
 $id = $evaluation_selector['selected'];
-$evaluation = new ArtefactTypeChecklist($id);
+$evaluation = new ArtefactTypeEvaluation($id);
 $evaluation->check_permission();
 
 $addcustomgoalform = ArtefactTypeCustomGoal::form_add_customgoal($is_goal=true, 'customgoalSaveCallback');

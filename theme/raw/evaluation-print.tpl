@@ -27,7 +27,7 @@
     </div>
     <h1>Self Evaluation</h1>
     <h2>{$USER|display_name:null:true}: {$subject}</h2>
-	<table id="checklist" width="100%">
+	<table id="evaluation" width="100%">
 	    <thead>
 	        <tr>
 	            <th style="min-width: 30%;">{str tag='competence' section='artefact.epos'}</th>

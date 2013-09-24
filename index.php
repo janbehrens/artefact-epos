@@ -92,10 +92,10 @@ function languageSaveCallback(form, data) {
     });
 }
 
-function deleteLanguage(checklist_id) {
+function deleteLanguage(evaluation_id) {
     if (confirm('{$confirmdelstr}')) {
         sendjsonrequest('languagedelete.json.php',
-            {'checklist_id': checklist_id},
+            {'evaluation_id': evaluation_id},
             'GET',
             function(data) {
                 tableRenderer.doupdate();

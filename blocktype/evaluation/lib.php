@@ -27,14 +27,14 @@
 
 defined('INTERNAL') || die();
 
-class PluginBlocktypeChecklist extends PluginBlocktype {
+class PluginBlocktypeEvaluation extends PluginBlocktype {
 
     public static function get_title() {
-        return get_string('title', 'blocktype.epos/checklist');
+        return get_string('title', 'blocktype.epos/evaluation');
     }
 
     public static function get_description() {
-        return get_string('description', 'blocktype.epos/checklist');
+        return get_string('description', 'blocktype.epos/evaluation');
     }
 
     public static function get_categories() {
@@ -56,8 +56,8 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
         
         $result = '';
         if (!empty($configdata['artefactid'])) {
-	        $checklist = $instance->get_artefact_instance($configdata['artefactid']);
-	        $result = $checklist->render_self($configdata, $blockid);
+	        $evaluation = $instance->get_artefact_instance($configdata['artefactid']);
+	        $result = $evaluation->render_self($configdata, $blockid);
 	        $result = $result['html'];
         }
         return $result;
@@ -74,14 +74,14 @@ class PluginBlocktypeChecklist extends PluginBlocktype {
         return array(
             'name'  => 'artefactid',
             'type'  => 'artefactchooser',
-            'title' => get_string('selectchecklist', 'blocktype.epos/checklist'),
+            'title' => get_string('selectevaluation', 'blocktype.epos/evaluation'),
             'defaultvalue' => $default,
             'rules' => array(
                 'required' => true,
             ),
-            'blocktype' => 'checklist',
+            'blocktype' => 'evaluation',
             'limit' => 5,
-            'artefacttypes' => array('checklist'),
+            'artefacttypes' => array('evaluation'),
         );
     }
     

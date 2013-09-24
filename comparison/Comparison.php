@@ -52,7 +52,7 @@ class Comparison {
             if (is_numeric($evaluation)) {
                 $evaluation = artefact_instance_from_id($evaluation);
             }
-            if (!is_a($evaluation, 'ArtefactTypeChecklist')) {
+            if (!is_a($evaluation, 'ArtefactTypeEvaluation')) {
                 throw new ParameterException("No valid evaluation: $evaluation");
             }
             $this->evaluations_by_id[$evaluation->get('id')]= $evaluation;
@@ -102,8 +102,8 @@ class Comparison {
         $evaluations = array();
         foreach ($evaluation_records as $evaluation) {
             if (!isset($this->evaluations_by_id[$evaluation->id])) {
-                if ($evaluation->artefacttype == 'checklist') {
-                    $evaluation = new ArtefactTypeChecklist(0, $evaluation, false);
+                if ($evaluation->artefacttype == 'evaluation') {
+                    $evaluation = new ArtefactTypeEvaluation(0, $evaluation, false);
                 }
                 else {
                     $evaluation = new ArtefactTypeStoredEvaluation(0, $evaluation, false);
@@ -172,7 +172,7 @@ class Comparison {
                 if (is_a($evaluation, 'ArtefactTypeStoredEvaluation')) {
                     $item->title = $evaluation->get('title');
                 }
-                else if (is_a($evaluation, 'ArtefactTypeChecklist')) {
+                else if (is_a($evaluation, 'ArtefactTypeEvaluation')) {
                     $item->title = $evaluation->get_parent_instance()->get('title');
                 }
                 $data []= $item;

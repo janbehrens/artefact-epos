@@ -54,12 +54,12 @@ $string['addedlanguage'] = 'Subject has been added.';
 $string['confirmdel'] = 'Are you sure you want to delete this subject?';
 $string['deletedlanguage'] = 'Subject has been deleted.';
 $string['nolanguageselected'] = 'You have not selected any subjects. Go to %s to add one.';
-$string['savedchecklist'] = 'Your checklist has been saved.';
+$string['savedevaluation'] = 'Your evaluation has been saved.';
 $string['titlenotvalid'] = 'Title is not valid.';
 $string['descriptorsetnotvalid'] = 'Competence grid is not valid.';
 $string['pleasechoosesubject'] = 'Please choose a subject first';
-$string['youarenottheownerofthischecklist'] = 'You may not view this self-evaluation list, it is owned by someone else';
-$string['nochecklistsforuser'] = 'You do not yet have any self-evaluation lists.';
+$string['youarenottheownerofthisevaluation'] = 'You may not view this self-evaluation list, it is owned by someone else';
+$string['noevaluationsforuser'] = 'You do not yet have any self-evaluation lists.';
 
 //vocabulary
 $string['competence'] = 'Competence area';
@@ -134,7 +134,7 @@ $string['learningobjective_checkbox'] = 'Display checkbox for learning objective
 $string['fill_in_learning_objectives'] = 'Fill in can-do statements and task links for the given combination of competence and level.';
 $string['combination_of'] = 'Combination of';
 $string['and'] = 'and';
-$string['printchecklist'] = 'Print evaluation';
+$string['printevaluation'] = 'Print evaluation';
 $string['enablebackgroundprinting'] = 'Make sure to enable printing of background colors in the printing dialog.';
 $string['legendthenumbers'] = 'The figures in the bars indicate the number of "Can-Do Statements" rated with the respective evaluation levels. The first figure is the number of statements rated with "%s", the second one refers to "%s" etc.';
 
