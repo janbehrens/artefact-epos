@@ -50,7 +50,7 @@ class Comparison {
         $this->evaluations = array();
         foreach ($evaluations as $evaluation) {
             if (is_numeric($evaluation)) {
-                $evaluation = new ArtefactTypeChecklist($evaluation);
+                $evaluation = artefact_instance_from_id($evaluation);
             }
             if (!is_a($evaluation, 'ArtefactTypeChecklist')) {
                 throw new ParameterException("No valid evaluation: $evaluation");
@@ -102,7 +102,12 @@ class Comparison {
         $evaluations = array();
         foreach ($evaluation_records as $evaluation) {
             if (!isset($this->evaluations_by_id[$evaluation->id])) {
-                $evaluation = new ArtefactTypeChecklist(0, $evaluation, false);
+                if ($evaluation->artefacttype == 'checklist') {
+                    $evaluation = new ArtefactTypeChecklist(0, $evaluation, false);
+                }
+                else {
+                    $evaluation = new ArtefactTypeStoredEvaluation(0, $evaluation, false);
+                }
                 $evaluation->set('dirty', false);
                 $evaluations []= $evaluation;
             }
@@ -120,7 +125,14 @@ class Comparison {
         foreach ($this->evaluations as $evaluation) {
             $evaluation_item = new stdClass();
             $evaluation_item->id = $evaluation->get('id');
-            $evaluation_item->title = $evaluation->get_parent_instance()->get('title');
+            if (is_a($evaluation, 'ArtefactTypeStoredEvaluation')) {
+                $evaluation_item->title = $evaluation->get('title');
+                $evaluation_item->url = get_config('wwwroot') . "/artefact/epos/evaluation/stored.php?id=$evaluation_item->id";
+            }
+            else {
+                $evaluation_item->title = $evaluation->get_parent_instance()->get('title');
+                $evaluation_item->url = get_config('wwwroot') . "/artefact/epos/evaluation/self-eval.php?id=$evaluation_item->id";
+            }
             $evaluation_item->url_without_this = $this->get_url_without($evaluation_item->id);
             $evaluation_item->color = $this->color_next();
             $evaluation_item->color_html = $this->color_html();
@@ -157,7 +169,12 @@ class Comparison {
             foreach ($other as $evaluation) {
                 $item = new stdClass();
                 $item->id = $evaluation->get('id');
-                $item->title = $evaluation->get_parent_instance()->get('title');
+                if (is_a($evaluation, 'ArtefactTypeStoredEvaluation')) {
+                    $item->title = $evaluation->get('title');
+                }
+                else if (is_a($evaluation, 'ArtefactTypeChecklist')) {
+                    $item->title = $evaluation->get_parent_instance()->get('title');
+                }
                 $data []= $item;
             }
             $current_ids = array();

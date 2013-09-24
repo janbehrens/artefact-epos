@@ -27,7 +27,7 @@
 
 define('INTERNAL', true);
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');

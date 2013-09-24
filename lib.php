@@ -98,24 +98,20 @@ class PluginArtefactEpos extends PluginArtefact {
     }
 
     public static function jsstrings($type) {
-        static $jsstrings = array(
-            'customgoals' => array(
-                'mahara' => array(
-                    'save',
-                    'cancel'
-                 ),
-                'artefact.epos' => array(
-                    'customlearninggoalwanttodelete'
-                ),
-            ),
-            'create_selfevaluation' => array(
-
-            ),
-            'evaluation' => array(
-
-            )
-        );
-        return $jsstrings[$type];
+        switch ($type) {
+            case 'customgoals':
+                return array(
+                    'mahara' => array(
+                        'save',
+                        'cancel'
+                     ),
+                    'artefact.epos' => array(
+                        'customlearninggoalwanttodelete'
+                    ),
+                );
+            default:
+                return array();
+        }
     }
 }
 
@@ -384,7 +380,7 @@ class ArtefactTypeChecklist extends ArtefactType {
             }
             else if ($item->type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                 $goal = $customgoals[$item->target_key];
-                $competence_id = $goal->get('parent');
+                $competence_id = $this->customcompetences[$goal->get('parent')]->get('title');
                 $level_id = 0; // there is always only one level
             }
             if (!isset($results[$competence_id][$level_id])) {
@@ -402,13 +398,20 @@ class ArtefactTypeChecklist extends ArtefactType {
                 $complevel['average'] = round(100 * $complevel['value'] / $complevel['max']);
             }
             if ($complevel['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
-                $levels['name'] = $customcompetences[$competence_id]->get('title');
+                $levels['name'] = $competence_id;
             }
             else {
                 $levels['name'] = $descriptorset->competences[$competence_id]->name;
             }
         }
-        ksort($results);
+        // string keys (custom competences) should come last
+        uksort($results, function($left, $right) {
+            if ((is_int($left) && is_int($right))
+                || (is_string($left) && is_string($right))) {
+                return $left < $right ? -1 : 1;
+            }
+            return is_numeric($left) ? -1 : 1;
+        });
         return $results;
     }
 
@@ -875,14 +878,14 @@ class ArtefactTypeStoredEvaluation extends ArtefactTypeChecklist {
      * Create a stored evaluation either from its id or from an evaluation.
      * @param unknown $idOrEvaluation
      */
-    public function __construct($idOrEvaluation) {
+    public function __construct($idOrEvaluation, $data=null, $full_load=true) {
         if (is_a($idOrEvaluation, 'ArtefactTypeChecklist')) {
             parent::__construct();
             // create a new stored evaluation from an evaluation
             $this->populate_from_evaluation($idOrEvaluation);
         }
         else {
-            parent::__construct($idOrEvaluation);
+            parent::__construct($idOrEvaluation, $data, $full_load);
         }
     }
 
