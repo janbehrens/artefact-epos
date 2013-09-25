@@ -41,8 +41,7 @@
 	        {cycle values='odd,even' assign='evenodd'}
 	        <tr class="{$evenodd}">
 	            <td style="white-space: nowrap;">{$competence.name}</td>
-	            {foreach $levels name=levels key=level_id item=level}
-                {assign $competence.levels.$level_id comp_level}
+	            {foreach $competence.levels name=levels key=level_id item=comp_level}
 	            <td>
 	                <div class="progressbar">
 	                    <div class="progressbar-value" style="width: {$comp_level.average}%;">

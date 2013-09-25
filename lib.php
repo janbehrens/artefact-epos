@@ -682,10 +682,10 @@ class ArtefactTypeEvaluation extends ArtefactType {
                     'value' => <<< EOL
                         <div style="white-space:nowrap;">
                             <a href="javascript: onClick=editCustomGoal('$goal_id');" title="$editCustomgoal">
-                                <img src="../../theme/raw/static/images/edit.gif" alt="$editCustomgoal">
+                                <img src="../../../theme/raw/static/images/edit.gif" alt="$editCustomgoal">
                             </a>
                             <a href="javascript: deleteCustomGoal('$goal_id');" title="$deleteCustomgoal">
-                                <img src="../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal">
+                                <img src="../../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal">
                             </a>
                         </div>
 EOL
@@ -1196,9 +1196,12 @@ class ArtefactTypeCustomCompetence extends ArtefactType {
 
     public function get_customgoals() {
         if (!isset($this->goals)) {
-            $this->goals = $this->get_children_instances();
-            if ($this->goals === false) {
-                $this->goals = array();
+            $records = get_records_array('artefact', 'parent', $this->id, 'id');
+            $this->goals = array();
+            if ($records !== false) {
+                foreach ($records as $record) {
+                    $this->goals []= new ArtefactTypeCustomGoal($record->id, $record);
+                }
             }
         }
         return $this->goals;
