@@ -104,19 +104,25 @@ $string['evaluationnotfound'] = 'The requested evaluation cannot be found.';
 $string['overallrating'] = "Overall rating for this competence area on this level";
 $string['evaluationtypedescriptor'] = "Switch to detailed evaluation";
 $string['evaluationtypecompetencelevel'] = "Switch to overall evaluation";
-$string['requestexternalevaluation'] = "Request External Evaluation";
 
 // Stored Evaluations
 $string['storeevaluation'] = "Store Evaluation";
 $string['storedevaluations'] = "Stored Evaluations";
 $string['evaluationname'] = "Name for evaluation";
+$string['creationtime'] = "Time of creation";
+$string['nostoredevaluations'] = "You have not yet stored any evaluations.";
 $string['evaluationnamealreadyexists'] = "An evaluation with this name already exists.";
 $string['evaluationsuccessfullystored'] = "Successfully stored your evaluation.";
 $string['evaluationisnoteditable'] = "This evaluation is final and cannot be edited.";
-$string['creationtime'] = "Time of creation";
 
 // External Evaluations
+$string['externalevaluations'] = "External Evaluations";
 $string['evaluator'] = "Evaluator";
+$string['requestexternalevaluation'] = "Request External Evaluation";
+$string['sendrequest'] = "Send Request";
+$string['invalidusername'] = "This user does not exist.";
+$string['cannotevaluateyourself'] = "You cannot send an evaluation request to yourself. You can evaluate yourself under 'Self-evaluation'.";
+$string['invaliddescriptorsetforsubject'] = "This competence grid cannot be used for this subject. Please choose another one.";
 
 //Comparison
 $string['comparison'] = "Comparison";

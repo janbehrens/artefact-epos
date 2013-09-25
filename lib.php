@@ -75,9 +75,9 @@ class PluginArtefactEpos extends PluginArtefact {
                 'weight' => 21,
             ),
             array(
-                'path' => 'evaluation/request',
-                'title' => get_string('requestexternalevaluation', 'artefact.epos'),
-                'url' => 'artefact/epos/evaluation/request_external.php',
+                'path' => 'evaluation/external',
+                'title' => get_string('externalevaluations', 'artefact.epos'),
+                'url' => 'artefact/epos/evaluation/external.php',
                 'weight' => 22,
             ),
             array(
@@ -130,9 +130,28 @@ class ArtefactTypeSubject extends ArtefactType {
      * Overriding the delete() function to clear table references
      */
     public function delete() {
+        db_begin();
         delete_records('artefact_epos_mysubject', 'artefact', $this->id);
-
         parent::delete();
+        db_commit();
+    }
+
+    public static function get_all_subjects() {
+        global $USER;
+        $records = get_records_sql_array("
+                SELECT * FROM artefact
+                WHERE artefacttype = 'subject'
+                    AND owner = ?
+                ORDER BY title
+                ", array($USER->get('id'))
+        );
+        $subjects = array();
+        if ($records) {
+            foreach ($records as $record) {
+                $subjects []= new ArtefactTypeSubject($record->id, $record);
+            }
+        }
+        return $subjects;
     }
 }
 
@@ -1361,6 +1380,62 @@ class Descriptorset implements ArrayAccess, Iterator {
     	return $this->descriptors_by_competence_level[$competence_id][$level_id];
     }
 
+    /**
+     * Gets all descriptorsets for a given user's subject (artefact, not institution offer)
+     * @param int $subject
+     */
+    public static function get_descriptorsets_for_mysubject_records($subject) {
+        $sets = get_records_sql_array("
+                SELECT d.*
+                FROM artefact_epos_descriptorset d
+                INNER JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
+                INNER JOIN artefact_epos_mysubject my ON ds.subject = my.subject
+                WHERE my.artefact = ?
+                    AND d.active = 1
+                ORDER BY d.name
+                ", array($subject)
+        );
+        return $sets ? $sets : array();
+    }
+
+    /**
+     * Select the descriptorset of the first non-final evaluation of that subject.
+     * @param int $subject
+     */
+    public static function get_default_descriptorset_for_subject_record($subject) {
+        $set = get_record_sql("
+                SELECT d.*
+                FROM artefact_epos_descriptorset d
+                INNER JOIN artefact_epos_evaluation e ON d.id = e.descriptorset_id
+                INNER JOIN artefact a ON e.artefact = a.id
+                WHERE a.parent = ?
+                    AND e.final = 0
+                    AND d.active = 1
+                ORDER BY a.id
+                LIMIT 1
+                ", array($subject)
+        );
+        return $set ? $set : null;
+    }
+
+    /**
+     * Check if the descriptorset is available for the subject (may be inactive).
+     * @param int $descriptorset_id
+     * @param int $subject_id
+     * @return boolean
+     */
+    public static function is_valid_descriptorset_for_subject($descriptorset_id, $subject_id) {
+        $sets = get_record_sql("
+                SELECT d.*
+                FROM artefact_epos_descriptorset d
+                INNER JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
+                INNER JOIN artefact_epos_mysubject my ON ds.subject = my.subject
+                WHERE my.artefact = ?
+                    AND d.id = ?
+                ", array($subject_id,$descriptorset_id)
+        );
+        return $sets != false;
+    }
 }
 
 
@@ -1394,7 +1469,7 @@ function load_descriptors($id) {
             LEFT JOIN artefact_epos_competence c ON d.competence_id = c.id
             LEFT JOIN artefact_epos_level l ON d.level_id = l.id
         WHERE descriptorset = ?
-        ORDER BY level, competence, id';
+        ORDER BY c.id, l.id, id';
 
     if (!$descriptors = get_records_sql_array($sql, array($id))) {
         $descriptors = array();

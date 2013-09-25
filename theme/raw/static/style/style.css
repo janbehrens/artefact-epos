@@ -26,6 +26,10 @@
     cursor: pointer;
 }
 
+a label {
+	cursor: pointer;
+}
+
 div#subjects_list p {
 	font-size: 120%;
 }
