@@ -38,6 +38,7 @@ $string['mylanguages'] = 'My subjects';
 $string['myexperience'] = 'My experience';
 $string['mydiary'] = 'My diary';
 $string['templates'] = 'Templates';
+$string['current'] = 'current';
 
 //interaction
 $string['add'] = 'Add';

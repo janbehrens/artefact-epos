@@ -732,6 +732,11 @@ EOL
 		}
     }
 
+    /**
+     * Render the HTML table for this evaluation.
+     * @param string $interactive Whether javascript links should be generated that toggle forms
+     * @return string The HTML of the table
+     */
     public function render_evaluation_table($interactive=true) {
         $descriptorset = $this->get_descriptorset();
         $results = $this->results();
@@ -854,6 +859,9 @@ EOL
                     }
                 }
             }
+            $evaluation = new ArtefactTypeEvaluation($id);
+            $evaluation->set('mtime', time());
+            $evaluation->commit();
             db_commit();
         }
         catch (Exception $e) {
@@ -968,19 +976,26 @@ EOL
     /**
      * Get all records (not instances) of evaluations that are final
      * ordered by mtime
-     * @return array The records: id, title, mtime, subject (title), evaluator (id), firstname, lastname
+     * @return array The records: id, title, mtime, subject (title), evaluator (id), final, firstname, lastname
      */
     public static function get_all_stored_evaluations() {
         global $USER;
         $evaluations = get_records_sql_array("
-                SELECT a.id, a.title, a.mtime, s.title as subject, e.evaluator, usr.firstname, usr.lastname FROM artefact a
+                SELECT a.id, a.title, a.mtime, s.title as subject, e.evaluator, e.final, usr.firstname, usr.lastname
+                FROM artefact a
                 INNER JOIN artefact s ON a.parent = s.id
                 INNER JOIN artefact_epos_evaluation e ON a.id = e.artefact
                 LEFT JOIN usr ON e.evaluator = usr.id
+                RIGHT JOIN (
+                    SELECT e1.parent
+                    FROM artefact e1
+                    WHERE e1.artefacttype = 'evaluation'
+                    GROUP BY e1.parent
+                    HAVING count(e1.parent) > 1
+                ) c ON s.id = c.parent
                 WHERE a.artefacttype = 'evaluation'
                     AND a.owner = ?
-                    AND e.final = 1
-                ORDER BY a.mtime
+                ORDER BY s.title, e.final DESC, a.mtime
                 ", array($USER->get('id')));
         if ($evaluations) {
             foreach ($evaluations as $evaluation) {

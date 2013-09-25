@@ -45,6 +45,14 @@ else {
     $evaluations = ArtefactTypeEvaluation::get_all_stored_evaluations();
     $by_subject = array();
     foreach ($evaluations as $evaluation) {
+        if (!$evaluation->final) {
+            $evaluation->title = $evaluation->title . ' (' . get_string('current', 'artefact.epos') . ')';
+            $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/self-eval.php?id=' . $evaluation->id;
+        }
+        else {
+            $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/stored.php?id=' . $evaluation->id;
+            $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/display.php?id=' . $evaluation->id;
+        }
         if ($evaluation->evaluator == $USER->get('id')) {
             $evaluation->firstname = get_string('yourself', 'artefact.epos');
             $evaluation->lastname = "";

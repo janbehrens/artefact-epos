@@ -25,7 +25,7 @@
         <a class="btn buttondk" href="javascript:self:back()">{str tag='back' section='artefact.epos'}</a>
         <a class="btn buttondk" href="javascript:self:print()">{str tag='print' section='artefact.epos'}</a>
     </div>
-    <h1>Self Evaluation</h1>
+    <h1>{str tag='evaluation' section='artefact.epos'}</h1>
     <h2>{$USER|display_name:null:true}: {$subject}</h2>
 	<table id="evaluation" width="100%">
 	    <thead>
@@ -42,7 +42,7 @@
 	        <tr class="{$evenodd}">
 	            <td style="white-space: nowrap;">{$competence.name}</td>
 	            {foreach $levels name=levels key=level_id item=level}
-                {assign $competence.$level_id comp_level}
+                {assign $competence.levels.$level_id comp_level}
 	            <td>
 	                <div class="progressbar">
 	                    <div class="progressbar-value" style="width: {$comp_level.average}%;">

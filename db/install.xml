@@ -109,7 +109,7 @@
                 <KEY NAME="primary"             TYPE="primary" FIELDS="artefact" />
                 <KEY NAME="artefactfk"          TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
                 <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset_id" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="evaluator" REFTABLE="usr" REFFIELDS="id" />
+                <KEY NAME="evaluatorfk"     TYPE="foreign" FIELDS="evaluator" REFTABLE="usr" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_evaluation_item"> 
