@@ -431,7 +431,7 @@ function createNewCanDoRow(competencyName, competencyLevel, nI) {
 }
 
 function showCanDoRow(competencyName, competencyLevel, id) {
-	id = competencyName+"_"+competencyLevel+"_"+nI;
+	id = competencyName+"_"+competencyLevel+"_"+id;
 	
 	tr = document.getElementById("tr_canDo_"+id);
 	tr.setAttribute("style", "display");
