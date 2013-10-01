@@ -204,6 +204,10 @@ body.print {
 	margin: 0 10px;
 }
 
+table.stored_evaluations {
+	width: 100%;
+}
+
 table.stored_evaluations thead {
 	color: gray;
 }

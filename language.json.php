@@ -40,11 +40,15 @@ $count = 0;
 
 $data = array();
 
-$sql = "SELECT DISTINCT a.id, b.title, s.name as descriptorset FROM artefact b, artefact a
-        JOIN artefact_epos_evaluation_item i ON a.id = i.evaluation_id
-        JOIN artefact_epos_descriptor d ON d.id = i.descriptor_id
-        JOIN artefact_epos_descriptorset s ON s.id = d.descriptorset
-        WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = 'evaluation' ORDER BY b.title;";
+$sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
+        FROM artefact subject
+        INNER JOIN artefact evaluation ON subject.id = evaluation.parent
+        LEFT JOIN artefact_epos_evaluation e ON e.artefact = evaluation.id
+        LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset_id
+        WHERE evaluation.owner = ?
+            AND evaluation.artefacttype = 'evaluation'
+            AND e.final = 0
+        ORDER BY subject.title;";
 
 if (!$data = get_records_sql_array($sql, array($owner))) {
     $data = array();

@@ -102,13 +102,7 @@ class Comparison {
         $evaluations = array();
         foreach ($evaluation_records as $evaluation) {
             if (!isset($this->evaluations_by_id[$evaluation->id])) {
-                if ($evaluation->artefacttype == 'evaluation') {
-                    $evaluation = new ArtefactTypeEvaluation(0, $evaluation, false);
-                }
-                else {
-                    $evaluation = new ArtefactTypeStoredEvaluation(0, $evaluation, false);
-                }
-                $evaluation->set('dirty', false);
+                $evaluation = new ArtefactTypeEvaluation($evaluation->id, $evaluation, false);
                 $evaluations []= $evaluation;
             }
         }
@@ -126,9 +120,10 @@ class Comparison {
         foreach ($this->evaluations as $evaluation) {
             $evaluation_item = new stdClass();
             $evaluation_item->id = $evaluation->get('id');
+            $evaluation_item->final = $evaluation->final;
             if ($evaluation->final) {
                 $evaluation_item->title = $evaluation->get('title');
-                $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/stored.php?id=$evaluation_item->id";
+                $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/display.php?id=$evaluation_item->id";
             }
             else {
                 $evaluation_item->title = $evaluation->get_parent_instance()->get('title');
@@ -177,11 +172,14 @@ class Comparison {
             foreach ($other as $evaluation) {
                 $item = new stdClass();
                 $item->id = $evaluation->get('id');
-                if (is_a($evaluation, 'ArtefactTypeStoredEvaluation')) {
-                    $item->title = $evaluation->get('title');
+                if ($evaluation->final) {
+                    $evaluator_name = $evaluation->evaluator == $USER->get('id') ?
+                        get_string('yourself', 'artefact.epos') : $evaluation->evaluator_display_name;
+                    $item->title = $evaluation->get('title') . ' (' . format_date($evaluation->get('mtime')) . ', '
+                    . get_string('by', 'artefact.epos') . ' ' . $evaluator_name . ')';
                 }
-                else if (is_a($evaluation, 'ArtefactTypeEvaluation')) {
-                    $item->title = $evaluation->get_parent_instance()->get('title');
+                else {
+                    $item->title = $evaluation->get_parent_instance()->get('title') . ' (' . get_string('current', 'artefact.epos') . ')';
                 }
                 $data []= $item;
             }

@@ -37,16 +37,16 @@ safe_require('artefact', 'epos');
 $evaluation_id = param_integer('id', -1);
 
 if ($evaluation_id != -1) {
-    $evaluation = new ArtefactTypeStoredEvaluation($evaluation_id);
+    $evaluation = new ArtefactTypeEvaluation($evaluation_id);
     $evaluation->check_permission();
     $subject = $evaluation->get_parent_instance();
 }
 else {
-    $evaluations = ArtefactTypeEvaluation::get_all_stored_evaluations();
-    $by_subject = array();
+    $evaluations = ArtefactTypeEvaluation::get_all_stored_evaluation_records();
+    $by_subject_and_descriptorset = array();
     foreach ($evaluations as $evaluation) {
         if (!$evaluation->final) {
-            $evaluation->title = $evaluation->title . ' (' . get_string('current', 'artefact.epos') . ')';
+            $evaluation->title = '(' . get_string('current', 'artefact.epos') . ')';
             $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/self-eval.php?id=' . $evaluation->id;
         }
         else {
@@ -57,7 +57,8 @@ else {
             $evaluation->firstname = get_string('yourself', 'artefact.epos');
             $evaluation->lastname = "";
         }
-        $by_subject[$evaluation->subject] []= $evaluation;
+        $by_subject_and_descriptorset[$evaluation->subject][$evaluation->descriptorset_id]['evaluations'] []= $evaluation;
+        $by_subject_and_descriptorset[$evaluation->subject][$evaluation->descriptorset_id]['name'] = $evaluation->descriptorset;
     }
 }
 
@@ -65,5 +66,5 @@ $heading = get_string('storedevaluations', 'artefact.epos');
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', $heading);
-$smarty->assign('subjects', $by_subject);
+$smarty->assign('subjects', $by_subject_and_descriptorset);
 $smarty->display('artefact:epos:stored-evaluations.tpl');

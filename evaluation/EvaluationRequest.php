@@ -195,7 +195,7 @@ class EvaluationRequest {
         $request->inquirer = $USER->get('id');
         $request->inquiry_message = $values['message'];
         $request->commit();
-        redirect(get_config('wwwroot') . 'artefact/epos/evaluation/external.php'');
+        redirect(get_config('wwwroot') . 'artefact/epos/evaluation/external.php');
     }
 
 }

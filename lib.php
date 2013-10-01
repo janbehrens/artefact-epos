@@ -995,26 +995,31 @@ EOL
     /**
      * Get all records (not instances) of evaluations that are final
      * ordered by mtime
-     * @return array The records: id, title, mtime, subject (title), evaluator (id), final, firstname, lastname
+     * @return array The records: id, title, mtime, subject (title), evaluator (id), final, firstname, lastname, descriptorset_id, descriptorset
      */
-    public static function get_all_stored_evaluations() {
+    public static function get_all_stored_evaluation_records() {
         global $USER;
         $evaluations = get_records_sql_array("
-                SELECT a.id, a.title, a.mtime, s.title as subject, e.evaluator, e.final, usr.firstname, usr.lastname
+                SELECT a.owner, a.id, a.title, a.mtime, s.title AS subject, e.evaluator, e.final, usr.firstname,
+                        usr.lastname, d.id AS descriptorset_id, d.name AS descriptorset
                 FROM artefact a
                 INNER JOIN artefact s ON a.parent = s.id
                 INNER JOIN artefact_epos_evaluation e ON a.id = e.artefact
+                LEFT JOIN artefact_epos_descriptorset d ON e.descriptorset_id = d.id
                 LEFT JOIN usr ON e.evaluator = usr.id
                 RIGHT JOIN (
-                    SELECT e1.parent
+                    SELECT e1.parent, d1.id
                     FROM artefact e1
+                    LEFT JOIN artefact_epos_evaluation e2 ON e1.id = e2.artefact
+                    LEFT JOIN artefact_epos_descriptorset d1 ON e2.descriptorset_id = d1.id
                     WHERE e1.artefacttype = 'evaluation'
-                    GROUP BY e1.parent
-                    HAVING count(e1.parent) > 1
+                    GROUP BY e1.parent, d1.id
+                    HAVING count(d1.id) > 1
                 ) c ON s.id = c.parent
                 WHERE a.artefacttype = 'evaluation'
+                    AND c.id = d.id
                     AND a.owner = ?
-                ORDER BY s.title, e.final DESC, a.mtime
+                ORDER BY s.title, descriptorset, e.final DESC, a.mtime
                 ", array($USER->get('id')));
         if ($evaluations) {
             foreach ($evaluations as $evaluation) {
@@ -1672,7 +1677,8 @@ function create_evaluation_for_user($descriptorset_id, $title, $parent, $user_id
         'owner' => $user_id,
         'title' => $title,
         'parent' => $parent,
-    	'descriptorset_id' => $descriptorset_id
+    	'descriptorset_id' => $descriptorset_id,
+        'evaluator' => $user_id
     ));
     $evaluation->commit();
 
