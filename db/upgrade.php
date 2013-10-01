@@ -613,5 +613,42 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         db_commit();
     }
 
+    if ($oldversion < 2013100100) {
+        // find users that have custom goals
+        $usersSql = "SELECT owner AS id FROM artefact WHERE artefacttype = 'customgoal' GROUP BY owner";
+        $users = get_records_sql_array($usersSql, array());
+        // add custom competence for each user and evaluation and assign all goals to it
+        db_begin();
+        foreach ($users as $user) {
+            $competencesSql = "SELECT DISTINCT customcompetence.*
+                    FROM artefact customcompetence
+                    WHERE customcompetence.artefacttype = 'customcompetence'
+                    AND customcompetence.owner = ?";
+            $competences = get_records_sql_array($competencesSql, array($user->id));
+            $evaluationsSql = "SELECT DISTINCT evaluation.*
+            FROM artefact customcompetence
+            LEFT JOIN artefact evaluation ON customcompetence.parent = evaluation.id
+            WHERE customcompetence.artefacttype = 'customcompetence'
+                    AND evaluation.artefacttype = 'evaluation'
+                            AND customcompetence.owner = ?";
+            $evaluation_records = get_records_sql_array($evaluationsSql, array($user->id));
+            $evaluations = array();
+            foreach ($evaluation_records as $evaluation) {
+                $evaluations[$evaluation->id] = new ArtefactTypeEvaluation($evaluation->id, $evaluation);
+            }
+            foreach ($competences as $competence) {
+                $competence = new ArtefactTypeCustomCompetence($competence->id, $competence);
+                $evaluation = $evaluations[$competence->get('parent')];
+                // create evaluation items for all goals if not already exists
+                foreach ($competence->get_customgoals() as $customgoal) {
+                    if (!get_record('artefact_epos_evaluation_item', 'type', EVALUATION_ITEM_TYPE_CUSTOM_GOAL, 'target_key', $customgoal->get('id'))) {
+                        $evaluation->add_item(EVALUATION_ITEM_TYPE_CUSTOM_GOAL, null, $customgoal->get('id'), 1);
+                    }
+                }
+            }
+        }
+        db_commit();
+    }
+
     return true;
 }

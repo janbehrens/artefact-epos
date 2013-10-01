@@ -989,7 +989,7 @@ EOL
         $stored_evaluation->final = 1;
         $stored_evaluation->evaluator = $USER->get('id');
         $stored_evaluation->commit();
-        redirect(get_config('wwwroot') . '/artefact/epos/evaluation/self-eval.php?id=' . $values['evaluation']);
+        redirect(get_config('wwwroot') . '/artefact/epos/evaluation/stored.php');
     }
 
     /**
