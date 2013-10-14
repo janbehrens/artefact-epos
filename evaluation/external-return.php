@@ -21,7 +21,7 @@
 * @subpackage artefact-epos
 * @author     Tim-Christian Mundt
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
-* @copyright  (C) 2011-2013 TZI / Universität Bremen
+* @copyright  (C) 2013 TZI / Universität Bremen
 *
 */
 
@@ -31,15 +31,19 @@ define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 
 require_once(dirname(dirname(dirname((dirname(__FILE__))))) . '/init.php');
-define('TITLE', get_string('externalevaluations', 'artefact.epos'));
+define('TITLE', get_string('returnexternalevaluation', 'artefact.epos'));
 
 safe_require('artefact', 'epos');
 require_once 'EvaluationRequest.php';
 
-$waiting_requests = EvaluationRequest::get_open_requests_for_evaluator();
+$id = param_integer('id');
+$request = new EvaluationRequest($id);
+
+$return_evaluation_request_form = EvaluationRequest::form_return_evaluation_request($request);
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
-$smarty->assign('waiting_requests', $waiting_requests);
-$smarty->display('artefact:epos:evaluation-external.tpl');
+$smarty->assign('return_evaluation_request_form', $return_evaluation_request_form);
+$smarty->assign('title', "title");
+$smarty->display('artefact:epos:evaluation-return-external.tpl');

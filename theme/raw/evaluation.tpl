@@ -13,10 +13,3 @@
         {/foreach}
     {/foreach}
 {/foreach}
-
-
-<div id="customgoalform">
-    <hr />
-    <h3>{str tag="addcustomgoalformtitle" section="artefact.epos"}</h3>
-    {$customgoalform|safe}
-</div>

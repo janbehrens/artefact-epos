@@ -220,6 +220,27 @@ table.stored_evaluations thead {
 	text-align: center;
 }
 
+/* external evaluations */
+
+div.eval-request {
+	padding: 5px;
+}
+
+.eval-request p {
+	margin: 0;
+}
+
+.eval-request .tools {
+	float: right;
+}
+
+.eval-request .message {
+	text-align: left;
+	padding:3px;
+	clear: right;
+	margin-top: 3px;
+}
+
 /* comparison */
 #other.comparison form {
 	display: inline;

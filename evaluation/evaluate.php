@@ -19,46 +19,38 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Jan Behrens, Tim-Christian Mundt
+ * @author     Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011-2013 TZI / Universität Bremen
+ * @copyright  (C) 2013 TZI / Universität Bremen
  *
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'evaluation/selfevaluation');
+define('MENUITEM', 'evaluation');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
-define('SECTION_PAGE', 'selfevaluation');
 
 require_once(dirname(dirname(dirname((dirname(__FILE__))))) . '/init.php');
-define('TITLE', get_string('selfevaluation', 'artefact.epos'));
+define('TITLE', get_string('evaluation', 'artefact.epos'));
 
 safe_require('artefact', 'epos');
 
-$id = param_integer('id', null);
-list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
+$id = param_integer('id');
 
-if (!$selectform) {
-    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
+$evaluation = new ArtefactTypeEvaluation($id);
+$evaluation->check_permission();
+if ($evaluation->final) {
+    throw new ParameterException(get_string('evaluationisnoteditable', 'artefact.epos'));
 }
-else {
-    $evaluation = new ArtefactTypeEvaluation($id);
-    $evaluation->check_permission();
-    if ($evaluation->final) {
-        throw new ParameterException(get_string('evaluationisnoteditable', 'artefact.epos'));
-    }
-    $render = $evaluation->render_evaluation();
-    $selfevaluation = $render['html'];
-    $includejs = $render['includejs'];
-    $customgoalform = ArtefactTypeCustomGoal::form_add_customgoal();
-}
+$render = $evaluation->render_evaluation();
+$selfevaluation = $render['html'];
+$includejs = $render['includejs'];
+$subject = new ArtefactTypeSubject($evaluation->get('parent'));
 
 $smarty = smarty($includejs);
-$smarty->assign('PAGEHEADING', get_string('selfevaluation', 'artefact.epos'));
+$smarty->assign('PAGEHEADING', get_string('evaluation', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
-$smarty->assign('selectform', $selectform);
+$smarty->assign('title', $USER->get('firstname') . ' ' . $USER->get('lastname') . ': ' . $subject->get('title'));
 $smarty->assign('selfevaluation', $selfevaluation);
-$smarty->assign('customgoalform', $customgoalform);
-$smarty->display('artefact:epos:evaluation-self.tpl');
+$smarty->display('artefact:epos:evaluation-single.tpl');

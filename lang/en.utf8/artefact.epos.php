@@ -59,8 +59,6 @@ $string['savedevaluation'] = 'Your evaluation has been saved.';
 $string['titlenotvalid'] = 'Title is not valid.';
 $string['descriptorsetnotvalid'] = 'Competence grid is not valid.';
 $string['pleasechoosesubject'] = 'Please choose a subject first';
-$string['youarenottheownerofthisevaluation'] = 'You may not view this self-evaluation list, it is owned by someone else';
-$string['noevaluationsforuser'] = 'You do not yet have any self-evaluation lists.';
 
 //vocabulary
 $string['competence'] = 'Competence area';
@@ -104,6 +102,8 @@ $string['evaluationnotfound'] = 'The requested evaluation cannot be found.';
 $string['overallrating'] = "Overall rating for this competence area on this level";
 $string['evaluationtypedescriptor'] = "Switch to detailed evaluation";
 $string['evaluationtypecompetencelevel'] = "Switch to overall evaluation";
+$string['youarenottheownerofthisevaluation'] = 'You may not view/edit this evaluation, it is owned by someone else';
+$string['noevaluationsforuser'] = 'You do not yet have any self-evaluations.';
 
 // Stored Evaluations
 $string['storeevaluation'] = "Store Evaluation";
@@ -119,10 +119,17 @@ $string['evaluationisnoteditable'] = "This evaluation is final and cannot be edi
 $string['externalevaluations'] = "External Evaluations";
 $string['evaluator'] = "Evaluator";
 $string['requestexternalevaluation'] = "Request External Evaluation";
+$string['returnexternalevaluation'] = "Return External Evaluation";
 $string['sendrequest'] = "Send Request";
 $string['invalidusername'] = "This user does not exist.";
 $string['cannotevaluateyourself'] = "You cannot send an evaluation request to yourself. You can evaluate yourself under 'Self-evaluation'.";
 $string['invaliddescriptorsetforsubject'] = "This competence grid cannot be used for this subject. Please choose another one.";
+$string['waitingrequests'] = "Requests for Evaluation";
+$string['returnrequest'] = "Return the evaluation request";
+$string['dontreturnrequest'] = "Don't return the evaluation request";
+$string['action'] = "Action";
+$string['yourenottheevaluator'] = "You are not the evaluator for this evaluation.";
+$string['noevaluationtoreturn'] = "You have not done the requested evaluation and thus cannot return an evaluation.";
 
 //Comparison
 $string['comparison'] = "Comparison";

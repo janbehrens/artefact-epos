@@ -311,6 +311,65 @@ class ArtefactTypeEvaluation extends ArtefactType {
         return $language . ' (' . $this->title . ')';
     }
 
+    /**
+     * Create an evaluation artefact for a user
+     * @param $descriptorset_id The descriptorset to use as evaluation in this instance
+     * @param $title The title of the evaluation created for this subject
+     * @param $parent The parent item (e.g. subject)
+     * @param $user_id The user to create the subject artefact for, defaults to the current user
+     */
+    public static function create_evaluation_for_user($descriptorset_id, $title, $parent, $user_id=null, $type=EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+        if (!isset($user_id)) {
+            global $USER;
+            $user_id = $USER->get('id');
+        }
+
+        // create evaluation artefact
+        $evaluation = new ArtefactTypeEvaluation(0, array(
+            'owner' => $user_id,
+            'title' => $title,
+            'parent' => $parent,
+        	'descriptorset_id' => $descriptorset_id,
+            'evaluator' => $user_id
+        ));
+        $evaluation->commit();
+
+        if ($type == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+            $descriptors = array();
+            $descriptors_sql = 'SELECT d.id, d.goal_available
+                    FROM artefact_epos_descriptor d
+                    JOIN artefact_epos_descriptorset s ON s.id = d.descriptorset
+                    WHERE s.id = ?';
+            if ($descriptors = get_records_sql_array($descriptors_sql, array($descriptorset_id))) {
+                $evaluation_item = (object) array('evaluation_id' => $evaluation->get('id'), 'value' => 0);
+                foreach ($descriptors as $descriptor) {
+                    $evaluation_item->descriptor_id = $descriptor->id;
+                    if ($descriptor->goal_available == 1) {
+                        $evaluation_item->goal = 0;
+                    }
+                    else {
+                        unset($evaluation_item->goal);
+                    }
+                    insert_record('artefact_epos_evaluation_item', $evaluation_item);
+                }
+            }
+        }
+        else if ($type == EVALUATION_ITEM_TYPE_COMPLEVEL) {
+            $competences = get_records_array('artefact_epos_competence', 'descriptorset_id', $descriptorset_id);
+            $levels = get_records_array('artefact_epos_level', 'descriptorset_id', $descriptorset_id);
+            foreach ($competences as $competence) {
+                foreach ($levels as $level) {
+                    $target_key = "$competence->id;$level->id";
+                    $evaluation->add_item($type, null, $target_key);
+                }
+            }
+        }
+        else {
+            throw new Exception("Cannot create evaluation with type '$type'");
+        }
+        return $evaluation;
+    }
+
     public function add_item($type, $descriptor_id=null, $target_key=null, $goal=0) {
         $item = new stdClass();
         $item->evaluation_id = $this->id;
@@ -368,7 +427,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     public function check_permission() {
         global $USER;
-        if ($USER->get('id') != $this->owner) {
+        if (($USER->get('id') != $this->owner) &&
+            (($USER->get('id') != $this->evaluator) || $this->final)) {
             throw new AccessDeniedException(get_string('youarenottheownerofthisevaluation', 'artefact.epos'));
         }
     }
@@ -478,11 +538,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     public function render_evaluation($alterform = array()) {
         $evaluationforms = $this->form_evaluation_all_types($alterform);
-        $customgoalform = ArtefactTypeCustomGoal::form_add_customgoal();
         $smarty = smarty();
         $smarty->assign('id', $this->get('id'));
         $smarty->assign('evaluationforms', $evaluationforms);
-        $smarty->assign('customgoalform', $customgoalform);
         $smarty->assign('evaltable', $this->render_evaluation_table());
         $includejs = array(
             'jquery',
@@ -1649,61 +1707,16 @@ function create_subject_for_user($subject_id, $subject_title, $descriptorset_id,
     }
 
     /*
-    // if there is already a evaluation with the given title, don't create another one
+    // if there is already an evaluation with the given title, don't create another one
     $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
     if (get_records_sql_array($sql, array($id, $evaluation_title))) {
         return;
     }
     */
-    create_evaluation_for_user($descriptorset_id, $evaluation_title, $id, $user_id);
+    ArtefactTypeEvaluation::create_evaluation_for_user($descriptorset_id, $evaluation_title, $id, $user_id);
 }
 
 
-/**
- * Create an evaluation artefact for a user
- * @param $descriptorset_id The descriptorset to use as evaluation in this instance
- * @param $title The title of the evaluation created for this subject
- * @param $parent The parent item (e.g. subject)
- * @param $user_id The user to create the subject artefact for, defaults to the current user
- */
-function create_evaluation_for_user($descriptorset_id, $title, $parent, $user_id=null) {
-    if (!isset($user_id)) {
-        global $USER;
-        $user_id = $USER->get('id');
-    }
-
-    // create evaluation artefact
-    $evaluation = new ArtefactTypeEvaluation(0, array(
-        'owner' => $user_id,
-        'title' => $title,
-        'parent' => $parent,
-    	'descriptorset_id' => $descriptorset_id,
-        'evaluator' => $user_id
-    ));
-    $evaluation->commit();
-
-    // load descriptors
-    $descriptors = array();
-    $sql = 'SELECT d.id, d.goal_available FROM artefact_epos_descriptor d
-            JOIN artefact_epos_descriptorset s ON s.id = d.descriptorset
-            WHERE s.id = ?';
-    if (!$descriptors = get_records_sql_array($sql, array($descriptorset_id))) {
-        $descriptors = array();
-    }
-
-    // update artefact_epos_evaluation_item
-    $evaluation_item = array('evaluation_id' => $evaluation->get('id'), 'value' => 0);
-    foreach ($descriptors as $descriptor) {
-        $evaluation_item['descriptor_id'] = $descriptor->id;
-        if ($descriptor->goal_available == 1) {
-            $evaluation_item['goal'] = 0;
-        }
-        else {
-            unset($evaluation_item['goal']);
-        }
-        insert_record('artefact_epos_evaluation_item', (object)$evaluation_item);
-    }
-}
 
 function increase_array_value(&$data, $key, $value=1) {
     if (!array_key_exists($key, $data)) {

@@ -24,6 +24,12 @@
 
 {$selfevaluation|safe}
 
+<div id="customgoalform">
+    <hr />
+    <h3>{str tag="addcustomgoalformtitle" section="artefact.epos"}</h3>
+    {$customgoalform|safe}
+</div>
+
 {/if}
 
 {include file="footer.tpl"}

@@ -21,7 +21,7 @@
 * @subpackage artefact-epos
 * @author     Tim-Christian Mundt
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
-* @copyright  (C) 2011-2013 TZI / Universität Bremen
+* @copyright  (C) 2013 TZI / Universität Bremen
 *
 */
 
@@ -45,4 +45,4 @@ $smarty = smarty();
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('create_evaluation_request_form', $create_evaluation_request_form);
-$smarty->display('artefact:epos:evaluation-external.tpl');
+$smarty->display('artefact:epos:evaluation-request-external.tpl');
