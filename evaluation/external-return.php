@@ -40,10 +40,12 @@ $id = param_integer('id');
 $request = new EvaluationRequest($id);
 
 $return_evaluation_request_form = EvaluationRequest::form_return_evaluation_request($request);
+$subject = new ArtefactTypeSubject($request->subject_id);
+$user = get_user($request->inquirer_id);
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('return_evaluation_request_form', $return_evaluation_request_form);
-$smarty->assign('title', "title");
+$smarty->assign('title', $user->firstname . ' ' . $user->lastname . ': ' . $subject->get('title'));
 $smarty->display('artefact:epos:evaluation-return-external.tpl');

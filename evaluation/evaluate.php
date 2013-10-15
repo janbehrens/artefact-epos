@@ -46,11 +46,12 @@ $render = $evaluation->render_evaluation();
 $selfevaluation = $render['html'];
 $includejs = $render['includejs'];
 $subject = new ArtefactTypeSubject($evaluation->get('parent'));
+$user = get_user($evaluation->get('owner'));
 
 $smarty = smarty($includejs);
 $smarty->assign('PAGEHEADING', get_string('evaluation', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
-$smarty->assign('title', $USER->get('firstname') . ' ' . $USER->get('lastname') . ': ' . $subject->get('title'));
+$smarty->assign('title', $user->firstname . ' ' . $user->lastname . ': ' . $subject->get('title'));
 $smarty->assign('selfevaluation', $selfevaluation);
 $smarty->display('artefact:epos:evaluation-single.tpl');

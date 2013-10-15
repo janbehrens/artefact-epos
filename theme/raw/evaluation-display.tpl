@@ -1,6 +1,6 @@
 {include file="header.tpl"}
 
-<div class="rbuttons{if $GROUP} pagetabs{/if}">
+<div class="rbuttons{if $GROUP} pagetabs{/if}" >
     <form method="get" action="{$WWWROOT}artefact/epos/evaluation/print.php">
         <input type="submit" class="submit" value="{str tag='printevaluation' section='artefact.epos'}">
         <input type="hidden" name="id" value="{$id}">
