@@ -129,6 +129,7 @@ $string['returnedmessage'] = "Returned Message";
 $string['invalidusername'] = "This user does not exist.";
 $string['cannotevaluateyourself'] = "You cannot send an evaluation request to yourself. You can evaluate yourself under 'Self-evaluation'.";
 $string['invaliddescriptorsetforsubject'] = "This competence grid cannot be used for this subject. Please choose another one.";
+$string['successfullysentrequest'] = "Your request has been sent successfully.";
 $string['waitingrequests'] = "Requests for Evaluation";
 $string['recentoutgoing'] = "Recent Outgoing Requests";
 $string['doreturnrequest'] = "Return the evaluation request";
@@ -137,6 +138,7 @@ $string['action'] = "Action";
 $string['yourenottheevaluator'] = "You are not the evaluator for this evaluation.";
 $string['noevaluationtoreturn'] = "You have not done the requested evaluation and thus cannot return an evaluation.";
 $string['noevaluationavailable'] = "no evaluation available";
+$string['successfullyreturnedrequest'] = "Your evaluation has been sent successfully.";
 
 //Comparison
 $string['comparison'] = "Comparison";

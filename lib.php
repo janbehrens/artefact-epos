@@ -1040,7 +1040,7 @@ EOL
     }
 
     public static function form_store_evaluation_submit($form, $values) {
-        global $USER;
+        global $USER, $SESSION;
         $evaluation = new ArtefactTypeEvaluation($values['evaluation']);
         $evaluation->check_permission();
         $stored_evaluation = new ArtefactTypeEvaluation($evaluation);
@@ -1048,6 +1048,7 @@ EOL
         $stored_evaluation->final = 1;
         $stored_evaluation->evaluator = $USER->get('id');
         $stored_evaluation->commit();
+        $SESSION->add_info_msg(get_string('evaluationsuccessfullystored', 'artefact.epos'));
         redirect(get_config('wwwroot') . '/artefact/epos/evaluation/stored.php');
     }
 

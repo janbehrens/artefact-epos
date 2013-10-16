@@ -311,7 +311,7 @@ class EvaluationRequest {
     }
 
     public static function form_create_evaluation_request_submit(Pieform $form, $values) {
-        global $USER;
+        global $USER, $SESSION;
         $evaluator_id = username_to_id(array($values['evaluator']));
         $evaluator_id = $evaluator_id[$values['evaluator']];
         $request = new EvaluationRequest();
@@ -321,6 +321,7 @@ class EvaluationRequest {
         $request->inquirer_id = $USER->get('id');
         $request->inquiry_message = $values['message'];
         $request->commit();
+        $SESSION->add_info_msg(get_string('successfullysentrequest', 'artefact.epos'));
         redirect(get_config('wwwroot') . 'artefact/epos/evaluation/external.php');
     }
 
@@ -365,7 +366,7 @@ class EvaluationRequest {
     }
 
     public static function form_return_evaluation_request_submit(Pieform $form, $values) {
-        global $request, $USER;
+        global $request, $USER, $SESSION;
         if ($USER->get('id') != $request->evaluator_id) {
             throw new AccessDeniedException(get_string('yourenottheevaluator', 'artefact.epos'));
         }
@@ -385,6 +386,7 @@ class EvaluationRequest {
             $request->commit();
         }
         db_commit();
+        $SESSION->add_info_msg(get_string('successfullyreturnedrequest', 'artefact.epos'));
         redirect('/artefact/epos/evaluation/external.php');
     }
 
