@@ -27,8 +27,7 @@
 
 defined('INTERNAL') || die();
 
-//general
-$string['title'] = 'Self-evaluation';
+$string['title'] = 'Evaluation';
 $string['description'] = 'Display your evaluation for a selected language';
 $string['defaulttitledescription'] = 'If you leave this blank, the title of the evaluation will be used';
 $string['selectevaluation'] = 'Select the evaluation to display';

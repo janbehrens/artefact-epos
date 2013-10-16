@@ -53,7 +53,7 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $configdata = $instance->get('configdata');
         $blockid = $instance->get('id');
-        
+
         $result = '';
         if (!empty($configdata['artefactid'])) {
 	        $evaluation = $instance->get_artefact_instance($configdata['artefactid']);
@@ -62,14 +62,7 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
         }
         return $result;
     }
-	
-    public static function get_instance_javascript(BlockInstance $instance) {
-        return array(get_config('wwwroot') . 'artefact/epos/js/jquery/ui/minified/jquery.ui.core.min.js',
-                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/minified/jquery.ui.widget.min.js',
-                     get_config('wwwroot') . 'artefact/epos/js/jquery/ui/minified/jquery.ui.progressbar.min.js'
-        );
-    }
-    
+
     public static function artefactchooser_element($default=null) {
         return array(
             'name'  => 'artefactid',
@@ -84,13 +77,13 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
             'artefacttypes' => array('evaluation'),
         );
     }
-    
+
     public static function has_instance_config() {
         return true;
     }
-    
+
     /**
-     * Optional method. If specified, allows the blocktype class to munge the 
+     * Optional method. If specified, allows the blocktype class to munge the
      * artefactchooser element data before it's templated
      */
     public static function artefactchooser_get_element_data($artefact) {
@@ -102,15 +95,13 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
 
     public static function instance_config_form($instance) {
         $configdata = $instance->get('configdata');
-
         $elements = array();
         $elements[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
         return $elements;
     }
-    
+
     public static function default_copy_type() {
         return 'full';
     }
 }
 
-?>
