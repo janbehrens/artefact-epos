@@ -37,11 +37,11 @@ safe_require('artefact', 'epos');
 require_once 'EvaluationRequest.php';
 
 $waiting_requests = EvaluationRequest::get_open_requests_for_evaluator();
-$recent_activity = EvaluationRequest::get_recent_requests_for_inquirer();
+$recent_outgoing = EvaluationRequest::get_recent_requests_for_inquirer();
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('waiting_requests', $waiting_requests);
-$smarty->assign('recent_activity', $recent_activity);
+$smarty->assign('recent_outgoing', $recent_outgoing);
 $smarty->display('artefact:epos:evaluation-external.tpl');

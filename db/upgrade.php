@@ -592,8 +592,8 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         db_begin();
         $table = new XMLDBTable('artefact_epos_evaluation_request');
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
-        $table->addFieldInfo('inquirer', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
-        $table->addFieldInfo('evaluator', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addFieldInfo('inquirer_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->addFieldInfo('evaluator_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('subject_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addFieldInfo('evaluation_id', XMLDB_TYPE_INTEGER, '10', null, false);
@@ -602,8 +602,8 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table->addFieldInfo('response_date', XMLDB_TYPE_DATETIME, null, null, false);
         $table->addFieldInfo('response_message', XMLDB_TYPE_TEXT, null, null, false);
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('inquirerfk', XMLDB_KEY_FOREIGN, array('inquirer'), 'usr', array('id'));
-        $table->addKeyInfo('evaluatorfk', XMLDB_KEY_FOREIGN, array('evaluator'), 'usr', array('id'));
+        $table->addKeyInfo('inquirerfk', XMLDB_KEY_FOREIGN, array('inquirer_id'), 'usr', array('id'));
+        $table->addKeyInfo('evaluatorfk', XMLDB_KEY_FOREIGN, array('evaluator_id'), 'usr', array('id'));
         $table->addKeyInfo('subjectfk', XMLDB_KEY_FOREIGN, array('subject_id'), 'artefact_epos_mysubject', array('artefact'));
         $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptorset', array('id'));
         $table->addKeyInfo('evaluationfk', XMLDB_KEY_FOREIGN, array('evaluation_id'), 'artefact_epos_evaluation', array('artefact'));

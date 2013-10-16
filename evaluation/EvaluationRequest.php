@@ -182,7 +182,7 @@ class EvaluationRequest {
                 WHERE inquirer_id = ?
                     AND response_date IS NOT NULL
                 ORDER BY response_date DESC
-                LIMIT 7
+                LIMIT 5
                 ";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             foreach ($records as $record) {
@@ -208,7 +208,7 @@ class EvaluationRequest {
                 WHERE inquirer_id = ?
                     AND response_date IS NULL
                 ORDER BY inquiry_date DESC
-                LIMIT 7
+                LIMIT 5
                 ";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             foreach ($records as $record) {
@@ -223,7 +223,7 @@ class EvaluationRequest {
         usort($requests, function ($left, $right) {
                 $left_value = isset($left->response_date) ? $left->response_date : $left->inquiry_date;
                 $right_value = isset($right->response_date) ? $right->response_date : $right->inquiry_date;
-                return $left_value > $right_value ? 1 : -1;
+                return $left_value > $right_value ? -1 : 1;
         });
         return $requests;
     }

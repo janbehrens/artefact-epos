@@ -22,7 +22,7 @@
                 </a>
             </span>
             <p><a href="../../../user/view.php?id={$request->inquirer_id}">{$request->inquirer.firstname} {$request->inquirer.lastname}</a>:
-            {$request->subject} ({$request->descriptorset})</p>
+            {$request->subject} ({$request->descriptorset}), {$request->inquiry_date}</p>
             {if $request->inquiry_message}
             <p class="message">{$request->inquiry_message}</p>
             {/if}
@@ -32,15 +32,15 @@
 
 {/if}
 
-{if $recent_activity}
+{if $recent_outgoing}
 
-<h2>{str tag="recentactivity" section="artefact.epos"}</h2>
+<h2>{str tag="recentoutgoing" section="artefact.epos"}</h2>
      
-     {foreach $recent_activity item=request}
+     {foreach $recent_outgoing item=request}
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
             <span class="tools">
-            {if $request->response_date}
+            {if $request->response_date && $request->evaluation_id}
                 <a href="display.php?id={$request->evaluation_id}">
                     <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
                 </a>
@@ -48,22 +48,37 @@
             ({str tag=noevaluationavailable section=artefact.epos})
             {/if}
             </span>
-            <p>
             {if $request->response_date}
-                <img alt="{str tag='returnedrequest' section='artefact.epos'}" title="{str tag='returnedrequest' section='artefact.epos'}" src="../../../theme/raw/static/images/reply.png" />
-            {else}
-                <img alt="{str tag='sentrequest' section='artefact.epos'}" title="{str tag='sentrequest' section='artefact.epos'}" src="../../../theme/raw/static/images/move-right.gif" />
-            {/if}
-                <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a>:
-                {$request->subject} ({$request->descriptorset})
-            </p>
-            {if $request->response_message}
-            <p class="message">{$request->response_message}</p>
-            {else}
+                <p>
+                    <img alt="{str tag='returnedrequest' section='artefact.epos'}" title="{str tag='returnedrequest' section='artefact.epos'}" src="../../../theme/raw/static/images/reply.png" />
+                    <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a>:
+                    {$request->subject} ({$request->descriptorset}), {$request->response_date}
+                </p>
                 {if $request->inquiry_message}
-                    <p class="message">{$request->inquiry_message}</p>
+                <p class="message">
+                    <img alt="{str tag='sentmessage' section='artefact.epos'}" title="{str tag='sentmessage' section='artefact.epos'}" src="../../../theme/raw/static/images/move-right.gif" />
+                    {$request->inquiry_message}</p>
+                {/if}
+                {if $request->response_message}
+                <p class="message">
+                    <img alt="{str tag='returnedmessage' section='artefact.epos'}" title="{str tag='returnedmessage' section='artefact.epos'}" src="../../../theme/raw/static/images/reply.png" />
+                    {$request->response_message}
+                </p>
+                {/if}
+            {else}
+                <p>
+                    <img alt="{str tag='sentrequest' section='artefact.epos'}" title="{str tag='sentrequest' section='artefact.epos'}" src="../../../theme/raw/static/images/move-right.gif" />
+                    <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a>:
+                    {$request->subject} ({$request->descriptorset}), {$request->inquiry_date}
+                </p>
+                {if $request->inquiry_message}
+                    <p class="message">
+                        <img alt="{str tag='sentmessage' section='artefact.epos'}" title="{str tag='sentmessage' section='artefact.epos'}" src="../../../theme/raw/static/images/move-right.gif" />
+                        {$request->inquiry_message}
+                    </p>
                 {/if}
             {/if}
+            
         </div>
         
      {/foreach}

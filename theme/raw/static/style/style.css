@@ -224,6 +224,7 @@ table.stored_evaluations thead {
 
 div.eval-request {
 	padding: 5px;
+	padding-top: 2px;
 }
 
 .eval-request p {
@@ -235,10 +236,16 @@ div.eval-request {
 }
 
 .eval-request .message {
+    clear: right;
 	text-align: left;
-	padding:3px;
-	clear: right;
+	padding: 3px;
+	padding-top: 0;
 	margin-top: 3px;
+}
+
+.eval-request img {
+	position: relative;
+	top: 3px;
 }
 
 /* comparison */
