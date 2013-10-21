@@ -42,21 +42,22 @@ $id = param_integer('id', null);
 list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
 
 if (!$selectform) {
-    $selectform = get_string('nolanguageselected1', 'artefact.epos') . '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>' . get_string('nolanguageselected2', 'artefact.epos');
+    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
 }
-$evaluation = new ArtefactTypeEvaluation($id);
-$evaluation->check_permission();
+else {
+    $evaluation = new ArtefactTypeEvaluation($id);
+    $evaluation->check_permission();
 
-$addcustomgoalform = ArtefactTypeCustomGoal::form_add_customgoal($is_goal=true, 'customgoalSaveCallback');
+    $addcustomgoalform = ArtefactTypeCustomGoal::form_add_customgoal($is_goal=true, 'customgoalSaveCallback');
 
-$textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
-$textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
-$reallyDeleteCustomGoal = get_string('customlearninggoalwanttodelete', 'artefact.epos');
+    $textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
+    $textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
+    $reallyDeleteCustomGoal = get_string('customlearninggoalwanttodelete', 'artefact.epos');
 
-$editCustomgoal = get_string('edit', 'mahara');
-$deleteCustomgoal = get_string('delete', 'mahara');
+    $editCustomgoal = get_string('edit', 'mahara');
+    $deleteCustomgoal = get_string('delete', 'mahara');
 
-$inlinejs = <<<EOF
+    $inlinejs = <<<EOF
 
 tableRenderer = new TableRenderer(
     'goals_table',
@@ -99,6 +100,8 @@ tableRenderer.emptycontent = '';
 tableRenderer.paginate = false;
 tableRenderer.updateOnLoad();
 EOF;
+
+}
 
 $smarty = smarty(array('tablerenderer',
                        'artefact/epos/js/customgoals.js'));

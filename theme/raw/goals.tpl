@@ -22,15 +22,12 @@
         {/foreach}
     </tbody>
 </table>
-{/if}
-
-<div>
 
 <div id="customgoal">
     <h3>{str tag="addcustomgoalformtitle" section="artefact.epos"}</h3>
     {$custom_goal_form|safe}
 </div>
 
-</div>
+{/if}
 
 {include file="footer.tpl"}
