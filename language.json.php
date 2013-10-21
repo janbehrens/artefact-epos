@@ -19,7 +19,7 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Jan Behrens
+ * @author     Jan Behrens, Tim-Christian Mundt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 2011-2013 TZI / Universität Bremen
  *
@@ -40,22 +40,36 @@ $count = 0;
 
 $data = array();
 
+$sql = "SELECT COUNT(DISTINCT evaluation.id) AS countall
+        FROM artefact subject
+        INNER JOIN artefact evaluation ON subject.id = evaluation.parent
+        LEFT JOIN artefact_epos_evaluation e ON e.artefact = evaluation.id
+        LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset_id
+        WHERE evaluation.owner = ?
+            AND evaluation.owner = e.evaluator
+            AND evaluation.artefacttype = 'evaluation'
+            AND e.final = 0";
+$count = get_records_sql_array($sql, array($owner));
+$count = $count[0]->countall;
+
 $sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
         FROM artefact subject
         INNER JOIN artefact evaluation ON subject.id = evaluation.parent
         LEFT JOIN artefact_epos_evaluation e ON e.artefact = evaluation.id
         LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset_id
         WHERE evaluation.owner = ?
-            and evaluation.owner = e.evaluator
+            AND evaluation.owner = e.evaluator
             AND evaluation.artefacttype = 'evaluation'
             AND e.final = 0
-        ORDER BY subject.title;";
+        ORDER BY subject.title
+        OFFSET $offset";
+if ($limit) {
+    $sql .= " LIMIT $limit";
+}
 
 if (!$data = get_records_sql_array($sql, array($owner))) {
     $data = array();
 }
-
-$count = count($data);
 
 echo json_encode(array(
     'data' => $data,
@@ -64,4 +78,3 @@ echo json_encode(array(
     'count' => $count,
 ));
 
-?>
