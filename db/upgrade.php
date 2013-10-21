@@ -531,15 +531,8 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('artefact'), 'artefact', array('id'));
         add_key($table, $key);
         // first rename the existing sequence to something the weird mahara mechanism accepts
-        try {
-            // wrap this statement in its own sub transaction so it may fail
-            db_begin();
+        if (get_record('pg_class', 'relname', 'artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1')) {
             execute_sql("ALTER TABLE artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1 RENAME TO artefact_epos_artefact_subject_id_seq");
-            db_commit();
-        }
-        catch (Exception $e) {
-            db_rollback();
-            // don't fail, but try to rename the table anyways
         }
         // eventually do the one operation we'd like to execute
         rename_table($table, 'artefact_epos_mysubject');
