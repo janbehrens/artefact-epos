@@ -1052,6 +1052,35 @@ EOL
         redirect(get_config('wwwroot') . '/artefact/epos/evaluation/stored.php');
     }
 
+    public static function form_delete_evaluation($evaluation_id) {
+        $elements = array();
+        $elements['evaluation'] = array(
+                'type' => 'hidden',
+                'value' => $evaluation_id
+        );
+        $elements['submit'] = array(
+                'type' => 'submitcancel',
+                'value' => array(get_string('deleteevaluation', 'artefact.epos'), get_string('cancel')),
+                'goto' => get_config('wwwroot') . '/artefact/epos/evaluation/stored.php'
+        );
+        return pieform(array(
+                'name' => 'delete_evaluation',
+                'class' => 'delete_evaluation',
+                'plugintype' => 'artefact',
+                'pluginname' => 'epos',
+                'elements' => $elements,
+                'jsform' => false,
+                'renderer' => 'oneline',
+                'successcallback' => array('ArtefactTypeEvaluation', 'form_delete_evaluation_submit')
+        ));
+    }
+
+    public static function form_delete_evaluation_submit(Pieform $form, $values) {
+        global $evaluation;
+        $evaluation->delete();
+        redirect(get_config('wwwroot') . '/artefact/epos/evaluation/stored.php');
+    }
+
     /**
      * Get all records (not instances) of evaluations that are final
      * ordered by mtime

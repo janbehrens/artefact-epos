@@ -12,16 +12,24 @@
                     <td class="name">{str tag='name'}</td>
                     <td style="width:200px;">{str tag='creationtime' section='artefact.epos'}</td>
                     <td style="width:120px;">{str tag='evaluator' section='artefact.epos'}</td>
+                    <td style="width: 16px;"></td>
                     <td class="selectors" style="width:40px;">{str tag='compare' section='artefact.epos'}</td>
                 </tr>
             </thead>
             {foreach $descriptorset.evaluations item=evaluation}
             {cycle values='r0,r1' assign='class'} 
             <tr class="{$class}">
-                <td><a href="{$evaluation->url}">{if !$evaluation->final}<em>{/if}<label for="{$evaluation_id}">{$evaluation->title}</label>{if !$evaluation->final}</em>{/if}</a></td>
+                <td><a href="{$evaluation->url}">{if !$evaluation->final}<em>{/if}{$evaluation->title}{if !$evaluation->final}</em>{/if}</a></td>
                 <td>{$evaluation->mtime}</td>
                 <td>{$evaluation->firstname} {$evaluation->lastname}</td>
-                <td class="selectors"><input title="{str tag='useincomparison' section='artefact.epos'}" id="{$evaluation->id}" type="checkbox" name="evaluations[]" value="{$evaluation->id}" /></td>    
+                <td>
+                {if $evaluation->final}
+                    <a href="stored-delete.php?id={$evaluation->id}"><img title="{str tag='deleteevaluation' section='artefact.epos'}" alt="{str tag='deleteevaluation' section='artefact.epos'}" src="{$WWWROOT}theme/raw/static/images/icon_close.gif" /></a>
+                {/if}
+                </td>
+                <td class="selectors">
+                    <input title="{str tag='useincomparison' section='artefact.epos'}" id="{$evaluation->id}" type="checkbox" name="evaluations[]" value="{$evaluation->id}" />
+                </td>
             </tr>
             {/foreach}
         </table>

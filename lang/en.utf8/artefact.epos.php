@@ -114,6 +114,8 @@ $string['nostoredevaluations'] = "You have not yet stored any evaluations.";
 $string['evaluationnamealreadyexists'] = "An evaluation with this name already exists.";
 $string['evaluationsuccessfullystored'] = "Successfully stored your evaluation.";
 $string['evaluationisnoteditable'] = "This evaluation is final and cannot be edited.";
+$string['deleteevaluation'] = "Delete Evaluation";
+$string['confirmdeleteevaluation'] = "Do you want to delete the evaluation %s permanently?";
 
 // External Evaluations
 $string['externalevaluations'] = "External Evaluations";
