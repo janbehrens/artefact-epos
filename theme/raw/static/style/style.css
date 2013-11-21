@@ -280,3 +280,14 @@ table.comparison.legend tr {
     border-top: 2px solid white;
     border-bottom: 2px solid white;
 }
+
+
+/* biography - needs to be moved to biography plugin */
+#biographylist td.buttonscell form,
+#biographylist td.buttonscell form div {
+    display: inline;
+}
+
+#biographylist th {
+    border-bottom: none;
+}
