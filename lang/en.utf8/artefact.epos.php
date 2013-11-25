@@ -81,7 +81,9 @@ $string['subjectform.descriptorset'] = 'Competence grid';
 //help text
 $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate your expertise in the selected area of competence and level.';
 
-//custom learning goal
+//custom competences
+$string['customcompetencearea'] = 'Custom Competence Area';
+$string['standardcompetencearea'] = 'Standard Competence Area';
 $string['addcustomgoalformtitle'] = 'Add further goals';
 $string['addcustomcompetenceformtitle'] = 'Add further competences';
 $string['customlearninggoal'] = 'Additional learning objective';

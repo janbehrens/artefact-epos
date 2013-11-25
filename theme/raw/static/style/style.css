@@ -22,10 +22,6 @@
     color: #333;
 }
 
-.interactive {
-    cursor: pointer;
-}
-
 a label {
 	cursor: pointer;
 }
@@ -33,25 +29,9 @@ a label {
 div#subjects_list p {
 	font-size: 120%;
 }
-.checklistform table {
-	/*float: right;*/
-}
-div.checklistform {
-    margin-top: 20px;
-}
-table.evaluation {
-    width: 100%;
-    table-layout:fixed;
-}
-table.evaluation .column_0 {
-	width: 30%;
-}
 
 form#addlearnedlanguage table {
     float: left;
-}
-table#checklist th {
-	color: #666;
 }
 td.radio {
     white-space: nowrap;
@@ -111,9 +91,32 @@ div.grippie {
     margin: 0px;	
 }
 
+
 /* evaluation */
-.ui-progressbar {
-	cursor: pointer;
+
+table.evaluation {
+    width: 100%;
+    table-layout:fixed;
+}
+
+table.evaluation .column_0 {
+    width: 30%;
+}
+
+.interactive {
+    cursor: pointer;
+}
+
+table.evaluation td {
+	vertical-align: middle;
+}
+
+table.evaluation tr.r0 td.custom {
+    background-color: #dee8fa;
+}
+
+table.evaluation tr.r1 td.custom {
+    background-color: #f3f5fd;
 }
 
 #example_popup {
@@ -135,11 +138,6 @@ body.print {
     background-color: #FFF;
     color: #333;
     font-size: .8em;
-}
-
-.print table#checklist th {
-    color: #333;
-    border-bottom-color: #333;
 }
 
 .print tr.odd {

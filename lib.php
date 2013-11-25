@@ -825,7 +825,13 @@ EOL
 
         $column_definitions = array(
             function ($row) {
-                return $row['name'];
+                $cell = array('content' => $row['name']);
+                $cell['properties']['title'] = get_string('standardcompetencearea', 'artefact.epos');
+                if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+                    $cell['properties']['class'] = "custom";
+                    $cell['properties']['title'] = get_string('customcompetencearea', 'artefact.epos');
+                }
+                return $cell;
             }
         );
         $levelcount = count($descriptorset->levels);
@@ -852,6 +858,7 @@ EOL
                     if ($type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                         $cell['properties']['colspan'] = $levelcount;
                         $cell['break'] = true;
+                        $cell['properties']['class'] .= " custom";
                     }
                 }
                 return $cell;
