@@ -164,7 +164,7 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
     $elements['submit'] = array(
         'type' => 'submitcancel',
         'value' => array(get_string('save', 'artefact.epos'), get_string('cancel')),
-        'goto' => get_config('wwwroot') . '/artefact/epos/'
+        'goto' => get_config('wwwroot') . 'artefact/epos/'
     );
 
     $languageform = pieform(array(

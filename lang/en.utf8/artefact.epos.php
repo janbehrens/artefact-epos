@@ -83,6 +83,7 @@ $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate y
 
 //custom learning goal
 $string['addcustomgoalformtitle'] = 'Add further goals';
+$string['addcustomcompetenceformtitle'] = 'Add further competences';
 $string['customlearninggoal'] = 'Additional learning objective';
 $string['customgoaldefaulttitle'] = 'My additional goals';
 $string['customlearninggoalupdatesuccess'] = 'Learning objective has been updated.';
