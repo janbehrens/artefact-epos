@@ -72,10 +72,10 @@ function toggleLanguageForm() {
     var elemName = 'learnedlanguageform';
     if (hasElementClass(elemName, 'hidden')) {
         removeElementClass(elemName, 'hidden');
-        $('addlearnedlanguagebutton').innerHTML = '{$cancelstr}';
+        addElementClass('addlearnedlanguagebutton', 'hidden');
     }
     else {
-        $('addlearnedlanguagebutton').innerHTML = '{$addstr}';
+        removeElementClass('addlearnedlanguagebutton', 'hidden');
         addElementClass(elemName, 'hidden');
     }
 }
@@ -162,8 +162,9 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
         $elements['subject']['defaultvalue'] = $addsubject;
     }
     $elements['submit'] = array(
-        'type' => 'submit',
-        'value' => get_string('save', 'artefact.epos'),
+        'type' => 'submitcancel',
+        'value' => array(get_string('save', 'artefact.epos'), get_string('cancel')),
+        'goto' => get_config('wwwroot') . '/artefact/epos/'
     );
 
     $languageform = pieform(array(

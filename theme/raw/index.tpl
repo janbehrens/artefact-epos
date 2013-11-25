@@ -23,7 +23,6 @@
 <div>
     {if $addsubjectset}
     <div id="learnedlanguageform">{$languageform|safe}</div>
-    <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='cancel'}</button>
     {else}
     <div id="learnedlanguageform" class="hidden">{$languageform|safe}</div>
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
@@ -36,6 +35,7 @@
 
 <script type='text/javascript'>
 jQuery('#addlearnedlanguage_subject').attr('onchange', 'refreshDescriptorsets();');
+jQuery('#cancel_addlearnedlanguage_submit').attr('onclick', 'toggleLanguageForm(); return false;');
 </script>
 
 {include file="footer.tpl"}
