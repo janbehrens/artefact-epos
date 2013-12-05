@@ -1,3 +1,5 @@
+$j = jQuery;
+
 function toggleEvaluationForm(comp, level, type, competence) {
     var formDivId = '#evaluationform_' + comp + '_' + level + '_' + type + '_div';
     var allforms = $j('div[id^=evaluationform_]');
