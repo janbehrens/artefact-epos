@@ -844,6 +844,7 @@ EOL
                     $level_id = $level->id;
                 }
                 $cell = array('content' => html_progressbar($row['levels'][$level_id]['average']));
+                $classes = array();
                 if ($interactive) {
                     $competence_id = $row['__id'];
                     if (is_string($competence_id)) {
@@ -852,19 +853,19 @@ EOL
                     $type = $row['levels'][$level_id]['type'];
                     $name = $row['name'];
                     $cell['properties'] = array(
-                            'onclick' => "toggleEvaluationForm($competence_id, $level_id, $type, '$name')",
-                            'class' => "interactive"
+                            'onclick' => "toggleEvaluationForm($competence_id, $level_id, $type, '$name')"
                     );
-                    if ($type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
-                        $cell['properties']['colspan'] = $levelcount;
-                        $cell['break'] = true;
-                        $cell['properties']['class'] .= " custom";
-                    }
+                    $classes []= "interactive";
                 }
+                if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+                    $cell['properties']['colspan'] = $levelcount;
+                    $cell['break'] = true;
+                    $classes []= "custom";
+                }
+                $cell['properties']['class'] = implode(' ', $classes);
                 return $cell;
             };
         }
-
         $eval_table = new HTMLTable_epos($column_titles, $column_definitions);
         $eval_table->add_table_classes('evaluation');
         $eval_table->always_even = true;
@@ -1089,7 +1090,7 @@ EOL
     }
 
     /**
-     * Get all records (not instances) of evaluations that are final
+     * Get all records (not instances) of evaluations, final and current
      * ordered by mtime
      * @return array The records: id, title, mtime, subject (title), evaluator (id), final, firstname, lastname, descriptorset_id, descriptorset
      */

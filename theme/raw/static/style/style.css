@@ -189,6 +189,10 @@ body.print {
     .dontprint {
        display: none;
     }
+    
+    body.print {
+        padding: 0;
+    }
 
 }
 
