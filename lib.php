@@ -1375,7 +1375,9 @@ class Descriptorset implements ArrayAccess, Iterator {
 					$this->{$field} = $value;
 				}
 			}
-			$descriptor_sql = "SELECT * FROM artefact_epos_descriptor
+			$descriptor_sql = "SELECT d.id, d.name, d.link, d.goal_available, d.descriptorset, d.competence_id, d.level_id, c.name as competence_name
+			        FROM artefact_epos_descriptor d
+			        LEFT JOIN artefact_epos_competence c ON d.competence_id = c.id
 			        WHERE descriptorset = ?
 			        ORDER BY competence_id, level_id, id";
 			if ($descriptors = get_records_sql_array($descriptor_sql, array($this->id))) {
@@ -1574,7 +1576,7 @@ function load_descriptors($id) {
             LEFT JOIN artefact_epos_competence c ON d.competence_id = c.id
             LEFT JOIN artefact_epos_level l ON d.level_id = l.id
         WHERE descriptorset = ?
-        ORDER BY c.id, l.id, id';
+        ORDER BY c.name, l.id, id';
 
     if (!$descriptors = get_records_sql_array($sql, array($id))) {
         $descriptors = array();
