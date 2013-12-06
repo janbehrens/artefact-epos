@@ -77,16 +77,6 @@ div.grippie {
     visibility: hidden;
 }
 
-#addcustomgoal_submit_container {
-    text-align: right;
-    padding: 0px;
-}
-
-#addcustomgoal_submit_container td {
-    text-align: right;
-    padding: 0px;    
-}
-
 #addcustomgoal_submit {
     margin: 0px;	
 }
