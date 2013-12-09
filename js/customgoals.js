@@ -25,7 +25,7 @@ function cancleEditCustomGoalOut(customgoal_id) {
 function submitEditCustomGoal(customgoal_id) {
 	ta_id = 'ta_' + customgoal_id;
 	customgoal_text = document.getElementById(ta_id).value;
-	sendjsonrequest('../customgoalupdate.json.php',
+	sendjsonrequest(config.wwwroot + 'artefact/epos/customgoalupdate.json.php',
             {'customgoal_id': customgoal_id,
             'customgoal_text': customgoal_text},
             'POST',
@@ -40,7 +40,7 @@ function submitEditCustomGoal(customgoal_id) {
 
 function deleteCustomGoal(customgoal_id) {
     if (confirm(strings['customlearninggoalwanttodelete'])) {
-        sendjsonrequest('customgoaldelete.json.php',
+        sendjsonrequest(config.wwwroot + 'artefact/epos/customgoaldelete.json.php',
             {'customgoal_id': customgoal_id},
             'GET',
             function(data) {
