@@ -517,7 +517,18 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 $competence['name'] = $descriptorset->competences[$competence_id]->name;
             }
         }
-        ksort($results);
+        // sort results alphabetically with custom competences at the very buttom
+        usort($results, function($left, $right) {
+            if ($left['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL &&
+                $right['type'] != EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+                return 1;
+            }
+            if ($left['type'] != EVALUATION_ITEM_TYPE_CUSTOM_GOAL &&
+                $right['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+                return -1;
+            }
+            return strcmp($left['name'], $right['name']);
+        });
         return $results;
     }
 
