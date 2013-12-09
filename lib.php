@@ -504,6 +504,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
             increase_array_value($complevel['evaluation_sums'], $item->value);
         }
         foreach ($results as $competence_id => &$competence) {
+            $competence['id'] = $competence_id;
             $levels = &$competence['levels'];
             ksort($levels);
             foreach ($levels as &$complevel) {
@@ -523,8 +524,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 $right['type'] != EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                 return 1;
             }
-            if ($left['type'] != EVALUATION_ITEM_TYPE_CUSTOM_GOAL &&
-                $right['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+            if ($right['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL &&
+                $left['type'] != EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                 return -1;
             }
             return strcmp($left['name'], $right['name']);
@@ -857,7 +858,7 @@ EOL
                 $cell = array('content' => html_progressbar($row['levels'][$level_id]['average']));
                 $classes = array();
                 if ($interactive) {
-                    $competence_id = $row['__id'];
+                    $competence_id = $row['id'];
                     if (is_string($competence_id)) {
                         $competence_id = "'$competence_id'";
                     }
