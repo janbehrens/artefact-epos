@@ -130,12 +130,12 @@ class EvaluationRequest {
                        u2.firstname AS evaluator_firstname,
                        u2.lastname AS evaluator_lastname,
                        subject.title AS subject,
-                       set.name AS descriptorset
+                       dset.name AS descriptorset
                 FROM artefact_epos_evaluation_request r
                 LEFT JOIN usr u1 ON r.inquirer_id = u1.id
                 LEFT JOIN usr u2 ON r.evaluator_id = u2.id
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
-                LEFT JOIN artefact_epos_descriptorset set ON r.descriptorset_id = set.id
+                LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
                 WHERE evaluator_id = ?
                     AND response_date IS NULL
                 ORDER BY inquiry_date
@@ -174,10 +174,10 @@ class EvaluationRequest {
                        u.firstname AS evaluator_firstname,
                        u.lastname AS evaluator_lastname,
                        subject.title AS subject,
-                       set.name AS descriptorset
+                       dset.name AS descriptorset
                 FROM artefact_epos_evaluation_request r
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
-                LEFT JOIN artefact_epos_descriptorset set ON r.descriptorset_id = set.id
+                LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
                 LEFT JOIN usr u ON r.evaluator_id = u.id
                 WHERE inquirer_id = ?
                     AND response_date IS NOT NULL
@@ -200,10 +200,10 @@ class EvaluationRequest {
                        u.firstname AS evaluator_firstname,
                        u.lastname AS evaluator_lastname,
                        subject.title AS subject,
-                       set.name AS descriptorset
+                       dset.name AS descriptorset
                 FROM artefact_epos_evaluation_request r
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
-                LEFT JOIN artefact_epos_descriptorset set ON r.descriptorset_id = set.id
+                LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
                 LEFT JOIN usr u ON r.evaluator_id = u.id
                 WHERE inquirer_id = ?
                     AND response_date IS NULL

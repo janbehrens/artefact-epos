@@ -162,7 +162,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     protected $descriptorset;
 
-    protected $customcompetences;
+    protected $customcompetences = array();
 
     public $items = array();
 
@@ -409,7 +409,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
     }
 
     public function get_customcompetences() {
-        if (!isset($this->customcompetences)) {
+        if (!$this->customcompetences) {
             $this->customcompetences = array();
             $sql = "SELECT * FROM artefact
                     WHERE artefacttype='customcompetence'
@@ -907,6 +907,15 @@ EOL
                             USING artefact_epos_descriptor d
                             WHERE ei.descriptor_id = d.id
                                 AND ei.evaluation_id = ? AND ei.type = ? AND d.competence_id = ? AND d.level_id = ?";
+                    if (is_mysql()) {
+                        $sql = "DELETE FROM ei
+                                USING artefact_epos_evaluation_item ei
+                                    INNER JOIN artefact_epos_descriptor d ON ei.descriptor_id = d.id
+                                WHERE ei.evaluation_id = ?
+                                    AND ei.type = ?
+                                    AND d.competence_id = ?
+                                    AND d.level_id = ?";
+                    }
                     execute_sql($sql, array($id, $othertype, $competence, $level));
                 }
                 else if ($othertype == EVALUATION_ITEM_TYPE_COMPLEVEL) {

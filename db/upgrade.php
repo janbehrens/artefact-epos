@@ -414,12 +414,17 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $table = new XMLDBTable('artefact_epos_descriptor_set');
         rename_table($table, 'artefact_epos_descriptorset');
         $table = new XMLDBTable('artefact_epos_checklist_item');
-        $field = new XMLDBField('id');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
-        add_field($table, $field);
-        $key = new XMLDBKey('primary');
-        $key->setAttributes(XMLDB_KEY_PRIMARY, array('id'), null, null);
-        add_key($table, $key);
+        if (is_mysql()) {
+            execute_sql('ALTER TABLE `artefact_epos_checklist_item` ADD `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST');
+        }
+        else {
+            $field = new XMLDBField('id');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+            add_field($table, $field);
+            $key = new XMLDBKey('primary');
+            $key->setAttributes(XMLDB_KEY_PRIMARY, array('id'), null, null);
+            add_key($table, $key);
+        }
         $field = new XMLDBField('type');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', true, XMLDB_NOTNULL, false, false, null, '0');
         add_field($table, $field);
@@ -431,7 +436,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
     	if (table_exists($table)) {
     		drop_table($table);
     	}
-        $table->addFieldInfo('artefact', XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL);
+        $table->addFieldInfo('artefact', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL);
         $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('artefact'));
         $table->addKeyInfo('artefactfk', XMLDB_KEY_FOREIGN, array('artefact'), 'artefact', array('id'));
@@ -459,10 +464,15 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2013082000) {
+        // delete foreign keys first so fields can be renamed (for mysql)
+        execute_sql("ALTER TABLE `artefact_epos_evaluation_item` DROP FOREIGN KEY `arteeposchecitem_che_fk`;");
+        execute_sql("ALTER TABLE `artefact_epos_evaluation_item` DROP FOREIGN KEY `arteeposchecitem_des_fk`;");
         $table = new XMLDBTable('artefact_epos_evaluation_item');
         $field = new XMLDBField('checklist');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10');
         rename_field($table, $field, 'evaluation_id');
         $field = new XMLDBField('evaluation');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10');
         rename_field($table, $field, 'value');
         $field = new XMLDBField('descriptor');
         // allow null
@@ -473,6 +483,35 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $field = new XMLDBField('target_key');
         $field->setAttributes(XMLDB_TYPE_CHAR, '255');
         add_field($table, $field);
+        // re-add the foreign keys
+        $key = new XMLDBKey('arteeposevalitem_eva_fk');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('evaluation_id'), 'artefact', array('id'));
+        add_key($table, $key);
+        $key = new XMLDBKey('arteeposevalitem_des_fk');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('descriptor_id'), 'artefact_epos_descriptor', array('id'));
+        add_key($table, $key);
+    }
+
+    if ($oldversion < 2013091601) {
+        // rename artefact type "checklist" to "evaluation"
+        db_begin();
+        insert_record('artefact_installed_type', (object) array(
+            'name' => 'evaluation',
+            'plugin' => 'epos'
+        ));
+        // we cannot use update_record() because it does not allow to use the same columns
+        // for update as for where (Mahara bug)
+        execute_sql("UPDATE artefact SET artefacttype = 'evaluation' WHERE artefacttype = 'checklist'");
+        delete_records('artefact_installed_type', 'name', 'checklist', 'plugin', 'epos');
+        // rename checklist blocks, too
+        $blocktype = get_record('blocktype_installed', 'name', 'checklist', 'artefactplugin', 'epos');
+        $blocktype->name = 'evaluation';
+        insert_record('blocktype_installed', $blocktype);
+        execute_sql("UPDATE block_instance SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
+        execute_sql("UPDATE blocktype_installed_viewtype SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
+        execute_sql("UPDATE blocktype_installed_category SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
+        delete_records('blocktype_installed', 'name', 'checklist', 'artefactplugin', 'epos');
+        db_commit();
     }
 
     if ($oldversion < 2013091601) {
@@ -496,7 +535,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                     AND customgoal.owner = ?";
             $evaluations = get_records_sql_array($evaluationsSql, array($user->id));
             foreach ($evaluations as $evaluation) {
-                $evaluation = new ArtefactTypeChecklist(0, $evaluation);
+                $evaluation = new ArtefactTypeEvaluation(0, $evaluation);
                 $evaluation->set('dirty', false);
                 $competence = new ArtefactTypeCustomCompetence();
                 $competence->set('title', get_string('customgoaldefaulttitle', 'artefact.epos'));
@@ -521,43 +560,25 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         db_begin();
         $table = new XMLDBTable('artefact_epos_artefact_subject');
         // without primary key, the update will fail (mahara bug)
-        $field = new XMLDBField('artefact');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, XMLDB_SEQUENCE);
-        change_field_type($table, $field);
-        $key = new XMLDBKey('primary');
-        $key->setAttributes(XMLDB_KEY_PRIMARY, array('artefact'), null, null);
-        add_key($table, $key);
-        $key = new XMLDBKey('artefactfk');
-        $key->setAttributes(XMLDB_KEY_FOREIGN, array('artefact'), 'artefact', array('id'));
-        add_key($table, $key);
-        // first rename the existing sequence to something the weird mahara mechanism accepts
-        if (get_record('pg_class', 'relname', 'artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1')) {
-            execute_sql("ALTER TABLE artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1 RENAME TO artefact_epos_artefact_subject_id_seq");
+        if (is_mysql()) {
+            execute_sql("ALTER TABLE `artefact_epos_artefact_subject` ADD PRIMARY KEY(`artefact`)");
+        }
+        else {
+            $field = new XMLDBField('artefact');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+            change_field_type($table, $field);
+            $key = new XMLDBKey('primary');
+            $key->setAttributes(XMLDB_KEY_PRIMARY, array('artefact'), null, null);
+            add_key($table, $key);
+        }
+        if (is_postgres()) {
+            // first rename the existing sequence to something the weird mahara mechanism accepts
+            if (get_record('pg_class', 'relname', 'artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1')) {
+                execute_sql("ALTER TABLE artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1 RENAME TO artefact_epos_artefact_subject_id_seq");
+            }
         }
         // eventually do the one operation we'd like to execute
         rename_table($table, 'artefact_epos_mysubject');
-        db_commit();
-    }
-
-    if ($oldversion < 2013092400) {
-        // rename artefact type "checklist" to "evaluation"
-        db_begin();
-        insert_record('artefact_installed_type', (object) array(
-            'name' => 'evaluation',
-            'plugin' => 'epos'
-        ));
-        // we cannot use update_record() because it does not allow to use the same columns
-        // for update as for where (Mahara bug)
-        execute_sql("UPDATE artefact SET artefacttype = 'evaluation' WHERE artefacttype = 'checklist'");
-        delete_records('artefact_installed_type', 'name', 'checklist', 'plugin', 'epos');
-        // rename checklist blocks, too
-        $blocktype = get_record('blocktype_installed', 'name', 'checklist', 'artefactplugin', 'epos');
-        $blocktype->name = 'evaluation';
-        insert_record('blocktype_installed', $blocktype);
-        execute_sql("UPDATE block_instance SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
-        execute_sql("UPDATE blocktype_installed_viewtype SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
-        execute_sql("UPDATE blocktype_installed_category SET blocktype = 'evaluation' WHERE blocktype = 'checklist'");
-        delete_records('blocktype_installed', 'name', 'checklist', 'artefactplugin', 'epos');
         db_commit();
     }
 
@@ -568,16 +589,28 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', true, XMLDB_NOTNULL, null, null, null, 0);
         add_field($table, $field);
         $field = new XMLDBField('evaluator');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, XMLDB_NOTNULL, null, null, null, 0);
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, 0);
         add_field($table, $field);
         $key = new XMLDBKey('evaluatorfk');
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('evaluator'), 'usr', array('id'));
         add_key($table, $key);
-        execute_sql("
-                UPDATE artefact_epos_evaluation SET evaluator = a.owner
-                FROM artefact_epos_evaluation e
-                INNER JOIN artefact a ON e.artefact = a.id
-        ");
+        if (is_postgres()) {
+            execute_sql("
+                    UPDATE artefact_epos_evaluation SET evaluator = a.owner
+                    FROM artefact_epos_evaluation e
+                    INNER JOIN artefact a ON e.artefact = a.id
+            ");
+        }
+        else if (is_mysql()) {
+            execute_sql("
+                    UPDATE artefact_epos_evaluation e
+                    INNER JOIN artefact a ON e.artefact = a.id
+                    SET e.evaluator = a.owner
+            ");
+        }
+        else {
+            throw new Exception("unsupported db dialect");
+        }
         db_commit();
     }
 

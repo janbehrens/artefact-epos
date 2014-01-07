@@ -56,9 +56,13 @@ if (!$data = get_records_sql_array($sql, array($id))) {
 
 // collect custom goals for certain language
 $data_custom_goal = array();
+$cast = "";
+if (is_postgres()) {
+    $cast = "::integer";
+}
 $sql = "SELECT goal.id, goal.description, competence.title AS competence
 		FROM artefact goal
-        LEFT JOIN artefact_epos_evaluation_item ei ON ei.target_key::integer = goal.id
+        LEFT JOIN artefact_epos_evaluation_item ei ON ei.target_key$cast = goal.id
         LEFT JOIN artefact competence ON goal.parent = competence.id
         LEFT JOIN artefact evaluation ON competence.parent = evaluation.id
 		WHERE goal.artefacttype = 'customgoal' AND ei.goal = 1
