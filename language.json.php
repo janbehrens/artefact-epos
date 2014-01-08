@@ -61,11 +61,11 @@ $sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
             AND evaluation.owner = e.evaluator
             AND evaluation.artefacttype = 'evaluation'
             AND e.final = 0
-        ORDER BY subject.title
-        OFFSET $offset";
+        ORDER BY subject.title";
 if ($limit) {
     $sql .= " LIMIT $limit";
 }
+$sql .= " OFFSET $offset";
 
 if (!$data = get_records_sql_array($sql, array($owner))) {
     $data = array();
