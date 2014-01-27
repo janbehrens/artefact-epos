@@ -40,7 +40,7 @@ $id = param_integer('id', null);
 list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
 
 if (!$selectform) {
-    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
+    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="..">' . get_string('mylanguages', 'artefact.epos') . '</a>');
 }
 else {
     $evaluation = new ArtefactTypeEvaluation($id);
