@@ -809,7 +809,7 @@ EOL
     	if ($descriptor->link != '') {
     		//check if http(s):// is present in link
     		if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
-    			$descriptor->link = "example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
+    			$descriptor->link = "../example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
     		}
     		$elements['item_' . $descriptor->id]['title'] .=
     		                    ' <a href="' . $descriptor->link . '"  onclick="openPopup(\''
