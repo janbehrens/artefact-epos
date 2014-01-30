@@ -165,7 +165,9 @@ if (!$emptyfield) {
 	    if (!$dbdata = get_records_sql_array($sql, array($id))) {
 	        $dbdata = array();
 	    }
-	    $oldfilepath = substr($dbdata[0]->file, 0, count($dbdata[0]->file) - 5);
+	    if (is_dir($oldfilepath)) {
+	        $oldfilepath = substr($dbdata[0]->file, 0, count($dbdata[0]->file) - 5);
+	    )
 	    symlink($dirpath_examples . '/' . $oldfilepath, $filepath_examples);
 	}
 
