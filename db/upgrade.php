@@ -412,7 +412,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
 
     if ($oldversion < 2013081300) {
         $table = new XMLDBTable('artefact_epos_descriptor_set');
-        rename_table($table, 'artefact_epos_descriptorset');
+        rename_table($table, 'artefact_epos_descriptorset', false, false);
         $table = new XMLDBTable('artefact_epos_checklist_item');
         if (is_mysql()) {
             execute_sql('ALTER TABLE `artefact_epos_checklist_item` ADD `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST');
@@ -431,7 +431,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $field = new XMLDBField('goal');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', true, false, false, false, null, '0');
         change_field_type($table, $field);
-        rename_table($table, 'artefact_epos_evaluation_item');
+        rename_table($table, 'artefact_epos_evaluation_item', false, false);
         $table = new XMLDBTable('artefact_epos_evaluation');
     	if (table_exists($table)) {
     		drop_table($table);
@@ -465,8 +465,10 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
 
     if ($oldversion < 2013082000) {
         // delete foreign keys first so fields can be renamed (for mysql)
-        execute_sql("ALTER TABLE `artefact_epos_evaluation_item` DROP FOREIGN KEY `arteeposchecitem_che_fk`;");
-        execute_sql("ALTER TABLE `artefact_epos_evaluation_item` DROP FOREIGN KEY `arteeposchecitem_des_fk`;");
+        if (is_mysql()) {
+            execute_sql("ALTER TABLE `artefact_epos_evaluation_item` DROP FOREIGN KEY `arteeposchecitem_che_fk`;");
+            execute_sql("ALTER TABLE `artefact_epos_evaluation_item` DROP FOREIGN KEY `arteeposchecitem_des_fk`;");
+        }
         $table = new XMLDBTable('artefact_epos_evaluation_item');
         $field = new XMLDBField('checklist');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10');
@@ -522,37 +524,39 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         ));
         // find users that have custom goals
         $usersSql = "SELECT owner AS id FROM artefact WHERE artefacttype = 'customgoal' GROUP BY owner";
-        $users = get_records_sql_array($usersSql, array());
-        // add custom competence for each user and evaluation and assign all goals to it
-        foreach ($users as $user) {
-            db_begin();
-            $evaluationsSql = "SELECT DISTINCT checklist.*
-                    FROM artefact customgoal
-                    LEFT JOIN artefact subject ON customgoal.parent = subject.id
-                    LEFT JOIN artefact checklist ON subject.id = checklist.parent
-                    WHERE customgoal.artefacttype = 'customgoal'
-                    AND checklist.artefacttype = 'checklist'
-                    AND customgoal.owner = ?";
-            $evaluations = get_records_sql_array($evaluationsSql, array($user->id));
-            foreach ($evaluations as $evaluation) {
-                $evaluation = new ArtefactTypeEvaluation(0, $evaluation);
-                $evaluation->set('dirty', false);
-                $competence = new ArtefactTypeCustomCompetence();
-                $competence->set('title', get_string('customgoaldefaulttitle', 'artefact.epos'));
-                $competence->set('parent', $evaluation->get('id'));
-                $competence->set('owner', $user->id);
-                $competence->commit();
-                $assignGoalsSql = "UPDATE artefact SET parent = ?
-                        WHERE artefacttype = 'customgoal'
-                        AND parent = ?
-                        AND owner = ?";
-                execute_sql($assignGoalsSql, array($competence->get('id'), $evaluation->get('parent'), $user->id));
-                // create evaluation items for all goals
-                foreach ($competence->get_customgoals() as $customgoal) {
-                    $evaluation->add_item(EVALUATION_ITEM_TYPE_CUSTOM_GOAL, null, $customgoal->get('id'), 1);
+        if ($users = get_records_sql_array($usersSql, array())) {
+            // add custom competence for each user and evaluation and assign all goals to it
+            foreach ($users as $user) {
+                db_begin();
+                $evaluationsSql = "SELECT DISTINCT checklist.*
+                        FROM artefact customgoal
+                        LEFT JOIN artefact subject ON customgoal.parent = subject.id
+                        LEFT JOIN artefact checklist ON subject.id = checklist.parent
+                        WHERE customgoal.artefacttype = 'customgoal'
+                        AND checklist.artefacttype = 'checklist'
+                        AND customgoal.owner = ?";
+                if ($evaluations = get_records_sql_array($evaluationsSql, array($user->id))) {
+                    foreach ($evaluations as $evaluation) {
+                        $evaluation = new ArtefactTypeEvaluation(0, $evaluation);
+                        $evaluation->set('dirty', false);
+                        $competence = new ArtefactTypeCustomCompetence();
+                        $competence->set('title', get_string('customgoaldefaulttitle', 'artefact.epos'));
+                        $competence->set('parent', $evaluation->get('id'));
+                        $competence->set('owner', $user->id);
+                        $competence->commit();
+                        $assignGoalsSql = "UPDATE artefact SET parent = ?
+                                WHERE artefacttype = 'customgoal'
+                                AND parent = ?
+                                AND owner = ?";
+                        execute_sql($assignGoalsSql, array($competence->get('id'), $evaluation->get('parent'), $user->id));
+                        // create evaluation items for all goals
+                        foreach ($competence->get_customgoals() as $customgoal) {
+                            $evaluation->add_item(EVALUATION_ITEM_TYPE_CUSTOM_GOAL, null, $customgoal->get('id'), 1);
+                        }
+                    }
+                    db_commit();
                 }
             }
-            db_commit();
         }
     }
 
@@ -576,9 +580,12 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
             if (get_record('pg_class', 'relname', 'artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1')) {
                 execute_sql("ALTER TABLE artefact_epos_artefact_subject_artefact_alter_column_tmp_seq1 RENAME TO artefact_epos_artefact_subject_id_seq");
             }
+            else {
+                execute_sql("CREATE SEQUENCE artefact_epos_artefact_subject_id_seq");
+            }
         }
         // eventually do the one operation we'd like to execute
-        rename_table($table, 'artefact_epos_mysubject');
+        rename_table($table, 'artefact_epos_mysubject', false, false);
         db_commit();
     }
 
