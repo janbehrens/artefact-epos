@@ -62,7 +62,6 @@
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
                 <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
-                <KEY NAME="ownerfk"             TYPE="foreign" FIELDS="owner" REFTABLE="usr" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_competence"> 
@@ -124,7 +123,7 @@
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
                 <KEY NAME="evaluationfk"        TYPE="foreign" FIELDS="evaluation_id" REFTABLE="artefact" REFFIELDS="id" />
-                <KEY NAME="descriptorfk"        TYPE="foreign" FIELDS="descriptor" REFTABLE="artefact_epos_descriptor" REFFIELDS="id" />
+                <KEY NAME="descriptorfk"        TYPE="foreign" FIELDS="descriptor_id" REFTABLE="artefact_epos_descriptor" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_evaluation_request">
