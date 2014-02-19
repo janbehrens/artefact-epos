@@ -27,16 +27,6 @@
                 <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
             </KEYS>
         </TABLE>
-        <TABLE NAME="artefact_epos_descriptorset_subject"> 
-            <FIELDS>
-                <FIELD NAME="descriptorset"     TYPE="int" LENGTH="10" NOTNULL="true" />
-                <FIELD NAME="subject"           TYPE="int" LENGTH="10" NOTNULL="true" />
-            </FIELDS>
-            <KEYS>
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
-                <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
-            </KEYS>
-        </TABLE>
         <TABLE NAME="artefact_epos_descriptorset"> 
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
@@ -47,6 +37,16 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_epos_descriptorset_subject"> 
+            <FIELDS>
+                <FIELD NAME="descriptorset"     TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="subject"           TYPE="int" LENGTH="10" NOTNULL="true" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
+                <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_descriptor"> 
@@ -61,7 +61,7 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
                 <KEY NAME="ownerfk"             TYPE="foreign" FIELDS="owner" REFTABLE="usr" REFFIELDS="id" />
             </KEYS>
         </TABLE>
@@ -69,33 +69,33 @@
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
+                <FIELD NAME="descriptorset_id"  TYPE="int" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset_id" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_level"> 
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
+                <FIELD NAME="descriptorset_id"  TYPE="int" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset_id" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_rating"> 
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
+                <FIELD NAME="descriptorset_id"  TYPE="int" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptor_set" REFFIELDS="id" />
+                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset_id" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_evaluation"> 
