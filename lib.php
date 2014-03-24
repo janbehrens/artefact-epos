@@ -54,13 +54,13 @@ class PluginArtefactEpos extends PluginArtefact {
                 'path' => 'subjects',
                 'title' => get_string('languages', 'artefact.epos'),
                 'url' => 'artefact/epos/',
-                'weight' => 30,
+                'weight' => 27,
             ),
             array(
                 'path' => 'evaluation',
-                'title' => get_string('evaluation', 'artefact.epos'),
+                'title' => get_string('selfevaluation', 'artefact.epos'),
                 'url' => 'artefact/epos/evaluation/self-eval.php',
-                'weight' => 31,
+                'weight' => 28,
             ),
             array(
                 'path' => 'evaluation/selfevaluation',
@@ -84,7 +84,7 @@ class PluginArtefactEpos extends PluginArtefact {
                 'path' => 'goals',
                 'title' => get_string('goals', 'artefact.epos'),
                 'url' => 'artefact/epos/goals.php',
-                'weight' => 32,
+                'weight' => 29,
             ),
             array(
                 'path' => 'goals/goals',
