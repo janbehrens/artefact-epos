@@ -1013,7 +1013,7 @@ EOL
             $subject->title = "$subject->title ($subject->descriptorset)";
         }
         $selectform = get_string('languages', 'artefact.epos') . ': ';
-        $selectform .= html_select($data, "Select", "id", $id);
+        $selectform .= html_select($data, get_string('select'), "id", $id);
         return array($selectform, $id);
     }
 

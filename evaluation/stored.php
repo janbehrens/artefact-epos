@@ -53,10 +53,10 @@ else {
             $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/stored.php?id=' . $evaluation->id;
             $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/display.php?id=' . $evaluation->id;
         }
-        if ($evaluation->evaluator == $USER->get('id')) {
+        /*if ($evaluation->evaluator == $USER->get('id')) {
             $evaluation->firstname = get_string('yourself', 'artefact.epos');
             $evaluation->lastname = "";
-        }
+        }*/
         $by_subject_and_descriptorset[$evaluation->subject][$evaluation->descriptorset_id]['evaluations'] []= $evaluation;
         $by_subject_and_descriptorset[$evaluation->subject][$evaluation->descriptorset_id]['name'] = $evaluation->descriptorset;
     }
