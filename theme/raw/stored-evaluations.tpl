@@ -24,7 +24,7 @@
                 <td>{$evaluation->firstname} {$evaluation->lastname}</td>
                 <td>
                 {if $evaluation->final}
-                    <a href="stored-delete.php?id={$evaluation->id}"><img title="{str tag='deleteevaluation' section='artefact.epos'}" alt="{str tag='deleteevaluation' section='artefact.epos'}" src="{$WWWROOT}theme/raw/static/images/icon_close.gif" /></a>
+                    <a href="stored-delete.php?id={$evaluation->id}"><img title="{str tag='deleteevaluation' section='artefact.epos'}" alt="{str tag='deleteevaluation' section='artefact.epos'}" src="{$WWWROOT}theme/raw/static/images/btn_deleteremove.png" /></a>
                 {/if}
                 </td>
                 <td class="selectors">
