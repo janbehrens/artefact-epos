@@ -41,6 +41,9 @@ safe_require('artefact', 'epos');
 $id = param_integer('id', null);
 list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
 
+$editbuttonurl = $THEME->get_url('images/btn_edit.png');
+$deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
+
 if (!$selectform) {
     $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
 }
@@ -85,7 +88,7 @@ tableRenderer = new TableRenderer(
         function (r, d) {
         	var data = TD(null);
         	if(r.description != null) {
-        		data.innerHTML = '<div style="width:32px;"><a href="javascript: onClick=editCustomGoal('+r.id+');" title="$editCustomgoal"><img src="../../theme/raw/static/images/edit.gif" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal"></a></div>';
+        		data.innerHTML = '<div style="width:48px;"><a href="javascript: onClick=editCustomGoal('+r.id+');" title="$editCustomgoal"><img src="$editbuttonurl" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="$deletebuttonurl" alt="$deleteCustomgoal"></a></div>';
                 return data;
 			}
 

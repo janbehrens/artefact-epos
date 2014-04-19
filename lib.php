@@ -735,6 +735,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
      * @param object $level
      */
     private function form_evaluation_customgoals(&$elements, $ratings, $customcompetence) {
+        global $THEME;
         $elements['header_goal'] = array(
                 'type' => 'html',
                 'title' => ' ',
@@ -754,6 +755,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
             $title = "<div id=\"custom_$goal_id\">$title</div>";
             $editCustomgoal = get_string('edit');
             $deleteCustomgoal = get_string('delete');
+            $editbuttonurl = $THEME->get_url('images/btn_edit.png');
+            $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
+            
             $elements['item_' . $goal_id] = array(
                     'type' => 'radio',
                     'title' => $title,
@@ -771,10 +775,10 @@ class ArtefactTypeEvaluation extends ArtefactType {
                     'value' => <<< EOL
                         <div style="white-space:nowrap;">
                             <a href="javascript: onClick=editCustomGoal('$goal_id');" title="$editCustomgoal">
-                                <img src="../../../theme/raw/static/images/edit.gif" alt="$editCustomgoal">
+                                <img src="$editbuttonurl" alt="$editCustomgoal">
                             </a>
                             <a href="javascript: deleteCustomGoal('$goal_id');" title="$deleteCustomgoal">
-                                <img src="../../../theme/raw/static/images/icon_close.gif" alt="$deleteCustomgoal">
+                                <img src="$deletebuttonurl" alt="$deleteCustomgoal">
                             </a>
                         </div>
 EOL
