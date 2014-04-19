@@ -69,7 +69,6 @@ $sql = "SELECT goal.id, goal.description, competence.title AS competence
 
 if (!$data_custom_goal = get_records_sql_array($sql, array($id, EVALUATION_ITEM_TYPE_CUSTOM_GOAL))) {
 	$data_custom_goal = array();
-	error_log("id=$id");
 }
 
 $data = array_merge($data, $data_custom_goal);
