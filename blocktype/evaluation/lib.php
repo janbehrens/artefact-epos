@@ -103,5 +103,12 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
     public static function default_copy_type() {
         return 'full';
     }
+    
+    /**
+     * Allow this blocktype in personal views only
+     */
+    public static function allowed_in_view(View $view) {
+        return $view->get('owner') != null;
+    }
 }
 

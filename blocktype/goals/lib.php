@@ -157,6 +157,13 @@ EOF;
     public static function has_title_link() {
         return false;
     }
+
+    /**
+     * Allow this blocktype in personal views only
+     */
+    public static function allowed_in_view(View $view) {
+        return $view->get('owner') != null;
+    }
 }
 
 ?>
