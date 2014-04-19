@@ -17,7 +17,6 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
         </tr>
         {/foreach}
     </tbody>

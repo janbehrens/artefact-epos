@@ -57,7 +57,7 @@ class PluginBlocktypeGoals extends PluginBlocktype {
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $result = '';
         $configdata = $instance->get('configdata');
-        $id = $configdata['artefactid'];
+        $id = isset($configdata['artefactid']) ? $configdata['artefactid'] : 0;
         
         if (!empty($configdata['artefactid'])) {
             $jsonpath = get_config('wwwroot') . 'artefact/epos/goals.json.php?id=' . $id;
@@ -71,22 +71,22 @@ tableRenderer{$id} = new TableRenderer(
     [
         function (r, d) {
         	var data = TD(null);
-        	if(r.descriptor == null && r.description != null) {
+        	if (r.descriptor == null && r.description != null) {
             	data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
             	return data;
 			}
             return TD(null, r.descriptor);
         },
         function (r, d) {
-        	if(r.competence == null) {
-        			r.competence = "";
-        			r.level = "";
+            var level = "";
+            var competence = "";
+        	if (r.competence != null) {
+        		competence = r.competence;
         	}
-            return TD(null, r.competence + ' ' + r.level);
-        },
-        function (r, d) {
-        	return TD(null, r.descriptorset);
-     
+        	if (typeof r.level !== "undefined") {
+        	    level = r.level;
+        	}
+            return TD(null, competence + ' ' + level);
         },
         function (r, d) {
 			return TD(null);
@@ -123,7 +123,7 @@ EOF;
             ),
             'blocktype' => 'goals',
             'limit' => 5,
-            'artefacttypes' => array('subject'),
+            'artefacttypes' => array('evaluation'),
         );
     }
     

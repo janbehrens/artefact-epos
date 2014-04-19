@@ -35,7 +35,6 @@ $limit = param_integer('limit', null);
 $offset = param_integer('offset', 0);
 $view = param_integer('view', 0);
 
-$owner = $USER->get('id');
 $id = $_GET['id'];
 
 $data = array();
@@ -66,10 +65,11 @@ $sql = "SELECT goal.id, goal.description, competence.title AS competence
         LEFT JOIN artefact competence ON goal.parent = competence.id
         LEFT JOIN artefact evaluation ON competence.parent = evaluation.id
 		WHERE goal.artefacttype = 'customgoal' AND ei.goal = 1
-        AND goal.owner = ? AND evaluation.id = ? AND ei.type = ?";
+        AND evaluation.id = ? AND ei.type = ?";
 
-if(!$data_custom_goal = get_records_sql_array($sql, array($owner, $id, EVALUATION_ITEM_TYPE_CUSTOM_GOAL))) {
+if (!$data_custom_goal = get_records_sql_array($sql, array($id, EVALUATION_ITEM_TYPE_CUSTOM_GOAL))) {
 	$data_custom_goal = array();
+	error_log("id=$id");
 }
 
 $data = array_merge($data, $data_custom_goal);
