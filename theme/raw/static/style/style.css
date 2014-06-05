@@ -89,8 +89,17 @@ table.evaluation {
     table-layout:fixed;
 }
 
+table.evaluation th, table.evaluation td {
+    white-space: normal;
+}
+
 table.evaluation .column_0 {
-    width: 30%;
+    max-width: 30%;
+}
+
+.evaluationform h2 {
+	font-size: 130%;
+	margin-top: 0.5em;
 }
 
 .interactive {

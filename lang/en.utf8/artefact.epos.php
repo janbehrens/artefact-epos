@@ -100,7 +100,7 @@ $string['descriptorsetnotfound'] = 'Could not find requested descriptor set';
 //Evaluation
 $string['evaluation'] = 'Evaluation';
 $string['selfevaluation'] = 'Self-evaluation';
-$string['evaluationformtitle'] = '%s on the level of %s';
+$string['evaluationformtitle'] = '%s – %s';
 $string['evaluationnotfound'] = 'The requested evaluation cannot be found.';
 $string['overallrating'] = "Overall rating for this competence area on this level";
 $string['evaluationtypedescriptor'] = "Switch to detailed evaluation";
