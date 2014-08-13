@@ -5,6 +5,8 @@ function toggleEvaluationForm(comp, level, type, competence) {
     var allforms = $j('div[id^=evaluationform_]');
     allforms.addClass('hidden');
     $j(formDivId).removeClass('hidden');
+    $j('th').removeClass('hidden');
+    $j('[id$=_description_container]').addClass('hidden');
     if (type == 2) {
     	$j('#addcustomgoal_customcompetence').val(competence);
     }
@@ -12,6 +14,7 @@ function toggleEvaluationForm(comp, level, type, competence) {
 
 function evaluationSaveCallback(form, data) {
     window.location.reload();
+    $j('th').addClass('hidden');
 }
 
 function openPopup(url) {

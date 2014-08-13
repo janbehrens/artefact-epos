@@ -1,23 +1,41 @@
 
-var oldTA = new Array();
+var oldText = new Array();
 var openToEdit = new Array();
 
 function editCustomGoal(customgoal_id) {
-	if(!openToEdit[customgoal_id]) {
-		openToEdit[customgoal_id] = true;
-		oldTA[customgoal_id] = customgoal_text = document.getElementById('custom_' + customgoal_id).innerHTML;
-		if(customgoal_text.substr(0, 5) != "<form") {
-			document.getElementById('custom_' + customgoal_id).innerHTML = '<form name="bm" action="javascript: submitEditCustomGoal('+customgoal_id+');">' +
-			'<textarea class="customgoalta" id="ta_' + customgoal_id + '">' + customgoal_text + '</textarea>' +
-			'<input class="submitcancel submit" type="submit" value="' + strings['save'] + '" />' +
-			'<input class="submitcancel cancel" type="reset" value="' + strings['cancel'] + '" onClick="javascript: cancleEditCustomGoalOut('+customgoal_id+');"/>' +
-			'</form>';
+	customGoalNode = document.getElementById('custom_' + customgoal_id);
+	customgoal_text = customGoalNode.innerHTML;
+	
+	//on self-evaluation page: embedded in evaluation pieform
+	if (customGoalNode.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == 'FORM') {
+		if (!customGoalNode.parentNode.classList.contains('hidden')) {
+			customGoalNode.parentNode.classList.add('hidden');
+			customGoalNode.parentNode.parentNode.children[1].classList.remove('hidden');
+		}
+		else {
+			customGoalNode.parentNode.classList.remove('hidden');
+			customGoalNode.parentNode.parentNode.children[1].classList.add('hidden');
+		}
+	}
+	//on goals page: extra form for editing
+	else {
+		if (!openToEdit[customgoal_id]) {
+			openToEdit[customgoal_id] = true;
+			oldText[customgoal_id] = customgoal_text
+			
+			if (customgoal_text.substr(0, 5) != "<form") {
+				customGoalNode.innerHTML = '<form name="bm" action="javascript: submitEditCustomGoal('+customgoal_id+');">' +
+				'<textarea class="customgoalta" id="ta_' + customgoal_id + '">' + customgoal_text + '</textarea>' +
+				'<input class="submitcancel submit" type="submit" value="' + strings['save'] + '" />' +
+				'<input class="submitcancel cancel" type="reset" value="' + strings['cancel'] + '" onClick="javascript: cancelEditCustomGoalOut('+customgoal_id+');"/>' +
+				'</form>';
+			}
 		}
 	}
 }
 
-function cancleEditCustomGoalOut(customgoal_id) {
-	document.getElementById('custom_' + customgoal_id).innerHTML = oldTA[customgoal_id];
+function cancelEditCustomGoalOut(customgoal_id) {
+	document.getElementById('custom_' + customgoal_id).innerHTML = oldText[customgoal_id];
 	openToEdit[customgoal_id] = false;
 	return true;
 }

@@ -758,6 +758,11 @@ class ArtefactTypeEvaluation extends ArtefactType {
             $editbuttonurl = $THEME->get_url('images/btn_edit.png');
             $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
             
+	        $elements['item_' . $goal_id . '_description'] = array(
+	                'type' => 'text',
+	        		'title' => $title,
+	                'defaultvalue' => $goal->get('description')
+	        );
             $elements['item_' . $goal_id] = array(
                     'type' => 'radio',
                     'title' => $title,
@@ -969,6 +974,16 @@ EOL
                         $where->target_key = $parts[1];
                         ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
                     }
+                }
+		        //update artefact table for updated custom goals
+                foreach ($values as $name => $value) {
+	                if (preg_match($item_pattern, $name, $parts)) {
+		                $data = new stdClass();
+		                $data->description = $values[$name . '_description'];
+		                $where = new stdClass();
+		                $where->id = $parts[1];
+		                ensure_record_exists('artefact', $where, $data);
+	                }
                 }
             }
             $evaluation = new ArtefactTypeEvaluation($id);
