@@ -74,12 +74,12 @@ class PluginArtefactEpos extends PluginArtefact {
                 'url' => 'artefact/epos/evaluation/stored.php',
                 'weight' => 21,
             ),
-            array(
+            /*array(
                 'path' => 'evaluation/external',
                 'title' => get_string('externalevaluations', 'artefact.epos'),
                 'url' => 'artefact/epos/evaluation/external.php',
                 'weight' => 22,
-            ),
+            ),*/
             array(
                 'path' => 'goals',
                 'title' => get_string('goals', 'artefact.epos'),
