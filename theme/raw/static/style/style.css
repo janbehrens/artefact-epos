@@ -133,6 +133,7 @@ table.evaluation tr.r1 td.custom {
 }
 
 /* print evaluation */
+
 body.print {
     background-color: #FFF;
     color: #333;
@@ -149,6 +150,7 @@ body.print {
 
 .print td {
     vertical-align: middle;
+    min-width: 40px;
 }
 
 .print .progressbar {
@@ -158,6 +160,10 @@ body.print {
 .print .progressbar-value {
     border: 0;
     margin: 0;
+}
+
+.print .progressbar-content {
+	padding: 6px;
 }
 
 .print #legend {
