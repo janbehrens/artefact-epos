@@ -14,7 +14,7 @@ function toggleEvaluationForm(comp, level, type, competence) {
 
 function evaluationSaveCallback(form, data) {
     window.location.reload();
-    $j('th').addClass('hidden');
+    $j('[id^=custom_]').parent().addClass('hidden');
 }
 
 function openPopup(url) {
