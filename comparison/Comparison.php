@@ -187,7 +187,7 @@ class Comparison {
             foreach ($this->evaluations as $evaluation) {
                 $current_ids []= (object) array('name' => "evaluations[]", 'value' => $evaluation->get('id'));
             }
-            $selectform = html_select($data, "Select", "evaluations[]", null, $current_ids);
+            $selectform = html_select($data, get_string('select'), "evaluations[]", null, $current_ids);
         }
         return $selectform;
     }
