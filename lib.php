@@ -538,7 +538,6 @@ class ArtefactTypeEvaluation extends ArtefactType {
      * @see ArtefactType::render_self()
      */
     public function render_self($options, $blockid = 0) {
-        $this->check_permission();
         return array('html' => $this->render_evaluation_table(false), 'javascript' => '');
     }
 
