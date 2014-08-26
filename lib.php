@@ -554,7 +554,6 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $smarty->assign('evaluationforms', $evaluationforms);
         $smarty->assign('evaltable', $this->render_evaluation_table());
         $includejs = array(
-            'jquery',
             'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js',
             'artefact/epos/js/evaluation.js',
             'artefact/epos/js/customgoals.js'
@@ -1949,16 +1948,26 @@ class HTMLTable_epos {
 }
 
 function html_progressbar($value, $content=null, $color="") {
-    $smarty = smarty();
-    $smarty->assign('value', $value);
     if ($color) {
         $color = '-' . $color;
     }
-    $smarty->assign('color', $color);
-    if ($content != null) {
-        $smarty->assign('content', $content);
+    $wwwroot = get_config('wwwroot');
+    $html = <<<EOF
+<div class="progressbar">
+    <div class="progressbar-value" style="width: {$value}%; background-image: url('{$wwwroot}artefact/epos/images/progressbar-fill{$color}.png');">
+    </div>
+EOF;
+    if (isset($content)) {
+        $html .= <<<EOF
+    <span class="progressbar-content">
+        {$content}
+    </span>
+EOF;
     }
-    return $smarty->fetch('artefact:epos:progressbar.tpl');
+    $html .= <<<EOF
+</div>
+EOF;
+    return $html;
 }
 
 /**
