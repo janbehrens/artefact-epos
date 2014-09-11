@@ -1432,6 +1432,9 @@ class Descriptorset implements ArrayAccess, Iterator {
 				}
 			}
 			if ($levels = get_records_array('artefact_epos_level', 'descriptorset_id', $id, 'id')) {
+				uasort($levels, function($a, $b) {
+				    return strcasecmp($a->name, $b->name);
+				});
 				foreach ($levels as $level) {
 					$this->levels[$level->id] = $level;
 				}
