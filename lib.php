@@ -838,14 +838,10 @@ EOL
         $results = $this->results();
 
         $column_titles = array_map(function ($item) {
-            // If column labels contain a colon, return only the part before it (useful in cases where competence level names are very long)
+        	// If column labels contain a colon, return only the part before it (useful in cases where competence level names are very long)
             $returnstr = explode(':', $item->name);
             return $returnstr[0];
         }, $descriptorset->levels);
-        //sort alphabetically
-        usort($column_titles, function ($a, $b) {
-            return strcasecmp($a, $b);
-        });
         array_unshift($column_titles, get_string('competence', 'artefact.epos'));
 
         $column_definitions = array(
