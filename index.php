@@ -158,17 +158,17 @@ if (count($optionssubject) > 0) {
             'title' => get_string('subject', 'artefact.epos'),
             'options' => $optionssubject,
         ),
+        'descriptorset' => array(
+            'type' => 'select',
+            'title' => get_string('descriptorset', 'artefact.epos'),
+            'options' => $optionsdescriptors,
+         ),
         'label' => array(
             'type' => 'text',
             'size' => 50,
             'title' => get_string('label', 'artefact.epos'),
             'defaultvalue' => '',
         ),
-        'descriptorset' => array(
-            'type' => 'select',
-            'title' => get_string('descriptorset', 'artefact.epos'),
-            'options' => $optionsdescriptors,
-         ),
     );
     $elements['submit'] = array(
         'type' => 'submitcancel',
