@@ -70,7 +70,7 @@ class PluginArtefactEpos extends PluginArtefact {
             array(
                 'path' => 'evaluation/addremove',
                 'title' => get_string('addremoveevaluations', 'artefact.epos'),
-                'url' => 'artefact/epos/evaluation/index.php',
+                'url' => 'artefact/epos',
                 'weight' => 27,
             ),
             array(
@@ -1025,7 +1025,7 @@ EOL
             $subject->title = "$subject->title ($subject->descriptorset)";
         }
         //$selectform = get_string('selfevaluations', 'artefact.epos') . ': ';
-        $selectform .= html_select($data, get_string('select'), "id", $id);
+        $selectform = html_select($data, get_string('select'), "id", $id);
         return array($selectform, $id);
     }
 

@@ -37,10 +37,11 @@ define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 safe_require('artefact', 'epos');
 
 $id = param_integer('id', null);
+
 list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
 
 if (!$selectform) {
-    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="./index.php">' . get_string('myselfevaluations', 'artefact.epos') . '</a>');
+    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="../index.php">' . get_string('myselfevaluations', 'artefact.epos') . '</a>');
 }
 else {
     $evaluation = new ArtefactTypeEvaluation($id);

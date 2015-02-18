@@ -31,7 +31,7 @@ define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 define('SECTION_PAGE', 'addremove');
 
-require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
 define('TITLE', get_string('myselfevaluations', 'artefact.epos'));
 require_once('pieforms/pieform.php');
 
@@ -48,10 +48,6 @@ if (isset($_GET['addsubject'])) {
     }
 }
 else {
-    foreach (array_keys($optionssubject) as $id) {
-        $addsubject = $id;
-        break;
-    }
 }
 
 $optionsdescriptors = get_descriptorsets();
@@ -78,6 +74,7 @@ function toggleLanguageForm() {
         removeElementClass('addlearnedlanguagebutton', 'hidden');
         addElementClass(elemName, 'hidden');
     }
+    refreshDescriptorsets();
 }
 
 function languageSaveCallback(form, data) {
@@ -113,7 +110,7 @@ tableRenderer = new TableRenderer(
     'evaluations.json.php',
     [
         function (r, d) {
-            var link = A({'href': './self-eval.php?id=' + r.id}, r.title);
+            var link = A({'href': './evaluation/self-eval.php?id=' + r.id}, r.title);
             return TD(null, link);
         },
         function (r, d) {
@@ -135,12 +132,26 @@ tableRenderer.updateOnLoad();
 
 function refreshDescriptorsets() {
     var selected = jQuery('#addlearnedlanguage_subject_container').children('td:first').children(':first').attr('value');
-    window.location = '?addsubject=' + selected;
+    var select = jQuery('#addlearnedlanguage_descriptorset');
+    var options = jQuery('#addlearnedlanguage_descriptorset option');
+
+    sendjsonrequest('evaluationform.json.php',
+        {'subject_id': selected},
+        'GET',
+        function(data) {
+            options.each(function(index, option) {
+                jQuery(option).remove();
+            });
+            for (var id in data) {
+                select.append(new Option(data[id], id));
+            }
+        }
+    );
 }
 EOF;
 
 //pieform
-if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
+if (count($optionssubject) > 0) {
     $elements = array(
         'subject' => array(
             'type' => 'select',
@@ -159,9 +170,6 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
             'options' => $optionsdescriptors,
          ),
     );
-    if ($addsubject != 0) {
-        $elements['subject']['defaultvalue'] = $addsubject;
-    }
     $elements['submit'] = array(
         'type' => 'submitcancel',
         'value' => array(get_string('save', 'artefact.epos'), get_string('cancel')),
@@ -176,6 +184,9 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
         'jsform' => true,
         'jssuccesscallback' => 'languageSaveCallback',
     ));
+}
+else {
+    
 }
 
 $smarty = smarty(array('tablerenderer', 'jquery'));
@@ -229,24 +240,13 @@ function get_subjects() {
  * Get descriptor sets for pieform select
  */
 function get_descriptorsets() {
-    global $addsubject;
     $descriptorsets = array();
 
-    if ($addsubject != 0) {
-        $sql = "SELECT d.id, d.name FROM artefact_epos_descriptorset d
-                JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
-                WHERE ds.subject = ? AND d.active = 1
-                ORDER BY name";
-
-        if (!$data = get_records_sql_array($sql, array($addsubject))) {
-            $data = array();
-        }
-        foreach ($data as $field) {
-            $descriptorsets[$field->id] = $field->name;
-        }
+    if (!$data = get_records_array('artefact_epos_descriptorset', 'active', 1)) {
+        $data = array();
     }
-    else {
-        $descriptorsets[''] = get_string('pleasechoosesubject', 'artefact.epos');
+    foreach ($data as $field) {
+        $descriptorsets[$field->id] = $field->name;
     }
 
     return $descriptorsets;

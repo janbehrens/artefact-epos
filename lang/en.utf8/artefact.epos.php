@@ -57,10 +57,10 @@ $string['back'] = 'Back';
 $string['close'] = 'Close';
 
 //notifications
-$string['addedlanguage'] = 'Subject has been added.';
-$string['confirmdel'] = 'Are you sure you want to delete this subject?';
-$string['deletedlanguage'] = 'Subject has been deleted.';
-$string['nolanguageselected'] = 'You have not selected any subjects. Go to %s to add one.';
+$string['addedlanguage'] = 'Self-evaluation has been added.';
+$string['confirmdel'] = 'Are you sure you want to delete this self-evaluation?';
+$string['deletedlanguage'] = 'Self-evaluation has been deleted.';
+$string['nolanguageselected'] = "You don't have any self-evaluations. Go to %s to add one.";
 $string['savedevaluation'] = 'Your evaluation has been saved.';
 $string['labelnotvalid'] = 'Label is not valid.';
 $string['descriptorsetnotvalid'] = 'Competence grid is not valid.';
