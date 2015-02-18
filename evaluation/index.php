@@ -26,13 +26,13 @@
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'subjects');
+define('MENUITEM', 'evaluation/addremove');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
-define('SECTION_PAGE', 'index');
+define('SECTION_PAGE', 'addremove');
 
-require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
-define('TITLE', get_string('mylanguages', 'artefact.epos'));
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
+define('TITLE', get_string('myselfevaluations', 'artefact.epos'));
 require_once('pieforms/pieform.php');
 
 $optionssubject = get_subjects();
@@ -94,7 +94,7 @@ function languageSaveCallback(form, data) {
 
 function deleteLanguage(evaluation_id) {
     if (confirm('{$confirmdelstr}')) {
-        sendjsonrequest('languagedelete.json.php',
+        sendjsonrequest('evaluationdelete.json.php',
             {'evaluation_id': evaluation_id},
             'GET',
             function(data) {
@@ -109,11 +109,12 @@ function deleteLanguage(evaluation_id) {
 }
 
 tableRenderer = new TableRenderer(
-    'learnedlanguagelist',
-    'language.json.php',
+    'evaluationslist',
+    'evaluations.json.php',
     [
         function (r, d) {
-            return TD(null, r.title);
+            var link = A({'href': './self-eval.php?id=' + r.id}, r.title);
+            return TD(null, link);
         },
         function (r, d) {
             return TD(null, r.descriptorset);
@@ -124,8 +125,7 @@ tableRenderer = new TableRenderer(
                 e.stop();
                 return deleteLanguage(r.id);
             });
-            var edit = A({'class': 'icon btn-edit s', 'href': 'evaluation/self-eval.php?id=' + r.id}, '{$selfevalstr}');
-            return TD(null, edit, ' ', del);
+            return TD(null, del);
         },
     ]
 );
@@ -144,17 +144,18 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
     $elements = array(
         'subject' => array(
             'type' => 'select',
-            'title' => get_string('subjectform.subject', 'artefact.epos'),
+            'title' => get_string('subject', 'artefact.epos'),
             'options' => $optionssubject,
         ),
-        'title' => array(
+        'label' => array(
             'type' => 'text',
-            'title' => get_string('subjectform.title', 'artefact.epos'),
+            'size' => 50,
+            'title' => get_string('label', 'artefact.epos'),
             'defaultvalue' => '',
         ),
         'descriptorset' => array(
             'type' => 'select',
-            'title' => get_string('subjectform.descriptorset', 'artefact.epos'),
+            'title' => get_string('descriptorset', 'artefact.epos'),
             'options' => $optionsdescriptors,
          ),
     );
@@ -167,7 +168,7 @@ if (count($optionssubject) > 0 /*&& count($optionsdescriptors) > 0*/) {
         'goto' => get_config('wwwroot') . 'artefact/epos/'
     );
 
-    $languageform = pieform(array(
+    $evaluationsform = pieform(array(
         'name' => 'addlearnedlanguage',
         'plugintype' => 'artefact',
         'pluginname' => 'epos',
@@ -181,7 +182,7 @@ $smarty = smarty(array('tablerenderer', 'jquery'));
 $smarty->assign('addsubjectset', isset($_GET['addsubject']));
 $smarty->assign('accessdenied', $accessdenied);
 $smarty->assign('nodescriptorsets', $nodescriptorsets);
-$smarty->assign_by_ref('languageform', $languageform);
+$smarty->assign_by_ref('evaluationsform', $evaluationsform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
@@ -255,8 +256,8 @@ function get_descriptorsets() {
  * form validate function
  */
 function addlearnedlanguage_validate(Pieform $form, $values) {
-    if ($values['title'] == '') {
-        $form->set_error('title', get_string('titlenotvalid', 'artefact.epos'));
+    if ($values['label'] == '') {
+        $form->set_error('label', get_string('labelnotvalid', 'artefact.epos'));
     }
     if ($values['descriptorset'] == '') {
         $form->set_error('descriptorset', get_string('descriptorsetnotvalid', 'artefact.epos'));
@@ -271,7 +272,7 @@ function addlearnedlanguage_submit(Pieform $form, $values) {
         global $USER, $optionsdescriptors;
         safe_require('artefact', 'epos');
         $owner = $USER->get('id');
-        create_subject_for_user($values['subject'], $values['title'], $values['descriptorset'], $optionsdescriptors[$values['descriptorset']], $owner);
+        create_subject_for_user($values['subject'], $values['label'], $values['descriptorset'], $optionsdescriptors[$values['descriptorset']], $owner);
     }
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());

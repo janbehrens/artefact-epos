@@ -233,7 +233,7 @@ EOF;
 $elements = array(
     'name' => array(
         'type' => 'text',
-        'title' => get_string('subjectform.title', 'artefact.epos'),
+        'title' => get_string('name', 'mahara'),
         'defaultvalue' => '',
         'rules' => array('required' => true),
     ),

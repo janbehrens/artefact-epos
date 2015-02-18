@@ -33,7 +33,6 @@ define('EVALUATION_ITEM_TYPE_DESCRIPTOR', 0);
 define('EVALUATION_ITEM_TYPE_COMPLEVEL', 1);
 define('EVALUATION_ITEM_TYPE_CUSTOM_GOAL', 2);
 
-
 class PluginArtefactEpos extends PluginArtefact {
 
     public static function get_artefact_types() {
@@ -50,12 +49,6 @@ class PluginArtefactEpos extends PluginArtefact {
 
     public static function menu_items() {
         return array(
-            array(
-                'path' => 'subjects',
-                'title' => get_string('languages', 'artefact.epos'),
-                'url' => 'artefact/epos/',
-                'weight' => 27,
-            ),
             array(
                 'path' => 'evaluation',
                 'title' => get_string('selfevaluation', 'artefact.epos'),
@@ -74,12 +67,12 @@ class PluginArtefactEpos extends PluginArtefact {
                 'url' => 'artefact/epos/evaluation/stored.php',
                 'weight' => 21,
             ),
-            /*array(
-                'path' => 'evaluation/external',
-                'title' => get_string('externalevaluations', 'artefact.epos'),
-                'url' => 'artefact/epos/evaluation/external.php',
-                'weight' => 22,
-            ),*/
+            array(
+                'path' => 'evaluation/addremove',
+                'title' => get_string('addremoveevaluations', 'artefact.epos'),
+                'url' => 'artefact/epos/evaluation/index.php',
+                'weight' => 27,
+            ),
             array(
                 'path' => 'goals',
                 'title' => get_string('goals', 'artefact.epos'),
@@ -1031,7 +1024,7 @@ EOL
         foreach ($data as $subject) {
             $subject->title = "$subject->title ($subject->descriptorset)";
         }
-        $selectform = get_string('languages', 'artefact.epos') . ': ';
+        //$selectform = get_string('selfevaluations', 'artefact.epos') . ': ';
         $selectform .= html_select($data, get_string('select'), "id", $id);
         return array($selectform, $id);
     }

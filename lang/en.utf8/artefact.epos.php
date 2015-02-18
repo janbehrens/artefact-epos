@@ -33,12 +33,18 @@ $string['goals'] = 'Learning objectives';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
 $string['biography'] = 'Biography';
-$string['languages'] = 'Subjects';
-$string['mylanguages'] = 'My subjects';
+//$string['languages'] = 'Subjects';
+//$string['mylanguages'] = 'My subjects';
 $string['myexperience'] = 'My experience';
 $string['mydiary'] = 'My diary';
 $string['templates'] = 'Templates';
 $string['current'] = 'current';
+
+//self-evaluations
+$string['myselfevaluations'] = 'My self-evaluations';
+$string['selfevaluations'] = 'Self-evaluations';
+$string['addremoveevaluations'] = 'Add/remove self-evaluations';
+$string['label'] = 'Label';
 
 //interaction
 $string['add'] = 'Add';
@@ -56,7 +62,7 @@ $string['confirmdel'] = 'Are you sure you want to delete this subject?';
 $string['deletedlanguage'] = 'Subject has been deleted.';
 $string['nolanguageselected'] = 'You have not selected any subjects. Go to %s to add one.';
 $string['savedevaluation'] = 'Your evaluation has been saved.';
-$string['titlenotvalid'] = 'Title is not valid.';
+$string['labelnotvalid'] = 'Label is not valid.';
 $string['descriptorsetnotvalid'] = 'Competence grid is not valid.';
 $string['pleasechoosesubject'] = 'Please choose a subject first';
 
@@ -72,11 +78,6 @@ $string['competencegrid'] = 'Competence grid';
 $string['goal'] = 'Goal';
 $string['institution'] = 'Institution';
 $string['exampletask'] = 'example/task';
-
-//add subject form
-$string['subjectform.subject'] = 'Subject';
-$string['subjectform.title'] = 'Title';
-$string['subjectform.descriptorset'] = 'Competence grid';
 
 //help text
 $string['helpselfevaluation'] = 'Click on one of the bars in order to evaluate your expertise in the selected area of competence and level.';
@@ -109,7 +110,7 @@ $string['youarenottheownerofthisevaluation'] = 'You may not view/edit this evalu
 $string['noevaluationsforuser'] = 'You do not yet have any self-evaluations.';
 
 // Stored Evaluations
-$string['storeevaluation'] = "Store Evaluation";
+$string['storeevaluation'] = "Store";
 $string['storedevaluations'] = "Stored Evaluations";
 $string['evaluationname'] = "Name for evaluation";
 $string['creationtime'] = "Time of creation";
@@ -172,7 +173,7 @@ $string['learningobjective_checkbox'] = 'Display checkbox for learning objective
 $string['fill_in_learning_objectives'] = 'Fill in can-do statements and task links for the given combination of competence and level.';
 $string['combination_of'] = 'Combination of';
 $string['and'] = 'and';
-$string['printevaluation'] = 'Print evaluation';
+$string['printevaluation'] = 'Print';
 $string['enablebackgroundprinting'] = 'Make sure to enable printing of background colors in the printing dialog.';
 $string['legendthenumbers'] = 'The figures in the bars indicate the number of "Can-Do Statements" rated with the respective evaluation levels. The first figure is the number of statements rated with "%s", the second one refers to "%s" etc.';
 

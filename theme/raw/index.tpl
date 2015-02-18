@@ -1,11 +1,11 @@
 {include file="header.tpl"}
 
 {if !$accessdenied}
-{if $languageform}
-<table id="learnedlanguagelist">
+{if $evaluationsform}
+<table id="evaluationslist">
     <thead>
         <tr>
-            <th>{str tag='language' section='artefact.epos'}</th>
+            <th>{str tag='label' section='artefact.epos'}</th>
             <th>{str tag='competencegrid' section='artefact.epos'}</th>
             <th></th>
         </tr>
@@ -22,9 +22,9 @@
 </table>
 <div>
     {if $addsubjectset}
-    <div id="learnedlanguageform">{$languageform|safe}</div>
+    <div id="learnedlanguageform">{$evaluationsform|safe}</div>
     {else}
-    <div id="learnedlanguageform" class="hidden">{$languageform|safe}</div>
+    <div id="learnedlanguageform" class="hidden">{$evaluationsform|safe}</div>
     <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm();">{str tag='add'}</button>
     {/if}
 </div>
