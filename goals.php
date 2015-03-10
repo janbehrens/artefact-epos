@@ -45,7 +45,7 @@ $editbuttonurl = $THEME->get_url('images/btn_edit.png');
 $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
 
 if (!$selectform) {
-    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('mylanguages', 'artefact.epos') . '</a>');
+    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('myselfevaluations', 'artefact.epos') . '</a>');
 }
 else {
     $evaluation = new ArtefactTypeEvaluation($id);
