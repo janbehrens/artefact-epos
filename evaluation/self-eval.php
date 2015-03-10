@@ -40,6 +40,9 @@ $id = param_integer('id', null);
 
 list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($id);
 
+$includejs = array();
+$selfevaluation = array();
+$customgoalform = null;
 if (!$selectform) {
     $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="../index.php">' . get_string('myselfevaluations', 'artefact.epos') . '</a>');
 }

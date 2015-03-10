@@ -44,6 +44,7 @@ list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($
 $editbuttonurl = $THEME->get_url('images/btn_edit.png');
 $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
 
+$inlinejs = array();
 if (!$selectform) {
     $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href=".">' . get_string('myselfevaluations', 'artefact.epos') . '</a>');
 }
@@ -103,7 +104,6 @@ tableRenderer.emptycontent = '';
 tableRenderer.paginate = false;
 tableRenderer.updateOnLoad();
 EOF;
-
 }
 
 $smarty = smarty(array('tablerenderer',
