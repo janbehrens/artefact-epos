@@ -68,6 +68,12 @@ class PluginArtefactEpos extends PluginArtefact {
                 'weight' => 21,
             ),
             array(
+                'path' => 'evaluation/external',
+                'title' => get_string('externalevaluations', 'artefact.epos'),
+                'url' => 'artefact/epos/evaluation/external.php',
+                'weight' => 22,
+            ),
+            array(
                 'path' => 'evaluation/addremove',
                 'title' => get_string('addremoveevaluations', 'artefact.epos'),
                 'url' => 'artefact/epos',
