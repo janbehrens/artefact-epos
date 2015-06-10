@@ -231,28 +231,40 @@ table.stored_evaluations thead {
 
 div.eval-request {
 	padding: 5px;
-	padding-top: 2px;
 }
 
-.eval-request p {
-	margin: 0;
-}
-
-.eval-request .tools {
-	float: right;
-}
 
 .eval-request .message {
     clear: right;
 	text-align: left;
-	padding: 3px;
-	padding-top: 0;
+	padding: 3px 0 3px 26px;
 	margin-top: 3px;
+}
+
+.eval-request p {
+    margin: -10px 0 0 0;
+}
+
+.request-entry{
+    padding-bottom: 3px;
 }
 
 .eval-request img {
 	position: relative;
-	top: 3px;
+	top: 7px;
+}
+
+.eval-request .tools {
+    float: right;
+    padding-top: 2px;
+}
+
+.eval-request .tools a {
+    padding-right: 3px;
+}
+
+.eval-request .tools img {
+    top: -1px;
 }
 
 /* comparison */

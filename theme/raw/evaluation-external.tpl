@@ -18,13 +18,16 @@
                     <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
                 </a>
                 <a href="external-return.php?id={$request->id}">
-                    <img alt="Return" title="Return" src="../../../theme/raw/static/images/reply_small.png" />
+                    <img alt="Reply" title="Reply" src="../../../theme/raw/static/images/reply_small.png" />
                 </a>
             </span>
-            <p><a href="../../../user/view.php?id={$request->inquirer_id}">{$request->inquirer.firstname} {$request->inquirer.lastname}</a>:
-            {$request->subject} ({$request->descriptorset}), {$request->inquiry_date}</p>
+            <p>
+                <img alt="{str tag='sentrequest' section='artefact.epos'}" title="{str tag='sentrequest' section='artefact.epos'}" src="../theme/raw/static/images/evaluation_entry.png" />
+                <a href="../../../user/view.php?id={$request->inquirer_id}">{$request->inquirer.firstname} {$request->inquirer.lastname}</a>:
+                {$request->subject} ({$request->descriptorset}), {$request->inquiry_date}
+            </p>
             {if $request->inquiry_message}
-            <p class="message">{$request->inquiry_message}</p>
+                <p class="message">{$request->inquiry_message}</p>
             {/if}
         </div>
         
@@ -56,7 +59,7 @@
                 </p>
                 {if $request->inquiry_message}
                 <p class="message">
-                    <img alt="{str tag='sentmessage' section='artefact.epos'}" title="{str tag='sentmessage' section='artefact.epos'}" src="../../../theme/raw/static/images/expand.png" />
+                    <img alt="{str tag='sentmessage' section='artefact.epos'}" title="{str tag='sentmessage' section='artefact.epos'}" src="../theme/raw/static/images/evaluation_entry.png" />
                     {$request->inquiry_message}</p>
                 {/if}
                 {if $request->response_message}
@@ -66,14 +69,13 @@
                 </p>
                 {/if}
             {else}
-                <p>
-                    <img alt="{str tag='sentrequest' section='artefact.epos'}" title="{str tag='sentrequest' section='artefact.epos'}" src="../../../theme/raw/static/images/expand.png" />
+                <p class="request-entry">
+                    <img alt="{str tag='sentrequest' section='artefact.epos'}" title="{str tag='sentrequest' section='artefact.epos'}" src="../theme/raw/static/images/evaluation_entry.png" />
                     <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a>:
                     {$request->subject} ({$request->descriptorset}), {$request->inquiry_date}
                 </p>
                 {if $request->inquiry_message}
                     <p class="message">
-                        <img alt="{str tag='sentmessage' section='artefact.epos'}" title="{str tag='sentmessage' section='artefact.epos'}" src="../../../theme/raw/static/images/expand.png" />
                         {$request->inquiry_message}
                     </p>
                 {/if}
