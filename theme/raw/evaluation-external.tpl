@@ -14,6 +14,8 @@
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
             <span class="tools">
+                {*TODO: add if{..}else{..} statements to display the evaluation-status*}
+                <span><p class="evaluation-status"></p>(Not yet evaluated)</span>
                 <a href="{if $request->evaluation_id}evaluate.php?id={$request->evaluation_id}{else}create.php?request={$request->get_id()}{/if}">
                     <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
                 </a>

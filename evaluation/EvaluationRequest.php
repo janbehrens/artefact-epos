@@ -239,7 +239,11 @@ class EvaluationRequest {
         if (empty($subject)) {
             reset($all_subjects);
             $first_subject = current($all_subjects);
-            $subject = $first_subject->get('id');
+            if(!$first_subject) {
+                return "You don't have any self-evaluations. Go to <a href=\"../index.php\">My self-evaluations</a> to add one.";
+            } else {
+                $subject = $first_subject->get('id');
+            }
         }
         $descriptorsets = Descriptorset::get_descriptorsets_for_mysubject_records($subject);
         $descriptorset_options = array();

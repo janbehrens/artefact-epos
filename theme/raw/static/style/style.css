@@ -1,3 +1,8 @@
+.btn {
+    padding: 4px 10px 5px 10px;
+    font-size: 1.167em;"
+}
+
 .progressbar {
     height: 26px;
     position: relative;
@@ -229,6 +234,10 @@ table.stored_evaluations thead {
 
 /* external evaluations */
 
+.evaluation-status {
+    padding-bottom: 5px;
+}
+
 div.eval-request {
 	padding: 5px;
 }
@@ -257,14 +266,15 @@ div.eval-request {
 .eval-request .tools {
     float: right;
     padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .eval-request .tools a {
-    padding-right: 3px;
+    padding-left: 3px;
 }
 
 .eval-request .tools img {
-    top: -1px;
+    top: 3px;
 }
 
 /* comparison */
