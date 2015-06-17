@@ -6,16 +6,17 @@
     </form>
 </div>
 
-{if $waiting_requests}
+{if $incomingrequests}
 
-<h2>{str tag="waitingrequests" section="artefact.epos"}</h2>
-     
-     {foreach $waiting_requests item=request}
+<h2>{str tag="evaluator" section="artefact.epos"}</h2>
+
+{foreach $incomingrequests key=section item=requests}
+    {if $requests}
+    <h3>{str tag=$section section="artefact.epos"}</h3>
+    {foreach $requests item=request}
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
             <span class="tools">
-                {*TODO: add if{..}else{..} statements to display the evaluation-status*}
-                <span><p class="evaluation-status"></p>(Not yet evaluated)</span>
                 <a href="{if $request->evaluation_id}evaluate.php?id={$request->evaluation_id}{else}create.php?request={$request->get_id()}{/if}">
                     <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
                 </a>
@@ -32,16 +33,20 @@
                 <p class="message">{$request->inquiry_message}</p>
             {/if}
         </div>
-        
-     {/foreach}
+    {/foreach}
+    {/if}
+{/foreach}
 
 {/if}
 
-{if $recent_outgoing}
+{if $outgoingrequests}
 
-<h2>{str tag="recentoutgoing" section="artefact.epos"}</h2>
-     
-     {foreach $recent_outgoing item=request}
+<h2>{str tag="inquirer" section="artefact.epos"}</h2>
+
+{foreach $outgoingrequests key=section item=requests}
+    {if $requests}
+    <h3>{str tag=$section section="artefact.epos"}</h3>
+    {foreach $requests item=request}
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
             <span class="tools">
@@ -82,10 +87,10 @@
                     </p>
                 {/if}
             {/if}
-            
         </div>
-        
-     {/foreach}
+    {/foreach}
+    {/if}
+{/foreach}
 
 {/if}
 

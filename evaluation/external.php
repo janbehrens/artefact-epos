@@ -36,12 +36,18 @@ define('TITLE', get_string('externalevaluations', 'artefact.epos'));
 safe_require('artefact', 'epos');
 require_once 'EvaluationRequest.php';
 
-$waiting_requests = EvaluationRequest::get_open_requests_for_evaluator();
-$recent_outgoing = EvaluationRequest::get_recent_requests_for_inquirer();
+$incomingrequests = array(
+        'waitingrequests' => EvaluationRequest::get_requests_for_evaluator(true),
+        'answeredrequests' => EvaluationRequest::get_requests_for_evaluator(false)
+);
+$outgoingrequests = array(
+        'sentrequests' => EvaluationRequest::get_requests_for_inquirer(true),
+        'returnedrequests' => EvaluationRequest::get_requests_for_inquirer(false)
+);
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('MENUITEM', MENUITEM);
-$smarty->assign('waiting_requests', $waiting_requests);
-$smarty->assign('recent_outgoing', $recent_outgoing);
+$smarty->assign('incomingrequests', $incomingrequests);
+$smarty->assign('outgoingrequests', $outgoingrequests);
 $smarty->display('artefact:epos:evaluation-external.tpl');

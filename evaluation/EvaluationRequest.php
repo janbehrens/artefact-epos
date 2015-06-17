@@ -117,12 +117,13 @@ class EvaluationRequest {
     }
 
     /**
-     * Get the open requests other users have sent to the current user.
+     * Get the requests other users have sent to the current user.
      */
-    public static function get_open_requests_for_evaluator() {
+    public static function get_requests_for_evaluator($open) {
         global $USER;
-        $sql = "
-                SELECT r.*,
+        $responseDateCondition = $open ? 'IS NULL' : 'IS NOT NULL';
+        $orderBy = $open ? 'inquiry_date' : 'response_date';
+        $sql = "SELECT r.*,
                        u1.username AS inquirer_username,
                        u1.firstname AS inquirer_firstname,
                        u1.lastname AS inquirer_lastname,
@@ -136,10 +137,8 @@ class EvaluationRequest {
                 LEFT JOIN usr u2 ON r.evaluator_id = u2.id
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
                 LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
-                WHERE evaluator_id = ?
-                    AND response_date IS NULL
-                ORDER BY inquiry_date
-                ";
+                WHERE evaluator_id = ? AND response_date $responseDateCondition
+                ORDER BY $orderBy DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             $requests = array();
             foreach ($records as $record) {
@@ -162,14 +161,15 @@ class EvaluationRequest {
     }
 
     /**
-     * Get the recently modified requests of the current user (either recently
+     * Get the requests of the current user (either recently
      * sent or recently returned).
      */
-    public static function get_recent_requests_for_inquirer() {
+    public static function get_requests_for_inquirer($open) {
         global $USER;
         $requests = array();
-        $sql = "
-                SELECT r.*,
+        $responseDateCondition = $open ? 'IS NULL' : 'IS NOT NULL';
+        $orderBy = $open ? 'inquiry_date' : 'response_date';
+        $sql = "SELECT r.*,
                        u.username AS evaluator_username,
                        u.firstname AS evaluator_firstname,
                        u.lastname AS evaluator_lastname,
@@ -179,11 +179,8 @@ class EvaluationRequest {
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
                 LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
                 LEFT JOIN usr u ON r.evaluator_id = u.id
-                WHERE inquirer_id = ?
-                    AND response_date IS NOT NULL
-                ORDER BY response_date DESC
-                LIMIT 5
-                ";
+                WHERE inquirer_id = ? AND response_date $responseDateCondition
+                ORDER BY $orderBy DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             foreach ($records as $record) {
                 $evaluator = array('username' => $record->evaluator_username,
@@ -194,41 +191,8 @@ class EvaluationRequest {
                 $requests []= $request;
             }
         }
-        $sql = "
-                SELECT r.*,
-                       u.username AS evaluator_username,
-                       u.firstname AS evaluator_firstname,
-                       u.lastname AS evaluator_lastname,
-                       subject.title AS subject,
-                       dset.name AS descriptorset
-                FROM artefact_epos_evaluation_request r
-                LEFT JOIN artefact subject ON r.subject_id = subject.id
-                LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
-                LEFT JOIN usr u ON r.evaluator_id = u.id
-                WHERE inquirer_id = ?
-                    AND response_date IS NULL
-                ORDER BY inquiry_date DESC
-                LIMIT 5
-                ";
-        if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
-            foreach ($records as $record) {
-                $evaluator = array('username' => $record->evaluator_username,
-                                  'firstname' => $record->evaluator_firstname,
-                                  'lastname' => $record->evaluator_lastname);
-                $request = new self(0, $record);
-                $request->evaluator = $evaluator;
-                $requests []= $request;
-            }
-        }
-        usort($requests, function ($left, $right) {
-                $left_value = isset($left->response_date) ? $left->response_date : $left->inquiry_date;
-                $right_value = isset($right->response_date) ? $right->response_date : $right->inquiry_date;
-                return $left_value > $right_value ? -1 : 1;
-        });
         return $requests;
     }
-
-
 
     public static function form_create_evaluation_request($subject=null, $descriptorset=null) {
         $subject_options = array();
