@@ -122,17 +122,17 @@ $string['deleteevaluation'] = "Delete Evaluation";
 $string['confirmdeleteevaluation'] = "Do you want to delete the evaluation %s permanently?";
 
 // External Evaluations
-$string['externalevaluations'] = "External Evaluations";
+$string['externalevaluations'] = "External evaluations";
 $string['evaluator'] = "Evaluator";
 $string['inquirer'] = "Sender/Learner";
-$string['requestexternalevaluation'] = "Request External Evaluation";
-$string['returnexternalevaluation'] = "Return External Evaluation";
-$string['sendrequest'] = "Send Request";
-$string['returnrequest'] = "Return Request";
-$string['sentrequest'] = "Sent Request";
-$string['returnedrequest'] = "Returned Request";
-$string['sentmessage'] = "Sent Message";
-$string['returnedmessage'] = "Returned Message";
+$string['requestexternalevaluation'] = "Request external evaluation";
+$string['returnexternalevaluation'] = "Return external evaluation";
+$string['sendrequest'] = "Send request";
+$string['returnrequest'] = "Return request";
+$string['sentrequest'] = "Sent request";
+$string['returnedrequest'] = "Returned request";
+$string['sentmessage'] = "Sent message";
+$string['returnedmessage'] = "Returned message";
 $string['invalidusername'] = "This user does not exist.";
 $string['cannotevaluateyourself'] = "You cannot send an evaluation request to yourself. You can evaluate yourself under 'Self-evaluation'.";
 $string['invaliddescriptorsetforsubject'] = "This competence grid cannot be used for this subject. Please choose another one.";
