@@ -22,14 +22,19 @@
             <div class="main">
                 <p class="request">
                     <span class="evaluationtitle">{$request->subject} ({$request->descriptorset})</span>
-                    {*TODO: add if{..}else{..} statements to display the evaluation-status*}
                     <a href="external-return.php?id={$request->id}" class="tools">
                         <img alt="Reply" title="Reply" src="../../../theme/raw/static/images/reply_small.png" />
                     </a>
-                    <a href="{if $request->evaluation_id}evaluate.php?id={$request->evaluation_id}{else}create.php?request={$request->get_id()}{/if}" class="tools">
-                        <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
-                    </a>
-                    <span class="tools">(not yet evaluated)</span>
+                    {if $request->evaluation_id}
+                        <a href="evaluate.php?id={$request->evaluation_id}" class="tools">
+                            <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
+                        </a>
+                    {else}
+                        <a href="create.php?request={$request->get_id()}" class="tools">
+                            <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
+                        </a>
+                        <span class="tools">(not yet evaluated)</span>
+                    {/if}
                 </p>
                 {if $request->inquiry_message}
                     <p class="message">

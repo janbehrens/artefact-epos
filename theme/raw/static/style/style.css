@@ -111,6 +111,10 @@ table.evaluation .column_0 {
     cursor: pointer;
 }
 
+.evaluation-submit {
+	margin-top: 15px;
+}
+
 table.evaluation td {
 	vertical-align: middle;
 }
