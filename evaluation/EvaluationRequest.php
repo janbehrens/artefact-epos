@@ -221,7 +221,7 @@ class EvaluationRequest {
         $elements = array();
         $elements['subject'] = array(
             'type' => 'select',
-            'title' => get_string('subjectform.subject', 'artefact.epos'),
+            'title' => get_string('subject', 'artefact.epos'),
             'options' => $subject_options,
             'defaultvalue' => $subject,
             'rules' => array('required' => true)
@@ -237,10 +237,6 @@ class EvaluationRequest {
             'type' => 'text',
             'title' => get_string('evaluator', 'artefact.epos'),
             'rules' => array('required' => true)
-        );
-        $elements['evaluator_search'] = array(
-            'type' => 'html',
-            'value' => "<div>Search User</div>"
         );
         $elements['message'] = array(
             'type' => 'textarea',
