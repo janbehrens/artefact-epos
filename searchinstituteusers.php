@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $sql = 'SELECT institution FROM usr_institution where usr = ?';
 
     if ($institutions = get_records_sql_array($sql, array((int)$USER->id))) {
-        $sql = "SELECT usr.username FROM usr
+        $sql = "SELECT DISTINCT usr.username FROM usr
                 JOIN usr_institution ui ON ui.usr = usr.id
                 WHERE ( ";
         $values = array();
