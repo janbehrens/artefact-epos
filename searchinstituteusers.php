@@ -36,19 +36,28 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $keyword = param_variable('keyword', null);
 
     $sql = 'SELECT institution FROM usr_institution where usr = ?';
-    $institution = get_record_sql($sql, (int)$USER->id);
-    $institution = $institution->institution;
 
-    if(is_null($institution)) {
-        json_reply(false, array('status' => 'institutionNull', 'msg' => "You can only search the users of your institution, and you are not in any institution. To enter one, please<br>consult your administrator."));
-    } else {
-        $sql = "SELECT usr.username FROM usr JOIN usr_institution ui ON ui.usr = usr.id WHERE ui.institution = ? and usr.id <> ? and username like ?";
-        $result = get_records_sql_array($sql, array($institution, (int)$USER->id, '%' . $keyword . '%'));
+    if ($institutions = get_records_sql_array($sql, array((int)$USER->id))) {
+        $sql = "SELECT usr.username FROM usr
+                JOIN usr_institution ui ON ui.usr = usr.id
+                WHERE ( ";
+        $values = array();
+        for ($i = 0; $i < count($institutions); $i++) {
+            $sql .= $i == 0 ? "ui.institution = ? " : "OR ui.institution = ? ";
+            $values []= $institutions[$i]->institution;
+        }
+        $sql .= ") AND usr.id <> ? AND username LIKE ?";
+        $values []= (int)$USER->id;
+        $values []= '%' . $keyword . '%';
+        $result = get_records_sql_array($sql, $values);
 
         $usernames = array();
         for($i=0; $i<sizeof($result); $i++) {
             array_push($usernames, $result[$i]->username);
         }
         json_reply(false, $usernames);
+    }
+    else {
+        json_reply(false, array('status' => 'institutionNull', 'msg' => "You can only search the users of your institution, and you are not in any institution. To enter one, please<br>consult your administrator."));
     }
 }
