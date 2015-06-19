@@ -6,7 +6,7 @@
     </form>
 </div>
 
-{if $incomingrequests}
+{if $incomingrequests.waitingrequests || $incomingrequest.answeredrequests}
 
 <h2>{str tag="evaluator" section="artefact.epos"}</h2>
 
@@ -52,7 +52,7 @@
 
 {/if}
 
-{if $outgoingrequests}
+{if $outgoingrequests.sentrequests || $outgoingrequests.returnedrequests}
 
 <h2>{str tag="inquirer" section="artefact.epos"}</h2>
 
