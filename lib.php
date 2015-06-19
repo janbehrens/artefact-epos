@@ -1534,15 +1534,26 @@ class Descriptorset implements ArrayAccess, Iterator {
      * @param int $subject
      */
     public static function get_descriptorsets_for_mysubject_records($subject) {
+        // $sets = get_records_sql_array("
+        //         SELECT d.*
+        //         FROM artefact_epos_descriptorset d
+        //         INNER JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
+        //         INNER JOIN artefact_epos_mysubject my ON ds.subject = my.subject
+        //         WHERE my.artefact = ?
+        //             AND d.active = 1
+        //         ORDER BY d.name
+        //         ", array($subject)
+        // );
+        global $USER;
         $sets = get_records_sql_array("
                 SELECT d.*
                 FROM artefact_epos_descriptorset d
-                INNER JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
-                INNER JOIN artefact_epos_mysubject my ON ds.subject = my.subject
-                WHERE my.artefact = ?
-                    AND d.active = 1
+                INNER JOIN artefact_epos_evaluation e ON d.id = e.descriptorset_id
+                INNER JOIN artefact ON e.artefact = artefact.id
+                WHERE artefact.owner = ?
+                    AND artefact.artefacttype = ?
                 ORDER BY d.name
-                ", array($subject)
+                ", array((int)$USER->id, 'evaluation')
         );
         return $sets ? $sets : array();
     }
