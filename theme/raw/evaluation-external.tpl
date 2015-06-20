@@ -67,10 +67,7 @@
             </div>
             <div class="main">
                 <p class="request">
-                    {if !$request->evaluation_id}
-                        <span class="tools">{str tag=noevaluationavailable section=artefact.epos}</span>
-                    {/if}
-                    {if $request->evaluation_id}
+                    {if $request->evaluation_id && $request->response_date}
                         <a href="display.php?id={$request->evaluation_id}" class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
                     {else}
                         <span class="evaluationtitle">{$request->subject} ({$request->descriptorset})</span>
