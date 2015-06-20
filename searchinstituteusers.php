@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $sql = 'SELECT institution FROM usr_institution where usr = ?';
 
     if ($institutions = get_records_sql_array($sql, array((int)$USER->id))) {
-        $sql = "SELECT DISTINCT usr.username FROM usr
+        $sql = "SELECT DISTINCT usr.username, usr.firstname, usr.lastname FROM usr
                 JOIN usr_institution ui ON ui.usr = usr.id
                 WHERE ( ";
         $values = array();
@@ -46,16 +46,23 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
             $sql .= $i == 0 ? "ui.institution = ? " : "OR ui.institution = ? ";
             $values []= $institutions[$i]->institution;
         }
-        $sql .= ") AND usr.id <> ? AND username LIKE ?";
+        $sql .= ") AND usr.id <> ? AND (usr.username LIKE ? OR usr.firstname LIKE ? OR usr.lastname LIKE ?) ORDER BY usr.lastname";
         $values []= (int)$USER->id;
+        $values []= '%' . $keyword . '%';
+        $values []= '%' . $keyword . '%';
         $values []= '%' . $keyword . '%';
         $result = get_records_sql_array($sql, $values);
 
         $usernames = array();
+        $firstnames = array();
+        $lastnames = array();
         for($i=0; $i<sizeof($result); $i++) {
             array_push($usernames, $result[$i]->username);
+            array_push($firstnames, $result[$i]->firstname);
+            array_push($lastnames, $result[$i]->lastname);
         }
-        json_reply(false, $usernames);
+
+        json_reply(false, array('usernames' => $usernames, 'firstnames' => $firstnames, 'lastnames' => $lastnames));
     }
     else {
         json_reply(false, array('status' => 'institutionNull', 'msg' => "You can only search the users of your institution, and you are not in any institution. To enter one, please<br>consult your administrator."));
