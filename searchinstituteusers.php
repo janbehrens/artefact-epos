@@ -53,16 +53,24 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         $values []= '%' . $keyword . '%';
         $result = get_records_sql_array($sql, $values);
 
-        $usernames = array();
-        $firstnames = array();
-        $lastnames = array();
-        for($i=0; $i<sizeof($result); $i++) {
-            array_push($usernames, $result[$i]->username);
-            array_push($firstnames, $result[$i]->firstname);
-            array_push($lastnames, $result[$i]->lastname);
-        }
+        if(!$result) {
+            json_reply(false, array(
+                'status' => 'noUserFound', 
+                'noMemberInInstitution' => "There is no other members in your institution, please contact the administrator to add members.",
+                'noUserFoundBasedOnEntered' => "No user is found based on the text you entered, please change the text and search again.")
+            );
+        } else {
+            $usernames = array();
+            $firstnames = array();
+            $lastnames = array();
+            for($i=0; $i<sizeof($result); $i++) {
+                array_push($usernames, $result[$i]->username);
+                array_push($firstnames, $result[$i]->firstname);
+                array_push($lastnames, $result[$i]->lastname);
+            }
 
-        json_reply(false, array('usernames' => $usernames, 'firstnames' => $firstnames, 'lastnames' => $lastnames));
+            json_reply(false, array('status' => 'successful', 'usernames' => $usernames, 'firstnames' => $firstnames, 'lastnames' => $lastnames));            
+        }
     }
     else {
         json_reply(false, array('status' => 'institutionNull', 'msg' => "You can only search the users of your institution, and you are not in any institution. To enter one, please<br>consult your administrator."));

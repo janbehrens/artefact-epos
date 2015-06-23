@@ -1,4 +1,29 @@
 jQuery(document).ready(function() {
+
+    jQuery("#create_evaluation_request_subject").change(function() {
+        var subjectID = parseInt(jQuery(this).val());
+        jQuery.ajax({
+            type: "POST",
+            dataType: "JSON",
+            url: config.wwwroot + "artefact/epos/changeDescriptorSet.php",
+            data: {
+                subjectID: subjectID,
+            },
+        })
+        .done(function(msg) {
+            console.log(msg);
+            if(!msg['error']) {
+                var descriptorSetSelector = jQuery("#create_evaluation_request_descriptorset");
+                descriptorSetSelector.find("option").remove();
+                for(var i=0; i<msg['message']['descriptorSetIDs'].length; i++) {
+                    var option = "<option value=\"" + msg['message']['descriptorSetIDs'][i] + "\">" + msg['message']['descriptorSets'][i] + "</option>";
+                    descriptorSetSelector.append(option);
+                }
+                descriptorSetSelector.find("option").first().attr("selected", "selected"); // by default select the first option
+            }
+        });    
+    });
+
     var searchBtn = "<button class=\"userSearchBtn\" style=\"margin-left:10px\">Search</button>"
     jQuery("#create_evaluation_request_evaluator_container").find("td").append(searchBtn);
 
@@ -21,20 +46,21 @@ jQuery(document).ready(function() {
                     var errorMsg = "<tr class=\"institutionNull\"><th></th><td style=\"color:red\">" + msg['message']['msg'] + "</td></tr>"; 
                     jQuery("#create_evaluation_request_evaluator_container").after(errorMsg);
                 } else {
-                    var userNumber = msg['message']['usernames'].length;
-                    if(msg['message']['usernames'][0] == null) { //no user found
+                    if(msg['message']['status'] == "noUserFound") { //no user found
                         jQuery(".noInstitutionMember").remove();
                         jQuery(".institutionMember").remove();
 
                         var errorMsg;
                         if(jQuery("#create_evaluation_request_evaluator").val() == "") {
-                            errorMsg = "There is no other members in your institution, please contact the administrator to add members."
+                            errorMsg = msg['message']['noMemberInInstitution'];
                         } else {
-                            errorMsg = "No user is found based on the text you entered, please change the text and search again."
+                            errorMsg = msg['message']['noUserFoundBasedOnEntered'];
                         }
                         errorMsg = "<tr class=\"noInstitutionMember\"><th></th><td style=\"color:red\">" + errorMsg + "</td></tr>"; 
                         jQuery("#create_evaluation_request_evaluator_container").after(errorMsg);
                     } else {
+                        var userNumber = msg['message']['usernames'].length;
+                    
                         jQuery(".noInstitutionMember").remove();
                         jQuery(".institutionMember").remove();
                         for(var i=0; i<userNumber; i++) {
