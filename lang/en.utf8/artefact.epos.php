@@ -148,6 +148,10 @@ $string['yourenottheevaluator'] = "You are not the evaluator for this evaluation
 $string['noevaluationtoreturn'] = "You have not done the requested evaluation and thus cannot return an evaluation.";
 $string['noevaluationavailable'] = "no evaluation available";
 $string['successfullyreturnedrequest'] = "Your evaluation has been sent successfully.";
+$string['noMemberInInstitution'] = "There is no other members in your institution, please contact the administrator to add members.";
+$string['noUserFoundBasedOnEntered'] = "No user is found based on the text you entered, please change the text and search again.";
+$string['noInstitutionErrorMsg'] = "You can only search the users of your institution, and you are not in any institution. To enter one, please<br>consult your administrator.";
+$string['search'] = "Search";
 
 //Comparison
 $string['comparison'] = "Comparison";

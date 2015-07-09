@@ -56,8 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         if(!$result) {
             json_reply(false, array(
                 'status' => 'noUserFound', 
-                'noMemberInInstitution' => "There is no other members in your institution, please contact the administrator to add members.",
-                'noUserFoundBasedOnEntered' => "No user is found based on the text you entered, please change the text and search again.")
+                'noMemberInInstitution' => get_string('noMemberInInstitution', 'artefact.epos'),
+                'noUserFoundBasedOnEntered' => get_string('noUserFoundBasedOnEntered', 'artefact.epos'))
             );
         } else {
             $usernames = array();
@@ -73,6 +73,6 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         }
     }
     else {
-        json_reply(false, array('status' => 'institutionNull', 'msg' => "You can only search the users of your institution, and you are not in any institution. To enter one, please<br>consult your administrator."));
+        json_reply(false, array('status' => 'institutionNull', 'msg' => get_string('noInstitutionErrorMsg', 'artefact-epos')));
     }
 }

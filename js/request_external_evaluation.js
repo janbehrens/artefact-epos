@@ -1,5 +1,14 @@
 jQuery(document).ready(function() {
 
+    //the DOM structure of having only one descriptor and more than one of them are different. Here to unified them.
+    var descriptorSetContainerTd = jQuery("#create_evaluation_request_descriptorset_container").find("td");
+    if(descriptorSetContainerTd.find("select").length == 0) {
+        var descID = descriptorSetContainerTd.find("input").attr("value");
+        var desc = descriptorSetContainerTd.text();
+        descriptorSetContainerTd.text("");
+        descriptorSetContainerTd.append("<select class=\"required select\" id=\"create_evaluation_request_descriptorset\" name=\"descriptorset\" tabindex=\"1\" style=\"\"><option value=\"" + descID + "\" selected=\"selected\">" + desc + "</option></select>");
+    }
+
     jQuery("#create_evaluation_request_subject").change(function() {
         var subjectID = parseInt(jQuery(this).val());
         jQuery.ajax({
@@ -11,20 +20,19 @@ jQuery(document).ready(function() {
             },
         })
         .done(function(msg) {
-            console.log(msg);
             if(!msg['error']) {
                 var descriptorSetSelector = jQuery("#create_evaluation_request_descriptorset");
                 descriptorSetSelector.find("option").remove();
                 for(var i=0; i<msg['message']['descriptorSetIDs'].length; i++) {
-                    var option = "<option value=\"" + msg['message']['descriptorSetIDs'][i] + "\">" + msg['message']['descriptorSets'][i] + "</option>";
-                    descriptorSetSelector.append(option);
+                    descriptorSetSelector.append("<option value=\"" + msg['message']['descriptorSetIDs'][i] + "\">" + msg['message']['descriptorSets'][i] + "</option>");
                 }
                 descriptorSetSelector.find("option").first().attr("selected", "selected"); // by default select the first option
             }
         });    
     });
 
-    var searchBtn = "<button class=\"userSearchBtn\" style=\"margin-left:10px\">Search</button>"
+    var searchText = jQuery(".data").data("search");
+    var searchBtn = "<button class=\"userSearchBtn\" style=\"margin-left:10px\">" + searchText + "</button>";
     jQuery("#create_evaluation_request_evaluator_container").find("td").append(searchBtn);
 
     jQuery("body").on("click", ".userSearchBtn", function(e) {
