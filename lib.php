@@ -94,6 +94,37 @@ class PluginArtefactEpos extends PluginArtefact {
         );
     }
 
+    public static function admin_menu_items() {
+        return PluginArtefactEpos::institution_menu_items();
+    }
+
+    public static function institution_menu_items() {
+        return PluginArtefactEpos::institution_staff_menu_items();
+    }
+
+    public static function institution_staff_menu_items() {
+        return array(
+            'templates' => array(
+                'path'   => 'templates',
+                'url'    => 'artefact/epos/templates/subjects.php',
+                'title'  => get_string('templates', 'artefact.epos'),
+                'weight' => 70,
+            ),
+            'templates/subjects' => array(
+                'path'   => 'templates/subjects',
+                'title'  => get_string('subjects', 'artefact.epos'),
+                'url'    => 'artefact/epos/templates/subjects.php',
+                'weight' => 10,
+            ),
+            'templates/selfevaluation' => array(
+                'path'   => 'templates/selfevaluation',
+                'url'    => 'artefact/epos/templates/selfevaluation.php',
+                'title'  => get_string('selfevaluation', 'artefact.epos'),
+                'weight' => 20,
+            )
+        );
+    }
+
     public static function jsstrings($type) {
         switch ($type) {
             case 'customgoals':
