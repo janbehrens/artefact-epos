@@ -131,7 +131,7 @@ tableRenderer.emptycontent = '';
 tableRenderer.updateOnLoad();
 
 function refreshDescriptorsets() {
-    var selected = jQuery('#addlearnedlanguage_subject_container').children('td:first').children(':first').attr('value');
+    var selected = jQuery('#addlearnedlanguage_subject').children(':selected').attr('value');
     var select = jQuery('#addlearnedlanguage_descriptorset');
     var options = jQuery('#addlearnedlanguage_descriptorset option');
 
@@ -186,7 +186,6 @@ if (count($optionssubject) > 0) {
     ));
 }
 else {
-    
 }
 
 $smarty = smarty(array('tablerenderer', 'jquery'));
