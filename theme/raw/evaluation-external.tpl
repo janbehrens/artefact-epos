@@ -41,7 +41,7 @@
                         {else}
                             <a href="create.php?request={$request->get_id()}"
                                class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
-                            <span class="tools">(not yet evaluated)</span>
+                            <span class="tools">({str tag='notyetevaluated' section='artefact.epos'})</span>
                         {/if}
                     {/if}
                 </p>
