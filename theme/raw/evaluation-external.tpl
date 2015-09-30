@@ -8,42 +8,53 @@
 
 {if $incomingrequests.waitingrequests || $incomingrequest.answeredrequests}
 
-<h2>{str tag="evaluator" section="artefact.epos"}</h2>
+<h2>{str tag="incomingrequests" section="artefact.epos"}</h2>
 
-{foreach $incomingrequests key=section item=requests}
+{foreach $incomingrequests item=requests}
     {if $requests}
-    <h3>{str tag=$section section="artefact.epos"}</h3>
     {foreach $requests item=request}
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
-            <div class="left">
-                <img alt="{str tag='sentrequest' section='artefact.epos'}" src="../theme/raw/static/images/evaluation_entry.png" />
-            </div>
+            {if $request->response_date}
+                <div class="left">
+                    <img alt="{str tag='returnedrequest' section='artefact.epos'}"
+                         title="{str tag='returnedrequest' section='artefact.epos'}"
+                         src="../theme/raw/static/images/evaluation_entry.png" />
+                </div>
+            {/if}
             <div class="main">
                 <p class="request">
-                    <span class="evaluationtitle">{$request->subject} ({$request->descriptorset})</span>
-                    <a href="external-return.php?id={$request->id}" class="tools">
-                        <img alt="Reply" title="Reply" src="../../../theme/raw/static/images/reply_small.png" />
-                    </a>
-                    {if $request->evaluation_id}
-                        <a href="evaluate.php?id={$request->evaluation_id}" class="tools">
-                            <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
-                        </a>
+                    {if $request->response_date}
+                        {if $request->evaluation_id}
+                            <a href="display.php?id={$request->evaluation_id}"
+                               class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
+                        {/if}
                     {else}
-                        <a href="create.php?request={$request->get_id()}" class="tools">
-                            <img alt="Evaluate" title="Evaluate" src="../theme/raw/static/images/evaluate.png" />
+                        <a href="external-return.php?id={$request->id}" class="tools">
+                            <img alt="{str tag='reply' section='artefact.epos'}"
+                                 title="{str tag='reply' section='artefact.epos'}"
+                                 src="../../../theme/raw/static/images/reply_small.png" />
                         </a>
-                        <span class="tools">(not yet evaluated)</span>
+                        {if $request->evaluation_id}
+                            <a href="evaluate.php?id={$request->evaluation_id}"
+                               class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
+                        {else}
+                            <a href="create.php?request={$request->get_id()}"
+                               class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
+                            <span class="tools">(not yet evaluated)</span>
+                        {/if}
                     {/if}
                 </p>
-                {if $request->inquiry_message}
-                    <p class="message">
-                        {$request->inquiry_message}
-                    </p>
+                {if $request->response_date}
+                    {if $request->response_message}
+                        <p class="message">{$request->response_message}</p>
+                    {/if}
+                    <p>{str tag='returnedto' section='artefact.epos'} <a href="../../../user/view.php?id={$request->inquirer_id}">{$request->inquirer.firstname} {$request->inquirer.lastname}</a> - {$request->response_date}</p>
                 {/if}
-                <p>
-                    <a href="../../../user/view.php?id={$request->inquirer_id}">{$request->inquirer.firstname} {$request->inquirer.lastname}</a> - {$request->inquiry_date}
-                </p>
+                {if $request->inquiry_message}
+                    <p class="message">{$request->inquiry_message}</p>
+                {/if}
+                <p>{str tag='receivedfrom' section='artefact.epos'} <a href="../../../user/view.php?id={$request->inquirer_id}">{$request->inquirer.firstname} {$request->inquirer.lastname}</a> - {$request->inquiry_date}</p>
             </div>
         </div>
     {/foreach}
@@ -54,40 +65,40 @@
 
 {if $outgoingrequests.sentrequests || $outgoingrequests.returnedrequests}
 
-<h2>{str tag="inquirer" section="artefact.epos"}</h2>
+<h2>{str tag="outgoingrequests" section="artefact.epos"}</h2>
 
+{cycle values='r1' assign='odd'}
 {foreach $outgoingrequests key=section item=requests}
     {if $requests}
-    <h3>{str tag=$section section="artefact.epos"}</h3>
     {foreach $requests item=request}
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
-            <div class="left">
-                <img alt="{str tag='sentrequest' section='artefact.epos'}" src="../theme/raw/static/images/evaluation_entry.png" />
-            </div>
+            {if $request->response_date}
+                <div class="left">
+                    <img alt="{str tag='returnedrequest' section='artefact.epos'}"
+                         title="{str tag='returnedrequest' section='artefact.epos'}"
+                         src="../theme/raw/static/images/evaluation_entry.png" />
+                </div>
+            {/if}
             <div class="main">
                 <p class="request">
-                    {if $request->evaluation_id && $request->response_date}
-                        <a href="display.php?id={$request->evaluation_id}" class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
+                    {if $request->response_date && $request->evaluation_id}
+                        <a href="display.php?id={$request->evaluation_id}"
+                           class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
                     {else}
                         <span class="evaluationtitle">{$request->subject} ({$request->descriptorset})</span>
                     {/if}
-                    (for <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a>)
                 </p>
+                {if $request->response_date}
+                    {if $request->response_message}
+                        <p class="message">{$request->response_message}</p>
+                    {/if}
+                    <p>{str tag='returnedby' section='artefact.epos'} <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a> - {$request->response_date}</p>
+                {/if}
                 {if $request->inquiry_message}
-                    <p class="message">
-                        {$request->inquiry_message}
-                    </p>
+                    <p class="message">{$request->inquiry_message}</p>
                 {/if}
-                <p>
-                    {$request->inquiry_date}
-                </p>
-                {if $request->response_message}
-                    <p class="message">
-                        <img alt="{str tag='returnedmessage' section='artefact.epos'}" src="../../../theme/raw/static/images/reply_small.png" />
-                        <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a>: {$request->response_message}
-                    </p>
-                {/if}
+                <p>{str tag='sentto' section='artefact.epos'} <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a> - {$request->inquiry_date}</p>
             </div>
         </div>
     {/foreach}

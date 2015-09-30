@@ -263,7 +263,7 @@ table.stored_evaluations thead {
 
 .eval-request .main p {
     text-align: left;
-    margin: 5px 0px;
+    margin: 8px 0px 2px 0px;
 }
 
 .eval-request .main p.request {
@@ -278,7 +278,8 @@ table.stored_evaluations thead {
 
 .eval-request .main .message {
     padding: 6px;
-    background-color: white;
+    background-color: transparent;
+    font-style: italic;
 }
 
 .eval-request .tools {
