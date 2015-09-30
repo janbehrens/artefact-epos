@@ -457,8 +457,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     public function check_permission() {
         global $USER;
-        if (($USER->get('id') != $this->owner) &&
-            (($USER->get('id') != $this->evaluator) || $this->final)) {
+        $user = $USER->get('id');
+        if ($user !== $this->owner && $user !== $this->evaluator) {
             throw new AccessDeniedException(get_string('youarenottheownerofthisevaluation', 'artefact.epos'));
         }
     }
@@ -785,7 +785,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
             $deleteCustomgoal = get_string('delete');
             $editbuttonurl = $THEME->get_url('images/btn_edit.png');
             $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
-            
+
 	        $elements['item_' . $goal_id . '_description'] = array(
 	                'type' => 'text',
 	        		'title' => $title,
