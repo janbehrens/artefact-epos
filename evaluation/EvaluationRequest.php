@@ -195,42 +195,35 @@ class EvaluationRequest {
     }
 
     public static function form_create_evaluation_request($subject=null, $descriptorset=null) {
-        $subject_options = array();
-        $all_subjects = ArtefactTypeSubject::get_all_subjects();
-        foreach ($all_subjects as $subject_instance) {
-            $subject_options[$subject_instance->get('id')] = $subject_instance->get('title');
+        global $USER;
+        global $descriptorset_ids, $artefact_subject_ids;
+        $owner = $USER->get('id');
+        $sql = "SELECT a.id, a.title as descriptorset, b.id as subject_id, b.title as subject, e.descriptorset_id
+                FROM artefact a, artefact b, artefact_epos_evaluation e
+                WHERE a.parent = b.id
+                AND a.id = e.artefact
+                AND a.owner = ?
+                AND a.owner = e.evaluator
+                AND a.artefacttype = 'evaluation'
+                AND e.final = 0";
+
+        if (!$data = get_records_sql_array($sql, array($owner))) {
+            $data = array();
         }
-        if (empty($subject)) {
-            reset($all_subjects);
-            $first_subject = current($all_subjects);
-            if(!$first_subject) {
-                return "You don't have any self-evaluations. Go to <a href=\"../index.php\">My self-evaluations</a> to add one.";
-            } else {
-                $subject = $first_subject->get('id');
-            }
+        $evaluation_options = array();
+        $descriptorset_ids = array();
+        $artefact_subject_ids = array();
+        foreach ($data as $evaluation) {
+            $evaluation_options[$evaluation->id] = "$evaluation->subject ($evaluation->descriptorset)";
+            $descriptorset_ids[$evaluation->id] = $evaluation->descriptorset_id;
+            $artefact_subject_ids[$evaluation->id] = $evaluation->subject_id;
         }
-        $descriptorsets = Descriptorset::get_descriptorsets_for_mysubject_records($subject);
-        $descriptorset_options = array();
-        foreach ($descriptorsets as $descriptorset_record) {
-            $descriptorset_options[$descriptorset_record->id] = $descriptorset_record->name;
-        }
-        if (empty($descriptorset)) {
-            $descriptorset = Descriptorset::get_default_descriptorset_for_subject_record($subject);
-            $descriptorset = $descriptorset ? $descriptorset->id : null;
-        }
+
         $elements = array();
-        $elements['subject'] = array(
+        $elements['evaluation'] = array(
             'type' => 'select',
-            'title' => get_string('subject', 'artefact.epos'),
-            'options' => $subject_options,
-            'defaultvalue' => $subject,
-            'rules' => array('required' => true)
-        );
-        $elements['descriptorset'] = array(
-            'type' => 'select',
-            'title' => get_string('descriptorset', 'artefact.epos'),
-            'options' => $descriptorset_options,
-            'defaultvalue' => $descriptorset,
+            'title' => get_string('selfevaluation', 'artefact.epos'),
+            'options' => $evaluation_options,
             'rules' => array('required' => true)
         );
         $elements['evaluator'] = array(
@@ -269,18 +262,16 @@ class EvaluationRequest {
                 $form->set_error('evaluator', get_string('cannotevaluateyourself', 'artefact.epos'));
             }
         }
-        if (!Descriptorset::is_valid_descriptorset_for_subject($values['descriptorset'], $values['subject'])) {
-            $form->set_error('descriptorset', get_string('invaliddescriptorsetforsubject', 'artefact.epos'));
-        }
     }
 
     public static function form_create_evaluation_request_submit(Pieform $form, $values) {
         global $USER, $SESSION;
+        global $descriptorset_ids, $artefact_subject_ids;
         $evaluator_id = username_to_id(array($values['evaluator']));
         $evaluator_id = $evaluator_id[$values['evaluator']];
         $request = new EvaluationRequest();
-        $request->descriptorset_id = $values['descriptorset'];
-        $request->subject_id = $values['subject'];
+        $request->descriptorset_id = $descriptorset_ids[$values['evaluation']];
+        $request->subject_id = $artefact_subject_ids[$values['evaluation']];
         $request->evaluator_id = $evaluator_id;
         $request->inquirer_id = $USER->get('id');
         $request->inquiry_message = $values['message'];
