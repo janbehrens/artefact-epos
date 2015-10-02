@@ -6,13 +6,10 @@
     </form>
 </div>
 
-{if $incomingrequests.waitingrequests || $incomingrequest.answeredrequests}
+{if $incomingrequests}
+    <h2>{str tag="incomingrequests" section="artefact.epos"}</h2>
 
-<h2>{str tag="incomingrequests" section="artefact.epos"}</h2>
-
-{foreach $incomingrequests item=requests}
-    {if $requests}
-    {foreach $requests item=request}
+    {foreach $incomingrequests item=request}
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
             {if $request->response_date}
@@ -58,19 +55,13 @@
             </div>
         </div>
     {/foreach}
-    {/if}
-{/foreach}
-
 {/if}
 
-{if $outgoingrequests.sentrequests || $outgoingrequests.returnedrequests}
+{if $outgoingrequests}
+    {cycle values='r1' assign='odd'}
+    <h2>{str tag="outgoingrequests" section="artefact.epos"}</h2>
 
-<h2>{str tag="outgoingrequests" section="artefact.epos"}</h2>
-
-{cycle values='r1' assign='odd'}
-{foreach $outgoingrequests key=section item=requests}
-    {if $requests}
-    {foreach $requests item=request}
+    {foreach $outgoingrequests item=request}
         {cycle values='r0,r1' assign='odd'}
         <div class="eval-request {$odd}">
             {if $request->response_date}
@@ -102,9 +93,6 @@
             </div>
         </div>
     {/foreach}
-    {/if}
-{/foreach}
-
 {/if}
 
 {include file="footer.tpl"}

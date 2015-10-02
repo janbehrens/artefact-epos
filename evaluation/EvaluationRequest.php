@@ -119,10 +119,8 @@ class EvaluationRequest {
     /**
      * Get the requests other users have sent to the current user.
      */
-    public static function get_requests_for_evaluator($open) {
+    public static function get_requests_for_evaluator() {
         global $USER;
-        $responseDateCondition = $open ? 'IS NULL' : 'IS NOT NULL';
-        $orderBy = $open ? 'inquiry_date' : 'response_date';
         $sql = "SELECT r.*,
                        u1.username AS inquirer_username,
                        u1.firstname AS inquirer_firstname,
@@ -137,8 +135,8 @@ class EvaluationRequest {
                 LEFT JOIN usr u2 ON r.evaluator_id = u2.id
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
                 LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
-                WHERE evaluator_id = ? AND response_date $responseDateCondition
-                ORDER BY $orderBy DESC";
+                WHERE evaluator_id = ?
+                ORDER BY response_date DESC, inquiry_date DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             $requests = array();
             foreach ($records as $record) {
@@ -164,11 +162,9 @@ class EvaluationRequest {
      * Get the requests of the current user (either recently
      * sent or recently returned).
      */
-    public static function get_requests_for_inquirer($open) {
+    public static function get_requests_for_inquirer() {
         global $USER;
         $requests = array();
-        $responseDateCondition = $open ? 'IS NULL' : 'IS NOT NULL';
-        $orderBy = $open ? 'inquiry_date' : 'response_date';
         $sql = "SELECT r.*,
                        u.username AS evaluator_username,
                        u.firstname AS evaluator_firstname,
@@ -179,8 +175,8 @@ class EvaluationRequest {
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
                 LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
                 LEFT JOIN usr u ON r.evaluator_id = u.id
-                WHERE inquirer_id = ? AND response_date $responseDateCondition
-                ORDER BY $orderBy DESC";
+                WHERE inquirer_id = ?
+                ORDER BY response_date DESC, inquiry_date DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             foreach ($records as $record) {
                 $evaluator = array('username' => $record->evaluator_username,
@@ -282,12 +278,12 @@ class EvaluationRequest {
 
     public static function form_return_evaluation_request($request) {
         $options = array(
-                0 => get_string('doreturnrequest', 'artefact.epos'),
-                1 => get_string('dontreturnrequest', 'artefact.epos')
+                1 => get_string('doreturnrequest', 'artefact.epos'),
+                0 => get_string('dontreturnrequest', 'artefact.epos')
         );
-        $default = isset($request->evaluation_id) ? 0 : 1;
+        $default = isset($request->evaluation_id) ? 1 : 0;
         $elements = array();
-        $elements['action'] = array(
+        $elements['returnrequest'] = array(
             'type' => 'radio',
             'title' => get_string('action', 'artefact.epos'),
             'options' => $options,
@@ -315,8 +311,8 @@ class EvaluationRequest {
 
     public static function form_return_evaluation_request_validate(Pieform $form, $values) {
         global $request;
-        if ($values['action'] == 0 && empty($request->evaluation_id)) {
-            $form->set_error('action', get_string('noevaluationtoreturn', 'artefact.epos'));
+        if ($values['returnrequest'] == 1 && empty($request->evaluation_id)) {
+            $form->set_error('returnrequest', get_string('noevaluationtoreturn', 'artefact.epos'));
         }
     }
 
@@ -326,20 +322,21 @@ class EvaluationRequest {
             throw new AccessDeniedException(get_string('yourenottheevaluator', 'artefact.epos'));
         }
         db_begin();
-        $evaluation = new ArtefactTypeEvaluation($request->evaluation_id);
         $request->response_message = $values['message'];
         $request->response_date = time();
-        if ($request->evaluation_id && $values['action']) {
-            // an evaluation has been created but should no be returned, so delete it
-            $request->evaluation_id = null;
-            $request->commit();
-            $evaluation->delete();
+        if ($request->evaluation_id) {
+            $evaluation = new ArtefactTypeEvaluation($request->evaluation_id);
+            if ($values['returnrequest'] === 0) {
+                // an evaluation has been created but should not be returned, so delete it
+                $request->evaluation_id = null;
+                $evaluation->delete();
+            }
+            else {
+                $evaluation->final = 1;
+                $evaluation->commit();
+            }
         }
-        else {
-            $evaluation->final = 1;
-            $evaluation->commit();
-            $request->commit();
-        }
+        $request->commit();
         db_commit();
         $SESSION->add_info_msg(get_string('successfullyreturnedrequest', 'artefact.epos'));
         redirect('/artefact/epos/evaluation/external.php');
