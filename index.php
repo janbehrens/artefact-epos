@@ -34,33 +34,17 @@ define('SECTION_PAGE', 'addremove');
 require_once(dirname(dirname(dirname(__FILE__))) . '/init.php');
 define('TITLE', get_string('myselfevaluations', 'artefact.epos'));
 require_once('pieforms/pieform.php');
+safe_require('artefact', 'epos');
 
 $optionssubject = get_subjects();
-$accessdenied = false;
-$nodescriptorsets = false;
-
-if (isset($_GET['addsubject'])) {
-    $addsubject = $_GET['addsubject'];
-
-    //check if user is allowed to use the subject indicated by GET parameter
-    if ($addsubject != 0 && !in_array($addsubject, array_keys($optionssubject))) {
-        $accessdenied = true;
-    }
-}
-else {
-}
-
-$optionsdescriptors = get_descriptorsets();
-
-if (count($optionsdescriptors) == 0) {
-    $nodescriptorsets = true;
-}
+$optionsdescriptors = get_descriptorsets(array_keys($optionssubject));
 
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
 $delstr = get_string('del', 'artefact.epos');
 $selfevalstr = get_string('selfevaluation', 'artefact.epos');
 $confirmdelstr = get_string('confirmdel', 'artefact.epos');
+$nodescriptorsetstr = get_string('nodescriptorsetavailable', 'artefact.epos');
 
 $inlinejs = <<<EOF
 
@@ -74,14 +58,13 @@ function toggleLanguageForm() {
         removeElementClass('addlearnedlanguagebutton', 'hidden');
         addElementClass(elemName, 'hidden');
     }
-    refreshDescriptorsets();
+    loadDescriptorsets();
+    jQuery('select#createselfevaluation_subject').change(loadDescriptorsets);
 }
 
-function languageSaveCallback(form, data) {
+function saveCallback(form, data) {
     tableRenderer.doupdate();
     toggleLanguageForm();
-    // Can't reset() the form here, because its values are what were just submitted,
-    // thanks to pieforms
     forEach(form.elements, function(element) {
         if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
             element.value = '';
@@ -92,7 +75,7 @@ function languageSaveCallback(form, data) {
 function deleteLanguage(evaluation_id) {
     if (confirm('{$confirmdelstr}')) {
         sendjsonrequest('evaluationdelete.json.php',
-            {'evaluation_id': evaluation_id},
+            {evaluation_id: evaluation_id},
             'GET',
             function(data) {
                 tableRenderer.doupdate();
@@ -103,6 +86,43 @@ function deleteLanguage(evaluation_id) {
         );
     }
     return false;
+}
+
+function loadDescriptorsets() {
+    // If there are at least two options, pieforms builds a select, otherwise a hidden input
+    var subjectSelect = jQuery('select#createselfevaluation_subject');
+    var subjectInput = jQuery('input#createselfevaluation_subject');
+    if (subjectSelect.length > 0) {
+        var selectedSubject = subjectSelect.children(':selected').attr('value');
+    }
+    else {
+        var selectedSubject = subjectInput.attr('value');
+    }
+
+    var descriptorsetContainer = jQuery('#createselfevaluation_descriptorset_container td');
+    var descriptorsetSelect = jQuery('select#createselfevaluation_descriptorset');
+    var descriptorsetOptions = descriptorsetSelect.children();
+    var descriptorsetInput = jQuery('input#createselfevaluation_descriptorset');
+
+    sendjsonrequest('evaluationform.json.php',
+        {subject_id: selectedSubject},
+        'GET',
+        function (data) {
+            descriptorsetContainer.children().remove();
+
+            if (data instanceof Array) {
+                jQuery('#createselfevaluation_descriptorset_container td')
+                    .append('<span>{$nodescriptorsetstr}</span>');
+            }
+            else {
+                descriptorsetContainer.append('<select class="select" id="createselfevaluation_descriptorset" name="descriptorset"></select>');
+                descriptorsetSelect = jQuery('select#createselfevaluation_descriptorset');
+                for (var id in data) {
+                    descriptorsetSelect.append(new Option(data[id], id));
+                }
+            }
+        }
+    );
 }
 
 tableRenderer = new TableRenderer(
@@ -129,69 +149,40 @@ tableRenderer = new TableRenderer(
 
 tableRenderer.emptycontent = '';
 tableRenderer.updateOnLoad();
-
-function refreshDescriptorsets() {
-    var selected = jQuery('#addlearnedlanguage_subject').children(':selected').attr('value');
-    var select = jQuery('#addlearnedlanguage_descriptorset');
-    var options = jQuery('#addlearnedlanguage_descriptorset option');
-
-    sendjsonrequest('evaluationform.json.php',
-        {'subject_id': selected},
-        'GET',
-        function(data) {
-            options.each(function(index, option) {
-                jQuery(option).remove();
-            });
-            for (var id in data) {
-                select.append(new Option(data[id], id));
-            }
-        }
-    );
-}
 EOF;
 
 //pieform
 if (count($optionssubject) > 0) {
-    $elements = array(
-        'subject' => array(
-            'type' => 'select',
-            'title' => get_string('subject', 'artefact.epos'),
-            'options' => $optionssubject,
-        ),
-        'descriptorset' => array(
-            'type' => 'select',
-            'title' => get_string('descriptorset', 'artefact.epos'),
-            'options' => $optionsdescriptors,
-         ),
-        'label' => array(
-            'type' => 'text',
-            'size' => 50,
-            'title' => get_string('label', 'artefact.epos'),
-            'defaultvalue' => '',
-        ),
-    );
-    $elements['submit'] = array(
-        'type' => 'submitcancel',
-        'value' => array(get_string('save', 'artefact.epos'), get_string('cancel')),
-        'goto' => get_config('wwwroot') . 'artefact/epos/'
-    );
-
     $evaluationsform = pieform(array(
-        'name' => 'addlearnedlanguage',
-        'plugintype' => 'artefact',
-        'pluginname' => 'epos',
-        'elements' => $elements,
+        'name' => 'createselfevaluation',
         'jsform' => true,
-        'jssuccesscallback' => 'languageSaveCallback',
-    ));
-}
-else {
+        'jssuccesscallback' => 'saveCallback',
+        'elements' => array(
+            'subject' => array(
+                'type' => 'select',
+                'title' => get_string('subject', 'artefact.epos'),
+                'options' => $optionssubject,
+            ),
+            'descriptorset' => array(
+                'type' => 'select',
+                'title' => get_string('descriptorset', 'artefact.epos'),
+                'options' => $optionsdescriptors,
+            ),
+            'label' => array(
+                'type' => 'text',
+                'size' => 50,
+                'title' => get_string('label', 'artefact.epos'),
+                'defaultvalue' => '',
+            ),
+            'submit' => array(
+                'type' => 'submitcancel',
+                'value' => array(get_string('save', 'artefact.epos'), get_string('cancel')),
+                'goto' => '.'
+            )
+        )));
 }
 
 $smarty = smarty(array('tablerenderer', 'jquery'));
-$smarty->assign('addsubjectset', isset($_GET['addsubject']));
-$smarty->assign('accessdenied', $accessdenied);
-$smarty->assign('nodescriptorsets', $nodescriptorsets);
 $smarty->assign_by_ref('evaluationsform', $evaluationsform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', TITLE);
@@ -199,13 +190,14 @@ $smarty->assign('MENUITEM', MENUITEM);
 $smarty->display('artefact:epos:index.tpl');
 
 /**
- * Get language options for pieform select
+ * Get options for subject select
  */
 function get_subjects() {
     global $USER;
     $subjects = array();
 
-    $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
+    // subjects from user's institutions
+    $sql = "SELECT s.id, s.name, i.displayname FROM artefact_epos_subject s
             JOIN usr_institution ui ON ui.institution = s.institution
             JOIN institution i ON i.name = s.institution
             WHERE ui.usr = ? AND s.active = 1";
@@ -214,7 +206,8 @@ function get_subjects() {
         $data = array();
     }
 
-    $sql = "SELECT s.id, s.name, s.institution, i.displayname FROM artefact_epos_subject s
+    // subjects from "No institution"
+    $sql = "SELECT s.id, s.name, i.displayname FROM artefact_epos_subject s
             JOIN institution i ON i.name = s.institution
             WHERE s.institution = 'mahara' AND s.active = 1";
 
@@ -228,33 +221,37 @@ function get_subjects() {
         return strcoll($a->name, $b->name);
     });
 
-    foreach ($data as $field) {
-        $subjects[$field->id] = $field->name . " ($field->displayname)";
+    foreach ($data as $subject) {
+        $subjects[$subject->id] = $subject->name . " ($subject->displayname)";
     }
-
     return $subjects;
 }
 
 /**
  * Get descriptor sets for pieform select
  */
-function get_descriptorsets() {
-    $descriptorsets = array();
-
-    if (!$data = get_records_array('artefact_epos_descriptorset', 'active', 1)) {
+function get_descriptorsets($subjects) {
+    $sql = "SELECT id, name, descriptorset, subject FROM artefact_epos_descriptorset d
+            JOIN artefact_epos_descriptorset_subject ds ON d.id = ds.descriptorset
+            WHERE active = 1 AND (" .
+            implode(" OR ", array_map(function ($id) {
+                    return "subject = $id";
+                }, $subjects)) .
+            ")";
+    if (!$data = get_records_sql_array($sql, array())) {
         $data = array();
     }
-    foreach ($data as $field) {
-        $descriptorsets[$field->id] = $field->name;
+    $descriptorsets = array();
+    foreach ($data as $descriptorset) {
+        $descriptorsets[$descriptorset->id] = $descriptorset->name;
     }
-
     return $descriptorsets;
 }
 
 /**
  * form validate function
  */
-function addlearnedlanguage_validate(Pieform $form, $values) {
+function createselfevaluation_validate(Pieform $form, $values) {
     if ($values['label'] == '') {
         $form->set_error('label', get_string('labelnotvalid', 'artefact.epos'));
     }
@@ -266,11 +263,10 @@ function addlearnedlanguage_validate(Pieform $form, $values) {
 /**
  * form submit function
  */
-function addlearnedlanguage_submit(Pieform $form, $values) {
+function createselfevaluation_submit(Pieform $form, $values) {
+    global $USER, $optionsdescriptors;
+    $owner = $USER->get('id');
     try {
-        global $USER, $optionsdescriptors;
-        safe_require('artefact', 'epos');
-        $owner = $USER->get('id');
         create_subject_for_user($values['subject'], $values['label'], $values['descriptorset'], $optionsdescriptors[$values['descriptorset']], $owner);
     }
     catch (Exception $e) {

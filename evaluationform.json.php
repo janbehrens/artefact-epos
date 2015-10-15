@@ -35,7 +35,6 @@ $addsubject = param_integer('subject_id', null);
 
 $descriptorsets = array();
 
-$data = array();
 if ($addsubject != null) {
     $sql = "SELECT d.id, d.name FROM artefact_epos_descriptorset d
             JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id

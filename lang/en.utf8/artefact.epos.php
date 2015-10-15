@@ -33,8 +33,6 @@ $string['goals'] = 'Learning objectives';
 $string['dossier'] = 'Dossier';
 $string['diary'] = 'Diary';
 $string['biography'] = 'Biography';
-//$string['languages'] = 'Subjects';
-//$string['mylanguages'] = 'My subjects';
 $string['myexperience'] = 'My experience';
 $string['mydiary'] = 'My diary';
 $string['templates'] = 'Templates';
@@ -45,6 +43,8 @@ $string['myselfevaluations'] = 'My self-evaluations';
 $string['selfevaluations'] = 'Self-evaluations';
 $string['addremoveevaluations'] = 'Add/remove self-evaluations';
 $string['label'] = 'Label';
+$string['nosubjectsconfiguredforuser'] = 'No subjects are configured for your institutions! Please contact your admin or staff.';
+$string['nodescriptorsetavailable'] = 'No descriptorset available';
 
 //interaction
 $string['add'] = 'Add';

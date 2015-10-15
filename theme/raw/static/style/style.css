@@ -87,6 +87,12 @@ div.grippie {
 }
 
 
+/* evaluations list */
+
+#evaluationslist {
+	margin-bottom: 12px;
+}
+
 /* evaluation */
 
 table.evaluation {
