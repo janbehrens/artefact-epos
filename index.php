@@ -109,6 +109,7 @@ function loadDescriptorsets() {
         'GET',
         function (data) {
             descriptorsetContainer.children().remove();
+            descriptorsetContainer.empty();
 
             if (data instanceof Array) {
                 jQuery('#createselfevaluation_descriptorset_container td')
