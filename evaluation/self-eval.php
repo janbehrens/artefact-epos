@@ -44,7 +44,7 @@ $includejs = array();
 $selfevaluation = array();
 $customgoalform = null;
 if (!$selectform) {
-    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="../index.php">' . get_string('myselfevaluations', 'artefact.epos') . '</a>');
+    $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="../index.php">' . get_string('addremoveevaluations', 'artefact.epos') . '</a>');
 }
 else {
     $evaluation = new ArtefactTypeEvaluation($id);
