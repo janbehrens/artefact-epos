@@ -121,12 +121,11 @@ class Comparison {
             $evaluation_item = new stdClass();
             $evaluation_item->id = $evaluation->get('id');
             $evaluation_item->final = $evaluation->final;
+            $evaluation_item->title = $evaluation->get_parent_instance()->get('title') . " (". $evaluation->get('title') . ")";
             if ($evaluation->final) {
-                $evaluation_item->title = $evaluation->get('title');
                 $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/display.php?id=$evaluation_item->id";
             }
             else {
-                $evaluation_item->title = $evaluation->get_parent_instance()->get('title');
                 $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/self-eval.php?id=$evaluation_item->id";
             }
             $evaluation_item->mtime = format_date($evaluation->get('mtime'));
