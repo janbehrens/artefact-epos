@@ -133,6 +133,7 @@ $string['sentrequest'] = "Sent request";
 $string['returnedrequest'] = "Returned request";
 $string['sentmessage'] = "Sent message";
 $string['returnedmessage'] = "Returned message";
+$string['noevaluationtorequest'] = "You cannot request an external evaluation as long as you have not created a self-evaluation.";
 $string['invalidusername'] = "This user does not exist.";
 $string['cannotevaluateyourself'] = "You cannot send an evaluation request to yourself. You can evaluate yourself under 'Self-evaluation'.";
 $string['invaliddescriptorsetforsubject'] = "This competence grid cannot be used for this subject. Please choose another one.";

@@ -214,6 +214,9 @@ class EvaluationRequest {
             $descriptorset_ids[$evaluation->id] = $evaluation->descriptorset_id;
             $artefact_subject_ids[$evaluation->id] = $evaluation->subject_id;
         }
+        if (empty($evaluation_options)) {
+            return null;
+        }
 
         $elements = array();
         $elements['evaluation'] = array(

@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 
         if(!$result) {
             json_reply(false, array(
-                'status' => 'noUserFound', 
+                'status' => 'noUserFound',
                 'noMemberInInstitution' => get_string('noMemberInInstitution', 'artefact.epos'),
                 'noUserFoundBasedOnEntered' => get_string('noUserFoundBasedOnEntered', 'artefact.epos'))
             );
@@ -69,10 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
                 array_push($lastnames, $result[$i]->lastname);
             }
 
-            json_reply(false, array('status' => 'successful', 'usernames' => $usernames, 'firstnames' => $firstnames, 'lastnames' => $lastnames));            
+            json_reply(false, array('status' => 'successful', 'usernames' => $usernames, 'firstnames' => $firstnames, 'lastnames' => $lastnames));
         }
     }
     else {
-        json_reply(false, array('status' => 'institutionNull', 'msg' => get_string('noInstitutionErrorMsg', 'artefact-epos')));
+        json_reply(false, array('status' => 'institutionNull', 'msg' => get_string('noInstitutionErrorMsg', 'artefact.epos')));
     }
 }
