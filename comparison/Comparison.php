@@ -234,8 +234,10 @@ class Comparison {
                     // for EVALUATION_ITEM_TYPE_CUSTOM_GOAL level_id is always 0
                     $level_id = 0;
                 }
-                foreach ($row[$level_id] as $evaluation_id => $evaluation_row) {
-                    $bars .= html_progressbar($evaluation_row['average'], null, $colors[$evaluation_id]);
+                if (!empty($row[$level_id])) {
+                    foreach ($row[$level_id] as $evaluation_id => $evaluation_row) {
+                        $bars .= html_progressbar($evaluation_row['average'], null, $colors[$evaluation_id]);
+                    }
                 }
                 return array('content' => $bars, 'properties' => array(
                     'class' => 'progress'

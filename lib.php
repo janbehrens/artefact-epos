@@ -894,18 +894,21 @@ EOL
                 else {
                     $level_id = $level->id;
                 }
-                $cell = array('content' => html_progressbar($row['levels'][$level_id]['average']));
+                $content = isset($row['levels'][$level_id]) ? html_progressbar($row['levels'][$level_id]['average']) : '';
+                $cell = array('content' => $content);
                 $classes = array();
                 if ($interactive) {
                     $competence_id = $row['id'];
                     if (is_string($competence_id)) {
                         $competence_id = "'$competence_id'";
                     }
-                    $type = $row['levels'][$level_id]['type'];
-                    $name = $row['name'];
-                    $cell['properties'] = array(
-                            'onclick' => "toggleEvaluationForm($competence_id, $level_id, $type, '$name')"
-                    );
+                    if (isset($row['levels'][$level_id])) {
+                        $type = $row['levels'][$level_id]['type'];
+                        $name = $row['name'];
+                        $cell['properties'] = array(
+                                'onclick' => "toggleEvaluationForm($competence_id, $level_id, $type, '$name')"
+                        );
+                    }
                     $classes []= "interactive";
                 }
                 if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
@@ -1557,7 +1560,11 @@ class Descriptorset implements ArrayAccess, Iterator {
     }
 
     public function get_descriptors($competence_id, $level_id) {
-    	return $this->descriptors_by_competence_level[$competence_id][$level_id];
+        if (array_key_exists($competence_id, $this->descriptors_by_competence_level) &&
+            array_key_exists($level_id, $this->descriptors_by_competence_level[$competence_id])) {
+            return $this->descriptors_by_competence_level[$competence_id][$level_id];
+        }
+        return array();
     }
 
     /**
