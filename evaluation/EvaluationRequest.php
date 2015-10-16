@@ -122,6 +122,7 @@ class EvaluationRequest {
     public static function get_requests_for_evaluator() {
         global $USER;
         $sql = "SELECT r.*,
+                       e.final,
                        u1.username AS inquirer_username,
                        u1.firstname AS inquirer_firstname,
                        u1.lastname AS inquirer_lastname,
@@ -131,6 +132,7 @@ class EvaluationRequest {
                        subject.title AS subject,
                        dset.name AS descriptorset
                 FROM artefact_epos_evaluation_request r
+                LEFT JOIN artefact_epos_evaluation e ON r.evaluation_id = e.artefact
                 LEFT JOIN usr u1 ON r.inquirer_id = u1.id
                 LEFT JOIN usr u2 ON r.evaluator_id = u2.id
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
@@ -149,6 +151,7 @@ class EvaluationRequest {
                 $request = new self(0, $record);
                 $request->inquirer = $inquirer;
                 $request->evaluator = $evaluator;
+                $request->final = $record->final;
                 $requests []= $request;
             }
             return $requests;
@@ -166,12 +169,14 @@ class EvaluationRequest {
         global $USER;
         $requests = array();
         $sql = "SELECT r.*,
+                       e.final,
                        u.username AS evaluator_username,
                        u.firstname AS evaluator_firstname,
                        u.lastname AS evaluator_lastname,
                        subject.title AS subject,
                        dset.name AS descriptorset
                 FROM artefact_epos_evaluation_request r
+                LEFT JOIN artefact_epos_evaluation e ON r.evaluation_id = e.artefact
                 LEFT JOIN artefact subject ON r.subject_id = subject.id
                 LEFT JOIN artefact_epos_descriptorset dset ON r.descriptorset_id = dset.id
                 LEFT JOIN usr u ON r.evaluator_id = u.id
@@ -184,6 +189,7 @@ class EvaluationRequest {
                                   'lastname' => $record->evaluator_lastname);
                 $request = new self(0, $record);
                 $request->evaluator = $evaluator;
+                $request->final = $record->final;
                 $requests []= $request;
             }
         }
@@ -280,17 +286,10 @@ class EvaluationRequest {
     }
 
     public static function form_return_evaluation_request($request) {
-        $options = array(
-                1 => get_string('doreturnrequest', 'artefact.epos'),
-                0 => get_string('dontreturnrequest', 'artefact.epos')
-        );
-        $default = isset($request->evaluation_id) ? 1 : 0;
         $elements = array();
-        $elements['returnrequest'] = array(
-            'type' => 'radio',
-            'title' => get_string('action', 'artefact.epos'),
-            'options' => $options,
-    		'defaultvalue' => $default
+        $elements['donotreturnrequest'] = array(
+            'type' => 'checkbox',
+            'title' => get_string('dontreturnrequest', 'artefact.epos')
         );
         $elements['message'] = array(
             'type' => 'textarea',
@@ -300,7 +299,7 @@ class EvaluationRequest {
         );
         $elements['submit'] = array(
             'type' => 'submit',
-            'value' => get_string('returnrequest', 'artefact.epos')
+            'value' => get_string('submit')
         );
         return pieform(array(
             'name' => 'create_evaluation_request',
@@ -313,10 +312,6 @@ class EvaluationRequest {
     }
 
     public static function form_return_evaluation_request_validate(Pieform $form, $values) {
-        global $request;
-        if ($values['returnrequest'] == 1 && empty($request->evaluation_id)) {
-            $form->set_error('returnrequest', get_string('noevaluationtoreturn', 'artefact.epos'));
-        }
     }
 
     public static function form_return_evaluation_request_submit(Pieform $form, $values) {
@@ -329,12 +324,7 @@ class EvaluationRequest {
         $request->response_date = time();
         if ($request->evaluation_id) {
             $evaluation = new ArtefactTypeEvaluation($request->evaluation_id);
-            if ($values['returnrequest'] === 0) {
-                // an evaluation has been created but should not be returned, so delete it
-                $request->evaluation_id = null;
-                $evaluation->delete();
-            }
-            else {
+            if (!$values['donotreturnrequest']) {
                 $evaluation->final = 1;
                 $evaluation->commit();
             }
