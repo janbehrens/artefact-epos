@@ -212,9 +212,9 @@ class EvaluationRequest {
                 WHERE a.parent = b.id
                 AND a.id = e.artefact
                 AND a.owner = ?
-                AND a.owner = e.evaluator
                 AND a.artefacttype = 'evaluation'
-                AND e.final = 0";
+                AND e.final = 0
+                ORDER BY subject";
 
         if (!$data = get_records_sql_array($sql, array($owner))) {
             $data = array();

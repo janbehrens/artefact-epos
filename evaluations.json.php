@@ -36,21 +36,6 @@ $offset = param_integer('offset', 0);
 $view = param_integer('view', 0);
 
 $owner = $USER->get('id');
-$count = 0;
-
-$data = array();
-
-$sql = "SELECT COUNT(DISTINCT evaluation.id) AS countall
-        FROM artefact subject
-        INNER JOIN artefact evaluation ON subject.id = evaluation.parent
-        LEFT JOIN artefact_epos_evaluation e ON e.artefact = evaluation.id
-        LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset_id
-        WHERE evaluation.owner = ?
-            AND evaluation.owner = e.evaluator
-            AND evaluation.artefacttype = 'evaluation'
-            AND e.final = 0";
-$count = get_records_sql_array($sql, array($owner));
-$count = $count[0]->countall;
 
 $sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
         FROM artefact subject
@@ -58,7 +43,6 @@ $sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
         LEFT JOIN artefact_epos_evaluation e ON e.artefact = evaluation.id
         LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset_id
         WHERE evaluation.owner = ?
-            AND evaluation.owner = e.evaluator
             AND evaluation.artefacttype = 'evaluation'
             AND e.final = 0
         ORDER BY subject.title";
@@ -75,6 +59,6 @@ echo json_encode(array(
     'data' => $data,
     'limit' => $limit,
     'offset' => $offset,
-    'count' => $count,
+    'count' => count($data)
 ));
 
