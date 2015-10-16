@@ -275,7 +275,9 @@ class EvaluationRequest {
     }
 
     public static function form_create_evaluation_request_submit(Pieform $form, $values) {
+        safe_require('notification', 'internal');
         global $USER, $SESSION;
+
         $evaluator_id = username_to_id(array($values['evaluator']));
         $evaluator_id = $evaluator_id[$values['evaluator']];
         $inquirerevaluation = new ArtefactTypeEvaluation($values['evaluation']);
@@ -292,6 +294,21 @@ class EvaluationRequest {
         $request->commit();
 
         $SESSION->add_info_msg(get_string('successfullysentrequest', 'artefact.epos'));
+
+        // notify user
+        if (is_plugin_active('internal')) {
+            $inquirer = get_user($request->inquirer_id);
+            $evaluator = get_user($request->evaluator_id);
+            $subject = new ArtefactTypeSubject($request->subject_id);
+            $data = new stdClass();
+            $data->type = 1;
+            $data->subject = get_string('evaluationrequestsent', 'artefact.epos');
+            $data->message = get_string('evaluationrequestsentmessage', 'artefact.epos', "$inquirer->firstname $inquirer->lastname", $subject->get('title'));
+            $data->url = 'artefact/epos/evaluation/external.php';
+            $data->parent = null;
+            PluginNotificationInternal::notify_user($evaluator, $data);
+        }
+
         redirect(get_config('wwwroot') . 'artefact/epos/evaluation/external.php');
     }
 
@@ -325,10 +342,13 @@ class EvaluationRequest {
     }
 
     public static function form_return_evaluation_request_submit(Pieform $form, $values) {
+        safe_require('notification', 'internal');
         global $request, $USER, $SESSION;
+
         if ($USER->get('id') != $request->evaluator_id) {
             throw new AccessDeniedException(get_string('yourenottheevaluator', 'artefact.epos'));
         }
+
         db_begin();
         $request->response_message = $values['message'];
         $request->response_date = time();
@@ -341,7 +361,23 @@ class EvaluationRequest {
         }
         $request->commit();
         db_commit();
+
         $SESSION->add_info_msg(get_string('successfullyreturnedrequest', 'artefact.epos'));
+
+        // notify user
+        if (is_plugin_active('internal')) {
+            $inquirer = get_user($request->inquirer_id);
+            $evaluator = get_user($request->inquirer_id);
+            $subject = new ArtefactTypeSubject($request->subject_id);
+            $data = new stdClass();
+            $data->type = 1;
+            $data->subject = get_string('evaluationrequestanswered', 'artefact.epos');
+            $data->message = get_string('evaluationrequestansweredmessage', 'artefact.epos', "$evaluator->firstname $evaluator->lastname", $subject->get('title'));
+            $data->url = 'artefact/epos/evaluation/external.php';
+            $data->parent = null;
+            PluginNotificationInternal::notify_user($inquirer, $data);
+        }
+
         redirect('/artefact/epos/evaluation/external.php');
     }
 

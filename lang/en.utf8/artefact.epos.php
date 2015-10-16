@@ -158,6 +158,10 @@ $string['noMemberInInstitution'] = "There is no other members in your institutio
 $string['noUserFoundBasedOnEntered'] = "No user is found based on the text you entered, please change the text and search again.";
 $string['noInstitutionErrorMsg'] = "You can only search the users of your institution, and you are not in any institution. To enter one, please<br>consult your administrator.";
 $string['search'] = "Search";
+$string['evaluationrequestsent'] = "You have been sent an evaluation request";
+$string['evaluationrequestsentmessage'] = "%s has sent you an evaluation request for '%s'.";
+$string['evaluationrequestanswered'] = "Your evaluation request has been answered";
+$string['evaluationrequestansweredmessage'] = "%s has answered your evaluation request for '%s'.";
 
 //Comparison
 $string['comparison'] = "Comparison";
