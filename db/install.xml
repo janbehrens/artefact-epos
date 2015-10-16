@@ -131,6 +131,7 @@
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" NOTNULL="true" SEQUENCE="true" />
                 <FIELD NAME="inquirer_id"       TYPE="int" NOTNULL="true" />
+                <FIELD NAME="inquirer_evaluation"   TYPE="int" NOTNULL="false" />
                 <FIELD NAME="evaluator_id"      TYPE="int" NOTNULL="true" />
                 <FIELD NAME="subject_id"        TYPE="int" NOTNULL="true" />
                 <FIELD NAME="descriptorset_id"  TYPE="int" NOTNULL="true" />

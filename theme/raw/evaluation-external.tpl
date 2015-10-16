@@ -22,7 +22,8 @@
             <div class="main">
                 <p class="request">
                     <!-- title -->
-                    <span class="evaluationtitle">{$request->subject} ({$request->descriptorset})</span>
+                    <a href="display.php?id={$request->inquirer_evaluation}"
+                       class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
                     <!-- actions -->
                     {if !$request->final}
                         <a href="external-return.php?id={$request->id}" class="tools">
@@ -37,7 +38,7 @@
                                      src="../theme/raw/static/images/evaluate.png" />
                             </a>
                         {else}
-                            <a href="create.php?request={$request->get_id()}" class="tools">
+                            <a href="create.php?request={$request->id}" class="tools">
                                 <img alt="{str tag='evaluate' section='artefact.epos'}"
                                      title="{str tag='evaluate' section='artefact.epos'}"
                                      src="../theme/raw/static/images/evaluate.png" />

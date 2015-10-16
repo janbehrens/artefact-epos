@@ -683,5 +683,13 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         db_commit();
     }
 
+    if ($oldversion < 2015101600) {
+        // Add 'inquirer_evaluation' to artefact_epos_evaluation_request
+        $table = new XMLDBTable('artefact_epos_evaluation_request');
+        $field = new XMLDBField('inquirer_evaluation');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10');
+        add_field($table, $field);
+    }
+
     return true;
 }

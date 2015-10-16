@@ -188,7 +188,9 @@ class ArtefactTypeSubject extends ArtefactType {
 
 class ArtefactTypeEvaluation extends ArtefactType {
 
-    protected $descriptorset_id;
+    public $subject_id;
+
+    public $descriptorset_id;
 
     protected $descriptorset;
 
@@ -224,9 +226,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
             if ($this->id && $full_load) {
                 if (!isset($this->descriptorset_id)) {
                 	$sql = 'SELECT e.*, u.firstname, u.lastname
-                            FROM {artefact} a
-                            LEFT JOIN {artefact_epos_evaluation} e ON a.id = e.artefact
-                	        LEFT JOIN {usr} u ON e.evaluator = u.id
+                            FROM artefact a
+                            LEFT JOIN artefact_epos_evaluation e ON a.id = e.artefact
+                            LEFT JOIN usr u ON e.evaluator = u.id
                             WHERE a.id = ?';
                 	$data = get_record_sql($sql, array($this->id));
                 	if ($data) {
@@ -253,6 +255,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
             			}
             		}
             	}
+                $subject = $this->get_parent_metadata();
+                $this->subject_id = $subject->id;
             }
         }
     }
