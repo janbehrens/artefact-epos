@@ -234,11 +234,14 @@ function get_subjects() {
 function get_descriptorsets($subjects) {
     $sql = "SELECT id, name, descriptorset, subject FROM artefact_epos_descriptorset d
             JOIN artefact_epos_descriptorset_subject ds ON d.id = ds.descriptorset
-            WHERE active = 1 AND (" .
+            WHERE active = 1";
+    if (!empty($subjects)) {
+        $sql .= " AND (" .
             implode(" OR ", array_map(function ($id) {
                     return "subject = $id";
                 }, $subjects)) .
             ")";
+    }
     if (!$data = get_records_sql_array($sql, array())) {
         $data = array();
     }
