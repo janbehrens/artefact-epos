@@ -49,9 +49,8 @@ $subject = new ArtefactTypeSubject($evaluation->get('parent'));
 $user = get_user($evaluation->get('owner'));
 
 $smarty = smarty($includejs);
-$smarty->assign('PAGEHEADING', get_string('evaluation', 'artefact.epos'));
+$smarty->assign('PAGEHEADING', $user->firstname . ' ' . $user->lastname . ': ' . $subject->get('title'));
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
-$smarty->assign('title', $user->firstname . ' ' . $user->lastname . ': ' . $subject->get('title'));
 $smarty->assign('selfevaluation', $selfevaluation);
 $smarty->display('artefact:epos:evaluation-single.tpl');

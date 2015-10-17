@@ -43,7 +43,7 @@ $subject = $evaluation->get_parent_instance();
 $evaluationtable = $evaluation->render_evaluation_table(false);
 
 $smarty = smarty();
-$smarty->assign('PAGEHEADING', $evaluation->get('title') . ' (' . $subject->get('title') . ')');
+$smarty->assign('PAGEHEADING', $subject->get('title') . ' (' . $evaluation->get('title') . ')');
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
 $smarty->assign('evaluationtable', $evaluationtable);
