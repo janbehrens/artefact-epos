@@ -691,5 +691,14 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         add_field($table, $field);
     }
 
+    if ($oldversion < 2015101700) {
+        // Fix wrong column names
+        $table = new XMLDBTable('artefact_epos_evaluation_request');
+        $field = new XMLDBField('inquirer');
+        rename_field($table, $field, 'inquirer_id');
+        $field = new XMLDBField('evaluator');
+        rename_field($table, $field, 'evaluator_id');
+    }
+
     return true;
 }
