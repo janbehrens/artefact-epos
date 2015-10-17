@@ -314,9 +314,10 @@ class EvaluationRequest {
 
     public static function form_return_evaluation_request($request) {
         $elements = array();
-        $elements['donotreturnrequest'] = array(
+        $elements['includeevaluation'] = array(
             'type' => 'checkbox',
-            'title' => get_string('dontreturnrequest', 'artefact.epos')
+            'title' => get_string('includeevaluation', 'artefact.epos'),
+            'defaultvalue' => 1
         );
         $elements['message'] = array(
             'type' => 'textarea',
@@ -354,7 +355,7 @@ class EvaluationRequest {
         $request->response_date = time();
         if ($request->evaluation_id) {
             $evaluation = new ArtefactTypeEvaluation($request->evaluation_id);
-            if (!$values['donotreturnrequest']) {
+            if ($values['includeevaluation']) {
                 $evaluation->final = 1;
                 $evaluation->commit();
             }
