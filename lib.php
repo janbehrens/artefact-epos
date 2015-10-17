@@ -1049,7 +1049,6 @@ EOL
             	WHERE a.parent = b.id
                     AND a.id = e.artefact
                     AND a.owner = ?
-                    AND a.owner = e.evaluator
                     AND a.artefacttype = ?
                     AND e.final = 0";
 
