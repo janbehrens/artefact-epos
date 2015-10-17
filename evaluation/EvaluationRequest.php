@@ -368,7 +368,7 @@ class EvaluationRequest {
         // notify user
         if (is_plugin_active('internal')) {
             $inquirer = get_user($request->inquirer_id);
-            $evaluator = get_user($request->inquirer_id);
+            $evaluator = get_user($request->evaluator_id);
             $subject = new ArtefactTypeSubject($request->subject_id);
             $data = new stdClass();
             $data->type = 1;
