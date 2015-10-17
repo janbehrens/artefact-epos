@@ -42,6 +42,10 @@ td.radio {
     white-space: nowrap;
 }
 
+#evaluation .rbuttons {
+	margin-top: 0px;
+}
+
 /** Customgoal **/
 
 #customgoalform {
