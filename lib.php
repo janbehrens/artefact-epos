@@ -653,7 +653,13 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     private function form_evaluation($competence, $level, $type, $ratings, $descriptorsetfile, $alterform=array()) {
         $elements = array();
-        $elements['header'] = array(
+        // Add empty header cells so the "Goal?" header is in its place
+        $elements['header1'] = array(
+                'type' => 'html',
+                'title' => ' ',
+                'value' => ''
+        );
+        $elements['header2'] = array(
                 'type' => 'html',
                 'title' => ' ',
                 'value' => ''
