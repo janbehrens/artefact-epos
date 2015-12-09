@@ -790,36 +790,32 @@ class ArtefactTypeEvaluation extends ArtefactType {
             }
             $goal_id = $goal->get('id');
             $title = $goal->get('description');
-            $title = "<div id=\"custom_$goal_id\">$title</div>";
             $editCustomgoal = get_string('edit');
             $deleteCustomgoal = get_string('delete');
             $editbuttonurl = $THEME->get_url('images/btn_edit.png');
             $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
 
-	        $elements['item_' . $goal_id . '_description'] = array(
+	        $elements['customgoal_' . $goal_id . '_description'] = array(
 	                'type' => 'text',
 	        		'title' => $title,
 	                'defaultvalue' => $goal->get('description')
 	        );
-            $elements['item_' . $goal_id] = array(
+            $elements['customgoal_' . $goal_id] = array(
                     'type' => 'radio',
                     'title' => $title,
                     'options' => $ratings,
                     'defaultvalue' => $value,
             );
-            $elements['item_' . $goal_id . '_goal'] = array(
+            $elements['customgoal_' . $goal_id . '_goal'] = array(
     				'type' => 'checkbox',
     				'title' => $title,
     				'defaultvalue' => $item->goal,
     		);
-            $elements['item_'. $goal_id . '_actions'] = array(
+            $elements['customgoal_'. $goal_id . '_actions'] = array(
                     'type' => 'html',
-    				'title' => $title,
+                    'title' => $title,
                     'value' => <<< EOL
                         <div style="white-space:nowrap;">
-                            <a href="javascript: onClick=editCustomGoal('$goal_id');" title="$editCustomgoal">
-                                <img src="$editbuttonurl" alt="$editCustomgoal">
-                            </a>
                             <a href="javascript: deleteCustomGoal('$goal_id');" title="$deleteCustomgoal">
                                 <img src="$deletebuttonurl" alt="$deleteCustomgoal">
                             </a>
@@ -1002,7 +998,7 @@ EOL
                 ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
             }
             else if ($type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
-                $item_pattern = '/^item_(\d+)$/';
+                $item_pattern = '/^customgoal_(\d+)$/';
                 foreach ($values as $name => $value) {
                     if (preg_match($item_pattern, $name, $parts)) {
                         $data->value = $value;
@@ -1017,7 +1013,7 @@ EOL
                     }
                 }
 		        //update artefact table for updated custom goals
-                foreach ($values as $name => $value) {
+                /*foreach ($values as $name => $value) {
 	                if (preg_match($item_pattern, $name, $parts)) {
 		                $data = new stdClass();
 		                $data->description = $values[$name . '_description'];
@@ -1025,7 +1021,7 @@ EOL
 		                $where->id = $parts[1];
 		                ensure_record_exists('artefact', $where, $data);
 	                }
-                }
+                }*/
             }
             $evaluation = new ArtefactTypeEvaluation($id);
             $evaluation->set('mtime', time());
