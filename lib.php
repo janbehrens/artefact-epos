@@ -795,11 +795,6 @@ class ArtefactTypeEvaluation extends ArtefactType {
             $editbuttonurl = $THEME->get_url('images/btn_edit.png');
             $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
 
-	        $elements['customgoal_' . $goal_id . '_description'] = array(
-	                'type' => 'text',
-	        		'title' => $title,
-	                'defaultvalue' => $goal->get('description')
-	        );
             $elements['customgoal_' . $goal_id] = array(
                     'type' => 'radio',
                     'title' => $title,
