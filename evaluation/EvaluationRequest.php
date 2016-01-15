@@ -80,12 +80,12 @@ class EvaluationRequest {
         }
         $data = (object)array(
                 'id' => $this->id,
-                'inquirer_id' => $this->inquirer_id,
+                'inquirer' => $this->inquirer_id,
                 'inquirer_evaluation' => $this->inquirer_evaluation,
-                'evaluator_id' => $this->evaluator_id,
-                'subject_id' => $this->subject_id,
-                'descriptorset_id' => $this->descriptorset_id,
-                'evaluation_id' => $this->evaluation_id,
+                'evaluator' => $this->evaluator_id,
+                'evaluator_evaluation' => $this->evaluation_id,
+                'subject' => $this->subject_id,
+                'descriptorset' => $this->descriptorset_id,
                 'inquiry_message' => $this->inquiry_message,
                 'response_message' => $this->response_message
         );
@@ -131,13 +131,13 @@ class EvaluationRequest {
                        u2.firstname AS evaluator_firstname,
                        u2.lastname AS evaluator_lastname
                 FROM artefact_epos_evaluation_request r
-                LEFT JOIN artefact subject ON r.subject_id = subject.id
-                LEFT JOIN artefact_epos_evaluation e ON r.evaluation_id = e.artefact
+                LEFT JOIN artefact subject ON r.subject = subject.id
+                LEFT JOIN artefact_epos_evaluation e ON r.evaluator_evaluation = e.artefact
                 LEFT JOIN artefact_epos_evaluation ie ON r.inquirer_evaluation = ie.artefact
-                LEFT JOIN artefact_epos_descriptorset dset ON ie.descriptorset_id = dset.id
-                LEFT JOIN usr u1 ON r.inquirer_id = u1.id
-                LEFT JOIN usr u2 ON r.evaluator_id = u2.id
-                WHERE evaluator_id = ?
+                LEFT JOIN artefact_epos_descriptorset dset ON ie.descriptorset = dset.id
+                LEFT JOIN usr u1 ON r.inquirer = u1.id
+                LEFT JOIN usr u2 ON r.evaluator = u2.id
+                WHERE evaluator = ?
                 ORDER BY response_date DESC, inquiry_date DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             $requests = array();
@@ -180,12 +180,12 @@ class EvaluationRequest {
                        u.firstname AS evaluator_firstname,
                        u.lastname AS evaluator_lastname
                 FROM artefact_epos_evaluation_request r
-                LEFT JOIN artefact subject ON r.subject_id = subject.id
-                LEFT JOIN artefact_epos_evaluation e ON r.evaluation_id = e.artefact
+                LEFT JOIN artefact subject ON r.subject = subject.id
+                LEFT JOIN artefact_epos_evaluation e ON r.evaluator_evaluation = e.artefact
                 LEFT JOIN artefact_epos_evaluation ie ON r.inquirer_evaluation = ie.artefact
-                LEFT JOIN artefact_epos_descriptorset dset ON ie.descriptorset_id = dset.id
-                LEFT JOIN usr u ON r.evaluator_id = u.id
-                WHERE inquirer_id = ?
+                LEFT JOIN artefact_epos_descriptorset dset ON ie.descriptorset = dset.id
+                LEFT JOIN usr u ON r.evaluator = u.id
+                WHERE inquirer = ?
                 ORDER BY response_date DESC, inquiry_date DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             foreach ($records as $record) {
@@ -207,7 +207,7 @@ class EvaluationRequest {
         global $USER;
         global $descriptorset_ids, $artefact_subject_ids;
         $owner = $USER->get('id');
-        $sql = "SELECT a.id, a.title as descriptorset, b.id as subject_id, b.title as subject, e.descriptorset_id
+        $sql = "SELECT a.id, a.title as descriptorset, b.id as subject_id, b.title as subject, e.descriptorset
                 FROM artefact a, artefact b, artefact_epos_evaluation e
                 WHERE a.parent = b.id
                 AND a.id = e.artefact
@@ -224,7 +224,7 @@ class EvaluationRequest {
         $artefact_subject_ids = array();
         foreach ($data as $evaluation) {
             $evaluation_options[$evaluation->id] = "$evaluation->subject ($evaluation->descriptorset)";
-            $descriptorset_ids[$evaluation->id] = $evaluation->descriptorset_id;
+            $descriptorset_ids[$evaluation->id] = $evaluation->descriptorset;
             $artefact_subject_ids[$evaluation->id] = $evaluation->subject_id;
         }
         if (empty($evaluation_options)) {

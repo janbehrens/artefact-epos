@@ -41,7 +41,7 @@ $sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
         FROM artefact subject
         INNER JOIN artefact evaluation ON subject.id = evaluation.parent
         LEFT JOIN artefact_epos_evaluation e ON e.artefact = evaluation.id
-        LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset_id
+        LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset
         WHERE evaluation.owner = ?
             AND evaluation.artefacttype = 'evaluation'
             AND e.final = 0

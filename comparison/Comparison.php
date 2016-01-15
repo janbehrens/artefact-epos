@@ -98,7 +98,7 @@ class Comparison {
         $sql = "SELECT a.*, e.*, u.firstname, u.lastname FROM artefact a
                 LEFT JOIN artefact_epos_evaluation e ON a.id = e.artefact
                 LEFT JOIN usr u ON e.evaluator = u.id
-                WHERE e.descriptorset_id = ? and a.owner = ?";
+                WHERE e.descriptorset = ? and a.owner = ?";
         $evaluation_records = get_records_sql_array($sql, array($this->descriptorset->get_id(), $owner));
         $evaluations = array();
         foreach ($evaluation_records as $record) {
