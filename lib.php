@@ -611,16 +611,12 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $types = array(EVALUATION_ITEM_TYPE_DESCRIPTOR, EVALUATION_ITEM_TYPE_COMPLEVEL);
         $elements = array();
         // Add empty header cells so the "Goal?" header is in its place
-        $elements['header1'] = array(
+        $header = array(
                 'type' => 'html',
                 'title' => '',
                 'value' => ''
         );
-        $elements['header2'] = array(
-                'type' => 'html',
-                'title' => '',
-                'value' => ''
-        );
+        $elements['header1'] = $elements['header2'] = $elements['header3'] = $header;
         $elements['header_goal'] = array(
                 'type' => 'html',
                 'title' => '',
@@ -718,6 +714,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
     }
 
     private function form_evaluation_descriptor(&$elements, $descriptor, $ratings, $descriptorsetfile, $competence, $level) {
+        global $THEME;
         if (isset($this->items_by_descriptor_id[$descriptor->id])) {
             $item = $this->items_by_descriptor_id[$descriptor->id];
         }
@@ -727,6 +724,21 @@ class ArtefactTypeEvaluation extends ArtefactType {
             $item->goal = 0;
         }
         $index = "item_{$competence->id}_{$level->id}_" . EVALUATION_ITEM_TYPE_DESCRIPTOR . '_' . $descriptor->id;
+        $elements[$index . '_link'] = array(
+                'type' => 'html',
+                'title' => $descriptor->name,
+                'value' => ''
+        );
+        //link
+        $imgUrl = $THEME->get_url('images/help.png');;
+        if ($descriptor->link != '') {
+            //check if http(s):// is present in link
+            if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
+                $descriptor->link = "../example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
+            }
+            $elements[$index . '_link']['value'] = "<a href=\"$descriptor->link\" onclick=\"openPopup('$descriptor->link'); return false;\">"
+                    . "<img src=\"$imgUrl\" /></a>";
+        }
         $elements[$index] = array(
                 'type' => 'radio',
                 'title' => $descriptor->name,
@@ -740,17 +752,6 @@ class ArtefactTypeEvaluation extends ArtefactType {
                     'title' => $descriptor->name,
                     'defaultvalue' => $item->goal,
             );
-        }
-        //link
-        if ($descriptor->link != '') {
-            //check if http(s):// is present in link
-            if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
-                $descriptor->link = "../example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
-            }
-            $elements[$index]['title'] .=
-                    ' <a href="' . $descriptor->link . '"  onclick="openPopup(\''
-                    . $descriptor->link . '\'); return false;">('
-                    . get_string('exampletask', 'artefact.epos') . ')</a>';
         }
     }
 
