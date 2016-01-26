@@ -496,8 +496,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
     /**
      * Calculate the results in an array of competences of levels.
      */
-    public function results($descriptorset) {
-//         $descriptorset = $this->get_descriptorset();
+    public function results() {
+        $descriptorset = $this->get_descriptorset();
         $customcompetences = $this->get_customcompetences();
         $customgoals = array();
         foreach ($customcompetences as $competence) {
@@ -512,7 +512,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
             'max' => 0,
             'evaluation_sums' => array_fill(0, $max_rating+1, 0)
         );
-        foreach($this->items as $item) {
+        foreach ($this->items as $item) {
             if ($item->type == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
                 $descriptor = $descriptorset[$item->descriptor];
                 $competence_id = $descriptor->competence;
@@ -547,7 +547,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 $competence['name'] = $this->customcompetences[$competence_id]->get('title');
             }
             else {
-                $competence['name'] = $descriptorset->competences[$competence_id]->name;
+                if (is_object($descriptorset->competences[$competence_id])) {
+                    $competence['name'] = $descriptorset->competences[$competence_id]->name;
+                }
             }
         }
         // sort results alphabetically with custom competences at the very buttom
@@ -575,16 +577,14 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     /**
      * Get the forms and JS necessary to display the self-evaluation.
-     * @param array $alterform An array containing elements that should override
-     * the values of the generated forms.
      * @return array ($html, $includejs)
      */
-    public function render_evaluation($alterform = array()) {
-        $evaluationforms = $this->form_evaluation_all_types($alterform);
+    public function render_evaluation() {
+        $evaluationform = $this->form_evaluation_all_types();
         $smarty = smarty();
         $smarty->assign('id', $this->get('id'));
-        $smarty->assign('evaluationforms', $evaluationforms);
-        $smarty->assign('evaltable', $this->render_evaluation_table());
+        $smarty->assign('evaluationform', $evaluationform);
+        $smarty->assign('evaltable', $this->render_evaluation_table(true));
         $includejs = array(
             'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js',
             'artefact/epos/js/evaluation.js',
@@ -598,11 +598,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     /**
      * Build all forms for all competences > levels > types
-     * @param unknown $alterform
-     * @return Ambigous <multitype:, string>
      */
-    private function form_evaluation_all_types($alterform=array()) {
-        $evaluationforms = array();
+    private function form_evaluation_all_types() {
         $descriptorset = $this->get_descriptorset();
         $descriptorsetfile = substr($descriptorset->file, 0, count($descriptorset->file) - 5);
         $ratings = array();
@@ -610,106 +607,58 @@ class ArtefactTypeEvaluation extends ArtefactType {
             $ratings[] = $rating->name;
         }
         $types = array(EVALUATION_ITEM_TYPE_DESCRIPTOR, EVALUATION_ITEM_TYPE_COMPLEVEL);
-        foreach ($descriptorset->competences as $competence) {
-            foreach ($descriptorset->levels as $level) {
-                foreach ($types as $type) {
-                    $evaluationform = $this->form_evaluation($competence, $level, $type, $ratings, $descriptorsetfile, $alterform);
-                    $form_name = "evaluationform_{$competence->id}_{$level->id}_{$type}";
-                    $compleveltype = array();
-                    $compleveltype['form'] = $evaluationform;
-                    $compleveltype['name'] = $form_name;
-                    $compleveltype['other_types'] = self::other_types($type);
-                    $evaluationforms[$competence->id][$level->name]['forms'][$type] = $compleveltype;
-                }
-                $evaluationforms[$competence->id][$level->name]['competence'] = $competence;
-                $evaluationforms[$competence->id][$level->name]['level'] = $level;
-                $evaluationforms[$competence->id][$level->name]['title'] = get_string('evaluationformtitle', 'artefact.epos', $competence->name, $level->name);
-            }
-        }
-        foreach ($this->get_customcompetences() as $competence_id => $competence) {
-            $level = (object) array('id' => 0);
-            $type = EVALUATION_ITEM_TYPE_CUSTOM_GOAL;
-            $evaluationform = $this->form_evaluation($competence, $level, $type, $ratings, $descriptorsetfile, $alterform);
-            $form_name = "evaluationform_{$competence_id}_0_{$type}";
-            $compleveltype = array();
-            $compleveltype['form'] = $evaluationform;
-            $compleveltype['name'] = $form_name;
-            $compleveltype['other_types'] = self::other_types($type);
-            $evaluationforms[$competence_id]['customgoals']['forms'][$type] = $compleveltype;
-            $evaluationforms[$competence_id]['customgoals']['title'] = $competence->get('title');
-        }
-        return $evaluationforms;
-    }
-
-    /**
-     * Get a form for evaluation.
-     *
-     * @param array $alterform
-     *            An array containing elements that should override
-     *            the values of the generated forms.
-     * @return array $forms
-     */
-    private function form_evaluation($competence, $level, $type, $ratings, $descriptorsetfile, $alterform=array()) {
         $elements = array();
         // Add empty header cells so the "Goal?" header is in its place
-        $elements['header1'] = array(
+        $header = array(
                 'type' => 'html',
-                'title' => ' ',
+                'title' => '',
                 'value' => ''
         );
-        $elements['header2'] = array(
+        $elements['header1'] = $elements['header2'] = $elements['header3'] = $header;
+        $elements['header_goal'] = array(
                 'type' => 'html',
-                'title' => ' ',
-                'value' => ''
+                'title' => '',
+                'value' => get_string('goal', 'artefact.epos') . '?'
         );
-        switch ($type) {
-            case EVALUATION_ITEM_TYPE_DESCRIPTOR:
+        foreach ($descriptorset->competences as $competence) {
+            foreach ($descriptorset->levels as $level) {
+                $elements["item_{$competence->id}_{$level->id}_overall"] = array(
+                        'type' => 'checkbox',
+                        'title' => "Overall $competence->id $level->id",
+                        'defaultvalue' => false
+                );
                 $this->form_evaluation_descriptors($elements, $ratings, $descriptorsetfile, $competence, $level);
-                $competence_id = $competence->id;
-                break;
-            case EVALUATION_ITEM_TYPE_COMPLEVEL:
                 $this->form_evaluation_complevel($elements, $ratings, $competence, $level);
-                $competence_id = $competence->id;
-                break;
-            case EVALUATION_ITEM_TYPE_CUSTOM_GOAL:
-                $this->form_evaluation_customgoals($elements, $ratings, $competence);
-                $competence_id = $competence->get('id');
-                break;
+            }
         }
-        $elements['type'] = array(
+        foreach ($this->get_customcompetences() as $competence) {
+            $elements["item_{$competence->id}_0_overall"] = array(
+                    'type' => 'hidden',
+                    'title' => "Overall $competence->id 0",
+                    'value' => false
+            );
+            $this->form_evaluation_customgoals($elements, $ratings, $competence);
+        }
+        $elements['id'] = array(
                 'type' => 'hidden',
-                'value' => $type
-        );
-        $elements['competence'] = array(
-                'type' => 'hidden',
-                'value' => $competence_id
-        );
-        $elements['level'] = array(
-                'type' => 'hidden',
-                'value' => $level->id
+                'value' => $this->id
         );
         $elements['submit'] = array(
                 'type' => 'submit',
-                'title' => '',
+                'title' => ' ',
                 'value' => get_string('save', 'artefact.epos')
         );
         $evaluationform = array(
-                'name' => "evaluationform_{$competence_id}_{$level->id}_{$type}",
+                'name' => "evaluationform",
                 'plugintype' => 'artefact',
                 'pluginname' => 'epos',
                 'jsform' => true,
                 'renderer' => 'multicolumntable',
                 'elements' => $elements,
                 'elementclasses' => true,
-                'successcallback' => array(
-                        'ArtefactTypeEvaluation',
-                        'submit_evaluationform'
-                ),
+                'successcallback' => array('ArtefactTypeEvaluation', 'submit_evaluationform'),
                 'jssuccesscallback' => 'evaluationSaveCallback'
         );
-        foreach ($alterform as $key => $value) {
-            $evaluationform[$key] = $value;
-        }
         return pieform($evaluationform);
     }
 
@@ -722,16 +671,19 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     private function form_evaluation_complevel(&$elements, $ratings, $competence, $level) {
         $key = "$competence->id;$level->id";
-        if (isset($this->items_by_target_id[$key])) {
+        if (array_key_exists($key, $this->items_by_target_id)) {
             $item = $this->items_by_target_id[$key];
             $value = $item->value;
+            // Override the "is overall evaluation" setting (default: false)
+            $elements["item_{$competence->id}_{$level->id}_overall"]['defaultvalue'] = true;
         }
         else {
             $value = 0;
         }
-        $elements["item_{$competence->id}_{$level->id}"] = array(
+        $index = "item_{$competence->id}_{$level->id}_" . EVALUATION_ITEM_TYPE_COMPLEVEL;
+        $elements[$index] = array(
                 'type' => 'radio',
-                'title' => get_string('overallrating', 'artefact.epos'),
+                'title' => get_string('overallrating', 'artefact.epos') . " $competence->name – $level->name",
                 'options' => $ratings,
                 'defaultvalue' => $value,
         );
@@ -747,18 +699,57 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     private function form_evaluation_descriptors(&$elements, $ratings, $descriptorsetfile, $competence, $level) {
         $descriptorset = $this->get_descriptorset();
-        $elements['header_goal'] = array(
-                'type' => 'html',
-                'title' => ' ',
-                'value' => get_string('goal', 'artefact.epos') . '?'
-        );
         $goals = false;
         foreach ($descriptorset->get_descriptors($competence->id, $level->id) as $descriptor) {
-            if ($descriptor->goal_available) $goals = true;
-            $this->form_evaluation_descriptor($elements, $descriptor, $ratings, $descriptorsetfile);
+            if ($descriptor->goal_available) {
+                $goals = true;
+            }
+            $this->form_evaluation_descriptor($elements, $descriptor, $ratings, $descriptorsetfile, $competence, $level);
         }
         if (!$goals) {
             unset($elements['header_goal']);
+        }
+    }
+
+    private function form_evaluation_descriptor(&$elements, $descriptor, $ratings, $descriptorsetfile, $competence, $level) {
+        global $THEME;
+        if (isset($this->items_by_descriptor_id[$descriptor->id])) {
+            $item = $this->items_by_descriptor_id[$descriptor->id];
+        }
+        else {
+            $item = new stdClass();
+            $item->value = 0;
+            $item->goal = 0;
+        }
+        $index = "item_{$competence->id}_{$level->id}_" . EVALUATION_ITEM_TYPE_DESCRIPTOR . '_' . $descriptor->id;
+        $elements[$index . '_link'] = array(
+                'type' => 'html',
+                'title' => $descriptor->name,
+                'value' => ''
+        );
+        //link
+        $imgUrl = $THEME->get_url('images/help.png');;
+        if ($descriptor->link != '') {
+            //check if http(s):// is present in link
+            if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
+                $descriptor->link = "../example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
+            }
+            $elements[$index . '_link']['value'] = "<a href=\"$descriptor->link\" onclick=\"openPopup('$descriptor->link'); return false;\">"
+                    . "<img src=\"$imgUrl\" /></a>";
+        }
+        $elements[$index] = array(
+                'type' => 'radio',
+                'title' => $descriptor->name,
+                'options' => $ratings,
+                'defaultvalue' => $item->value,
+        );
+        //goal checkbox
+        if ($descriptor->goal_available) {
+            $elements[$index . '_goal'] = array(
+                    'type' => 'checkbox',
+                    'title' => $descriptor->name,
+                    'defaultvalue' => $item->goal,
+            );
         }
     }
 
@@ -772,12 +763,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     private function form_evaluation_customgoals(&$elements, $ratings, $customcompetence) {
         global $THEME;
-        $elements['header_goal'] = array(
-                'type' => 'html',
-                'title' => ' ',
-                'value' => get_string('goal', 'artefact.epos') . '?'
-        );
-        foreach($customcompetence->get_customgoals() as $goal) {
+        foreach ($customcompetence->get_customgoals() as $goal) {
             $key = (string)$goal->get('id');
             if (isset($this->items_by_target_id[$key])) {
                 $item = $this->items_by_target_id[$key];
@@ -792,19 +778,20 @@ class ArtefactTypeEvaluation extends ArtefactType {
             $deleteCustomgoal = get_string('delete');
             $editbuttonurl = $THEME->get_url('images/btn_edit.png');
             $deletebuttonurl = $THEME->get_url('images/btn_deleteremove.png');
+            $index = "item_{$customcompetence->id}_0_" . EVALUATION_ITEM_TYPE_CUSTOM_GOAL . "_$goal_id";
 
-            $elements['customgoal_' . $goal_id] = array(
+            $elements[$index] = array(
                     'type' => 'radio',
                     'title' => $title,
                     'options' => $ratings,
                     'defaultvalue' => $value,
             );
-            $elements['customgoal_' . $goal_id . '_goal'] = array(
+            $elements[$index . '_goal'] = array(
     				'type' => 'checkbox',
     				'title' => $title,
     				'defaultvalue' => $item->goal,
     		);
-            $elements['customgoal_'. $goal_id . '_actions'] = array(
+            $elements[$index . '_actions'] = array(
                     'type' => 'html',
                     'title' => $title,
                     'value' => <<< EOL
@@ -818,53 +805,14 @@ EOL
         }
     }
 
-    private function form_evaluation_descriptor(&$elements, $descriptor, $ratings, $descriptorsetfile) {
-        if (isset($this->items_by_descriptor_id[$descriptor->id])) {
-            $item = $this->items_by_descriptor_id[$descriptor->id];
-        }
-        else {
-            $item = new stdClass();
-            $item->value = 0;
-            $item->goal = 0;
-        }
-    	$elements['item_' . $descriptor->id] = array(
-    			'type' => 'radio',
-    			'title' => $descriptor->name,
-    			'options' => $ratings,
-    			'defaultvalue' => $item->value,
-    	);
-    	//goal checkbox
-    	if ($descriptor->goal_available) {
-    		$elements['item_' . $descriptor->id . '_goal'] = array(
-    				'type' => 'checkbox',
-    				'title' => $descriptor->name,
-    				'defaultvalue' => $item->goal,
-    		);
-    	}
-    	//link
-    	if ($descriptor->link != '') {
-    		//check if http(s):// is present in link
-    		if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
-    			$descriptor->link = "../example.php?d=" . $descriptorsetfile . "&l=" . $descriptor->link;
-    		}
-    		$elements['item_' . $descriptor->id]['title'] .=
-    		                    ' <a href="' . $descriptor->link . '"  onclick="openPopup(\''
-    		      		      . $descriptor->link . '\'); return false;">('
-    		      		      . get_string('exampletask', 'artefact.epos') . ')</a>';
-    	}
-		if ($descriptor->goal_available) {
-			$elements['item_' . $descriptor->id . '_goal']['title'] = $elements['item_' . $descriptor->id]['title'];
-		}
-    }
-
     /**
      * Render the HTML table for this evaluation.
      * @param string $interactive Whether javascript links should be generated that toggle forms
      * @return string The HTML of the table
      */
-    public function render_evaluation_table($interactive=true) {
+    public function render_evaluation_table($interactive = true) {
         $descriptorset = $this->get_descriptorset();
-        $results = $this->results($descriptorset);
+        $results = $this->results();
 
         $column_titles = array_map(function ($item) {
         	// If column labels contain a colon, return only the part before it (useful in cases where competence level names are very long)
@@ -886,7 +834,7 @@ EOL
         );
         $levelcount = count($descriptorset->levels);
         foreach ($descriptorset->levels as $level) {
-            $column_definitions []= function($row) use ($level, $interactive, $levelcount) {
+            $column_definitions []= function ($row) use ($level, $levelcount, $interactive) {
                 if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                     $level_id = 0;
                 }
@@ -905,7 +853,7 @@ EOL
                         $type = $row['levels'][$level_id]['type'];
                         $name = $row['name'];
                         $cell['properties'] = array(
-                                'onclick' => "toggleEvaluationForm($competence_id, $level_id, $type, '$name')"
+                                'onclick' => "toggleEvaluationForm($competence_id, $level_id, $type, '$name', '$level->name')"
                         );
                     }
                     $classes []= "interactive";
@@ -929,92 +877,102 @@ EOL
      * This writes changed evaluation items to the database.
      */
     public static function submit_evaluationform(Pieform $form, $values) {
-        try {
-            global $id;
-            $type = assert_integer($values['type']);
-            $competence = assert_integer($values['competence']);
-            $level = assert_integer($values['level']);
-            $data = new stdClass();
-            $data->evaluation = $id;
-            $data->type = $type;
-            $where = new stdClass();
-            $where->evaluation = $id;
-            $where->type = $type;
+        $evaluation = array();
+        $id = $values['id'];
 
+        foreach ($values as $key => $value) {
+            $parts = explode('_', $key);
+
+            if (preg_match('/^item_[0-9]+_[0-9]+_.+$/', $key)) {
+                $complevel = "$parts[1];$parts[2]";
+                if (!isset($evaluation[$complevel])) {
+                    $evaluation[$complevel] = array();
+                }
+                // e.g. "item_5_6_typeused"
+                if (preg_match('/^item_[0-9]+_[0-9]+_overall$/', $key)) {
+                    $evaluation[$complevel]['overall'] = $value;
+                }
+                if (preg_match('/^item_[0-9]+_[0-9]+_[0-9]_.+$/', $key)) {
+                    $descriptor = $parts[4];
+                    if (!isset($evaluation[$complevel]['descriptors'])) {
+                        $evaluation[$complevel]['descriptors'] = array();
+                        $evaluation[$complevel]['descriptors'][$descriptor] = array();
+                    }
+                    if (!isset($evaluation[$complevel]['type'])) {
+                        $evaluation[$complevel]['type'] = intval($parts[3]);
+                    }
+                    // e.g. "item_5_6_0_60"
+                    if (preg_match('/^item_[0-9]+_[0-9]+_[0-9]_[0-9]+$/', $key)) {
+                        $evaluation[$complevel]['descriptors'][$descriptor]['value'] = intval($value);
+                    }
+                    // e.g. "item_5_6_0_60_goal"
+                    else if (preg_match('/^item_[0-9]+_[0-9]+_[0-9]_[0-9]+_goal$/', $key)) {
+                        $evaluation[$complevel]['descriptors'][$descriptor]['goal'] = $value ? 1 : 0;
+                    }
+                }
+                // e.g. "item_5_6_1"
+                if (preg_match('/^item_[0-9]+_[0-9]+_1$/', $key)) {
+                    $evaluation[$complevel]['value'] = intval($value);
+                }
+            }
+        }
+
+        try {
             db_begin();
-            foreach (self::other_types($type) as $othertype => $title) {
-                if ($othertype == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+            foreach ($evaluation as $complevel => $compleveldata) {
+                if (!array_key_exists('type', $compleveldata) || !array_key_exists('overall', $compleveldata)) {
+                    continue;
+                }
+                list($competence, $level) = explode(';', $complevel);
+                $type = $compleveldata['type'];
+                $isOverall = $compleveldata['overall'];
+
+                $data = new stdClass();
+                $data->evaluation = $id;
+                $where = new stdClass();
+                $where->evaluation = $id;
+
+                // Delete descriptor values when overall evaluation is used, and vice versa
+                if ($isOverall) {
                     $sql = "DELETE FROM artefact_epos_evaluation_item ei
                             USING artefact_epos_descriptor d
                             WHERE ei.descriptor = d.id
-                                AND ei.evaluation = ? AND ei.type = ? AND d.competence = ? AND d.level = ?";
+                            AND ei.evaluation = ? AND ei.type = ? AND d.competence = ? AND d.level = ?";
                     if (is_mysql()) {
                         $sql = "DELETE FROM ei
                                 USING artefact_epos_evaluation_item ei
-                                    INNER JOIN artefact_epos_descriptor d ON ei.descriptor = d.id
-                                WHERE ei.evaluation = ?
-                                    AND ei.type = ?
-                                    AND d.competence = ?
-                                    AND d.level = ?";
+                                INNER JOIN artefact_epos_descriptor d ON ei.descriptor = d.id
+                                WHERE ei.evaluation = ? AND ei.type = ? AND d.competence = ? AND d.level = ?";
                     }
-                    execute_sql($sql, array($id, $othertype, $competence, $level));
+                    execute_sql($sql, array($id, EVALUATION_ITEM_TYPE_DESCRIPTOR, $competence, $level));
+
+                    $where->target_key = $complevel;
+                    $data->target_key = $complevel;
+                    $data->type = EVALUATION_ITEM_TYPE_COMPLEVEL;
+                    $data->value = $compleveldata['value'];
+                    ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
                 }
-                else if ($othertype == EVALUATION_ITEM_TYPE_COMPLEVEL) {
+                else {
                     delete_records('artefact_epos_evaluation_item',
                         'evaluation', $id,
-                        'type', $othertype,
-                        'target_key', "$competence;$level");
-                }
-            }
+                        'type', EVALUATION_ITEM_TYPE_COMPLEVEL,
+                        'target_key', $complevel);
 
-            if ($type == EVALUATION_ITEM_TYPE_DESCRIPTOR) {
-                $item_pattern = '/^item_(\d+)$/';
-                foreach ($values as $name => $value) {
-                    if (preg_match($item_pattern, $name, $parts)) {
-                        $data->descriptor = $parts[1];
-                        $data->value = $value;
-                        if (isset($values[$name . '_goal'])) {
-                            $data->goal = $values[$name . '_goal'] ? 1 : 0;
+                    foreach ($compleveldata['descriptors'] as $descriptor => $descriptordata) {
+                        if ($type === EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+                            $where->descriptor = $descriptor;
+                            $data->descriptor = $descriptor;
                         }
-                        else {
-                            unset($data->goal);
+                        else if ($type === EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+                            $where->target_key = $descriptor;
+                            $data->target_key = $descriptor;
                         }
-                        $where->descriptor = $data->descriptor;
+                        $data->type = $type;
+                        $data->value = $descriptordata['value'];
+                        $data->goal = $descriptordata['goal'];
                         ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
                     }
                 }
-            }
-            else if ($type == EVALUATION_ITEM_TYPE_COMPLEVEL) {
-                $where->target_key = "$competence;$level";
-                $data->target_key = "$competence;$level";
-                $data->value = assert_integer($values["item_$competence" . "_$level"]);
-                ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
-            }
-            else if ($type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
-                $item_pattern = '/^customgoal_(\d+)$/';
-                foreach ($values as $name => $value) {
-                    if (preg_match($item_pattern, $name, $parts)) {
-                        $data->value = $value;
-                        if (isset($values[$name . '_goal'])) {
-                            $data->goal = $values[$name . '_goal'] ? 1 : 0;
-                        }
-                        else {
-                            unset($data->goal);
-                        }
-                        $where->target_key = $parts[1];
-                        ensure_record_exists('artefact_epos_evaluation_item', $where, $data);
-                    }
-                }
-		        //update artefact table for updated custom goals
-                /*foreach ($values as $name => $value) {
-	                if (preg_match($item_pattern, $name, $parts)) {
-		                $data = new stdClass();
-		                $data->description = $values[$name . '_description'];
-		                $where = new stdClass();
-		                $where->id = $parts[1];
-		                ensure_record_exists('artefact', $where, $data);
-	                }
-                }*/
             }
             $evaluation = new ArtefactTypeEvaluation($id);
             $evaluation->set('mtime', time());

@@ -31,10 +31,6 @@ define('JSON', 1);
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'epos');
 
-$limit = param_integer('limit', null);
-$offset = param_integer('offset', 0);
-$view = param_integer('view', 0);
-
 $owner = $USER->get('id');
 
 $sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
@@ -46,10 +42,6 @@ $sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
             AND evaluation.artefacttype = 'evaluation'
             AND e.final = 0
         ORDER BY subject.title";
-if ($limit) {
-    $sql .= " LIMIT $limit";
-}
-$sql .= " OFFSET $offset";
 
 if (!$data = get_records_sql_array($sql, array($owner))) {
     $data = array();
@@ -57,8 +49,8 @@ if (!$data = get_records_sql_array($sql, array($owner))) {
 
 echo json_encode(array(
     'data' => $data,
-    'limit' => $limit,
-    'offset' => $offset,
+    'limit' => -1,
+    'offset' => 0,
     'count' => count($data)
 ));
 
