@@ -34,23 +34,12 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 $id = param_integer('evaluation_id');
 
 $evaluationartefact = artefact_instance_from_id($id);
-$languageartefact = $evaluationartefact->get_parent_instance();
 
-if ($languageartefact->get('owner') != $USER->get('id')) {
+if ($evaluationartefact->get('owner') != $USER->get('id')) {
     throw new AccessDeniedException(get_string('notartefactowner', 'error'));
 }
 
 $evaluationartefact->delete();
-
-//delete language artefact if there is no evaluation left
-$count = $languageartefact->count_children();
-if (empty($count)) {
-    $languageartefact->delete();
-}
-else {
-    $languageartefact->set('mtime', time());
-    $languageartefact->commit();
-}
 
 //reply
 json_reply(null, get_string('deletedlanguage', 'artefact.epos'));

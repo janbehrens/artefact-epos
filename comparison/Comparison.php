@@ -123,7 +123,7 @@ class Comparison {
             $evaluation_item = new stdClass();
             $evaluation_item->id = $evaluation->get('id');
             $evaluation_item->final = $evaluation->final;
-            $evaluation_item->title = $evaluation->get_parent_instance()->get('title') . " (". $evaluation->get('title') . ")";
+            $evaluation_item->title = $evaluation->display_title();
             if ($evaluation->final) {
                 $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/display.php?id=$evaluation_item->id";
             }
@@ -180,7 +180,7 @@ class Comparison {
                     . get_string('by', 'artefact.epos') . ' ' . $evaluator_name . ')';
                 }
                 else {
-                    $item->title = $evaluation->get_parent_instance()->get('title') . ' (' . get_string('current', 'artefact.epos') . ')';
+                    $item->title = $evaluation->get('title') . ' (' . get_string('current', 'artefact.epos') . ')';
                 }
                 $data []= $item;
             }
@@ -199,7 +199,7 @@ class Comparison {
         $colors = array();
         $this->color_reset();
         foreach ($this->evaluations as $evaluation) {
-            foreach ($evaluation->results() as $competence_id => $row) {
+            foreach ($evaluation->get_results() as $competence_id => $row) {
                 foreach ($row['levels'] as $level_id => $complevel) {
                     if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
                         $results[$row['name']][$level_id][$evaluation->get('id')] = $complevel;

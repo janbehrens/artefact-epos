@@ -35,39 +35,24 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'internal');
 safe_require('artefact', 'epos');
 
-$owner = $USER->get('id');
+$id = $_GET['id'];
 
-//get user's evaluations
-$sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
-    FROM artefact a, artefact b
-    WHERE a.parent = b.id AND a.owner = ? AND a.artefacttype = ?";
-$params = array($owner, 'evaluation');
-
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $a = new ArtefactTypeEvaluation($id);
-    if (!$USER->can_view_artefact($a)) {
-        throw new AccessDeniedException(get_string('notownerofevaluation', 'artefact.epos'));
-    }
-    $sql .= " AND a.id = ?";
-    $params []= $id;
-}
-if (!$evaluations = get_records_sql_array($sql, $params)) {
-    throw new NotFoundException(get_string('noevaluationsforuser', 'artefact.epos'));
-}
-// select first evaluation if id is not given
 if (!isset($id)) {
-    $id = $evaluations[0]->id;
-    $a = new ArtefactTypeEvaluation($id);
+    throw new ParameterException();
+}
+$evaluation = artefact_instance_from_id($id);
+
+if (!$USER->can_view_artefact($evaluation)) {
+    throw new AccessDeniedException(get_string('notownerofevaluation', 'artefact.epos'));
 }
 
-$descriptorset = $a->get_descriptorset();
+$descriptorset = $evaluation->get_descriptorset();
 $ratings = array_values(array_map(function($item) { return $item->name; }, $descriptorset->ratings));
 
 $smarty = smarty();
-$smarty->assign('results', $a->results());
+$smarty->assign('title', $evaluation->display_title());
+$smarty->assign('results', $evaluation->get_results());
 $smarty->assign('levels', $descriptorset->levels);
 $smarty->assign('ratings', $ratings);
-$smarty->assign('subject', $a->get_parent_instance()->get_name());
 $smarty->assign('PAGEHEADING', get_string('selfevaluationprintout', 'artefact.epos'));
 $smarty->display('artefact:epos:evaluation-print.tpl');

@@ -34,13 +34,12 @@ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 define('TITLE', get_string('deleteevaluation', 'artefact.epos'));
 safe_require('artefact', 'epos');
 
-$evaluation_id = param_integer('id', -1);
-$evaluation = new ArtefactTypeEvaluation($evaluation_id);
+$id = param_integer('id', -1);
+$evaluation = artefact_instance_from_id($id);
 $evaluation->check_permission();
-$subject = $evaluation->get_parent_instance();
 
-$question = get_string('confirmdeleteevaluation', 'artefact.epos', '"' . $evaluation->get('title') . ' (' . $subject->get('title'). ')"');
-$confirm = ArtefactTypeEvaluation::form_delete_evaluation($evaluation_id);
+$question = get_string('confirmdeleteevaluation', 'artefact.epos', '"' . $evaluation->get('title') . '"');
+$confirm = ArtefactTypeEvaluation::form_delete_evaluation($id);
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', get_string('deleteevaluation', 'artefact.epos'));

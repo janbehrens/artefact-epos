@@ -45,6 +45,6 @@ $evaluationtable = $evaluation->render_evaluation_table(false);
 $smarty = smarty();
 $smarty->assign('MENUITEM', MENUITEM);
 $smarty->assign('id', $id);
-$smarty->assign('heading', $subject->get('title') . ' (' . $evaluation->get('title') . ')');
+$smarty->assign('heading', $evaluation->display_title());
 $smarty->assign('evaluationtable', $evaluationtable);
 $smarty->display('artefact:epos:evaluation-display.tpl');

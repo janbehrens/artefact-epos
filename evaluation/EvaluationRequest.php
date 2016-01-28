@@ -29,21 +29,15 @@ class EvaluationRequest {
 
     public $id;
 
-    public $inquirer_id;
-
     public $inquirer;
 
     public $inquirer_evaluation;
 
     public $evaluator;
 
-    public $evaluator_id;
+    public $evaluator_evaluation;
 
-    public $subject_id;
-
-    public $descriptorset_id;
-
-    public $evaluation_id;
+    public $descriptorset;
 
     public $inquiry_date;
 
@@ -53,7 +47,11 @@ class EvaluationRequest {
 
     public $response_message;
 
-    public function __construct($id=0, $data=null) {
+    public $title;
+
+    public $final;
+
+    public function __construct($id = 0, $data = null) {
         if (!empty($id)) {
             if (empty($data)) {
                 $data = get_record('artefact_epos_evaluation_request', 'id', $id);
@@ -80,12 +78,11 @@ class EvaluationRequest {
         }
         $data = (object)array(
                 'id' => $this->id,
-                'inquirer' => $this->inquirer_id,
+                'inquirer' => $this->inquirer,
                 'inquirer_evaluation' => $this->inquirer_evaluation,
-                'evaluator' => $this->evaluator_id,
-                'evaluator_evaluation' => $this->evaluation_id,
-                'subject' => $this->subject_id,
-                'descriptorset' => $this->descriptorset_id,
+                'evaluator' => $this->evaluator,
+                'evaluator_evaluation' => $this->evaluator_evaluation,
+                'descriptorset' => $this->descriptorset,
                 'inquiry_message' => $this->inquiry_message,
                 'response_message' => $this->response_message
         );
@@ -120,42 +117,29 @@ class EvaluationRequest {
      */
     public static function get_requests_for_evaluator() {
         global $USER;
-        $sql = "SELECT r.*,
-                       e.final,
-                       subject.title AS subject,
+        $sql = "SELECT r.*, e.final, a.title,
                        dset.name AS descriptorset,
-                       u1.username AS inquirer_username,
                        u1.firstname AS inquirer_firstname,
                        u1.lastname AS inquirer_lastname,
-                       u2.username AS evaluator_username,
                        u2.firstname AS evaluator_firstname,
                        u2.lastname AS evaluator_lastname
                 FROM artefact_epos_evaluation_request r
-                LEFT JOIN artefact subject ON r.subject = subject.id
                 LEFT JOIN artefact_epos_evaluation e ON r.evaluator_evaluation = e.artefact
                 LEFT JOIN artefact_epos_evaluation ie ON r.inquirer_evaluation = ie.artefact
+                LEFT JOIN artefact a ON a.id = ie.artefact
                 LEFT JOIN artefact_epos_descriptorset dset ON ie.descriptorset = dset.id
                 LEFT JOIN usr u1 ON r.inquirer = u1.id
                 LEFT JOIN usr u2 ON r.evaluator = u2.id
-                WHERE evaluator = ?
+                WHERE r.evaluator = ?
                 ORDER BY response_date DESC, inquiry_date DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             $requests = array();
             foreach ($records as $record) {
-                $inquirer = array('username' => $record->inquirer_username,
-                                  'firstname' => $record->inquirer_firstname,
-                                  'lastname' => $record->inquirer_lastname);
-                $evaluator = array('username' => $record->evaluator_username,
-                                  'firstname' => $record->evaluator_firstname,
-                                  'lastname' => $record->evaluator_lastname);
                 $request = new self(0, $record);
-                $request->inquirer = $inquirer;
-                $request->inquirer_evaluation = $record->inquirer_evaluation;
-                $request->evaluator = $evaluator;
-                $request->subject = $record->subject;
-                $request->descriptorset = $record->descriptorset;
-                $request->descriptorset = $record->descriptorset;
-                $request->final = $record->final;
+                $request->inquirerfirstname = $record->inquirer_firstname;
+                $request->inquirerlastname = $record->inquirer_lastname;
+                $request->evaluatorfirstname = $record->evaluator_firstname;
+                $request->evaluatorlastname = $record->evaluator_lastname;
                 $requests []= $request;
             }
             return $requests;
@@ -172,60 +156,45 @@ class EvaluationRequest {
     public static function get_requests_for_inquirer() {
         global $USER;
         $requests = array();
-        $sql = "SELECT r.*,
-                       e.final,
-                       subject.title AS subject,
+        $sql = "SELECT r.*, e.final, a.title,
                        dset.name AS descriptorset,
-                       u.username AS evaluator_username,
                        u.firstname AS evaluator_firstname,
                        u.lastname AS evaluator_lastname
                 FROM artefact_epos_evaluation_request r
-                LEFT JOIN artefact subject ON r.subject = subject.id
                 LEFT JOIN artefact_epos_evaluation e ON r.evaluator_evaluation = e.artefact
                 LEFT JOIN artefact_epos_evaluation ie ON r.inquirer_evaluation = ie.artefact
+                LEFT JOIN artefact a ON a.id = ie.artefact
                 LEFT JOIN artefact_epos_descriptorset dset ON ie.descriptorset = dset.id
                 LEFT JOIN usr u ON r.evaluator = u.id
-                WHERE inquirer = ?
+                WHERE r.inquirer = ?
                 ORDER BY response_date DESC, inquiry_date DESC";
         if ($records = get_records_sql_array($sql, array($USER->get('id')))) {
             foreach ($records as $record) {
-                $evaluator = array('username' => $record->evaluator_username,
-                                  'firstname' => $record->evaluator_firstname,
-                                  'lastname' => $record->evaluator_lastname);
                 $request = new self(0, $record);
-                $request->evaluator = $evaluator;
-                $request->subject = $record->subject;
-                $request->descriptorset = $record->descriptorset;
-                $request->final = $record->final;
+                $request->evaluatorfirstname = $record->evaluator_firstname;
+                $request->evaluatorlastname = $record->evaluator_lastname;
                 $requests []= $request;
             }
         }
         return $requests;
     }
 
-    public static function form_create_evaluation_request($subject=null, $descriptorset=null) {
+    public static function form_create_evaluation_request($subject = null, $descriptorset = null) {
         global $USER;
-        global $descriptorset_ids, $artefact_subject_ids;
+        global $descriptorset_ids;
         $owner = $USER->get('id');
-        $sql = "SELECT a.id, a.title as descriptorset, b.id as subject_id, b.title as subject, e.descriptorset
-                FROM artefact a, artefact b, artefact_epos_evaluation e
-                WHERE a.parent = b.id
-                AND a.id = e.artefact
-                AND a.owner = ?
-                AND a.artefacttype = 'evaluation'
-                AND e.final = 0
-                ORDER BY subject";
-
+        $sql = "SELECT a.*, e.*
+                FROM artefact a
+                INNER JOIN artefact_epos_evaluation e ON a.id = e.artefact
+                WHERE a.artefacttype = 'evaluation' AND a.owner = ? AND e.final = 0";
         if (!$data = get_records_sql_array($sql, array($owner))) {
             $data = array();
         }
         $evaluation_options = array();
         $descriptorset_ids = array();
-        $artefact_subject_ids = array();
         foreach ($data as $evaluation) {
-            $evaluation_options[$evaluation->id] = "$evaluation->subject ($evaluation->descriptorset)";
+            $evaluation_options[$evaluation->id] = "$evaluation->title ($evaluation->description)";
             $descriptorset_ids[$evaluation->id] = $evaluation->descriptorset;
-            $artefact_subject_ids[$evaluation->id] = $evaluation->subject_id;
         }
         if (empty($evaluation_options)) {
             return null;
@@ -286,10 +255,9 @@ class EvaluationRequest {
 
         $request = new EvaluationRequest();
         $request->inquirer_evaluation = $values['evaluation'];
-        $request->descriptorset_id = $inquirerevaluation->descriptorset_id;
-        $request->subject_id = $inquirerevaluation->subject_id;
-        $request->evaluator_id = $evaluator_id;
-        $request->inquirer_id = $USER->get('id');
+        $request->descriptorset = $inquirerevaluation->descriptorset_id;
+        $request->evaluator = $evaluator_id;
+        $request->inquirer = $USER->get('id');
         $request->inquiry_message = $values['message'];
         $request->commit();
 
@@ -297,13 +265,12 @@ class EvaluationRequest {
 
         // notify user
         if (is_plugin_active('internal')) {
-            $inquirer = get_user($request->inquirer_id);
-            $evaluator = get_user($request->evaluator_id);
-            $subject = new ArtefactTypeSubject($request->subject_id);
+            $inquirer = get_user($request->inquirer);
+            $evaluator = get_user($request->evaluator);
             $data = new stdClass();
             $data->type = 1;
             $data->subject = get_string('evaluationrequestsent', 'artefact.epos');
-            $data->message = get_string('evaluationrequestsentmessage', 'artefact.epos', "$inquirer->firstname $inquirer->lastname", $subject->get('title'));
+            $data->message = get_string('evaluationrequestsentmessage', 'artefact.epos', "$inquirer->firstname $inquirer->lastname", $inquirerevaluation->get('title'));
             $data->url = 'artefact/epos/evaluation/external.php';
             $data->parent = null;
             PluginNotificationInternal::notify_user($evaluator, $data);
@@ -346,15 +313,15 @@ class EvaluationRequest {
         safe_require('notification', 'internal');
         global $request, $USER, $SESSION;
 
-        if ($USER->get('id') != $request->evaluator_id) {
+        if ($USER->get('id') != $request->evaluator) {
             throw new AccessDeniedException(get_string('yourenottheevaluator', 'artefact.epos'));
         }
 
         db_begin();
         $request->response_message = $values['message'];
         $request->response_date = time();
-        if ($request->evaluation_id) {
-            $evaluation = new ArtefactTypeEvaluation($request->evaluation_id);
+        if ($request->evaluator_evaluation) {
+            $evaluation = new ArtefactTypeEvaluation($request->evaluator_evaluation);
             if ($values['includeevaluation']) {
                 $evaluation->final = 1;
                 $evaluation->commit();
@@ -367,13 +334,12 @@ class EvaluationRequest {
 
         // notify user
         if (is_plugin_active('internal')) {
-            $inquirer = get_user($request->inquirer_id);
-            $evaluator = get_user($request->evaluator_id);
-            $subject = new ArtefactTypeSubject($request->subject_id);
+            $inquirer = get_user($request->inquirer);
+            $evaluator = get_user($request->evaluator);
             $data = new stdClass();
             $data->type = 1;
             $data->subject = get_string('evaluationrequestanswered', 'artefact.epos');
-            $data->message = get_string('evaluationrequestansweredmessage', 'artefact.epos', "$evaluator->firstname $evaluator->lastname", $subject->get('title'));
+            $data->message = get_string('evaluationrequestansweredmessage', 'artefact.epos', "$evaluator->firstname $evaluator->lastname", $evaluation->get('title'));
             $data->url = 'artefact/epos/evaluation/external.php';
             $data->parent = null;
             PluginNotificationInternal::notify_user($inquirer, $data);

@@ -40,23 +40,32 @@ require_once 'EvaluationRequest.php';
 $request_id = param_integer('request');
 
 $request = new EvaluationRequest($request_id);
-if ($request->evaluator_id != $USER->get('id')) {
+if ($request->evaluator != $USER->get('id')) {
     throw new AccessDeniedException(get_string('youarenottheownerofthisevaluation', 'artefact.epos'));
 }
-if ($request->evaluation_id) {
-    redirect('/artefact/epos/evaluation/evaluate.php?id=' . $request->evaluation_id);
+if ($request->evaluator_evaluation) {
+    redirect('/artefact/epos/evaluation/evaluate.php?id=' . $request->evaluator_evaluation);
 }
-db_begin();
-$descriptorset = get_record('artefact_epos_descriptorset', 'id', $request->descriptorset_id);
-$evaluation = ArtefactTypeEvaluation::create_evaluation_for_user(
-        $request->descriptorset_id,
-        $descriptorset->name,
-        $request->subject_id,
-        $request->inquirer_id,
-        EVALUATION_ITEM_TYPE_COMPLEVEL);
-$evaluation->evaluator = $USER->get('id');
-$evaluation->commit();
-$request->evaluation_id = $evaluation->get('id');
-$request->commit();
-db_commit();
-redirect('/artefact/epos/evaluation/evaluate.php?id=' . $evaluation->get('id'));
+
+$inquirerevaluation = get_record('artefact', 'id', $request->inquirer_evaluation);
+$descriptorset = get_record('artefact_epos_descriptorset', 'id', $request->descriptorset);
+
+if ($inquirerevaluation && $descriptorset) {
+    db_begin();
+    $evaluation = ArtefactTypeEvaluation::create_evaluation_for_user(
+            $request->descriptorset,
+            $inquirerevaluation->title,
+            $descriptorset->name,
+            $request->inquirer,
+            EVALUATION_ITEM_TYPE_COMPLEVEL);
+    $evaluation->evaluator = $USER->get('id');
+    $evaluation->commit();
+    $request->evaluator_evaluation = $evaluation->get('id');
+    $request->commit();
+    db_commit();
+
+    redirect('/artefact/epos/evaluation/evaluate.php?id=' . $evaluation->get('id'));
+}
+else {
+    throw new ArtefactNotFoundException();
+}

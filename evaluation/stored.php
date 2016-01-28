@@ -39,26 +39,21 @@ $evaluation_id = param_integer('id', -1);
 if ($evaluation_id != -1) {
     $evaluation = new ArtefactTypeEvaluation($evaluation_id);
     $evaluation->check_permission();
-    $subject = $evaluation->get_parent_instance();
 }
 else {
     $evaluations = ArtefactTypeEvaluation::get_all_stored_evaluation_records();
     $by_subject_and_descriptorset = array();
     foreach ($evaluations as $evaluation) {
         if (!$evaluation->final) {
-            $evaluation->title = '(' . get_string('current', 'artefact.epos') . ')';
+            $evaluation->displaytitle = '(' . get_string('current', 'artefact.epos') . ')';
             $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/self-eval.php?id=' . $evaluation->id;
         }
         else {
-            $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/stored.php?id=' . $evaluation->id;
+            $evaluation->displaytitle = $evaluation->title;
             $evaluation->url = get_config('wwwroot') . 'artefact/epos/evaluation/display.php?id=' . $evaluation->id;
         }
-        /*if ($evaluation->evaluator == $USER->get('id')) {
-            $evaluation->firstname = get_string('yourself', 'artefact.epos');
-            $evaluation->lastname = "";
-        }*/
-        $by_subject_and_descriptorset[$evaluation->subject][$evaluation->descriptorset_id]['evaluations'] []= $evaluation;
-        $by_subject_and_descriptorset[$evaluation->subject][$evaluation->descriptorset_id]['name'] = $evaluation->descriptorset;
+        $by_subject_and_descriptorset[$evaluation->title][$evaluation->descriptorset]['evaluations'] []= $evaluation;
+        $by_subject_and_descriptorset[$evaluation->title][$evaluation->descriptorset]['name'] = $evaluation->descriptorset;
     }
 }
 

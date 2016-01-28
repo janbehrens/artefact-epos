@@ -34,14 +34,13 @@ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 define('TITLE', get_string('storeevaluation', 'artefact.epos'));
 safe_require('artefact', 'epos');
 
-$evaluation_id = param_integer('id');
-$evaluation = new ArtefactTypeEvaluation($evaluation_id);
+$id = param_integer('id');
+$evaluation = artefact_instance_from_id($id);
 $evaluation->check_permission();
-$subject = $evaluation->get_parent_instance();
 
 $heading = get_string('storeevaluation', 'artefact.epos');
-$content = '<h2>' . $subject->get('title') . ' (' . $evaluation->get('title') . ')</h2>';
-$content .= ArtefactTypeEvaluation::form_store_evaluation($evaluation_id);
+$content = '<h2>' . $evaluation->display_title() . '</h2>';
+$content .= $evaluation->form_store_evaluation();
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', $heading);

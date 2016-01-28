@@ -135,7 +135,7 @@ tableRenderer = new TableRenderer(
             return TD(null, link);
         },
         function (r, d) {
-            return TD(null, r.descriptorset);
+            return TD(null, r.description);
         },
         function (r, d) {
             var del = A({'class': 'icon btn-del s', 'href': ''}, '{$delstr}');
@@ -271,7 +271,8 @@ function createselfevaluation_submit(Pieform $form, $values) {
     global $USER, $optionsdescriptors;
     $owner = $USER->get('id');
     try {
-        create_subject_for_user($values['subject'], $values['label'], $values['descriptorset'], $optionsdescriptors[$values['descriptorset']], $owner);
+//         $form->json_reply(PIEFORM_ERR, $values['descriptorset']);
+        ArtefactTypeEvaluation::create_evaluation_for_user($values['descriptorset'], $values['label'], $optionsdescriptors[$values['descriptorset']], $owner);
     }
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());

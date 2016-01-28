@@ -26,7 +26,7 @@
         <a class="btn buttondk" href="javascript:self:print()">{str tag='print' section='artefact.epos'}</a>
     </div>
     <h1>{str tag='evaluation' section='artefact.epos'}</h1>
-    <h2>{$USER|display_name:null:true}: {$subject}</h2>
+    <h2>{$USER|display_name:null:true}: {$title}</h2>
 	<table id="evaluation" width="100%">
 	    <thead>
 	        <tr>

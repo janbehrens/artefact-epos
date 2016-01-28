@@ -39,7 +39,7 @@ require_once 'Comparison.php';
 
 $evaluations = isset($_GET['evaluations']) ? $_GET['evaluations'] : null;
 
-if ($evaluations != null) {
+if ($evaluations !== null) {
     if (!is_array($evaluations)) {
         throw new ParameterException("Wrong arguments for comparison");
     }
@@ -60,7 +60,7 @@ $comparison->check_permission();
 $comparison_of = get_string('comparisonof', 'artefact.epos');
 $evaluation_titles = array_map(
     function ($item) {
-        return '<strong>"' . $item->get_parent_instance()->get('title') . '"</strong>';
+        return '<strong>"' . $item->get('title') . '"</strong>';
     },
     $comparison->evaluations
 );
@@ -68,8 +68,6 @@ $last  = array_slice($evaluation_titles, -1);
 $first = join(', ', array_slice($evaluation_titles, 0, -1));
 $both  = array_filter(array_merge(array($first), $last));
 $comparison_of .= ' ' . implode(' ' . get_string('and', 'artefact.epos') . ' ', $both);
-
-
 
 $smarty = smarty();
 $smarty->assign('PAGEHEADING', get_string('comparison', 'artefact.epos'));

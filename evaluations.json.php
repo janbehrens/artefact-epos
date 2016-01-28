@@ -31,19 +31,10 @@ define('JSON', 1);
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'epos');
 
-$owner = $USER->get('id');
-
-$sql = "SELECT DISTINCT evaluation.id, subject.title, s.name as descriptorset
-        FROM artefact subject
-        INNER JOIN artefact evaluation ON subject.id = evaluation.parent
-        LEFT JOIN artefact_epos_evaluation e ON e.artefact = evaluation.id
-        LEFT JOIN artefact_epos_descriptorset s ON s.id = e.descriptorset
-        WHERE evaluation.owner = ?
-            AND evaluation.artefacttype = 'evaluation'
-            AND e.final = 0
-        ORDER BY subject.title";
-
-if (!$data = get_records_sql_array($sql, array($owner))) {
+try {
+    $data = ArtefactTypeEvaluation::get_user_evaluations($USER->get('id'));
+}
+catch (ArtefactNotFoundException $e) {
     $data = array();
 }
 
@@ -53,4 +44,3 @@ echo json_encode(array(
     'offset' => 0,
     'count' => count($data)
 ));
-

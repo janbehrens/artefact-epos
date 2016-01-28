@@ -9,8 +9,7 @@
         <table class="stored_evaluations">
             <thead>
                 <tr>
-                    <td class="name">{str tag='name'}</td>
-                    <td style="width:200px;">{str tag='creationtime' section='artefact.epos'}</td>
+                    <td style="width:200px;">{str tag='modified' section='mahara'}</td>
                     <td style="width:120px;">{str tag='evaluator' section='artefact.epos'}</td>
                     <td style="width: 16px;"></td>
                     <td class="selectors" style="width:40px;">{str tag='compare' section='artefact.epos'}</td>
@@ -19,8 +18,11 @@
             {foreach $descriptorset.evaluations item=evaluation}
             {cycle values='r0,r1' assign='class'} 
             <tr class="{$class}">
-                <td><a href="{$evaluation->url}">{if !$evaluation->final}<em>{/if}{$evaluation->title}{if !$evaluation->final}</em>{/if}</a></td>
-                <td>{$evaluation->mtime}</td>
+                <td>
+                    <a href="{$evaluation->url}">
+                        {$evaluation->mtime} {if !$evaluation->final}({str tag='current' section='artefact.epos'}){/if}
+                    </a>
+                </td>
                 <td>{$evaluation->firstname} {$evaluation->lastname}</td>
                 <td>
                 {if $evaluation->final}

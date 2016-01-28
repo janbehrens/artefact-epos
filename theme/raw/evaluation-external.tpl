@@ -23,7 +23,7 @@
                 <p class="request">
                     <!-- title -->
                     <a href="display.php?id={$request->inquirer_evaluation}"
-                       class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
+                       class="evaluationtitle">{$request->title} ({$request->descriptorset})</a>
                     <!-- actions -->
                     {if !$request->final}
                         <a href="external-return.php?id={$request->id}" class="tools">
@@ -31,8 +31,8 @@
                                  title="{str tag='reply' section='artefact.epos'}"
                                  src="../../../theme/raw/static/images/reply_small.png" />
                         </a>
-                        {if $request->evaluation_id}
-                            <a href="evaluate.php?id={$request->evaluation_id}" class="tools">
+                        {if $request->evaluator_evaluation}
+                            <a href="evaluate.php?id={$request->evaluator_evaluation}" class="tools">
                                 <img alt="{str tag='evaluate' section='artefact.epos'}"
                                      title="{str tag='evaluate' section='artefact.epos'}"
                                      src="../theme/raw/static/images/evaluate.png" />
@@ -46,7 +46,7 @@
                             <span class="tools">({str tag='notyetevaluated' section='artefact.epos'})</span>
                         {/if}
                     {else}
-                        <a href="display.php?id={$request->evaluation_id}" class="tools">
+                        <a href="display.php?id={$request->evaluator_evaluation}" class="tools">
                             <img alt="{str tag='display' section='artefact.epos'}"
                                  title="{str tag='display' section='artefact.epos'}"
                                  src="../theme/raw/static/images/evaluate.png" />
@@ -62,7 +62,7 @@
                 {if $request->inquiry_message}
                     <p class="message">{$request->inquiry_message}</p>
                 {/if}
-                <p>{str tag='receivedfrom' section='artefact.epos'} <a href="../../../user/view.php?id={$request->inquirer_id}">{$request->inquirer.firstname} {$request->inquirer.lastname}</a> - {$request->inquiry_date}</p>
+                <p>{str tag='receivedfrom' section='artefact.epos'} <a href="../../../user/view.php?id={$request->inquirer}">{$request->inquirerfirstname} {$request->inquirerlastname}</a> - {$request->inquiry_date}</p>
             </div>
         </div>
     {/foreach}
@@ -84,11 +84,11 @@
             </div>
             <div class="main">
                 <p class="request">
-                    {if $request->final && $request->evaluation_id}
-                        <a href="display.php?id={$request->evaluation_id}"
-                           class="evaluationtitle">{$request->subject} ({$request->descriptorset})</a>
+                    {if $request->final && $request->evaluator_evaluation}
+                        <a href="display.php?id={$request->evaluator_evaluation}"
+                           class="evaluationtitle">{$request->title} ({$request->descriptorset})</a>
                     {else}
-                        <span class="evaluationtitle">{$request->subject} ({$request->descriptorset})</span>
+                        <span class="evaluationtitle">{$request->title} ({$request->descriptorset})</span>
                         ({str tag='noevaluationavailable' section='artefact.epos'})
                     {/if}
                 </p>
@@ -101,7 +101,7 @@
                 {if $request->inquiry_message}
                     <p class="message">{$request->inquiry_message}</p>
                 {/if}
-                <p>{str tag='sentto' section='artefact.epos'} <a href="../../../user/view.php?id={$request->evaluator_id}">{$request->evaluator.firstname} {$request->evaluator.lastname}</a> - {$request->inquiry_date}</p>
+                <p>{str tag='sentto' section='artefact.epos'} <a href="../../../user/view.php?id={$request->evaluator}">{$request->evaluatorfirstname} {$request->evaluatorlastname}</a> - {$request->inquiry_date}</p>
             </div>
         </div>
     {/foreach}

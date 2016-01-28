@@ -36,7 +36,7 @@ define('EVALUATION_ITEM_TYPE_CUSTOM_GOAL', 2);
 class PluginArtefactEpos extends PluginArtefact {
 
     public static function get_artefact_types() {
-        return array('subject', 'evaluation', 'customgoal', 'customcompetence');
+        return array('evaluation', 'customgoal', 'customcompetence');
     }
 
     public static function get_block_types() {
@@ -143,52 +143,7 @@ class PluginArtefactEpos extends PluginArtefact {
     }
 }
 
-/**
- * ArtefactTypeSubject implementing ArtefactType
- */
-class ArtefactTypeSubject extends ArtefactType {
-
-    public static function get_icon($options=null) {}
-
-    public static function is_singular() {
-        return false;
-    }
-
-    public static function get_links($id) {}
-
-    /**
-     * Overriding the delete() function to clear table references
-     */
-    public function delete() {
-        db_begin();
-        delete_records('artefact_epos_mysubject', 'artefact', $this->id);
-        parent::delete();
-        db_commit();
-    }
-
-    public static function get_all_subjects() {
-        global $USER;
-        $records = get_records_sql_array("
-                SELECT * FROM artefact
-                WHERE artefacttype = 'subject'
-                    AND owner = ?
-                ORDER BY title
-                ", array($USER->get('id'))
-        );
-        $subjects = array();
-        if ($records) {
-            foreach ($records as $record) {
-                $subjects []= new ArtefactTypeSubject($record->id, $record);
-            }
-        }
-        return $subjects;
-    }
-}
-
-
 class ArtefactTypeEvaluation extends ArtefactType {
-
-    public $subject_id;
 
     public $descriptorset_id;
 
@@ -253,8 +208,6 @@ class ArtefactTypeEvaluation extends ArtefactType {
             			}
             		}
             	}
-                $subject = $this->get_parent_metadata();
-                $this->subject_id = $subject->id;
             }
         }
     }
@@ -339,18 +292,17 @@ class ArtefactTypeEvaluation extends ArtefactType {
      * @see ArtefactType::display_title()
      */
     public function display_title() {
-        $language = get_field('artefact', 'title', 'id', $this->parent);
-        return $language . ' (' . $this->title . ')';
+        return "$this->title ($this->description)";
     }
 
     /**
      * Create an evaluation artefact for a user
      * @param $descriptorset_id The descriptorset to use as evaluation in this instance
      * @param $title The title of the evaluation created for this subject
-     * @param $parent The parent item (e.g. subject)
+     * @param $description
      * @param $user_id The user to create the subject artefact for, defaults to the current user
      */
-    public static function create_evaluation_for_user($descriptorset_id, $title, $parent, $user_id=null, $type=EVALUATION_ITEM_TYPE_DESCRIPTOR) {
+    public static function create_evaluation_for_user($descriptorset_id, $title, $description, $user_id = null, $type = EVALUATION_ITEM_TYPE_DESCRIPTOR) {
         if (!isset($user_id)) {
             global $USER;
             $user_id = $USER->get('id');
@@ -360,8 +312,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $evaluation = new ArtefactTypeEvaluation(0, array(
             'owner' => $user_id,
             'title' => $title,
-            'parent' => $parent,
-        	'descriptorset' => $descriptorset_id,
+            'description' => $description,
+            'descriptorset_id' => $descriptorset_id,
             'evaluator' => $user_id
         ));
         $evaluation->commit();
@@ -496,7 +448,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
     /**
      * Calculate the results in an array of competences of levels.
      */
-    public function results() {
+    public function get_results() {
         $descriptorset = $this->get_descriptorset();
         $customcompetences = $this->get_customcompetences();
         $customgoals = array();
@@ -811,8 +763,8 @@ EOL
      * @return string The HTML of the table
      */
     public function render_evaluation_table($interactive = true) {
-        $descriptorset = $this->get_descriptorset();
-        $results = $this->results();
+        $descriptorset = $this->get_descriptorset();    // FIXME: also called by get_results
+        $results = $this->get_results();
 
         $column_titles = array_map(function ($item) {
         	// If column labels contain a colon, return only the part before it (useful in cases where competence level names are very long)
@@ -997,58 +949,49 @@ EOL
             global $USER;
             $owner = $USER->get('id');
         }
-        $sql = "SELECT a.id, a.parent, a.title as descriptorset, b.title
-            	FROM artefact a, artefact b, artefact_epos_evaluation e
-            	WHERE a.parent = b.id
-                    AND a.id = e.artefact
-                    AND a.owner = ?
-                    AND a.artefacttype = ?
-                    AND e.final = 0";
+        $sql = "SELECT a.id, a.title, a.description
+            	FROM artefact a
+                JOIN artefact_epos_evaluation e ON a.id = e.artefact
+            	WHERE a.artefacttype = 'evaluation' AND a.owner = ? AND e.final = 0";
 
-        if (!$data = get_records_sql_array($sql, array($owner, 'evaluation'))) {
+        if (!$data = get_records_sql_array($sql, array($owner))) {
             return array(null, false);
         }
         // sort alphabetically by title
         usort($data, function ($a, $b) { return strcoll($a->title, $b->title); });
         // select first language if no selected is given
-        if (!$selected) {
-            $id = $data[0]->id;
-        }
-        else {
-            $id = $selected;
-        }
-        foreach ($data as $subject) {
-            $subject->title = "$subject->title ($subject->descriptorset)";
+        $id = $selected ? $selected : $data[0]->id;
+
+        foreach ($data as $evaluation) {
+            $evaluation->title = "$evaluation->title ($evaluation->description)";
         }
         //$selectform = get_string('selfevaluations', 'artefact.epos') . ': ';
         $selectform = html_select($data, get_string('select'), "id", $id);
         return array($selectform, $id);
     }
 
-    public static function get_users_evaluations() {
-        global $USER;
-        $evaluations = get_records_sql_array("
-                SELECT e.id, e.title, e.ctime, s.id as s_id, s.title s_title
-                FROM artefact e
-                    LEFT JOIN artefacts ON e.parent = s.id
-                WHERE e.artefacttype = 'storedevaluation'
-                    AND e.owner = ?
-                ORDERY BY s_id, e.ctime
-                ", array($USER->get('id')));
-        // TODO: do sth.
+    public static function get_user_evaluations($user_id) {
+        $sql = "SELECT a.*, e.*
+                FROM artefact a
+                RIGHT JOIN artefact_epos_evaluation e ON e.artefact = a.id
+                WHERE a.owner = ? AND e.final = 0";
+        if (!$result = get_records_sql_array($sql, array($user_id))) {
+            throw new ArtefactNotFoundException();
+        }
+        return $result;
     }
 
-    public static function form_store_evaluation($evaluation_id) {
+    public function form_store_evaluation() {
         $elements = array();
         $elements['name'] = array(
                 'type' => 'text',
                 'title' => get_string('evaluationname', 'artefact.epos'),
-                'defaultvalue' => '',
+                'defaultvalue' => $this->title,
                 'rules' => array('required' => true)
         );
         $elements['evaluation'] = array(
                 'type' => 'hidden',
-                'value' => $evaluation_id
+                'value' => $this->id
         );
         $elements['submit'] = array(
                 'type' => 'submit',
@@ -1068,12 +1011,6 @@ EOL
     }
 
     public static function form_store_evaluation_validate($form, $values) {
-        global $USER;
-        $records = get_records_array('artefact', 'artefacttype', 'evaluation',
-                'owner', $USER->get('id'), 'title', $values['name']);
-        if ($records) {
-            $form->set_error("name", get_string('evaluationnamealreadyexists', 'artefact.epos'));
-        }
     }
 
     public static function form_store_evaluation_submit($form, $values) {
@@ -1082,11 +1019,12 @@ EOL
         $evaluation->check_permission();
         $stored_evaluation = new ArtefactTypeEvaluation($evaluation);
         $stored_evaluation->set('title', $values['name']);
+        $stored_evaluation->set('description', $evaluation->description);
         $stored_evaluation->final = 1;
         $stored_evaluation->evaluator = $USER->get('id');
         $stored_evaluation->commit();
         $SESSION->add_info_msg(get_string('evaluationsuccessfullystored', 'artefact.epos'));
-        redirect(get_config('wwwroot') . '/artefact/epos/evaluation/stored.php');
+        redirect(get_config('wwwroot') . 'artefact/epos/evaluation/stored.php');
     }
 
     public static function form_delete_evaluation($evaluation_id) {
@@ -1098,7 +1036,7 @@ EOL
         $elements['submit'] = array(
                 'type' => 'submitcancel',
                 'value' => array(get_string('deleteevaluation', 'artefact.epos'), get_string('cancel')),
-                'goto' => get_config('wwwroot') . '/artefact/epos/evaluation/stored.php'
+                'goto' => get_config('wwwroot') . 'artefact/epos/evaluation/stored.php'
         );
         return pieform(array(
                 'name' => 'delete_evaluation',
@@ -1115,7 +1053,7 @@ EOL
     public static function form_delete_evaluation_submit(Pieform $form, $values) {
         global $evaluation;
         $evaluation->delete();
-        redirect(get_config('wwwroot') . '/artefact/epos/evaluation/stored.php');
+        redirect(get_config('wwwroot') . 'artefact/epos/evaluation/stored.php');
     }
 
     /**
@@ -1126,30 +1064,14 @@ EOL
     public static function get_all_stored_evaluation_records() {
         global $USER;
         // "AND NOT (a.owner != e.evaluator AND e.final = 0)" makes sure open evaluation requests are not shown
-        $evaluations = get_records_sql_array("
-                SELECT a.owner, a.id, a.title, a.mtime, s.title AS subject, e.evaluator, e.final, usr.firstname,
-                        usr.lastname, d.id AS descriptorset, d.name AS descriptorset
+        $sql = "SELECT a.*, e.*, usr.firstname, usr.lastname, d.name AS descriptorset
                 FROM artefact a
-                INNER JOIN artefact s ON a.parent = s.id
                 INNER JOIN artefact_epos_evaluation e ON a.id = e.artefact
                 LEFT JOIN artefact_epos_descriptorset d ON e.descriptorset = d.id
                 LEFT JOIN usr ON e.evaluator = usr.id
-                RIGHT JOIN (
-                    SELECT e1.parent, d1.id
-                    FROM artefact e1
-                    LEFT JOIN artefact_epos_evaluation e2 ON e1.id = e2.artefact
-                    LEFT JOIN artefact_epos_descriptorset d1 ON e2.descriptorset = d1.id
-                    WHERE e1.artefacttype = 'evaluation'
-                        AND NOT (e1.owner != e2.evaluator AND e2.final = 0)
-                    GROUP BY e1.parent, d1.id
-                    HAVING count(d1.id) > 1
-                ) c ON s.id = c.parent
-                WHERE a.artefacttype = 'evaluation'
-                    AND c.id = d.id
-                    AND a.owner = ?
-                    AND NOT (a.owner != e.evaluator AND e.final = 0)
-                ORDER BY s.title, descriptorset, e.final DESC, a.mtime
-                ", array($USER->get('id')));
+                WHERE a.artefacttype = 'evaluation' AND a.owner = ? AND NOT (a.owner != e.evaluator AND e.final = 0)
+                ORDER BY a.title, d.name, e.final, a.mtime DESC";
+        $evaluations = get_records_sql_array($sql, array($USER->get('id')));
         if ($evaluations) {
             foreach ($evaluations as $evaluation) {
                 $evaluation->mtime = format_date(strtotime($evaluation->mtime));
@@ -1158,7 +1080,6 @@ EOL
         }
         return array();
     }
-
 }
 
 
@@ -1525,25 +1446,6 @@ class Descriptorset implements ArrayAccess, Iterator {
     }
 
     /**
-     * Gets all descriptorsets for a given user's subject (artefact, not institution offer)
-     * @param int $subject
-     */
-    public static function get_descriptorsets_for_mysubject_records($subject) {
-        global $USER;
-        $sets = get_records_sql_array("
-                SELECT d.*
-                FROM artefact_epos_descriptorset d
-                INNER JOIN artefact_epos_evaluation e ON d.id = e.descriptorset_id
-                INNER JOIN artefact ON e.artefact = artefact.id
-                WHERE artefact.owner = ?
-                    AND artefact.parent = ?
-                ORDER BY d.name
-                ", array((int)$USER->id, $subject)
-        );
-        return $sets ? $sets : array();
-    }
-
-    /**
      * Select the descriptorset of the first non-final evaluation of that subject.
      * @param int $subject
      */
@@ -1561,25 +1463,6 @@ class Descriptorset implements ArrayAccess, Iterator {
                 ", array($subject)
         );
         return $set ? $set : null;
-    }
-
-    /**
-     * Check if the descriptorset is available for the subject (may be inactive).
-     * @param int $descriptorset_id
-     * @param int $subject_id
-     * @return boolean
-     */
-    public static function is_valid_descriptorset_for_subject($descriptorset_id, $subject_id) {
-        $sets = get_record_sql("
-                SELECT d.*
-                FROM artefact_epos_descriptorset d
-                INNER JOIN artefact_epos_descriptorset_subject ds ON ds.descriptorset = d.id
-                INNER JOIN artefact_epos_mysubject my ON ds.subject = my.subject
-                WHERE my.artefact = ?
-                    AND d.id = ?
-                ", array($subject_id,$descriptorset_id)
-        );
-        return $sets != false;
     }
 }
 
@@ -1750,55 +1633,6 @@ function get_manageable_institutions($user) {
     }
     return $data;
 }
-
-/**
- * Create a subject artefact for a user with a evaluation assigned
- * @param $subject_id The subject the user chooses to partake in
- * @param $subject_title The title the user assigns to that subject's instance
- * @param $descriptorset_id The descriptorset to use as evaluation in this instance
- * @param $evaluation_title The title of the evaluation created for this subject
- * @param $user_id The user to create the subject artefact for, defaults to the current user
- */
-function create_subject_for_user($subject_id, $subject_title, $descriptorset_id, $evaluation_title, $user_id=null) {
-    if (!isset($user_id)) {
-        global $USER;
-        $user_id = $USER->get('id');
-    }
-
-    // update artefact 'subject' ...
-    $sql = "SELECT * FROM artefact WHERE owner = ? AND artefacttype = 'subject' AND title = ?";
-    if ($subjects = get_records_sql_array($sql, array($user_id, $subject_title))) {
-        $subject = artefact_instance_from_id($subjects[0]->id);
-        $subject->set('mtime', time());
-        $subject->commit();
-        $id = $subject->get('id');
-    }
-    // ... or create it if it doesn't exist
-    else {
-        safe_require('artefact', 'epos');
-        $subject = new ArtefactTypeSubject(0, array(
-                'owner' => $user_id,
-                'title' => $subject_title,
-            )
-        );
-        $subject->commit();
-        $id = $subject->get('id');
-        //insert: artefact_epos_mysubject
-        $values_artefact_subject = array('artefact' => $id, 'subject' => $subject_id);
-        insert_record('artefact_epos_mysubject', (object)$values_artefact_subject);
-    }
-
-    /*
-    // if there is already an evaluation with the given title, don't create another one
-    $sql = 'SELECT * FROM artefact WHERE parent = ? AND title = ?';
-    if (get_records_sql_array($sql, array($id, $evaluation_title))) {
-        return;
-    }
-    */
-    ArtefactTypeEvaluation::create_evaluation_for_user($descriptorset_id, $evaluation_title, $id, $user_id);
-}
-
-
 
 function increase_array_value(&$data, $key, $value=1) {
     if (!array_key_exists($key, $data)) {
