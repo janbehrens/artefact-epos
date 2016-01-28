@@ -700,5 +700,68 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         rename_field($table, $field, 'evaluator_id');
     }
 
+    if ($oldversion < 2016012800) {
+        // alter tables
+        $descriptorsetfield = new XMLDBField('descriptorset_id');
+        $competencefield = new XMLDBField('competence_id');
+        $levelfield = new XMLDBField('level_id');
+        $evaluationfield = new XMLDBField('evaluation_id');
+        $descriptorfield = new XMLDBField('descriptor_id');
+        $inquirerfield = new XMLDBField('inquirer_id');
+        $evaluatorfield = new XMLDBField('evaluator_id');
+        $subjectfield = new XMLDBField('subject_id');
+
+        $competencetable = new XMLDBTable('artefact_epos_competence');
+        rename_field($competencetable, $descriptorsetfield, 'descriptorset');
+
+        $leveltable = new XMLDBTable('artefact_epos_level');
+        rename_field($leveltable, $descriptorsetfield, 'descriptorset');
+
+        $descriptortable = new XMLDBTable('artefact_epos_descriptor');
+        rename_field($descriptortable, $competencefield, 'competence');
+        rename_field($descriptortable, $levelfield, 'level');
+        $descriptortable->addKeyInfo('competencefk', XMLDB_KEY_FOREIGN, array('competence'), 'artefact_epos_competence', array('id'));
+        $descriptortable->addKeyInfo('levelfk', XMLDB_KEY_FOREIGN, array('level'), 'artefact_epos_level', array('id'));
+
+        $ratingtable = new XMLDBTable('artefact_epos_rating');
+        rename_field($ratingtable, $descriptorsetfield, 'descriptorset');
+
+        $evaluationtable = new XMLDBTable('artefact_epos_evaluation');
+        rename_field($evaluationtable, $descriptorsetfield, 'descriptorset');
+
+        $evaluationitemtable = new XMLDBTable('artefact_epos_evaluation_item');
+        rename_field($evaluationitemtable, $evaluationfield, 'evaluation');
+        rename_field($evaluationitemtable, $descriptorfield, 'descriptor');
+
+        $evaluationrequesttable = new XMLDBTable('artefact_epos_evaluation_request');
+        rename_field($evaluationrequesttable, $inquirerfield, 'inquirer');
+        rename_field($evaluationrequesttable, $evaluatorfield, 'evaluator');
+        rename_field($evaluationrequesttable, $evaluationfield, 'evaluator_evaluation');
+        rename_field($evaluationrequesttable, $descriptorsetfield, 'descriptorset');
+        drop_field($evaluationrequesttable, $subjectfield);
+        $evaluationrequesttable->addKeyInfo('inquirer_evaluationfk', XMLDB_KEY_FOREIGN, array('inquirer_evaluation'), 'artefact_epos_evaluation', 'artefact');
+
+        // update artefact
+        $sql = "SELECT a.*, b.title as parenttitle FROM artefact a
+                JOIN artefact b ON a.parent = b.id
+                WHERE a.artefacttype = 'evaluation' OR a.artefacttype = 'customcompetence' OR a.artefacttype = 'customgoal'";
+        $artefacts = get_records_sql_array($sql);
+        foreach ($artefacts as $artefact) {
+            if ($artefact->artefacttype == 'evaluation') {
+                $artefact->description = $artefact->title;
+                $artefact->title = $artefact->parenttitle;
+                $artefact->parent = null;
+            }
+            $artefact->path = substr($artefact->path, strpos($artefact->path, '/', 1));
+            update_record('artefact', $artefact);
+        }
+        delete_records('artefact_epos_mysubject');
+        delete_records('artefact', 'artefacttype', 'subject');
+
+        // drop mysubject
+        $mysubjecttable = new XMLDBTable('artefact_epos_mysubject');
+        drop_table($mysubjecttable);
+    }
+
     return true;
 }
