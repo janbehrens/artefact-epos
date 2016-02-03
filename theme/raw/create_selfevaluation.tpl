@@ -46,19 +46,19 @@
 
 <form enctype="multipart/form-data" action="" method="POST">
 <table cellspacing="0">
-	<tr>
-		<th width="200"><label for="competencyPatternTitle">{$text_name_evaluation_grid}</label></th>
-		<td><input type="text" name="competencyPatternTitle" id="competencyPatternTitle" maxlength="255" size="25" /></td>
-	</tr>
+    <tr>
+        <th width="200"><label for="competencyPatternTitle">{$text_name_evaluation_grid}</label></th>
+        <td><input type="text" name="competencyPatternTitle" id="competencyPatternTitle" maxlength="255" size="25" /></td>
+    </tr>
 </table>
 
 <br />
 
 <table cellspacing="0">
-	<tr>
-		<th width="200"><label for="evaluationLevelNumItems">{$text_num_evaluation_levels}</label></th>
-		<td><input type="text" name="evaluationLevelNumItems" id="evaluationLevelNumItems" maxlength="2" size="25" onkeypress="validateNumericKey(event);" onkeyup="updateEvaluationLevelInputFields();" value="5" /></td>
-	</tr>
+    <tr>
+        <th width="200"><label for="evaluationLevelNumItems">{$text_num_evaluation_levels}</label></th>
+        <td><input type="text" name="evaluationLevelNumItems" id="evaluationLevelNumItems" maxlength="2" size="25" onkeypress="validateNumericKey(event);" onkeyup="updateEvaluationLevelInputFields();" value="5" /></td>
+    </tr>
 </table>
 
 <table id="evaluation_level_table" cellspacing="0">
@@ -70,14 +70,14 @@
 <input type="hidden" name="colCount" id="colCount" value="1"/>
 
 <table cellspacing="0">
-	<tr>
-		<th width="200"><label for="rows">{$text_num_rows}</label></th>
-		<td><input type="text" name="rows" id="rows" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('rows');" /></td>
-	</tr>
-	<tr>
-		<th width="200"><label for="cols">{$text_num_cols}</label></th>
-		<td><input type="text" name="cols" id="cols" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('cols');" /></td>
-	</tr>
+    <tr>
+        <th width="200"><label for="rows">{$text_num_rows}</label></th>
+        <td><input type="text" name="rows" id="rows" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('rows');" /></td>
+    </tr>
+    <tr>
+        <th width="200"><label for="cols">{$text_num_cols}</label></th>
+        <td><input type="text" name="cols" id="cols" value="1" maxlength="2" size="25" onkeyup="javascript:validateNumericKey(event); createTable('cols');" /></td>
+    </tr>
 </table>
 
 <br />

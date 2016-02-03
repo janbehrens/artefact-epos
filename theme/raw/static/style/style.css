@@ -12,7 +12,7 @@
 }
  
 .progressbar-value {
-	background: url("") repeat-x scroll 50% 50% #CCCCCC;
+    background: url("") repeat-x scroll 50% 50% #CCCCCC;
     height: 100%;
     margin: -1px;
     position: absolute;
@@ -28,11 +28,11 @@
 }
 
 a label {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 div#subjects_list p {
-	font-size: 120%;
+    font-size: 120%;
 }
 
 form#addlearnedlanguage table {
@@ -43,7 +43,7 @@ td.radio {
 }
 
 #evaluation .rbuttons {
-	margin-top: 0px;
+    margin-top: 0px;
 }
 
 /** Customgoal **/
@@ -87,14 +87,14 @@ div.grippie {
 }
 
 #addcustomgoal_submit {
-    margin: 0px;	
+    margin: 0px;    
 }
 
 
 /* evaluations list */
 
 #evaluationslist {
-	margin-bottom: 12px;
+    margin-bottom: 12px;
 }
 
 /* evaluation */
@@ -113,8 +113,8 @@ table.evaluation .column_0 {
 }
 
 .evaluationform h2 {
-	font-size: 130%;
-	margin-top: 0.5em;
+    font-size: 130%;
+    margin-top: 0.5em;
 }
 
 .interactive {
@@ -122,11 +122,11 @@ table.evaluation .column_0 {
 }
 
 .evaluation-submit {
-	margin-top: 15px;
+    margin-top: 15px;
 }
 
 table.evaluation td {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 table.evaluation tr.r0 td.custom {
@@ -138,17 +138,17 @@ table.evaluation tr.r1 td.custom {
 }
 
 #example_popup {
-	width: 450px;
-	height: 350px;
-	padding: 10px;
-	background: white;
-	border: 1px solid black;
+    width: 450px;
+    height: 350px;
+    padding: 10px;
+    background: white;
+    border: 1px solid black;
 }
 
 #example_popup iframe {
-	width: 100%;
-	height: 100%;
-	border: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
 }
 
 /* print evaluation */
@@ -182,7 +182,7 @@ body.print {
 }
 
 .print .progressbar-content {
-	padding: 6px;
+    padding: 6px;
 }
 
 .print #legend {
@@ -223,39 +223,39 @@ body.print {
 /* stored evaluations */
 
 #store_evaluation {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 #store_evaluation_name {
-	width: 350px;
-	margin: 0 10px;
+    width: 350px;
+    margin: 0 10px;
 }
 
 table.stored_evaluations {
-	width: 100%;
+    width: 100%;
 }
 
 table.stored_evaluations thead {
-	color: gray;
+    color: gray;
 }
 
 .stored_evaluations td {
-	padding: 3px 10px;
+    padding: 3px 10px;
 }
 
 .stored_evaluations td.selectors {
-	text-align: center;
+    text-align: center;
 }
 
 /* external evaluations */
 
 .eval-request {
-	padding: 5px;
+    padding: 5px;
 }
 
 .eval-request .left {
     float: left;
-	width: 32px;
+    width: 32px;
 }
 
 .eval-request .left img {
@@ -282,8 +282,8 @@ table.stored_evaluations thead {
 }
 
 .eval-request .main .evaluationtitle {
-	font-size: 110%;
-	font-weight: bold;
+    font-size: 110%;
+    font-weight: bold;
 }
 
 .eval-request .main .message {
@@ -300,7 +300,7 @@ table.stored_evaluations thead {
 /* comparison */
 
 #other.comparison form {
-	display: inline;
+    display: inline;
 }
 
 table.comparison.results {
@@ -310,7 +310,7 @@ table.comparison.results {
 }
 
 .comparison td.progress {
-	padding: 2px 5px;
+    padding: 2px 5px;
 }
 
 .comparison th.column_0 {
@@ -318,12 +318,12 @@ table.comparison.results {
 }
 
 .comparison div.progressbar {
-	margin: 2px 0;
-	height: 15px;
+    margin: 2px 0;
+    height: 15px;
 }
 
 table.comparison.legend tr {
-	border-collapse:collapse;
+    border-collapse:collapse;
 }
 
 .comparison.legend tr {

@@ -48,6 +48,3 @@ catch (Exception $e) {
     //reply
     json_reply(true, 'error');
 }
-
-
-?>

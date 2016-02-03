@@ -41,10 +41,10 @@ $data = array();
 
 // load all descriptors of a subject's evaluation that are marked as goal
 $sql = 'SELECT d.name as descriptor, c.name AS competence, l.name AS level
-	FROM artefact evaluation
+    FROM artefact evaluation
     JOIN artefact_epos_evaluation_item ei ON ei.evaluation = evaluation.id
     JOIN artefact_epos_descriptor d ON d.id = ei.descriptor
-	LEFT JOIN artefact_epos_competence c ON c.id = d.competence
+    LEFT JOIN artefact_epos_competence c ON c.id = d.competence
     LEFT JOIN artefact_epos_level l ON l.id = d.level
     WHERE evaluation.id = ? AND ei.goal = 1
     ORDER BY competence, level, d.id';
@@ -60,15 +60,15 @@ if (is_postgres()) {
     $cast = "::integer";
 }
 $sql = "SELECT goal.id, goal.description, competence.title AS competence
-		FROM artefact goal
+        FROM artefact goal
         LEFT JOIN artefact_epos_evaluation_item ei ON ei.target_key$cast = goal.id
         LEFT JOIN artefact competence ON goal.parent = competence.id
         LEFT JOIN artefact evaluation ON competence.parent = evaluation.id
-		WHERE goal.artefacttype = 'customgoal' AND ei.goal = 1
+        WHERE goal.artefacttype = 'customgoal' AND ei.goal = 1
         AND evaluation.id = ? AND ei.type = ?";
 
 if (!$data_custom_goal = get_records_sql_array($sql, array($id, EVALUATION_ITEM_TYPE_CUSTOM_GOAL))) {
-	$data_custom_goal = array();
+    $data_custom_goal = array();
 }
 
 $data = array_merge($data, $data_custom_goal);

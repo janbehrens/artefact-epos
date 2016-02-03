@@ -35,7 +35,7 @@ $id = param_variable('id');
 
 try {
     execute_sql("UPDATE artefact_epos_descriptorset SET visible = 0, active = 0 WHERE id = $id");
-    
+
     //reply
     json_reply(false, get_string('deletedescriptorsetsuccess', 'artefact.epos'));
 }
@@ -43,6 +43,3 @@ catch (Exception $e) {
     //reply
     json_reply(true, get_string('deletedescriptorsetfailed', 'artefact.epos'));
 }
-
-
-?>

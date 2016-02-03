@@ -433,33 +433,33 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         change_field_type($table, $field);
         rename_table($table, 'artefact_epos_evaluation_item', false, false);
         $table = new XMLDBTable('artefact_epos_evaluation');
-    	if (table_exists($table)) {
-    		drop_table($table);
-    	}
+        if (table_exists($table)) {
+            drop_table($table);
+        }
         $table->addFieldInfo('artefact', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL);
         $table->addFieldInfo('descriptorset_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('artefact'));
         $table->addKeyInfo('artefactfk', XMLDB_KEY_FOREIGN, array('artefact'), 'artefact', array('id'));
         $table->addKeyInfo('descriptorsetfk', XMLDB_KEY_FOREIGN, array('descriptorset_id'), 'artefact_epos_descriptorset', array('id'));
         if (!create_table($table)) {
-        	throw new SQLException($table . " could not be created, check log for errors.");
+            throw new SQLException($table . " could not be created, check log for errors.");
         }
         // fill the new table with data from existing "checklists"
         $evaluations = get_records_array('artefact', 'artefacttype', 'checklist');
         foreach ($evaluations as $evaluation) {
-        	$sql = "SELECT d.descriptorset
-        			FROM artefact_epos_descriptor d
-        			RIGHT JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
-        			WHERE i.checklist = ?
-        			LIMIT 1";
-        	$item_record = get_record_sql($sql, array($evaluation->id));
-        	if ($item_record) {
-	        	$data = (object) array(
-	        	    'artefact' => $evaluation->id,
-	        		'descriptorset_id' => $item_record->descriptorset
-	        	);
-	        	insert_record('artefact_epos_evaluation', $data);
-        	}
+            $sql = "SELECT d.descriptorset
+                    FROM artefact_epos_descriptor d
+                    RIGHT JOIN artefact_epos_evaluation_item i ON d.id = i.descriptor
+                    WHERE i.checklist = ?
+                    LIMIT 1";
+            $item_record = get_record_sql($sql, array($evaluation->id));
+            if ($item_record) {
+                $data = (object) array(
+                    'artefact' => $evaluation->id,
+                    'descriptorset_id' => $item_record->descriptorset
+                );
+                insert_record('artefact_epos_evaluation', $data);
+            }
         }
     }
 
@@ -659,11 +659,11 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                     AND customcompetence.owner = ?";
             $competences = get_records_sql_array($competencesSql, array($user->id));
             $evaluationsSql = "SELECT DISTINCT evaluation.*
-            FROM artefact customcompetence
-            LEFT JOIN artefact evaluation ON customcompetence.parent = evaluation.id
-            WHERE customcompetence.artefacttype = 'customcompetence'
+                    FROM artefact customcompetence
+                    LEFT JOIN artefact evaluation ON customcompetence.parent = evaluation.id
+                    WHERE customcompetence.artefacttype = 'customcompetence'
                     AND evaluation.artefacttype = 'evaluation'
-                            AND customcompetence.owner = ?";
+                    AND customcompetence.owner = ?";
             $evaluation_records = get_records_sql_array($evaluationsSql, array($user->id));
             $evaluations = array();
             foreach ($evaluation_records as $evaluation) {

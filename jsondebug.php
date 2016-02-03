@@ -47,7 +47,7 @@ $id = 242;
 $descriptors = array();
 
 $sql = 'SELECT ci.*, d.competence, d.level
-    FROM {artefact_epos_descriptor} d 
+    FROM {artefact_epos_descriptor} d
     JOIN {artefact_epos_evaluation_item} ci ON ci.descriptor = d.name
     WHERE ci.evaluation = ?';
 
@@ -62,7 +62,7 @@ $sendarray = array();
 foreach ($descriptors as $desc) {
     if (!array_key_exists($desc->competence, $competences)) {
         $competences[$desc->competence] = array('competence' => $desc->competence,
-        					   'competencestr' => get_string($desc->competence, 'artefact.epos'),
+                               'competencestr' => get_string($desc->competence, 'artefact.epos'),
                                $desc->level => 0.0,
                                $desc->level . 'max' => 0);
         $count++;
@@ -101,4 +101,3 @@ echo json_encode(array(
     'offset' => $offset,
     'count' => $count));
 
-?>

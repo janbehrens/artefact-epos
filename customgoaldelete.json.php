@@ -43,5 +43,3 @@ $a->delete();
 
 //reply
 json_reply(null, get_string('customlearninggoaldeleted', 'artefact.epos'));
-
-?>

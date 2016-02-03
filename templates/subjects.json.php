@@ -56,5 +56,3 @@ echo json_encode(array(
     'offset' => $offset,
     'count' => $count,
 ));
-
-?>

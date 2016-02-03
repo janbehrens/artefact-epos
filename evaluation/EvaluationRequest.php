@@ -347,5 +347,4 @@ class EvaluationRequest {
 
         redirect('/artefact/epos/evaluation/external.php');
     }
-
 }

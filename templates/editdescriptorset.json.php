@@ -45,5 +45,3 @@ echo json_encode(array(
     'data' => array('name' => $dsdata[0]->name, 'descriptors' => $data),
     'count' => count($data)
 ));
-
-?>

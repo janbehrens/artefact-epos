@@ -147,16 +147,16 @@ if ($data) {
     }
 }
 
-$text_evaluationlevel	           = get_string('evaluationlevel', 'artefact.epos');
-$text_competencyname	           = get_string('competency_name', 'artefact.epos');
-$text_competencylevel	           = get_string('competency_level', 'artefact.epos');
-$text_cando_statement	           = get_string('cando_statement', 'artefact.epos');
-$text_cando_statements	           = get_string('cando_statements', 'artefact.epos');
-$text_tasklink			           = get_string('tasklink', 'artefact.epos');
+$text_evaluationlevel               = get_string('evaluationlevel', 'artefact.epos');
+$text_competencyname               = get_string('competency_name', 'artefact.epos');
+$text_competencylevel               = get_string('competency_level', 'artefact.epos');
+$text_cando_statement               = get_string('cando_statement', 'artefact.epos');
+$text_cando_statements               = get_string('cando_statements', 'artefact.epos');
+$text_tasklink                       = get_string('tasklink', 'artefact.epos');
 $text_learningobjectivecheckbox    = get_string('learningobjective_checkbox', 'artefact.epos');
 $text_fill_in_learning_objectives  = get_string('fill_in_learning_objectives', 'artefact.epos');
-$text_combination_of			   = get_string('combination_of', 'artefact.epos');
-$text_and			               = get_string('and', 'artefact.epos');
+$text_combination_of               = get_string('combination_of', 'artefact.epos');
+$text_and                           = get_string('and', 'artefact.epos');
 
 $activatestr = get_string('activate', 'artefact.epos');
 $deactivatestr = get_string('deactivate', 'artefact.epos');
@@ -183,20 +183,20 @@ function submitTemplate(id) {
                 cancelEditing();
             },
             function() {
-            	// @todo error
+                // @todo error
             });
 }
 
-var text_evaluationlevel 				= "$text_evaluationlevel";
-var text_competencyname 				= "$text_competencyname";
-var text_competencylevel 				= "$text_competencylevel";
-var text_cando_statement				= "$text_cando_statement";
-var text_cando_statements				= "$text_cando_statements";
-var text_tasklink						= "$text_tasklink";
-var text_canBeGoal						= "$text_learningobjectivecheckbox";
-var text_fill_in_learning_objectives	= "$text_fill_in_learning_objectives";
-var text_combination_of					= "$text_combination_of";
-var text_and							= "$text_and";
+var text_evaluationlevel                 = "$text_evaluationlevel";
+var text_competencyname                 = "$text_competencyname";
+var text_competencylevel                 = "$text_competencylevel";
+var text_cando_statement                = "$text_cando_statement";
+var text_cando_statements                = "$text_cando_statements";
+var text_tasklink                        = "$text_tasklink";
+var text_canBeGoal                        = "$text_learningobjectivecheckbox";
+var text_fill_in_learning_objectives    = "$text_fill_in_learning_objectives";
+var text_combination_of                    = "$text_combination_of";
+var text_and                            = "$text_and";
 
 EOF;
 
@@ -259,14 +259,14 @@ if ($form_submitted) {
     $inlinejs .= <<<EOF
 function getPostData() {
     postData = {
-		'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
+        'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
         'arrCompetencyName'          : JSON.stringify($arrCompetencyNameJson),
-		'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
-		'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),
-	    'arrCanDo'                   : JSON.stringify($arrCanDoJson),
-		'arrCanDoTaskLink'           : JSON.stringify($arrCanDoTaskLinkJson),
-		'arrCanDoCanBeGoal'          : JSON.stringify($arrCanDoCanBeGoalJson),
-		'file_submitted'             : JSON.stringify($file_submitted)
+        'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
+        'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),
+        'arrCanDo'                   : JSON.stringify($arrCanDoJson),
+        'arrCanDoTaskLink'           : JSON.stringify($arrCanDoTaskLinkJson),
+        'arrCanDoCanBeGoal'          : JSON.stringify($arrCanDoCanBeGoalJson),
+        'file_submitted'             : JSON.stringify($file_submitted)
     };
     return postData;
 }
@@ -291,20 +291,20 @@ if (!$edit) {
     $inlinejs .= <<<EOF
 
 function activateDescriptorset(id) {
-	sendjsonrequest('activatedescriptorset.json.php?activate=1',
+    sendjsonrequest('activatedescriptorset.json.php?activate=1',
             {'id': id},
             'POST',
             function() {
-            	tableRenderer.doupdate();
+                tableRenderer.doupdate();
             });
 }
 
 function deactivateDescriptorset(id) {
-	sendjsonrequest('activatedescriptorset.json.php?activate=0',
+    sendjsonrequest('activatedescriptorset.json.php?activate=0',
             {'id': id},
             'POST',
             function() {
-            	tableRenderer.doupdate();
+                tableRenderer.doupdate();
             });
 }
 
@@ -319,7 +319,7 @@ function deleteDescriptorset(id, name) {
                 {'id': id},
                 'POST',
                 function() {
-                	tableRenderer.doupdate();
+                    tableRenderer.doupdate();
                 });
     }
 }
@@ -407,8 +407,8 @@ $importformcsv = pieform(array(
 ));
 
 $smarty = smarty(array('tablerenderer',
-    				   'jquery',
-					   'artefact/epos/js/create_selfevaluation.js')
+                       'jquery',
+                       'artefact/epos/js/create_selfevaluation.js')
 );
 
 //localization assignment to smarty
@@ -522,14 +522,14 @@ function importcsv_submit(Pieform $form, $values) {
             $values = str_getcsv_utf8($line);
             $line_no++;
 
-			$writer->startElement("DESCRIPTOR");
-			$writer->writeAttribute('COMPETENCE', $values[0]);
-			$writer->writeAttribute('LEVEL', $values[1]);
-			$writer->writeAttribute('EVALUATIONS', $values[2]);
-			$writer->writeAttribute('GOAL', $values[3]);
-			$writer->writeAttribute('NAME', $values[4]);
-			$writer->writeAttribute('LINK', $values[5]);
-			$writer->endElement();
+            $writer->startElement("DESCRIPTOR");
+            $writer->writeAttribute('COMPETENCE', $values[0]);
+            $writer->writeAttribute('LEVEL', $values[1]);
+            $writer->writeAttribute('EVALUATIONS', $values[2]);
+            $writer->writeAttribute('GOAL', $values[3]);
+            $writer->writeAttribute('NAME', $values[4]);
+            $writer->writeAttribute('LINK', $values[5]);
+            $writer->endElement();
         }
         $writer->endElement();
         $writer->endDocument();
@@ -561,5 +561,3 @@ function str_getcsv_utf8($str) {
 function errorHandler($errno, $errstr, $errfile, $errline) {
     throw new Exception($errstr, $errno);
 }
-
-?>

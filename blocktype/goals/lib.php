@@ -53,15 +53,15 @@ class PluginBlocktypeGoals extends PluginBlocktype {
         }
         return '';
     }
-    
+
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $result = '';
         $configdata = $instance->get('configdata');
         $id = isset($configdata['artefactid']) ? $configdata['artefactid'] : 0;
-        
+
         if (!empty($configdata['artefactid'])) {
             $jsonpath = get_config('wwwroot') . 'artefact/epos/goals.json.php?id=' . $id;
-            
+
             $inlinejs = '(function($){$.fn.goals=function(){';
             $inlinejs .= <<<EOF
 
@@ -70,27 +70,27 @@ tableRenderer{$id} = new TableRenderer(
     '{$jsonpath}',
     [
         function (r, d) {
-        	var data = TD(null);
-        	if (r.descriptor == null && r.description != null) {
-            	data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
-            	return data;
-			}
+            var data = TD(null);
+            if (r.descriptor == null && r.description != null) {
+                data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
+                return data;
+            }
             return TD(null, r.descriptor);
         },
         function (r, d) {
             var level = "";
             var competence = "";
-        	if (r.competence != null) {
-        		competence = r.competence;
-        	}
-        	if (typeof r.level !== "undefined") {
-        	    level = r.level;
-        	}
+            if (r.competence != null) {
+                competence = r.competence;
+            }
+            if (typeof r.level !== "undefined") {
+                level = r.level;
+            }
             return TD(null, competence + ' ' + level);
         },
         function (r, d) {
-			return TD(null);
-		},
+            return TD(null);
+        },
     ]
 );
 
@@ -102,16 +102,16 @@ $('#goalsnotvisible{$id}').addClass('hidden');};
 
 $().goals();})(jQuery);
 EOF;
-            
+
             $smarty = smarty_core();
             $smarty->assign('id', $id);
             $smarty->assign('JAVASCRIPT', $inlinejs);
-            
+
             $result = $smarty->fetch('artefact:epos:viewgoals.tpl');
         }
         return $result;
     }
-	
+
     public static function artefactchooser_element($default=null) {
         return array(
             'name'  => 'artefactid',
@@ -126,18 +126,18 @@ EOF;
             'artefacttypes' => array('evaluation'),
         );
     }
-    
+
     /**
-     * Optional method. If specified, allows the blocktype class to munge the 
+     * Optional method. If specified, allows the blocktype class to munge the
      * artefactchooser element data before it's templated
      */
     public static function artefactchooser_get_element_data($artefact) {
-    	$instance = artefact_instance_from_id($artefact->id);
+        $instance = artefact_instance_from_id($artefact->id);
         $artefact->title = $instance->display_title();
         $artefact->hovertitle = '';
         return $artefact;
     }
-    
+
     public static function has_instance_config() {
         return true;
     }
@@ -149,7 +149,7 @@ EOF;
         $elements[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
         return $elements;
     }
-    
+
     public static function default_copy_type() {
         return 'full';
     }
@@ -165,5 +165,3 @@ EOF;
         return $view->get('owner') != null;
     }
 }
-
-?>

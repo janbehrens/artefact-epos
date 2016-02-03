@@ -68,33 +68,33 @@ tableRenderer = new TableRenderer(
     'goals.json.php?id={$id}',
     [
         function (r, d) {
-        	var data = TD(null);
-        	if(r.descriptor == null && r.description != null) {
-            	data.innerHTML = '<div class="customgoalText" id="custom_' + r.id + '">' + r.description + '</div>';
-            	return data;
-			}
+            var data = TD(null);
+            if(r.descriptor == null && r.description != null) {
+                data.innerHTML = '<div class="customgoalText" id="custom_' + r.id + '">' + r.description + '</div>';
+                return data;
+            }
             return TD(null, r.descriptor);
         },
         function (r, d) {
             var level = "";
             var competence = "";
-        	if(r.competence != null) {
-        		competence = r.competence;
-        	}
-        	if (typeof r.level !== "undefined") {
-        	    level = r.level;
-        	}
+            if(r.competence != null) {
+                competence = r.competence;
+            }
+            if (typeof r.level !== "undefined") {
+                level = r.level;
+            }
             return TD(null, competence + ' ' + level);
         },
         function (r, d) {
-        	var data = TD(null);
-        	if(r.description != null) {
-        		data.innerHTML = '<div style="width:48px;"><a href="javascript: onClick=editCustomGoal('+r.id+');" title="$editCustomgoal"><img src="$editbuttonurl" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="$deletebuttonurl" alt="$deleteCustomgoal"></a></div>';
+            var data = TD(null);
+            if(r.description != null) {
+                data.innerHTML = '<div style="width:48px;"><a href="javascript: onClick=editCustomGoal('+r.id+');" title="$editCustomgoal"><img src="$editbuttonurl" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="$deletebuttonurl" alt="$deleteCustomgoal"></a></div>';
                 return data;
-			}
+            }
 
-			return TD(null);
-		},
+            return TD(null);
+        },
     ]
 );
 

@@ -36,5 +36,3 @@ $path = "$dataroot/artefact/epos/descriptorsets/$file";
 
 $options = array('forcedownload' => true);
 serve_file($path, $file, 'application/xml', $options);
-
-?>

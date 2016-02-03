@@ -41,7 +41,7 @@ $accessdenied = true;
 
 if (isset($_GET['institution'])) {
     $institution = $_GET['institution'];
-    
+
     //check if user is allowed to administer the institution indicated by GET parameter
     foreach ($institutions as $inst) {
         if ($institution == $inst->name) {
@@ -110,14 +110,14 @@ function toggleForm() {
     }
     else {
         $('addbutton').innerHTML = '{$addstr}';
-        addElementClass(elemName, 'hidden'); 
+        addElementClass(elemName, 'hidden');
     }
 }
 
 function saveCallback(form, data) {
-    tableRenderer.doupdate(); 
+    tableRenderer.doupdate();
     toggleForm();
-    // Can't reset() the form here, because its values are what were just submitted, 
+    // Can't reset() the form here, because its values are what were just submitted,
     // thanks to pieforms
     forEach(form.elements, function(element) {
         if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
@@ -127,20 +127,20 @@ function saveCallback(form, data) {
 }
 
 function activateSubject(id) {
-	sendjsonrequest('activatesubject.json.php?activate=1',
+    sendjsonrequest('activatesubject.json.php?activate=1',
             {'id': id},
-            'POST', 
+            'POST',
             function() {
-            	tableRenderer.doupdate();
+                tableRenderer.doupdate();
             });
 }
 
 function deactivateSubject(id) {
-	sendjsonrequest('activatesubject.json.php?activate=0',
+    sendjsonrequest('activatesubject.json.php?activate=0',
             {'id': id},
-            'POST', 
+            'POST',
             function() {
-            	tableRenderer.doupdate();
+                tableRenderer.doupdate();
             });
 }
 
@@ -148,9 +148,9 @@ function deleteSubject(id, name) {
     if (confirm('{$confirmdelstr}')) {
         sendjsonrequest('deletesubject.json.php',
                 {'id': id},
-                'POST', 
+                'POST',
                 function() {
-                	tableRenderer.doupdate();
+                    tableRenderer.doupdate();
                 });
     }
 }
@@ -159,36 +159,36 @@ var oldText;
 var openToEdit = false;
 
 function editSubject(id) {
-	if(!openToEdit) {
-		openToEdit = true;
-		oldText = document.getElementById("subject" + id).innerHTML;
-		if(oldText.substr(0, 5) != "<form") {
-			document.getElementById("subject" + id).innerHTML = '<form action="javascript: submitEdit('+id+');">' +
-			'<input id="input_'+ id+'" value="' + oldText + '"/>' +
-			'<input class="submitcancel submit" type="submit" value="$savestr" />' +
-			'<input class="submitcancel cancel" type="reset" value="$cancelstr" onClick="javascript: cancelEditing('+id+');"/>' +
-			'</form>';			
-		}
-	}
+    if(!openToEdit) {
+        openToEdit = true;
+        oldText = document.getElementById("subject" + id).innerHTML;
+        if(oldText.substr(0, 5) != "<form") {
+            document.getElementById("subject" + id).innerHTML = '<form action="javascript: submitEdit('+id+');">' +
+            '<input id="input_'+ id+'" value="' + oldText + '"/>' +
+            '<input class="submitcancel submit" type="submit" value="$savestr" />' +
+            '<input class="submitcancel cancel" type="reset" value="$cancelstr" onClick="javascript: cancelEditing('+id+');"/>' +
+            '</form>';
+        }
+    }
 }
 
 function cancelEditing(id) {
-	document.getElementById("subject" + id).innerHTML = oldText;
-	openToEdit = false;
-	return true;
+    document.getElementById("subject" + id).innerHTML = oldText;
+    openToEdit = false;
+    return true;
 }
 
 function submitEdit(id) {
-	text = document.getElementById('input_'+id).value;	
-	sendjsonrequest('updatesubject.json.php',
+    text = document.getElementById('input_'+id).value;
+    sendjsonrequest('updatesubject.json.php',
             {'id': id,
             'text': text},
-            'POST', 
+            'POST',
             function() {
-            	tableRenderer.doupdate();
+                tableRenderer.doupdate();
             },
             function() {
-            	// @todo error
+                // @todo error
             });
    openToEdit = false;
 }
@@ -199,8 +199,8 @@ tableRenderer = new TableRenderer(
     [
         function (r, d) {
             var data =  TD(null);
-        	data.innerHTML = '<div id="subject' + r.id + '">' + r.name + '</div>';
-        	return data;
+            data.innerHTML = '<div id="subject' + r.id + '">' + r.name + '</div>';
+            return data;
         },
         function (r, d) {
             if (r.active == 1) {
@@ -251,7 +251,7 @@ $subjectform = pieform(array(
     'name' => 'addsubjectform',
     'plugintype' => 'artefact',
     'pluginname' => 'epos',
-    'elements' => $elements, 
+    'elements' => $elements,
     'jsform' => true,
     'successcallback' => 'form_submit',
     'jssuccesscallback' => 'saveCallback',
@@ -284,11 +284,9 @@ function process_form(Pieform $form, $values) {
     $values['active'] = 1;
     if ($values['name'] != '') {
         $sql = "SELECT name FROM artefact_epos_subject WHERE name = ? AND institution = ?";
-        
+
         if (!get_records_sql_array($sql, array($values['name'], $values['institution']))) {
             insert_record('artefact_epos_subject', (object)$values);
         }
     }
 }
-
-?>

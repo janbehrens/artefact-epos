@@ -56,9 +56,9 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
 
         $result = '';
         if (!empty($configdata['artefactid'])) {
-	        $evaluation = $instance->get_artefact_instance($configdata['artefactid']);
-	        $result = $evaluation->render_self($configdata, $blockid);
-	        $result = $result['html'];
+            $evaluation = $instance->get_artefact_instance($configdata['artefactid']);
+            $result = $evaluation->render_self($configdata, $blockid);
+            $result = $result['html'];
         }
         return $result;
     }
@@ -87,7 +87,7 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
      * artefactchooser element data before it's templated
      */
     public static function artefactchooser_get_element_data($artefact) {
-    	$instance = artefact_instance_from_id($artefact->id);
+        $instance = artefact_instance_from_id($artefact->id);
         $artefact->title = $instance->display_title();
         $artefact->hovertitle = '';
         return $artefact;
@@ -103,7 +103,7 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
     public static function default_copy_type() {
         return 'full';
     }
-    
+
     /**
      * Allow this blocktype in personal views only
      */
@@ -111,4 +111,3 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
         return $view->get('owner') != null;
     }
 }
-

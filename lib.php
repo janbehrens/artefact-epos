@@ -180,34 +180,34 @@ class ArtefactTypeEvaluation extends ArtefactType {
             parent::__construct($idOrEvaluation, $data);
             if ($this->id && $full_load) {
                 if (!isset($this->descriptorset_id)) {
-                	$sql = 'SELECT e.*, u.firstname, u.lastname
+                    $sql = 'SELECT e.*, u.firstname, u.lastname
                             FROM artefact a
                             LEFT JOIN artefact_epos_evaluation e ON a.id = e.artefact
                             LEFT JOIN usr u ON e.evaluator = u.id
                             WHERE a.id = ?';
-                	$data = get_record_sql($sql, array($this->id));
-                	if ($data) {
-                		$this->descriptorset_id = $data->descriptorset;
-                		$this->evaluator = $data->evaluator;
-                		$this->final = $data->final;
-                		$this->evaluator_display_name = "$data->firstname $data->lastname";
-                	}
-                	else {
-                		// This should never happen unless the user is playing around with task IDs in the location bar or similar
-                		throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
-                	}
+                    $data = get_record_sql($sql, array($this->id));
+                    if ($data) {
+                        $this->descriptorset_id = $data->descriptorset;
+                        $this->evaluator = $data->evaluator;
+                        $this->final = $data->final;
+                        $this->evaluator_display_name = "$data->firstname $data->lastname";
+                    }
+                    else {
+                        // This should never happen unless the user is playing around with task IDs in the location bar or similar
+                        throw new ArtefactNotFoundException(get_string('evaluationnotfound', 'artefact.epos'));
+                    }
                 }
-            	if ($items = get_records_array('artefact_epos_evaluation_item', 'evaluation', $this->id, 'id')) {
-            		foreach ($items as $item) {
-            			$this->items[$item->id] = $item;
-            			if (isset($item->descriptor)) {
-            			    $this->items_by_descriptor_id[$item->descriptor] = $item;
-            			}
-            			if (isset($item->target_key)) {
-            			    $this->items_by_target_id[$item->target_key] = $item;
-            			}
-            		}
-            	}
+                if ($items = get_records_array('artefact_epos_evaluation_item', 'evaluation', $this->id, 'id')) {
+                    foreach ($items as $item) {
+                        $this->items[$item->id] = $item;
+                        if (isset($item->descriptor)) {
+                            $this->items_by_descriptor_id[$item->descriptor] = $item;
+                        }
+                        if (isset($item->target_key)) {
+                            $this->items_by_target_id[$item->target_key] = $item;
+                        }
+                    }
+                }
             }
         }
     }
@@ -234,38 +234,38 @@ class ArtefactTypeEvaluation extends ArtefactType {
     public function commit() {
         db_begin();
         $new = empty($this->id);
-    	parent::commit();
-    	$data = (object) array(
-    			'artefact' => $this->get('id'),
-    			'descriptorset' => $this->descriptorset_id,
-    	        'evaluator' => $this->evaluator,
-    	        'final' => $this->final
-    	);
-    	if ($new) {
-    	    global $USER;
-    		insert_record('artefact_epos_evaluation', $data);
-    		$goal_id_map = array();
-    		foreach ($this->customcompetences as $customcompetence) {
-    		    $customcompetence->set('parent', $this->id);
-    		    $customcompetence->set('owner', $USER->get('id'));
-    		    $goal_id_map = $goal_id_map + $customcompetence->commit();
-    		}
-    		foreach ($this->items as $item) {
-    		    $item->evaluation = $this->id;
-    		    if ($item->type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL && isset($item->id)) {
-    		        // we are new, but this item has an id => must be cloned, use new id and insert
-    		        if (isset($goal_id_map[$item->target_key])) {
-    		            $item->target_key = $goal_id_map[$item->target_key];
-    		        }
-    		    }
-    		    unset($item->id);
-    		    insert_record('artefact_epos_evaluation_item', $item);
-    		}
-    	}
-    	else {
-    		update_record('artefact_epos_evaluation', $data, 'artefact');
-    	}
-    	db_commit();
+        parent::commit();
+        $data = (object) array(
+                'artefact' => $this->get('id'),
+                'descriptorset' => $this->descriptorset_id,
+                'evaluator' => $this->evaluator,
+                'final' => $this->final
+        );
+        if ($new) {
+            global $USER;
+            insert_record('artefact_epos_evaluation', $data);
+            $goal_id_map = array();
+            foreach ($this->customcompetences as $customcompetence) {
+                $customcompetence->set('parent', $this->id);
+                $customcompetence->set('owner', $USER->get('id'));
+                $goal_id_map = $goal_id_map + $customcompetence->commit();
+            }
+            foreach ($this->items as $item) {
+                $item->evaluation = $this->id;
+                if ($item->type == EVALUATION_ITEM_TYPE_CUSTOM_GOAL && isset($item->id)) {
+                    // we are new, but this item has an id => must be cloned, use new id and insert
+                    if (isset($goal_id_map[$item->target_key])) {
+                        $item->target_key = $goal_id_map[$item->target_key];
+                    }
+                }
+                unset($item->id);
+                insert_record('artefact_epos_evaluation_item', $item);
+            }
+        }
+        else {
+            update_record('artefact_epos_evaluation', $data, 'artefact');
+        }
+        db_commit();
     }
 
     /**
@@ -366,10 +366,10 @@ class ArtefactTypeEvaluation extends ArtefactType {
     }
 
     public function get_descriptorset() {
-		if (!isset($this->descriptorset)) {
-	        $this->descriptorset = Descriptorset::get_instance($this->descriptorset_id);
-		}
-		return $this->descriptorset;
+        if (!isset($this->descriptorset)) {
+            $this->descriptorset = Descriptorset::get_instance($this->descriptorset_id);
+        }
+        return $this->descriptorset;
     }
 
     public function get_descriptorset_id() {
@@ -723,10 +723,10 @@ class ArtefactTypeEvaluation extends ArtefactType {
                     'defaultvalue' => $value,
             );
             $elements[$index . '_goal'] = array(
-    				'type' => 'checkbox',
-    				'title' => $title,
-    				'defaultvalue' => $item->goal,
-    		);
+                    'type' => 'checkbox',
+                    'title' => $title,
+                    'defaultvalue' => $item->goal,
+            );
             $elements[$index . '_actions'] = array(
                     'type' => 'html',
                     'title' => $title,
@@ -751,7 +751,7 @@ EOL
         $results = $this->get_results();
 
         $column_titles = array_map(function ($item) {
-        	// If column labels contain a colon, return only the part before it (useful in cases where competence level names are very long)
+            // If column labels contain a colon, return only the part before it (useful in cases where competence level names are very long)
             $returnstr = explode(':', $item->name);
             return $returnstr[0];
         }, $descriptorset->levels);
@@ -936,9 +936,9 @@ EOL
             $owner = $USER->get('id');
         }
         $sql = "SELECT a.id, a.title, a.description
-            	FROM artefact a
+                FROM artefact a
                 JOIN artefact_epos_evaluation e ON a.id = e.artefact
-            	WHERE a.artefacttype = 'evaluation' AND a.owner = ? AND e.final = 0";
+                WHERE a.artefacttype = 'evaluation' AND a.owner = ? AND e.final = 0";
 
         if (!$data = get_records_sql_array($sql, array($owner))) {
             return array(null, false);
@@ -1098,9 +1098,9 @@ class ArtefactTypeCustomGoal extends ArtefactType {
             'rules' => array('required' => true)
         );
         $elements['competence'] = array(
-                'type' => 'hidden',
-                'value' => -1, // will be set on client side
-                'sesskey' => true // indicate that the value may be changed by the client
+            'type' => 'hidden',
+            'value' => -1, // will be set on client side
+            'sesskey' => true // indicate that the value may be changed by the client
         );
         $elements['is_goal'] = array(
             'type' => 'hidden',
@@ -1274,47 +1274,47 @@ class ArtefactTypeCustomCompetence extends ArtefactType {
 
 class Descriptorset implements ArrayAccess, Iterator {
 
-	private $id;
+    private $id;
 
-	private $name;
+    private $name;
 
-	public $file;
+    public $file;
 
-	public $visible;
+    public $visible;
 
-	public $active;
+    public $active;
 
-	public $descriptors = array();
+    public $descriptors = array();
 
-	public $ratings = array();
+    public $ratings = array();
 
-	public $levels = array();
+    public $levels = array();
 
-	public $competences = array();
+    public $competences = array();
 
-	private $descriptors_by_competence_level = array();
+    private $descriptors_by_competence_level = array();
 
-	public function __construct($id=0) {
-		global $USER;
-		// load
-		if (!empty($id)) {
-			if (!$data = get_record('artefact_epos_descriptorset', 'id', $id)) {
-				throw new Exception(get_string('descriptorsetnotfound', 'artefact.epos'));
-			}
-			foreach((array)$data as $field => $value) {
-				if (property_exists($this, $field)) {
-					$this->{$field} = $value;
-				}
-			}
-			$sql = "SELECT d.*, c.name as competence_name, l.name as level_name
-			        FROM artefact_epos_descriptor d
-			        LEFT JOIN artefact_epos_competence c ON d.competence = c.id
-			        LEFT JOIN artefact_epos_level l ON d.level = l.id
-			        WHERE d.descriptorset = ?";
-			if ($descriptors = get_records_sql_array($sql, array($this->id))) {
-				foreach ($descriptors as $descriptor) {
-					$this->descriptors[$descriptor->id] = $descriptor;
-					$this->descriptors_by_competence_level[$descriptor->competence][$descriptor->level] []= $descriptor;
+    public function __construct($id=0) {
+        global $USER;
+        // load
+        if (!empty($id)) {
+            if (!$data = get_record('artefact_epos_descriptorset', 'id', $id)) {
+                throw new Exception(get_string('descriptorsetnotfound', 'artefact.epos'));
+            }
+            foreach((array)$data as $field => $value) {
+                if (property_exists($this, $field)) {
+                    $this->{$field} = $value;
+                }
+            }
+            $sql = "SELECT d.*, c.name as competence_name, l.name as level_name
+                    FROM artefact_epos_descriptor d
+                    LEFT JOIN artefact_epos_competence c ON d.competence = c.id
+                    LEFT JOIN artefact_epos_level l ON d.level = l.id
+                    WHERE d.descriptorset = ?";
+            if ($descriptors = get_records_sql_array($sql, array($this->id))) {
+                foreach ($descriptors as $descriptor) {
+                    $this->descriptors[$descriptor->id] = $descriptor;
+                    $this->descriptors_by_competence_level[$descriptor->competence][$descriptor->level] []= $descriptor;
                     if (!array_key_exists($descriptor->competence, $this->competences)) {
                         $competence = new stdClass();
                         $competence->id = $descriptor->competence;
@@ -1327,70 +1327,70 @@ class Descriptorset implements ArrayAccess, Iterator {
                         $level->name = $descriptor->level_name;
                         $this->levels[$descriptor->level] = $level;
                     }
-				}
-			}
-			if ($ratings = get_records_array('artefact_epos_rating', 'descriptorset', $id, 'id')) {
-				foreach ($ratings as $rating) {
-					$this->ratings[$rating->id] = $rating;
-				}
-			}
-		}
-	}
+                }
+            }
+            if ($ratings = get_records_array('artefact_epos_rating', 'descriptorset', $id, 'id')) {
+                foreach ($ratings as $rating) {
+                    $this->ratings[$rating->id] = $rating;
+                }
+            }
+        }
+    }
 
-	public static function get_instance($id) {
+    public static function get_instance($id) {
         static $cache = array();
         if (!isset($cache[$id])) {
             $cache[$id] = new Descriptorset($id);
         }
         return $cache[$id];
-	}
+    }
 
-	public function commit() {
-		db_begin();
-		$new = empty($this->id);
-		$data = (object)array(
-				'id'  => $this->id,
-		);
-		if ($new) {
-			$success = insert_record('artefact_epos_descriptorset', $data);
-		}
-		else {
-			$success = update_record('artefact_epos_descriptorset', $data, array('id'));
-		}
-		db_commit();
-	}
+    public function commit() {
+        db_begin();
+        $new = empty($this->id);
+        $data = (object)array(
+                'id'  => $this->id,
+        );
+        if ($new) {
+            $success = insert_record('artefact_epos_descriptorset', $data);
+        }
+        else {
+            $success = update_record('artefact_epos_descriptorset', $data, array('id'));
+        }
+        db_commit();
+    }
 
-	public function delete() {
-		if (empty($this->id)) {
-			return;
-		}
-		db_begin();
-		// TODO: delete competences, ratings and levels
-		delete_records('artefact_epos_descriptorset', 'id', $this->id);
-		db_commit();
-	}
+    public function delete() {
+        if (empty($this->id)) {
+            return;
+        }
+        db_begin();
+        // TODO: delete competences, ratings and levels
+        delete_records('artefact_epos_descriptorset', 'id', $this->id);
+        db_commit();
+    }
 
-	// array interface
+    // array interface
 
-	public function offsetExists($offset) {
-		return isset($this->descriptors);
-	}
+    public function offsetExists($offset) {
+        return isset($this->descriptors);
+    }
 
-	public function offsetGet($offset) {
-		return $this->descriptors[$offset];
-	}
+    public function offsetGet($offset) {
+        return $this->descriptors[$offset];
+    }
 
-	public function offsetSet($offset, $value) {
-		$this->descriptors[$offset] = $value;
-	}
+    public function offsetSet($offset, $value) {
+        $this->descriptors[$offset] = $value;
+    }
 
-	public function offsetUnset($offset) {
-		unset($this->descriptors[$offset]);
-	}
+    public function offsetUnset($offset) {
+        unset($this->descriptors[$offset]);
+    }
 
-	// iterator interface
+    // iterator interface
 
-	public function rewind() {
+    public function rewind() {
         return reset($this->descriptors);
     }
 

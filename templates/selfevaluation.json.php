@@ -53,5 +53,3 @@ echo json_encode(array(
     'data' => $dbdata,
     'count' => count($dbdata)
 ));
-
-?>

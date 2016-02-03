@@ -45,13 +45,13 @@ function object_to_array($mixed) {
     return $mixed;
 }
 
-$competencyPatternTitle				= json_decode(param_variable('jsonCompetencyPatternTitle'));
-$arrCompetencyName 					= json_decode(param_variable('arrCompetencyName'));
-$arrCompetencyLevel 				= json_decode(param_variable('arrCompetencyLevel'));
-$arrCanDo							= object_to_array(json_decode(param_variable('arrCanDo'))); // JSON array with missing index
-$arrCanDoTaskLink					= object_to_array(json_decode(param_variable('arrCanDoTaskLink'))); // gets converted to object
-$arrCanDoCanBeGoal					= object_to_array(json_decode(param_variable('arrCanDoCanBeGoal'))); // so we convert back
-$arrEvaluationLevelGlobal			= json_decode(param_variable('arrEvaluationLevelGlobal'));
+$competencyPatternTitle                = json_decode(param_variable('jsonCompetencyPatternTitle'));
+$arrCompetencyName                     = json_decode(param_variable('arrCompetencyName'));
+$arrCompetencyLevel                 = json_decode(param_variable('arrCompetencyLevel'));
+$arrCanDo                            = object_to_array(json_decode(param_variable('arrCanDo'))); // JSON array with missing index
+$arrCanDoTaskLink                    = object_to_array(json_decode(param_variable('arrCanDoTaskLink'))); // gets converted to object
+$arrCanDoCanBeGoal                    = object_to_array(json_decode(param_variable('arrCanDoCanBeGoal'))); // so we convert back
+$arrEvaluationLevelGlobal            = json_decode(param_variable('arrEvaluationLevelGlobal'));
 $arrEvaluationsString               = "";
 $file_submitted                     = param_variable('file_submitted') == 'true';
 
@@ -101,82 +101,82 @@ $writer->writeAttribute('NAME', $competencyPatternTitle);
 $emptyfield = false;
 
 for ($iCompetence = 0; $iCompetence < count($arrCompetencyName); $iCompetence++) {
-	//check if any of the fields is empty
-	if ($arrCompetencyName[$iCompetence] == "") {
-		$emptyfield = true;
-		break;
-	}
+    //check if any of the fields is empty
+    if ($arrCompetencyName[$iCompetence] == "") {
+        $emptyfield = true;
+        break;
+    }
 
-	for ($iLevel = 0; $iLevel < count($arrCompetencyLevel); $iLevel++) {
-	    //check if any of the fields is empty
-		if ($arrCompetencyLevel[$iLevel] == "") {
-			$emptyfield = true;
-			break;
-		}
+    for ($iLevel = 0; $iLevel < count($arrCompetencyLevel); $iLevel++) {
+        //check if any of the fields is empty
+        if ($arrCompetencyLevel[$iLevel] == "") {
+            $emptyfield = true;
+            break;
+        }
 
-		if (isset($arrCanDo[$iCompetence][$iLevel])) {
-    		for ($iCando = 0; $iCando < count($arrCanDo[$iCompetence][$iLevel]); $iCando++) {
-    			if ($iCando > 0 && $arrCanDo[$iCompetence][$iLevel][$iCando] == "" && $arrCanDoTaskLink[$iCompetence][$iLevel][$iCando] == "") {
-    				continue;
-    			}
+        if (isset($arrCanDo[$iCompetence][$iLevel])) {
+            for ($iCando = 0; $iCando < count($arrCanDo[$iCompetence][$iLevel]); $iCando++) {
+                if ($iCando > 0 && $arrCanDo[$iCompetence][$iLevel][$iCando] == "" && $arrCanDoTaskLink[$iCompetence][$iLevel][$iCando] == "") {
+                    continue;
+                }
 
-    			if (!isset($arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]) ||
-        				!$arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]) {
-    				$arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando] = "0";
-    			}
+                if (!isset($arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]) ||
+                        !$arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]) {
+                    $arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando] = "0";
+                }
 
-    			$arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);
+                $arrEvaluationsString = implode("; ", $arrEvaluationLevelGlobal);
 
-    			$writer->startElement("DESCRIPTOR");
-    			$writer->writeAttribute('COMPETENCE', $arrCompetencyName[$iCompetence]);
-    			$writer->writeAttribute('LEVEL', $arrCompetencyLevel[$iLevel]);
-    			$writer->writeAttribute('EVALUATIONS', $arrEvaluationsString);
-    			$writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]);
-    			$writer->writeAttribute('NAME', $arrCanDo[$iCompetence][$iLevel][$iCando]);
-    			$writer->writeAttribute('LINK', $arrCanDoTaskLink[$iCompetence][$iLevel][$iCando]);
-    			$writer->endElement();
-    		}
-		}
-	}
+                $writer->startElement("DESCRIPTOR");
+                $writer->writeAttribute('COMPETENCE', $arrCompetencyName[$iCompetence]);
+                $writer->writeAttribute('LEVEL', $arrCompetencyLevel[$iLevel]);
+                $writer->writeAttribute('EVALUATIONS', $arrEvaluationsString);
+                $writer->writeAttribute('GOAL', $arrCanDoCanBeGoal[$iCompetence][$iLevel][$iCando]);
+                $writer->writeAttribute('NAME', $arrCanDo[$iCompetence][$iLevel][$iCando]);
+                $writer->writeAttribute('LINK', $arrCanDoTaskLink[$iCompetence][$iLevel][$iCando]);
+                $writer->endElement();
+            }
+        }
+    }
 }
 
 if (!$emptyfield) {
-	// End Descriptorset
-	$writer->endElement();
-	$writer->endDocument();
+    // End Descriptorset
+    $writer->endElement();
+    $writer->endDocument();
 
-	$writer->flush();
+    $writer->flush();
 
-	//write to database and dataroot (create new rows/files if $id is not given, otherwise overwrite)
-	if ($id != 0) {
-	    write_descriptor_db($filepath, false, $subject, $id);
-	}
-	else {
-	    write_descriptor_db($filepath, false, $subject);
-	}
+    //write to database and dataroot (create new rows/files if $id is not given, otherwise overwrite)
+    if ($id != 0) {
+        write_descriptor_db($filepath, false, $subject, $id);
+    }
+    else {
+        write_descriptor_db($filepath, false, $subject);
+    }
 
-	if ($file_submitted) {
-	    unzipExamplesFiles();
-	}
-	else {
-	    //get filename of current descriptorset and link the examples files to the new one
-	    $sql = 'SELECT file FROM artefact_epos_descriptorset
+    if ($file_submitted) {
+        unzipExamplesFiles();
+    }
+    else {
+        //get filename of current descriptorset and link the examples files to the new one
+        $sql = 'SELECT file FROM artefact_epos_descriptorset
                 WHERE id = ?';
-	    if (!$dbdata = get_records_sql_array($sql, array($id))) {
-	        $dbdata = array();
-	    }
-	    $oldfilepath = substr($dbdata[0]->file, 0, count($dbdata[0]->file) - 5);
-	    if (is_dir($oldfilepath)) {
-	        symlink($dirpath_examples . '/' . $oldfilepath, $filepath_examples);
-	    }
-	}
+        if (!$dbdata = get_records_sql_array($sql, array($id))) {
+            $dbdata = array();
+        }
+        $oldfilepath = substr($dbdata[0]->file, 0, count($dbdata[0]->file) - 5);
+        if (is_dir($oldfilepath)) {
+            symlink($dirpath_examples . '/' . $oldfilepath, $filepath_examples);
+        }
+    }
 
-	//reply
-	json_reply(null, "OK");
+    //reply
+    json_reply(null, "OK");
 }
 else {
-	$writer->flush();
-	json_reply(true, 'Error: One of the fields is empty');
+    $writer->flush();
+    json_reply(true, 'Error: One of the fields is empty');
 }
 
 function unzipExamplesFiles() {
@@ -189,5 +189,3 @@ function unzipExamplesFiles() {
         json_reply(true, $e->getMessage());
     }
 }
-
-?>

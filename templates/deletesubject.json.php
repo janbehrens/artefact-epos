@@ -38,7 +38,7 @@ try {
     delete_records('artefact_epos_descriptorset_subject', 'subject', $id);
     delete_records('artefact_epos_mysubject', 'subject', $id);
     delete_records('artefact_epos_subject', 'id', $id);
-        
+
     //reply
     json_reply(false, get_string('deletesubjectsuccess', 'artefact.epos'));
 }
@@ -46,6 +46,3 @@ catch (Exception $e) {
     //reply
     json_reply(true, get_string('deletesubjectfailed', 'artefact.epos'));
 }
-
-
-?>

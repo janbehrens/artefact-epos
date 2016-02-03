@@ -53,4 +53,3 @@ else {
 }
 
 echo json_encode($descriptorsets);
-

@@ -46,5 +46,3 @@ $a->commit();
 
 //reply
 json_reply(null, get_string('customlearninggoalupdatesuccess', 'artefact.epos'));
-
-?>

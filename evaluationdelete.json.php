@@ -43,5 +43,3 @@ $evaluationartefact->delete();
 
 //reply
 json_reply(null, get_string('deletedlanguage', 'artefact.epos'));
-
-?>
