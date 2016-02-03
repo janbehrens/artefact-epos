@@ -700,7 +700,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         rename_field($table, $field, 'evaluator_id');
     }
 
-    if ($oldversion < 2016012800) {
+    if ($oldversion < 2016020300) {
         // alter tables
         $descriptorsetfield = new XMLDBField('descriptorset_id');
         $competencefield = new XMLDBField('competence_id');
@@ -712,10 +712,10 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $subjectfield = new XMLDBField('subject_id');
 
         $competencetable = new XMLDBTable('artefact_epos_competence');
-        rename_field($competencetable, $descriptorsetfield, 'descriptorset');
+        drop_field($competencetable, $descriptorsetfield, 'descriptorset');
 
         $leveltable = new XMLDBTable('artefact_epos_level');
-        rename_field($leveltable, $descriptorsetfield, 'descriptorset');
+        drop_field($leveltable, $descriptorsetfield, 'descriptorset');
 
         $descriptortable = new XMLDBTable('artefact_epos_descriptor');
         rename_field($descriptortable, $competencefield, 'competence');

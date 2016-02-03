@@ -42,22 +42,18 @@
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_level"> 
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
-                <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="artefact_epos_descriptor"> 
