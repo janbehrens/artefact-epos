@@ -720,8 +720,12 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $descriptortable = new XMLDBTable('artefact_epos_descriptor');
         rename_field($descriptortable, $competencefield, 'competence');
         rename_field($descriptortable, $levelfield, 'level');
-        $descriptortable->addKeyInfo('competencefk', XMLDB_KEY_FOREIGN, array('competence'), 'artefact_epos_competence', array('id'));
-        $descriptortable->addKeyInfo('levelfk', XMLDB_KEY_FOREIGN, array('level'), 'artefact_epos_level', array('id'));
+        $competencekey = new XMLDBKey('arteeposdesc_com_fk');
+        $competencekey->setAttributes(XMLDB_KEY_FOREIGN, array('competence'), 'artefact_epos_competence', array('id'));
+        add_key($descriptortable, $competencekey);
+        $levelkey = new XMLDBKey('arteeposdesc_lev_fk');
+        $levelkey->setAttributes(XMLDB_KEY_FOREIGN, array('level'), 'artefact_epos_level', array('id'));
+        add_key($descriptortable, $levelkey);
 
         $ratingtable = new XMLDBTable('artefact_epos_rating');
         rename_field($ratingtable, $descriptorsetfield, 'descriptorset');
@@ -739,7 +743,12 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         rename_field($evaluationrequesttable, $evaluationfield, 'evaluator_evaluation');
         rename_field($evaluationrequesttable, $descriptorsetfield, 'descriptorset');
         drop_field($evaluationrequesttable, $subjectfield);
-        $evaluationrequesttable->addKeyInfo('inquirer_evaluationfk', XMLDB_KEY_FOREIGN, array('inquirer_evaluation'), 'artefact_epos_evaluation', 'artefact');
+        $inquirerevaluationkey = new XMLDBKey('arteeposevalrequ_inq2_fk');
+        $inquirerevaluationkey->setAttributes(XMLDB_KEY_FOREIGN, array('inquirer_evaluation'), 'artefact_epos_evaluation', array('artefact'));
+        add_key($evaluationrequesttable, $inquirerevaluationkey);
+        $descriptorsetkey = new XMLDBKey('arteeposevalrequ_des_fk');
+        $descriptorsetkey->setAttributes(XMLDB_KEY_FOREIGN, array('descriptorset'), 'artefact_epos_descriptorset', array('id'));
+        add_key($evaluationrequesttable, $descriptorsetkey);
 
         // update artefact
         $sql = "SELECT a.*, b.title as parenttitle FROM artefact a
