@@ -274,6 +274,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
     public function delete() {
         db_begin();
         delete_records('artefact_epos_evaluation_item', 'evaluation', $this->id);
+        delete_records('artefact_epos_evaluation_request', 'inquirer_evaluation', $this->id);
+        delete_records('artefact_epos_evaluation_request', 'evaluator_evaluation', $this->id);
         delete_records('artefact_epos_evaluation', 'artefact', $this->id);
         parent::delete();
         db_commit();
