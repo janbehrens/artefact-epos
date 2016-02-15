@@ -1,57 +1,76 @@
 $j = jQuery;
 
 var args;
+var form, formSections, formSectionDescriptor, formSectionComplevel, formSectionCustomgoal, formSectionOverall;
+var heading, goalHeader, overallCheckbox, isOverall, toggleDetailedEvaluationLink, toggleOverallEvaluationLink;
 
-function toggleEvaluationForm(competence, level, type, competenceName, levelName, toggleType) {
+function toggleEvaluationForm(competence, level, competenceName, levelName) {
     args = {
         competence: competence,
         level: level,
-        type: type,
         competenceName,
         levelName: levelName
     };
-    var form = $j('#evaluationform_div');
-    var formSections = $j('[id^=evaluationform_item_]').parent('tr');
-    var formSectionDescriptor = $j('[id^=evaluationform_item_' + competence + '_' + level + '_0_]').parent('tr');
-    var formSectionComplevel = $j('[id^=evaluationform_item_' + competence + '_' + level + '_1_]').parent('tr');
-    var formSectionCustomgoal = $j('[id^=evaluationform_item_' + competence + '_0_2_]').parent('tr');
-    var goalHeader = $j('#evaluationform_header_goal_container').parent();
-    var overallHeader = $j('#evaluationform_item_' + competence + '_' + level + '_overall_container').parent();
-    var overallCheckbox = $j('#evaluationform_item_' + competence + '_' + level + '_overall');
-    var toggleDetailedEvaluation = $j('#toggle_detailed_evaluation');
-    var toggleOverallEvaluation = $j('#toggle_overall_evaluation');
-    var heading = $j('#evaluationform_heading');
+    form = $j('#evaluationform_div');
+    formSections = $j('[id^=evaluationform_item_]').parent('tr');
+    formSectionDescriptor = $j('[id^=evaluationform_item_' + competence + '_' + level + '_]').parent('tr');
+    formSectionComplevel = $j('#evaluationform_item_' + competence + '_' + level + '_container').parent('tr');
+    formSectionCustomgoal = $j('[id^=evaluationform_item_' + competence + '_0_]').parent('tr');
+    formSectionOverall = $j('#evaluationform_item_' + competence + '_' + level + '_overall_container').parent('tr');
+    heading = $j('#evaluationform_heading');
+    goalHeader = $j('#evaluationform_header_goal_container').parent();
+    overallCheckbox = $j('#evaluationform_item_' + competence + '_' + level + '_overall');
+    isOverall = overallCheckbox.attr('checked');
+    toggleDetailedEvaluationLink = $j('#toggle_detailed_evaluation');
+    toggleOverallEvaluationLink = $j('#toggle_overall_evaluation');
 
     form.show();
     formSections.hide();
-    goalHeader.show();
-    if (type === null) {
-        type = overallCheckbox.attr('checked') ? 1 : 0;
-    }
-    if (type === 0) {
-        if (toggleType) {
-            overallCheckbox.attr('checked', false);
-        }
-        formSectionDescriptor.show();
-        toggleDetailedEvaluation.hide();
-        toggleOverallEvaluation.show();
-    }
-    else if (type === 1) {
-        if (toggleType) {
-            overallCheckbox.attr('checked', true);
-        }
+
+    if (isOverall) {
         formSectionComplevel.show();
         goalHeader.hide();
-        toggleDetailedEvaluation.show();
-        toggleOverallEvaluation.hide();
+        toggleDetailedEvaluationLink.show();
+        toggleOverallEvaluationLink.hide();
     }
-    else if (type === 2) {
+    else {
+        formSectionDescriptor.show();
+        formSectionOverall.hide();
+        formSectionComplevel.hide();
+        goalHeader.show();
+        toggleDetailedEvaluationLink.hide();
+        toggleOverallEvaluationLink.show();
+    }
+    // custom competence
+    if (level === 0) {
         formSectionCustomgoal.show();
-        toggleDetailedEvaluation.hide();
-        toggleOverallEvaluation.hide();
+        goalHeader.show();
+        toggleDetailedEvaluationLink.hide();
+        toggleOverallEvaluationLink.hide();
     }
-    heading.html(type < 2 ? competenceName + ' – ' + levelName : competenceName);
-    $j('#addcustomgoal_customcompetence').val(type === 2 ? competenceName : '');
+    heading.html(competenceName + ' – ' + levelName);
+    heading.html(level === 0 ? competenceName : competenceName + ' – ' + levelName);
+    $j('#addcustomgoal_customcompetence').val(level === 0 ? competenceName : '');
+}
+
+function toggleOverallEvaluation(overall) {
+    if (!overall) {
+        overallCheckbox.attr('checked', false);
+        formSectionDescriptor.show();
+        formSectionOverall.hide();
+        formSectionComplevel.hide();
+        goalHeader.show();
+        toggleDetailedEvaluationLink.hide();
+        toggleOverallEvaluationLink.show();
+    }
+    else {
+        overallCheckbox.attr('checked', true);
+        formSectionDescriptor.hide();
+        formSectionComplevel.show();
+        goalHeader.hide();
+        toggleDetailedEvaluationLink.show();
+        toggleOverallEvaluationLink.hide();
+    }
 }
 
 function evaluationSaveCallback(form, data) {

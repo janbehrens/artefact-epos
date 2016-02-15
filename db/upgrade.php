@@ -772,5 +772,16 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         drop_table($mysubjecttable);
     }
 
+    if ($oldversion < 2016021600) {
+        // add key artefact_epos_descriptorset_subject
+        $competenceleveltable = new XMLDBTable('artefact_epos_evaluation_competencelevel');
+        $evaluationfield = new XMLDBField('evaluation');
+        $evaluationfield->setAttributes(XMLDB_TYPE_INTEGER, 10, true, true);
+        $competencefield = new XMLDBField('competence');
+        $levelfield = new XMLDBField('level');
+        $valuefield = new XMLDBField('value');
+
+    }
+
     return true;
 }

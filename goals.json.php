@@ -26,56 +26,20 @@
  */
 
 define('INTERNAL', 1);
-define('JSON', 1);    //comment to debug
+define('JSON', 1);
 
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'epos');
 
-$limit = param_integer('limit', null);
-$offset = param_integer('offset', 0);
-$view = param_integer('view', 0);
+$id = param_integer('id');
 
-$id = $_GET['id'];
-
-$data = array();
-
-// load all descriptors of a subject's evaluation that are marked as goal
-$sql = 'SELECT d.name as descriptor, c.name AS competence, l.name AS level
-    FROM artefact evaluation
-    JOIN artefact_epos_evaluation_item ei ON ei.evaluation = evaluation.id
-    JOIN artefact_epos_descriptor d ON d.id = ei.descriptor
-    LEFT JOIN artefact_epos_competence c ON c.id = d.competence
-    LEFT JOIN artefact_epos_level l ON l.id = d.level
-    WHERE evaluation.id = ? AND ei.goal = 1
-    ORDER BY competence, level, d.id';
-
-if (!$data = get_records_sql_array($sql, array($id))) {
-    $data = array();
-}
-
-// collect custom goals for certain language
-$data_custom_goal = array();
-$cast = "";
-if (is_postgres()) {
-    $cast = "::integer";
-}
-$sql = "SELECT goal.id, goal.description, competence.title AS competence
-        FROM artefact goal
-        LEFT JOIN artefact_epos_evaluation_item ei ON ei.target_key$cast = goal.id
-        LEFT JOIN artefact competence ON goal.parent = competence.id
-        LEFT JOIN artefact evaluation ON competence.parent = evaluation.id
-        WHERE goal.artefacttype = 'customgoal' AND ei.goal = 1
-        AND evaluation.id = ? AND ei.type = ?";
-
-if (!$data_custom_goal = get_records_sql_array($sql, array($id, EVALUATION_ITEM_TYPE_CUSTOM_GOAL))) {
-    $data_custom_goal = array();
-}
-
-$data = array_merge($data, $data_custom_goal);
+$evaluation = artefact_instance_from_id($id);
+$evaluation->check_permission();
+$data = $evaluation->get_goals();
 
 echo json_encode(array(
     'data' => $data,
-    'limit' => $limit,
-    'offset' => $offset,
+    'limit' => -1,
+    'offset' => 0,
     'count' => count($data),
 ));

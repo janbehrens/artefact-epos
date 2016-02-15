@@ -52,7 +52,9 @@ else {
     if ($evaluation->final) {
         throw new ParameterException(get_string('evaluationisnoteditable', 'artefact.epos'));
     }
-    $customgoalform = ArtefactTypeCustomGoal::form_add_customgoal();
+    $customdescriptor = new CustomDescriptor();
+    $customdescriptor->evaluationid = $evaluation->get('id');
+    $customgoalform = $customdescriptor->form_add_customgoal();
     $render = $evaluation->render_evaluation();
     $selfevaluation = $render['html'];
     $includejs = $render['includejs'];

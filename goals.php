@@ -52,8 +52,6 @@ else {
     $evaluation = new ArtefactTypeEvaluation($id);
     $evaluation->check_permission();
 
-    $addcustomgoalform = ArtefactTypeCustomGoal::form_add_customgoal($is_goal=true, 'customgoalSaveCallback');
-
     $textSaveCustomgoalchanges = get_string('save', 'artefact.epos');
     $textCancelCustomgoalchanges = get_string('cancel', 'artefact.epos');
     $reallyDeleteCustomGoal = get_string('customlearninggoalwanttodelete', 'artefact.epos');
@@ -73,18 +71,18 @@ tableRenderer = new TableRenderer(
                 data.innerHTML = '<div class="customgoalText" id="custom_' + r.id + '">' + r.description + '</div>';
                 return data;
             }
-            return TD(null, r.descriptor);
+            return TD(null, r.descriptor_name);
         },
         function (r, d) {
-            var level = "";
-            var competence = "";
-            if(r.competence != null) {
-                competence = r.competence;
+            var level = '';
+            var competence = '';
+            if (r.competence !== null) {
+                competence = r.competence_name;
             }
-            if (typeof r.level !== "undefined") {
-                level = r.level;
+            if (r.level !== null) {
+                level = ' – ' + r.level_name;
             }
-            return TD(null, competence + ' ' + level);
+            return TD(null, competence + level);
         },
         function (r, d) {
             var data = TD(null);
@@ -111,7 +109,6 @@ $smarty = smarty(array('tablerenderer',
 
 $smarty->assign('haslanguages', $id !== false);
 $smarty->assign('selectform', $selectform);
-if ($id !== false) $smarty->assign("custom_goal_form", $addcustomgoalform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', get_string('goals', 'artefact.epos'));
 $smarty->assign('MENUITEM', MENUITEM);

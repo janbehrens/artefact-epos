@@ -29,17 +29,19 @@ define('INTERNAL', 1);
 define('JSON', 1);
 
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
-require_once(get_config('docroot') . 'artefact/lib.php');
+//require_once(get_config('docroot') . 'artefact/lib.php');
+safe_require('artefact', 'epos');
 
 $id = param_integer('customgoal_id');
 
-$a = artefact_instance_from_id($id);
+$customdescriptor = new CustomDescriptor($id);
+$evaluation = artefact_instance_from_id($customdescriptor->evaluationid);
+$evaluation->check_permission();
 
-if ($a->get('owner') != $USER->get('id')) {
-    throw new AccessDeniedException(get_string('notartefactowner', 'error'));
+try {
+    $customdescriptor->delete();
+    json_reply(false, get_string('customlearninggoaldeleted', 'artefact.epos'));
 }
-
-$a->delete();
-
-//reply
-json_reply(null, get_string('customlearninggoaldeleted', 'artefact.epos'));
+catch (Exception $e) {
+    json_reply(true, $e->getMessage());
+}

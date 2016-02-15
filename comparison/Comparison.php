@@ -99,7 +99,7 @@ class Comparison {
                 LEFT JOIN artefact_epos_evaluation e ON a.id = e.artefact
                 LEFT JOIN usr u ON e.evaluator = u.id
                 WHERE e.descriptorset = ? and a.owner = ?";
-        $evaluation_records = get_records_sql_array($sql, array($this->descriptorset->get_id(), $owner));
+        $evaluation_records = get_records_sql_array($sql, array($this->descriptorset->id, $owner));
         $evaluations = array();
         foreach ($evaluation_records as $record) {
             if (!isset($this->evaluations_by_id[$record->id])) {
@@ -201,7 +201,7 @@ class Comparison {
         foreach ($this->evaluations as $evaluation) {
             foreach ($evaluation->get_results() as $competence_id => $row) {
                 foreach ($row['levels'] as $level_id => $complevel) {
-                    if ($row['type'] == EVALUATION_ITEM_TYPE_CUSTOM_GOAL) {
+                    if ($row['custom']) {
                         $results[$row['name']][$level_id][$evaluation->get('id')] = $complevel;
                         $results[$row['name']]['name'] = $row['name'];
                     }
@@ -232,7 +232,7 @@ class Comparison {
                     $level_id = $level->id;
                 }
                 else {
-                    // for EVALUATION_ITEM_TYPE_CUSTOM_GOAL level_id is always 0
+                    // for custom descriptors level_id is always 0
                     $level_id = 0;
                 }
                 if (!empty($row[$level_id])) {

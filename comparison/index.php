@@ -32,27 +32,10 @@ define('SECTION_PLUGINNAME', 'epos');
 define('SECTION_PAGE', 'comparison'); // this is for help
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
+require_once('Comparison.php');
 define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 
-safe_require('artefact', 'epos');
-require_once 'Comparison.php';
-
-$evaluations = isset($_GET['evaluations']) ? $_GET['evaluations'] : null;
-
-if ($evaluations !== null) {
-    if (!is_array($evaluations)) {
-        throw new ParameterException("Wrong arguments for comparison");
-    }
-    foreach ($evaluations as $evaluation_id) {
-        assert_integer($evaluation_id);
-    }
-}
-else {
-    $smarty = smarty();
-    $smarty->assign('content', get_string('noevaluationselected', 'artefact.epos'));
-    $smarty->display('artefact:epos:simple.tpl');
-    exit;
-}
+$evaluations = param_variable('evaluations');
 
 $comparison = new Comparison($evaluations);
 $comparison->check_permission();

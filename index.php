@@ -154,6 +154,7 @@ EOF;
 
 //pieform
 if (count($optionssubject) > 0) {
+    //FIXME: handle case: count($optionsdescriptors) === 0
     $evaluationsform = pieform(array(
         'name' => 'createselfevaluation',
         'jsform' => true,
@@ -232,7 +233,8 @@ function get_subjects() {
  * Get descriptor sets for pieform select
  */
 function get_descriptorsets($subjects) {
-    $sql = "SELECT id, name, descriptorset, subject FROM artefact_epos_descriptorset d
+    $sql = "SELECT id, name, descriptorset, subject
+            FROM artefact_epos_descriptorset d
             JOIN artefact_epos_descriptorset_subject ds ON d.id = ds.descriptorset
             WHERE active = 1";
     if (!empty($subjects)) {
@@ -272,7 +274,7 @@ function createselfevaluation_submit(Pieform $form, $values) {
     $owner = $USER->get('id');
     try {
 //         $form->json_reply(PIEFORM_ERR, $values['descriptorset']);
-        ArtefactTypeEvaluation::create_evaluation_for_user($values['descriptorset'], $values['label'], $optionsdescriptors[$values['descriptorset']], $owner);
+        ArtefactTypeEvaluation::create_evaluation_for_user($values['descriptorset'], $values['label'], $owner);
     }
     catch (Exception $e) {
         $form->json_reply(PIEFORM_ERR, $e->getMessage());

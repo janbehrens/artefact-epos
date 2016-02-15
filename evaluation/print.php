@@ -31,23 +31,16 @@ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
-require_once(get_config('docroot') . 'artefact/lib.php');
-safe_require('artefact', 'internal');
-safe_require('artefact', 'epos');
 
-$id = $_GET['id'];
+$id = param_integer('id');
 
-if (!isset($id)) {
-    throw new ParameterException();
-}
 $evaluation = artefact_instance_from_id($id);
-
-if (!$USER->can_view_artefact($evaluation)) {
-    throw new AccessDeniedException(get_string('notownerofevaluation', 'artefact.epos'));
-}
+$evaluation->check_permission();
 
 $descriptorset = $evaluation->get_descriptorset();
-$ratings = array_values(array_map(function($item) { return $item->name; }, $descriptorset->ratings));
+$ratings = array_values(array_map(function($item) {
+    return $item->name;
+}, $descriptorset->ratings));
 
 $smarty = smarty();
 $smarty->assign('title', $evaluation->display_title());

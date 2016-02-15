@@ -255,7 +255,7 @@ class EvaluationRequest {
 
         $request = new EvaluationRequest();
         $request->inquirer_evaluation = $values['evaluation'];
-        $request->descriptorset = $inquirerevaluation->descriptorset_id;
+        $request->descriptorset = $inquirerevaluation->descriptorset;
         $request->evaluator = $evaluator_id;
         $request->inquirer = $USER->get('id');
         $request->inquiry_message = $values['message'];

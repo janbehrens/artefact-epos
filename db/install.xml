@@ -34,6 +34,7 @@
                 <FIELD NAME="subject"           TYPE="int" LENGTH="10" NOTNULL="true" />
             </FIELDS>
             <KEYS>
+                <KEY NAME="primary"             TYPE="primary" FIELDS="descriptorset,subject" />
                 <KEY NAME="descriptorsetfk"     TYPE="foreign" FIELDS="descriptorset" REFTABLE="artefact_epos_descriptorset" REFFIELDS="id" />
                 <KEY NAME="subjectfk"           TYPE="foreign" FIELDS="subject" REFTABLE="artefact_epos_subject" REFFIELDS="id" />
             </KEYS>
@@ -62,9 +63,9 @@
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="link"              TYPE="text" NOTNULL="false" />
                 <FIELD NAME="competence"        TYPE="int" NOTNULL="true" UNSIGNED="true" />
-                <FIELD NAME="level"             TYPE="int" NOTNULL="true" UNSIGNED="true" />
+                <FIELD NAME="level"             TYPE="int" NOTNULL="false" UNSIGNED="true" />
                 <FIELD NAME="goal_available"    TYPE="int" NOTNULL="true" />
-                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="true" />
+                <FIELD NAME="descriptorset"     TYPE="int" NOTNULL="false" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />
@@ -98,15 +99,27 @@
                 <KEY NAME="evaluatorfk"         TYPE="foreign" FIELDS="evaluator" REFTABLE="usr" REFFIELDS="id" />
             </KEYS>
         </TABLE>
+        <TABLE NAME="artefact_epos_evaluation_competencelevel">
+            <FIELDS>
+                <FIELD NAME="evaluation"        TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" />
+                <FIELD NAME="competence"        TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" />
+                <FIELD NAME="level"             TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="false" />
+                <FIELD NAME="value"             TYPE="int" LENGTH="10" UNSIGNED="true" NOTNULL="true" DEFAULT="0" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary"             TYPE="primary" FIELDS="evaluation,competence,level" />
+                <KEY NAME="evaluationfk"        TYPE="foreign" FIELDS="evaluation" REFTABLE="artefact_epos_evaluation" REFFIELDS="artefact" />
+                <KEY NAME="competencefk"        TYPE="foreign" FIELDS="competence" REFTABLE="artefact_epos_competence" REFFIELDS="id" />
+                <KEY NAME="levelfk"             TYPE="foreign" FIELDS="level" REFTABLE="artefact_epos_level" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
         <TABLE NAME="artefact_epos_evaluation_item"> 
             <FIELDS>
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" UNSIGNED="true" />
                 <FIELD NAME="evaluation"        TYPE="int" LENGTH="10" NOTNULL="true" />
-                <FIELD NAME="type"              TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" />
                 <FIELD NAME="descriptor"        TYPE="int" LENGTH="10" NOTNULL="false"/>
                 <FIELD NAME="value"             TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" />
                 <FIELD NAME="goal"              TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" />
-                <FIELD NAME="target_key"        TYPE="char" LENGTH="255" NOTNULL="false" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary"             TYPE="primary" FIELDS="id" />

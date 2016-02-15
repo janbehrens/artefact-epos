@@ -53,11 +53,10 @@ $descriptorset = get_record('artefact_epos_descriptorset', 'id', $request->descr
 if ($inquirerevaluation && $descriptorset) {
     db_begin();
     $evaluation = ArtefactTypeEvaluation::create_evaluation_for_user(
-            $request->descriptorset,
-            $inquirerevaluation->title,
-            $descriptorset->name,
-            $request->inquirer,
-            EVALUATION_ITEM_TYPE_COMPLEVEL);
+        $request->descriptorset,
+        $inquirerevaluation->title,
+        $request->inquirer
+    );
     $evaluation->evaluator = $USER->get('id');
     $evaluation->commit();
     $request->evaluator_evaluation = $evaluation->get('id');
