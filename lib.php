@@ -730,7 +730,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 'value' => ''
         );
         //link
-        $imgUrl = $THEME->get_url('images/help.png');;
+        $imgUrl = $THEME->get_url('images/comment.png');
         if ($descriptor->link != '') {
             //check if http(s):// is present in link
             if (substr($descriptor->link, 0, 7) != "http://" && substr($descriptor->link, 0, 8) != "https://") {
