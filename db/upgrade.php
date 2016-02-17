@@ -712,10 +712,10 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $subjectfield = new XMLDBField('subject_id');
 
         $competencetable = new XMLDBTable('artefact_epos_competence');
-        drop_field($competencetable, $descriptorsetfield, 'descriptorset');
+        drop_field($competencetable, $descriptorsetfield);
 
         $leveltable = new XMLDBTable('artefact_epos_level');
-        drop_field($leveltable, $descriptorsetfield, 'descriptorset');
+        drop_field($leveltable, $descriptorsetfield);
 
         $descriptortable = new XMLDBTable('artefact_epos_descriptor');
         rename_field($descriptortable, $competencefield, 'competence');
@@ -773,14 +773,110 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2016021600) {
-        // add key artefact_epos_descriptorset_subject
+        // add primary key artefact_epos_descriptorset_subject
+        $descriptorsetsubjecttable = new XMLDBTable('artefact_epos_descriptorset_subject');
+        $primarykey = new XMLDBKey('arteeposdescsubj_dessub_pk');
+        $primarykey->setAttributes(XMLDB_KEY_PRIMARY, array('descriptorset', 'subject'));
+        add_key($descriptorsetsubjecttable, $primarykey);
+
+        // create artefact_epos_evaluation_competencelevel
         $competenceleveltable = new XMLDBTable('artefact_epos_evaluation_competencelevel');
         $evaluationfield = new XMLDBField('evaluation');
         $evaluationfield->setAttributes(XMLDB_TYPE_INTEGER, 10, true, true);
         $competencefield = new XMLDBField('competence');
+        $competencefield->setAttributes(XMLDB_TYPE_INTEGER, 10, true, true);
         $levelfield = new XMLDBField('level');
+        $levelfield->setAttributes(XMLDB_TYPE_INTEGER, 10, true, false);
         $valuefield = new XMLDBField('value');
+        $valuefield->setAttributes(XMLDB_TYPE_INTEGER, 10, true, true, null, null, null, 0);
+        $primarykey = new XMLDBKey('arteeposevalcomp_evacomlev_pk');
+        $primarykey->setAttributes(XMLDB_KEY_PRIMARY, array('evaluation', 'competence', 'level'));
+        $evaluationkey = new XMLDBKey('arteeposevalcomp_eva_fk');
+        $evaluationkey->setAttributes(XMLDB_KEY_FOREIGN, array('evaluation'), 'artefact_epos_evaluation', array('artefact'));
+        $competencekey = new XMLDBKey('arteeposevalcomp_com_fk');
+        $competencekey->setAttributes(XMLDB_KEY_FOREIGN, array('competence'), 'artefact_epos_competence', array('id'));
+        $levelkey = new XMLDBKey('arteeposevalcomp_lev_fk');
+        $levelkey->setAttributes(XMLDB_KEY_FOREIGN, array('level'), 'artefact_epos_level', array('id'));
+        $competenceleveltable->setFields(array($evaluationfield, $competencefield, $levelfield, $valuefield));
+        $competenceleveltable->setKeys(array($primarykey, $evaluationkey, $competencekey, $levelkey));
+        create_table($competenceleveltable);
 
+        $descriptortable = new XMLDBTable('artefact_epos_descriptor');
+        $levelfield = new XMLDBField('level');
+        $levelfield->setAttributes(XMLDB_TYPE_INTEGER, 10, true, false);
+        $descriptorsetfield = new XMLDBField('descriptorset');
+        $descriptorsetfield->setAttributes(XMLDB_TYPE_INTEGER, 10, true, false);
+        change_field_type($descriptortable, $levelfield);
+        change_field_type($descriptortable, $descriptorsetfield);
+
+        // move type 1 evaluation items to evaluation_competencelevel table
+        if ($data = get_records_array('artefact_epos_evaluation_item', 'type', 1)) {
+            foreach ($data as $item) {
+                $target_key = explode(';', $item->target_key);
+                $complevel = new stdClass();
+                $complevel->evaluation = $item->evaluation;
+                $complevel->competence = $target_key[0];
+                $complevel->level = $target_key[1];
+                $complevel->value = $item->value;
+                insert_record('artefact_epos_evaluation_competencelevel', $complevel);
+
+                // insert missing descriptors in evaluation_item table
+                $evaluationdata = get_record('artefact_epos_evaluation', 'artefact', $item->evaluation);
+                $select = 'descriptorset = ? AND competence = ? AND level = ?';
+                $values = array($evaluationdata->descriptorset, $target_key[0], $target_key[1]);
+                if ($descriptors = get_records_select_array('artefact_epos_descriptor', $select, $values)) {
+                    foreach ($descriptors as $descriptor) {
+                        $descriptoritem = new stdClass();
+                        $descriptoritem->evaluation = $item->evaluation;
+                        $descriptoritem->descriptor = $descriptor->id;
+                        $descriptoritem->value = $item->value;
+                        insert_record('artefact_epos_evaluation_item', $descriptoritem);
+                    }
+                }
+            }
+        }
+        delete_records('artefact_epos_evaluation_item', 'type', 1);
+
+        // move 'customcompetence' artefacts to competence table
+        $artefactcompetencemap = array();
+        $artefactdescriptormap = array();
+        if ($data = get_records_array('artefact', 'artefacttype', 'customcompetence')) {
+            foreach ($data as $customcompetence) {
+                $competence = new stdClass();
+                $competence->name = $customcompetence->title;
+                $competenceid = insert_record('artefact_epos_competence', $competence, 'id', true);
+                error_log($competenceid);
+                $artefactcompetencemap[$customcompetence->id] = $competenceid;
+            }
+        }
+        // move 'customgoal' artefacts to descriptor, update evaluation_item
+        if ($data = get_records_array('artefact', 'artefacttype', 'customgoal')) {
+            foreach ($data as $customgoal) {
+                $descriptor = new stdClass();
+                $descriptor->name = $customgoal->title;
+                error_log($customgoal->parent);
+                $descriptor->competence = $artefactcompetencemap[$customgoal->parent];
+                $descriptor->goal_available = 1;
+                $descriptorid = insert_record('artefact_epos_descriptor', $descriptor, 'id', true);
+                $artefactdescriptormap[$customgoal->id] = $descriptorid;
+            }
+        }
+        foreach ($artefactdescriptormap as $artefact => $id) {
+            $item = new stdClass();
+            $item->descriptor = $id;
+            $where = array('target_key' => "$artefact");
+            if (update_record('artefact_epos_evaluation_item', $item, $where)) {
+                delete_records('artefact', 'id', $artefact);
+            }
+        }
+        delete_records('artefact', 'artefacttype', 'customcompetence');
+
+        // tidy up artefact_epos_evaluation_item
+        $evaluationitemtable = new XMLDBTable('artefact_epos_evaluation_item');
+        $typefield = new XMLDBField('type');
+        $targetkeyfield = new XMLDBField('target_key');
+        drop_field($evaluationitemtable, $typefield);
+        drop_field($evaluationitemtable, $targetkeyfield);
     }
 
     return true;

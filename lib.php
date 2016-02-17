@@ -636,6 +636,10 @@ class ArtefactTypeEvaluation extends ArtefactType {
     private function form_evaluation_descriptors(&$elements, $ratings, $descriptorsetfile, $competence, $level) {
         global $THEME;
         $descriptorset = $this->get_descriptorset();
+        if (!array_key_exists($competence->id, $this->itemsbycompetencelevel)
+            || !array_key_exists($level->id, $this->itemsbycompetencelevel[$competence->id])) {
+            return;
+        }
         foreach ($this->itemsbycompetencelevel[$competence->id][$level->id] as $item) {
             $title = $item->descriptor_name;
             $index = "item_{$competence->id}_{$level->id}_{$item->descriptor}";
