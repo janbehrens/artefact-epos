@@ -32,4 +32,11 @@
 
 {/if}
 
+<div id="example-popup-frame" class="hidden" onclick="$j('#example-popup-frame').hide()">
+    <div id="example-popup" role="dialog">
+        <input class="popup-close" type="image" src="{theme_url filename=images/btn_close.png}" onclick="$j('#example-popup-frame').hide()" />
+        <iframe></iframe>
+    </div>
+</div>
+
 {include file="footer.tpl"}

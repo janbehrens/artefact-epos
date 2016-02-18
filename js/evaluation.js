@@ -60,6 +60,10 @@ function evaluationSaveCallback(form, data) {
 }
 
 function openPopup(url) {
-    $j('<div id=\"example_popup\"></div>').modal({overlayClose:true, closeHTML:''});
-    $j('<iframe src=\"' + url + '\">').appendTo('#example_popup');
+    var iframe = $j('#example-popup').children('iframe');
+    iframe.attr('src', url);
+    iframe.on('load', function () {
+        $j('#example-popup-frame').show();
+    });
+    return false;
 }

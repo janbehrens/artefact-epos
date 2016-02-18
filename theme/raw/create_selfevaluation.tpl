@@ -88,11 +88,6 @@
 
 <div id="canDos"></div>
 
-<label for="examples_file">Beispieldateien (im ZIP-Archiv)</label>
-<input type="hidden" name="MAX_FILE_SIZE" value="250000"/>
-<input type="file" id="examples_file" name="examplesfile" />
-<br /><br/>
-
 {if $edit}
 <button onclick="cancelEditing();">{str tag='cancel'}</button>
 {/if}
