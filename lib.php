@@ -649,14 +649,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 'value' => ''
             );
             //link
-            $imgUrl = $THEME->get_url('images/help.png');
-            if ($item->link != '') {
-                //check if http(s):// is present in link
-                if (substr($item->link, 0, 7) != "http://" && substr($item->link, 0, 8) != "https://") {
-                    $item->link = "../example.php?d=" . $descriptorsetfile . "&l=" . $item->link;
-                }
-                $elements[$index . '_link']['value'] = "<a href=\"$item->link\" onclick=\"openPopup('$item->link'); return false;\">"
-                        . "<img src=\"$imgUrl\" /></a>";
+            $imgUrl = $THEME->get_url('images/comment.png');
+            if (filter_var($item->link, FILTER_VALIDATE_URL)) {
+                $elements[$index . '_link']['value'] = "<a href=\"\" onclick=\"return openPopup('$item->link')\"><img src=\"$imgUrl\" /></a>";
             }
             $elements[$index] = array(
                 'type' => 'radio',
