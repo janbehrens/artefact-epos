@@ -23,7 +23,7 @@
                         {$evaluation->mtime} {if !$evaluation->final}({str tag='current' section='artefact.epos'}){/if}
                     </a>
                 </td>
-                <td>{$evaluation->firstname} {$evaluation->lastname}</td>
+                <td>{$evaluation->evaluator_display_name}</td>
                 <td>
                 {if $evaluation->final}
                     <a href="stored-delete.php?id={$evaluation->id}"><img title="{str tag='deleteevaluation' section='artefact.epos'}" alt="{str tag='deleteevaluation' section='artefact.epos'}" src="{$WWWROOT}theme/raw/static/images/btn_deleteremove.png" /></a>

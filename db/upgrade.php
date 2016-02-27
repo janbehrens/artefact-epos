@@ -877,5 +877,17 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         drop_field($evaluationitemtable, $targetkeyfield);
     }
 
+    if ($oldversion < 2016022700) {
+        // remove NOT NULL constraints (for LEAP import)
+        $descriptorsettable = new XMLDBTable('artefact_epos_descriptorset');
+        $filefield = new XMLDBField('file');
+        $filefield->setAttributes(XMLDB_TYPE_TEXT, null, null, false);
+        $evaluationtable = new XMLDBTable('artefact_epos_evaluation');
+        $evaluatorfield = new XMLDBField('evaluator');
+        $evaluatorfield->setAttributes(XMLDB_TYPE_INTEGER, 10, null, false);
+        change_field_type($descriptorsettable, $filefield);
+        change_field_type($evaluationtable, $evaluatorfield);
+    }
+
     return true;
 }

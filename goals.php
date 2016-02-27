@@ -76,10 +76,10 @@ tableRenderer = new TableRenderer(
         function (r, d) {
             var level = '';
             var competence = '';
-            if (r.competence !== null) {
+            if (r.competence) {
                 competence = r.competence_name;
             }
-            if (r.level !== null) {
+            if (r.level) {
                 level = ' – ' + r.level_name;
             }
             return TD(null, competence + level);
@@ -90,7 +90,6 @@ tableRenderer = new TableRenderer(
                 data.innerHTML = '<div style="width:48px;"><a href="javascript: onClick=editCustomGoal('+r.id+');" title="$editCustomgoal"><img src="$editbuttonurl" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="$deletebuttonurl" alt="$deleteCustomgoal"></a></div>';
                 return data;
             }
-
             return TD(null);
         },
     ]

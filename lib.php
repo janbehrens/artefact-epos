@@ -201,25 +201,24 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 foreach ($items as $item) {
                     // If level is not set, it is a custom descriptor
                     if (!isset($item->level)) {
-                        if (!array_key_exists($item->competence, $this->customcompetences)) {
-                            $this->customcompetences[$item->competence] = array();
-                        }
-                        $this->customcompetences[$item->competence][] = $item;
+                        $competence = new stdClass();
+                        $competence->name = $item->competence_name;
+                        $this->customcompetences[$item->competence] = $competence;
+                        $item->level = 0;
                     }
-                    else {
-                        if (!array_key_exists($item->competence, $this->itemsbycompetencelevel)) {
-                            $this->itemsbycompetencelevel[$item->competence] = array();
-                        }
-                        if (!array_key_exists($item->level, $this->itemsbycompetencelevel[$item->competence])) {
-                            $this->itemsbycompetencelevel[$item->competence][$item->level] = array();
-                        }
-                        $this->itemsbycompetencelevel[$item->competence][$item->level][] = $item;
+                    if (!array_key_exists($item->competence, $this->itemsbycompetencelevel)) {
+                        $this->itemsbycompetencelevel[$item->competence] = array();
                     }
+                    if (!array_key_exists($item->level, $this->itemsbycompetencelevel[$item->competence])) {
+                        $this->itemsbycompetencelevel[$item->competence][$item->level] = array();
+                    }
+                    $this->itemsbycompetencelevel[$item->competence][$item->level][] = $item;
+
                     // store competence and level names
                     if (!array_key_exists($item->competence, $this->competences)) {
                         $this->competences[$item->competence] = $item->competence_name;
                     }
-                    if (!array_key_exists($item->level, $this->levels)) {
+                    if ($item->level != 0 && !array_key_exists($item->level, $this->levels)) {
                         $this->levels[$item->level] = $item->level_name;
                     }
                 }
@@ -249,9 +248,6 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 foreach ($competence as $level) {
                     $evaluationitems = array_merge($evaluationitems, $level);
                 }
-            }
-            foreach ($this->customcompetences as $customcompetence) {
-                $evaluationitems = array_merge($evaluationitems, $customcompetence);
             }
             foreach ($evaluationitems as $item) {
                 $newitem = (object) array(
@@ -365,59 +361,57 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     public function get_results() {
         $descriptorset = $this->get_descriptorset();
-        $max_rating = count($descriptorset->ratings) - 1;
+        $maxrating = count($descriptorset->ratings) - 1;
         $results = array();
 
-        // normal descriptors
         foreach ($this->itemsbycompetencelevel as $competenceid => $levels) {
-            foreach ($levels as $levelid => $descriptors) {
-                $complevel = array(
-                    'value' => 0,
-                    'max' => 0,
-                    'evaluation_sums' => array_fill(0, $max_rating + 1, 0)
-                );
-                foreach ($descriptors as $descriptor) {
-                    $complevel['value'] += $descriptor->value;
-                    $complevel['max'] += $max_rating;
-                    $complevel['evaluation_sums'][$descriptor->value]++;
-                }
-                $key = "$competenceid;$levelid";
-                if (array_key_exists($key, $this->competencelevels)) {
-                    $complevel['average'] = round(100 * $this->competencelevels[$key]->value / $max_rating);
-                }
-                else {
-                    $complevel['average'] = round(100 * $complevel['value'] / $complevel['max']);
-                }
-                if (!isset($results[$competenceid]['levels'][$levelid])) {
+            // custom competences
+            if (array_keys($levels) == array(0)) {
+                $complevel = self::get_evaluation_result_for_competencelevel($levels[0], $maxrating);
+                $results[$competenceid]['levels'][0] = $complevel;
+                $results[$competenceid]['id'] = $competenceid;
+                $results[$competenceid]['name'] = $this->competences[$competenceid];
+                $results[$competenceid]['custom'] = true;
+            }
+            // normal descriptors
+            else {
+                foreach ($levels as $levelid => $descriptors) {
+                    $complevel = self::get_evaluation_result_for_competencelevel($descriptors, $maxrating);
+                    // different logic for overall evaluations
+                    $key = "$competenceid;$levelid";
+                    if (array_key_exists($key, $this->competencelevels)) {
+                        $complevel['average'] = round(100 * $this->competencelevels[$key]->value / $maxrating);
+                    }
                     $results[$competenceid]['levels'][$levelid] = $complevel;
                 }
+                $results[$competenceid]['id'] = $competenceid;
+                $results[$competenceid]['name'] = $this->competences[$competenceid];
+                $results[$competenceid]['custom'] = false;
             }
-            $results[$competenceid]['id'] = $competenceid;
-            $results[$competenceid]['name'] = $this->competences[$competenceid];
-            $results[$competenceid]['custom'] = false;
         }
+        // sort: normal competences before custom competences, then ordered by name
         usort($results, function ($a, $b) {
-            return strcmp($a['name'], $b['name']);
-        });
-        // custom competences
-        foreach ($this->customcompetences as $competenceid => $customdescriptors) {
-            $complevel = array(
-                'value' => 0,
-                'max' => 0,
-                'evaluation_sums' => array_fill(0, $max_rating + 1, 0)
-            );
-            foreach ($customdescriptors as $descriptor) {
-                $complevel['value'] += $descriptor->value;
-                $complevel['max'] += $max_rating;
-                $complevel['evaluation_sums'][$descriptor->value]++;
+            if ($a['custom'] === $b['custom']) {
+                return strcmp($a['name'], $b['name']);
             }
-            $complevel['average'] = round(100 * $complevel['value'] / $complevel['max']);
-            $results[$competenceid]['levels'][0] = $complevel;
-            $results[$competenceid]['id'] = $competenceid;
-            $results[$competenceid]['name'] = $this->competences[$competenceid];
-            $results[$competenceid]['custom'] = true;
-        }
+            return $a['custom'] && !$b['custom'] ? 1 : -1;
+        });
         return $results;
+    }
+
+    private static function get_evaluation_result_for_competencelevel($descriptors, $maxrating) {
+        $complevel = array(
+            'value' => 0,
+            'max' => 0,
+            'evaluation_sums' => array_fill(0, $maxrating + 1, 0)
+        );
+        foreach ($descriptors as $descriptor) {
+            $complevel['value'] += $descriptor->value;
+            $complevel['max'] += $maxrating;
+            $complevel['evaluation_sums'][$descriptor->value]++;
+        }
+        $complevel['average'] = round(100 * $complevel['value'] / $complevel['max']);
+        return $complevel;
     }
 
     public function get_goals() {
@@ -429,9 +423,6 @@ class ArtefactTypeEvaluation extends ArtefactType {
             foreach ($competence as $level) {
                 $goals = array_merge($goals, array_filter($level, $callback));
             }
-        }
-        foreach ($this->customcompetences as $competence) {
-            $goals = array_merge($goals, array_filter($competence, $callback));
         }
         return $goals;
     }
@@ -540,6 +531,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $ratings = array();
         foreach ($descriptorset->ratings as $id => $rating) {
             $ratings[] = $rating->name;
+        }
+        if (count($ratings) === 0) {
+            throw new MaharaException("There must be at least one rating option.");
         }
         $elements = array();
         // Add empty header cells so the "Goal?" header is in its place
@@ -680,8 +674,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     private function form_evaluation_customdescriptors(&$elements, $ratings, $competenceid) {
         global $THEME;
-        $customcompetence = $this->customcompetences[$competenceid];
-        foreach ($customcompetence as $item) {
+        foreach ($this->itemsbycompetencelevel[$competenceid][0] as $item) {
             $editCustomgoal = get_string('edit');
             $deleteCustomgoal = get_string('delete');
             $editbuttonurl = $THEME->get_url('images/btn_edit.png');
@@ -956,10 +949,72 @@ EOL
         if ($evaluations) {
             foreach ($evaluations as $evaluation) {
                 $evaluation->mtime = format_date(strtotime($evaluation->mtime));
+                $evaluation->evaluator_display_name = isset($evaluation->evaluator) ? "$evaluation->firstname $evaluation->lastname" : $evaluation->authorname;
             }
             return $evaluations;
         }
         return array();
+    }
+
+    public function export_json() {
+        $customdescriptors = array();
+
+        $items = $this->itemsbycompetencelevel;
+        foreach ($items as $competence) {
+            foreach ($competence as $levelid => $level) {
+                foreach ($level as $item) {
+                    if ($levelid == 0) {
+                        $cd = new stdClass();
+                        $cd->name = $item->descriptor_name;
+                        $cd->competence = $item->competence;
+                        $customdescriptors[$item->descriptor] = $cd;
+                    }
+                    unset($item->descriptor_name);
+                    unset($item->link);
+                    unset($item->goal_available);
+                    unset($item->level);
+                    unset($item->level_name);
+                    unset($item->competence);
+                    unset($item->competence_name);
+                }
+            }
+        }
+
+        $descriptorset = $this->get_descriptorset();
+        foreach ($descriptorset->descriptors as $descriptor) {
+            unset($descriptor->id);
+            unset($descriptor->descriptorset);
+            unset($descriptor->competence_name);
+            unset($descriptor->level_name);
+        }
+        foreach ($descriptorset->ratings as $rating) {
+            unset($rating->id);
+            unset($rating->descriptorset);
+        }
+        foreach ($descriptorset->competences as $competence) {
+            unset($competence->id);
+        }
+        foreach ($descriptorset->levels as $level) {
+            unset($level->id);
+        }
+        unset($descriptorset->id);
+        unset($descriptorset->file);
+        unset($descriptorset->visible);
+        unset($descriptorset->active);
+
+        $authorname = $this->evaluator != $this->owner ? $this->evaluator_display_name : null;
+
+        $data = array(
+            'title' => $this->title,
+            'description' => $this->description,
+            'authorname' => $authorname,
+            'final' => $this->final,
+            'descriptorset' => $descriptorset,
+            'customdescriptors' => $customdescriptors,
+            'customcompetences' => $this->customcompetences,
+            'itemsbycompetencelevel' => $items
+        );
+        return json_encode($data);
     }
 
 }

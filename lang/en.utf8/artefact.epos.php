@@ -216,3 +216,7 @@ $string['confirmdeletedescriptorset'] = 'Are you sure you want to permanently de
 $string['confirmdeletesubject'] = 'Are you sure you want to permanently delete the subject "%s"? All competence grids associated with this subject will become inaccessible.';
 $string['nosubjectsconfigured'] = 'There are no subjects configured in "%s". Go to %s to add one.';
 $string['subjectsadministration'] = 'Subjects administration';
+
+//Import
+$string['duplicatedselfevaluation'] = 'Duplicated self-evaluation';
+$string['existingselfevaluations'] = 'Existing self-evaluations';

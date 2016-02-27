@@ -250,7 +250,6 @@ class EvaluationRequest {
         $evaluator_id = username_to_id(array($values['evaluator']));
         $evaluator_id = $evaluator_id[$values['evaluator']];
         $inquirerevaluation = new ArtefactTypeEvaluation($values['evaluation']);
-        $inquirerevaluation->evaluator = $evaluator_id;
         $inquirerevaluation->commit();
 
         $request = new EvaluationRequest();
