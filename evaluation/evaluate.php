@@ -39,7 +39,7 @@ $id = param_integer('id');
 
 $evaluation = new ArtefactTypeEvaluation($id);
 $evaluation->check_permission();
-if ($evaluation->final) {
+if ($evaluation->get('final')) {
     throw new ParameterException(get_string('evaluationisnoteditable', 'artefact.epos'));
 }
 $render = $evaluation->render_evaluation();

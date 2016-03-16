@@ -57,7 +57,7 @@ if ($inquirerevaluation && $descriptorset) {
         $inquirerevaluation->title,
         $request->inquirer
     );
-    $evaluation->evaluator = $USER->get('id');
+    $evaluation->set('evaluator', $USER->get('id'));
     $evaluation->commit();
     $request->evaluator_evaluation = $evaluation->get('id');
     $request->commit();

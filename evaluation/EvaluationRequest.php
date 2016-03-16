@@ -254,7 +254,7 @@ class EvaluationRequest {
 
         $request = new EvaluationRequest();
         $request->inquirer_evaluation = $values['evaluation'];
-        $request->descriptorset = $inquirerevaluation->descriptorset;
+        $request->descriptorset = $inquirerevaluation->get('descriptorset');
         $request->evaluator = $evaluator_id;
         $request->inquirer = $USER->get('id');
         $request->inquiry_message = $values['message'];
@@ -322,7 +322,7 @@ class EvaluationRequest {
         if ($request->evaluator_evaluation) {
             $evaluation = new ArtefactTypeEvaluation($request->evaluator_evaluation);
             if ($values['includeevaluation']) {
-                $evaluation->final = 1;
+                $evaluation->set('final', 1);
                 $evaluation->commit();
             }
         }

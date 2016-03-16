@@ -104,7 +104,7 @@ class Comparison {
         foreach ($evaluation_records as $record) {
             if (!isset($this->evaluations_by_id[$record->id])) {
                 $evaluation = new ArtefactTypeEvaluation($record->id, $record, false);
-                $evaluation->evaluator_display_name = "$record->firstname $record->lastname";
+                $evaluation->set('evaluator_display_name', "$record->firstname $record->lastname");
                 $evaluations []= $evaluation;
             }
         }
@@ -122,20 +122,20 @@ class Comparison {
         foreach ($this->evaluations as $evaluation) {
             $evaluation_item = new stdClass();
             $evaluation_item->id = $evaluation->get('id');
-            $evaluation_item->final = $evaluation->final;
+            $evaluation_item->final = $evaluation->get('final');
             $evaluation_item->title = $evaluation->display_title();
-            if ($evaluation->final) {
+            if ($evaluation->get('final')) {
                 $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/display.php?id=$evaluation_item->id";
             }
             else {
                 $evaluation_item->url = get_config('wwwroot') . "artefact/epos/evaluation/self-eval.php?id=$evaluation_item->id";
             }
             $evaluation_item->mtime = format_date($evaluation->get('mtime'));
-            if ($USER->get('id') == $evaluation->evaluator) {
+            if ($USER->get('id') == $evaluation->get('evaluator')) {
                 $evaluation_item->evaluator = get_string('by', 'artefact.epos') . ' ' . get_string('yourself', 'artefact.epos');
             }
             else {
-                $evaluation_item->evaluator = get_string('by', 'artefact.epos') . ' ' . $evaluation->evaluator_display_name;
+                $evaluation_item->evaluator = get_string('by', 'artefact.epos') . ' ' . $evaluation->get('evaluator_display_name');
             }
             $evaluation_item->url_without_this = $this->get_url_without($evaluation_item->id);
             $evaluation_item->color = $this->color_next();
@@ -173,9 +173,9 @@ class Comparison {
             foreach ($other as $evaluation) {
                 $item = new stdClass();
                 $item->id = $evaluation->get('id');
-                if ($evaluation->final) {
-                    $evaluator_name = $evaluation->evaluator == $USER->get('id') ?
-                        get_string('yourself', 'artefact.epos') : $evaluation->evaluator_display_name;
+                if ($evaluation->get('final')) {
+                    $evaluator_name = $evaluation->get('evaluator') == $USER->get('id') ?
+                        get_string('yourself', 'artefact.epos') : $evaluation->get('evaluator_display_name');
                     $item->title = $evaluation->get('title') . ' (' . format_date($evaluation->get('mtime')) . ', '
                     . get_string('by', 'artefact.epos') . ' ' . $evaluator_name . ')';
                 }

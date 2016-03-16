@@ -141,11 +141,11 @@ class PluginArtefactEpos extends PluginArtefact {
 
 class ArtefactTypeEvaluation extends ArtefactType {
 
-    public $descriptorset;
+    protected $descriptorset;
 
-    public $competences = array();
+    protected $competences = array();
 
-    public $levels = array();
+    protected $levels = array();
 
     protected $customcompetences = array();
 
@@ -153,11 +153,11 @@ class ArtefactTypeEvaluation extends ArtefactType {
 
     protected $itemsbycompetencelevel = array();
 
-    public $final = 0;
+    protected $final = 0;
 
-    public $evaluator;
+    protected $evaluator;
 
-    public $evaluator_display_name;
+    protected $evaluator_display_name;
 
     /**
      * Override the constructor to fetch extra data.
@@ -885,7 +885,7 @@ EOL
         $evaluation = new ArtefactTypeEvaluation($values['evaluation']);
         $storedevaluation = new ArtefactTypeEvaluation(0, $evaluation->copy_data());
         $storedevaluation->set('title', $values['name']);
-        $storedevaluation->final = 1;
+        $storedevaluation->set('final', 1);
         $storedevaluation->commit();
         redirect(get_config('wwwroot') . 'artefact/epos/evaluation/stored.php');
     }
@@ -1137,7 +1137,7 @@ class CustomDescriptor {
         $competencename = trim($values['customcompetence']);
 
         // check for existing competence with the same name
-        foreach ($evaluation->competences as $id => $name) {
+        foreach ($evaluation->get('competences') as $id => $name) {
             if ($name == $competencename) {
                 $existingcompetence = $id;
                 break;
