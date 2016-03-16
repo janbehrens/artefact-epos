@@ -462,17 +462,12 @@ class ArtefactTypeEvaluation extends ArtefactType {
      * @return string The HTML of the table
      */
     public function render_evaluation_table($interactive = true) {
-        $descriptorset = $this->get_descriptorset();    // FIXME: also called by get_results
         $results = $this->get_results();
 
-        $column_titles = array_map(function ($item) {
-            // If column labels contain a colon, return only the part before it (useful in cases where competence level names are very long)
-            $returnstr = explode(':', $item->name);
-            return $returnstr[0];
-        }, $descriptorset->levels);
-        array_unshift($column_titles, get_string('competence', 'artefact.epos'));
+        $columntitles = array_values($this->levels);
+        array_unshift($columntitles, get_string('competence', 'artefact.epos'));
 
-        $column_definitions = array(
+        $columndefinitions = array(
             function ($row) {
                 $cell = array('content' => $row['name']);
                 $cell['properties']['title'] = get_string('standardcompetencearea', 'artefact.epos');
@@ -483,41 +478,35 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 return $cell;
             }
         );
-        $levelcount = count($descriptorset->levels);
-        foreach ($descriptorset->levels as $level) {
-            $column_definitions []= function ($row) use ($level, $levelcount, $interactive) {
+        $levelcount = count($this->levels);
+        foreach ($this->levels as $levelid => $level) {
+            $columndefinitions []= function ($row) use ($levelid, $level, $levelcount, $interactive) {
                 if ($row['custom']) {
-                    $level_id = 0;
+                    $levelid = 0;
                 }
-                else {
-                    $level_id = $level->id;
+                $content = isset($row['levels'][$levelid]) ? html_progressbar($row['levels'][$levelid]['average']) : '';
+                $cell = array('content' => $content);
+                $classes = array();
+                if ($interactive) {
+                    $competenceid = $row['id'];
+                    if (isset($row['levels'][$levelid])) {
+                        $name = $row['name'];
+                        $cell['properties'] = array(
+                            'onclick' => "toggleEvaluationForm($competenceid, $levelid, '$name', '$level')"
+                        );
+                    }
+                    $classes []= "interactive";
                 }
-            $content = isset($row['levels'][$level_id]) ? html_progressbar($row['levels'][$level_id]['average']) : '';
-            $cell = array('content' => $content);
-            $classes = array();
-            if ($interactive) {
-                $competence_id = $row['id'];
-                if (is_string($competence_id)) {
-                    $competence_id = "'$competence_id'";
+                if ($row['custom']) {
+                    $cell['properties']['colspan'] = $levelcount;
+                    $cell['break'] = true;
+                    $classes []= "custom";
                 }
-                if (isset($row['levels'][$level_id])) {
-                    $name = $row['name'];
-                    $cell['properties'] = array(
-                            'onclick' => "toggleEvaluationForm($competence_id, $level_id, '$name', '$level->name')"
-                    );
-                }
-                $classes []= "interactive";
-            }
-            if ($row['custom']) {
-                $cell['properties']['colspan'] = $levelcount;
-                $cell['break'] = true;
-                $classes []= "custom";
-            }
-            $cell['properties']['class'] = implode(' ', $classes);
-            return $cell;
+                $cell['properties']['class'] = implode(' ', $classes);
+                return $cell;
             };
         }
-        $eval_table = new HTMLTable_epos($column_titles, $column_definitions);
+        $eval_table = new HTMLTable_epos($columntitles, $columndefinitions);
         $eval_table->add_table_classes('evaluation');
         return $eval_table->render($results);
     }
@@ -1208,7 +1197,6 @@ class Descriptorset implements ArrayAccess, Iterator {
 
     public function __construct($id = 0) {
         global $USER;
-        // load
         if (!empty($id)) {
             if (!$data = get_record('artefact_epos_descriptorset', 'id', $id)) {
                 throw new Exception(get_string('descriptorsetnotfound', 'artefact.epos'));
@@ -1222,7 +1210,8 @@ class Descriptorset implements ArrayAccess, Iterator {
                     FROM artefact_epos_descriptor d
                     LEFT JOIN artefact_epos_competence c ON d.competence = c.id
                     LEFT JOIN artefact_epos_level l ON d.level = l.id
-                    WHERE d.descriptorset = ?";
+                    WHERE d.descriptorset = ?
+                    ORDER BY d.competence, d.level";
             if ($descriptors = get_records_sql_array($sql, array($this->id))) {
                 foreach ($descriptors as $descriptor) {
                     $this->descriptors[$descriptor->id] = $descriptor;
