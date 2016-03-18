@@ -177,9 +177,12 @@ class ArtefactTypeEvaluation extends ArtefactType {
                         WHERE a.id = ?';
                 $data = get_record_sql($sql, array($this->id));
                 if ($data) {
-                    $this->descriptorset = $data->descriptorset;
-                    $this->evaluator = $data->evaluator;
-                    $this->final = $data->final;
+                    foreach ($data as $field => $value) {
+                        $this->{$field} = $value;
+                    }
+                    foreach (['id', 'descriptorset', 'final'] as $field) {
+                        $this->{$field} = (int)$this->{$field};
+                    }
                     $this->evaluator_display_name = "$data->firstname $data->lastname";
                 }
                 else {
@@ -199,8 +202,11 @@ class ArtefactTypeEvaluation extends ArtefactType {
                     WHERE ei.evaluation = ?";
             if ($items = get_records_sql_array($sql, array($this->id))) {
                 foreach ($items as $item) {
-                    // If level is not set, it is a custom descriptor
-                    if (!isset($item->level)) {
+                    foreach (['descriptor', 'value', 'goal', 'competence', 'level', 'goal_available'] as $field) {
+                        $item->{$field} = (int)$item->{$field};
+                    }
+                    // If level is 0, it is a custom descriptor
+                    if ($item->level == 0) {
                         $competence = new stdClass();
                         $competence->name = $item->competence_name;
                         $this->customcompetences[$item->competence] = $competence;
@@ -969,28 +975,6 @@ EOL
             }
         }
 
-        $descriptorset = $this->get_descriptorset();
-        foreach ($descriptorset->descriptors as $descriptor) {
-            unset($descriptor->id);
-            unset($descriptor->descriptorset);
-            unset($descriptor->competence_name);
-            unset($descriptor->level_name);
-        }
-        foreach ($descriptorset->ratings as $rating) {
-            unset($rating->id);
-            unset($rating->descriptorset);
-        }
-        foreach ($descriptorset->competences as $competence) {
-            unset($competence->id);
-        }
-        foreach ($descriptorset->levels as $level) {
-            unset($level->id);
-        }
-        unset($descriptorset->id);
-        unset($descriptorset->file);
-        unset($descriptorset->visible);
-        unset($descriptorset->active);
-
         $authorname = $this->evaluator != $this->owner ? $this->evaluator_display_name : null;
 
         $data = array(
@@ -998,14 +982,12 @@ EOL
             'description' => $this->description,
             'authorname' => $authorname,
             'final' => $this->final,
-            'descriptorset' => $descriptorset,
             'customdescriptors' => $customdescriptors,
             'customcompetences' => $this->customcompetences,
             'itemsbycompetencelevel' => $items
         );
         return json_encode($data);
     }
-
 }
 
 class CustomCompetence {
@@ -1206,6 +1188,7 @@ class Descriptorset implements ArrayAccess, Iterator {
                     $this->{$field} = $value;
                 }
             }
+            $this->id = (int)$this->id;
             $sql = "SELECT d.*, c.name as competence_name, l.name as level_name
                     FROM artefact_epos_descriptor d
                     LEFT JOIN artefact_epos_competence c ON d.competence = c.id
@@ -1214,6 +1197,9 @@ class Descriptorset implements ArrayAccess, Iterator {
                     ORDER BY d.competence, d.level";
             if ($descriptors = get_records_sql_array($sql, array($this->id))) {
                 foreach ($descriptors as $descriptor) {
+                    foreach (['id', 'competence', 'level', 'goal_available'] as $field) {
+                        $descriptor->{$field} = (int)$descriptor->{$field};
+                    }
                     $this->descriptors[$descriptor->id] = $descriptor;
                     $this->descriptors_by_competence_level[$descriptor->competence][$descriptor->level] []= $descriptor;
                     if (!array_key_exists($descriptor->competence, $this->competences)) {
@@ -1254,6 +1240,34 @@ class Descriptorset implements ArrayAccess, Iterator {
         // TODO: delete competences, ratings and levels
         delete_records('artefact_epos_descriptorset', 'id', $this->id);
         db_commit();
+    }
+
+    public function export_json() {
+        foreach ($this->descriptors as $descriptor) {
+            unset($descriptor->id);
+            unset($descriptor->descriptorset);
+            unset($descriptor->competence_name);
+            unset($descriptor->level_name);
+        }
+        foreach ($this->ratings as $rating) {
+            unset($rating->id);
+            unset($rating->descriptorset);
+        }
+        foreach ($this->competences as $competence) {
+            unset($competence->id);
+        }
+        foreach ($this->levels as $level) {
+            unset($level->id);
+        }
+
+        $data = array(
+            'name' => $this->name,
+            'descriptors' => $this->descriptors,
+            'ratings' => $this->ratings,
+            'competences' => $this->competences,
+            'levels' => $this->levels
+        );
+        return json_encode($data);
     }
 
     // array interface
