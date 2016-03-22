@@ -19,11 +19,12 @@
  *
  * @package    mahara
  * @subpackage artefact-epos
- * @author     Zhuli Li
+ * @author     TZI
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011-2015 TZI / Universität Bremen
+ * @copyright  (C) 2015 TZI / Universität Bremen
  *
  */
+
 define('INTERNAL', true);
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');

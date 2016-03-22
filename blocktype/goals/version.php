@@ -18,10 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
- * @subpackage artefact-epos
- * @author     Jan Behrens
+ * @subpackage blocktype-goals
+ * @author     TZI
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2011-2013 TZI / Universität Bremen
+ * @copyright  (C) 2012 TZI / Universität Bremen
  *
  */
 
