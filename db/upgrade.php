@@ -843,7 +843,6 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 $competence = new stdClass();
                 $competence->name = $customcompetence->title;
                 $competenceid = insert_record('artefact_epos_competence', $competence, 'id', true);
-                error_log($competenceid);
                 $artefactcompetencemap[$customcompetence->id] = $competenceid;
             }
         }
@@ -852,7 +851,6 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
             foreach ($data as $customgoal) {
                 $descriptor = new stdClass();
                 $descriptor->name = $customgoal->title;
-                error_log($customgoal->parent);
                 $descriptor->competence = $artefactcompetencemap[$customgoal->parent];
                 $descriptor->goal_available = 1;
                 $descriptorid = insert_record('artefact_epos_descriptor', $descriptor, 'id', true);
