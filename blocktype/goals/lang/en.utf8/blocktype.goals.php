@@ -34,4 +34,4 @@ $string['defaulttitledescription'] = 'If you leave this blank, the title of the 
 $string['selectgoals'] = 'Select goals to display';
 $string['goalsfor'] = 'Goals for ';
 $string['nogoals'] = 'No goals to display';
-$string['goalsnotvisible'] = 'The goals will be visible after a page reload.'
+$string['goalsnotvisible'] = 'The goals will be visible after a page reload.';

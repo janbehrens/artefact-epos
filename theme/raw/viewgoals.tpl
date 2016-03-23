@@ -16,7 +16,6 @@
         {/foreach}
     </tbody>
 </table>
-<div id="goalsnotvisible{$id}" style="font-size:130%; margin:8px; color:red; text-align:center">{str tag='goalsnotvisible' section='blocktype.epos/goals'}</div>
 <script>
 {$JAVASCRIPT|safe}
 </script>

@@ -81,10 +81,10 @@ tableRenderer{$id} = new TableRenderer(
             var level = "";
             var competence = "";
             if (r.competence != null) {
-                competence = r.competence;
+                competence = r.competence_name;
             }
-            if (typeof r.level !== "undefined") {
-                level = r.level;
+            if (r.level) {
+                level = ' – ' + r.level_name;
             }
             return TD(null, competence + ' ' + level);
         },
@@ -98,7 +98,7 @@ tableRenderer{$id}.emptycontent = '';
 tableRenderer{$id}.paginate = false;
 tableRenderer{$id}.updateOnLoad();
 
-$('#goalsnotvisible{$id}').addClass('hidden');};
+};
 
 $().goals();})(jQuery);
 EOF;
