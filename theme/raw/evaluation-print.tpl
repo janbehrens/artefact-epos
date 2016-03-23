@@ -31,8 +31,8 @@
         <thead>
             <tr>
                 <th style="min-width: 30%;">{str tag='competence' section='artefact.epos'}</th>
-                {foreach $levels name=levels item=level}
-                <th>{$level->name}</th>
+                {foreach $levels item=level}
+                <th>{$level}</th>
                 {/foreach}
             </tr>
         </thead>
@@ -41,14 +41,14 @@
             {cycle values='odd,even' assign='evenodd'}
             <tr class="{$evenodd}">
                 <td style="white-space: nowrap;">{$competence.name}</td>
-                {foreach $competence.levels name=levels key=level_id item=comp_level}
+                {foreach $competence.levels name=levels key=levelid item=complevel}
                 <td>
                     <div class="progressbar">
-                        <div class="progressbar-value" style="width: {$comp_level.average}%;">
+                        <div class="progressbar-value" style="width: {$complevel.average}%;">
                             <img src="{$WWWROOT}artefact/epos/images/progressbar-fill-print.png" />
                         </div>
                         <span class="progressbar-content">
-                        {foreach $comp_level.evaluation_sums name=evaluations key=evaluation_index item=evaluation}
+                        {foreach $complevel.evaluationsums name=evaluations item=evaluation}
                             {$evaluation}
                             {if !$dwoo.foreach.evaluations.last} / {/if}
                         {/foreach}

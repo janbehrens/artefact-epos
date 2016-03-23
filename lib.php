@@ -362,6 +362,11 @@ class ArtefactTypeEvaluation extends ArtefactType {
         }
     }
 
+    public function get_levels() {
+        asort($this->levels);
+        return $this->levels;
+    }
+
     /**
      * Calculate the results in an array of competences of levels.
      */
@@ -381,6 +386,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
             }
             // normal descriptors
             else {
+                uksort($levels, function($a, $b) {
+                    return strcmp($this->levels[$a], $this->levels[$b]);
+                });
                 foreach ($levels as $levelid => $descriptors) {
                     $complevel = self::get_evaluation_result_for_competencelevel($descriptors, $maxrating);
                     // different logic for overall evaluations
@@ -409,12 +417,12 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $complevel = array(
             'value' => 0,
             'max' => 0,
-            'evaluation_sums' => array_fill(0, $maxrating + 1, 0)
+            'evaluationsums' => array_fill(0, $maxrating + 1, 0)
         );
         foreach ($descriptors as $descriptor) {
             $complevel['value'] += $descriptor->value;
             $complevel['max'] += $maxrating;
-            $complevel['evaluation_sums'][$descriptor->value]++;
+            $complevel['evaluationsums'][$descriptor->value]++;
         }
         $complevel['average'] = round(100 * $complevel['value'] / $complevel['max']);
         return $complevel;
@@ -469,8 +477,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
      */
     public function render_evaluation_table($interactive = true) {
         $results = $this->get_results();
+        $levels = $this->get_levels();
 
-        $columntitles = array_values($this->levels);
+        $columntitles = array_values($levels);
         array_unshift($columntitles, get_string('competence', 'artefact.epos'));
 
         $columndefinitions = array(
@@ -484,8 +493,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
                 return $cell;
             }
         );
-        $levelcount = count($this->levels);
-        foreach ($this->levels as $levelid => $level) {
+        $levelcount = count($levels);
+        foreach ($levels as $levelid => $level) {
             $columndefinitions []= function ($row) use ($levelid, $level, $levelcount, $interactive) {
                 if ($row['custom']) {
                     $levelid = 0;
@@ -1081,10 +1090,6 @@ class CustomDescriptor {
                 'type' => 'hidden',
                 'value' => $this->evaluationid
         );
-//         $elements['is_goal'] = array(
-//             'type' => 'hidden',
-//             'value' => $is_goal
-//         );
         $elements['submit'] = array(
                 'type' => 'submit',
                 'value' => get_string('add'),
@@ -1193,8 +1198,7 @@ class Descriptorset implements ArrayAccess, Iterator {
                     FROM artefact_epos_descriptor d
                     LEFT JOIN artefact_epos_competence c ON d.competence = c.id
                     LEFT JOIN artefact_epos_level l ON d.level = l.id
-                    WHERE d.descriptorset = ?
-                    ORDER BY d.competence, d.level";
+                    WHERE d.descriptorset = ?";
             if ($descriptors = get_records_sql_array($sql, array($this->id))) {
                 foreach ($descriptors as $descriptor) {
                     foreach (['id', 'competence', 'level', 'goal_available'] as $field) {

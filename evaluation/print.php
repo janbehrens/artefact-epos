@@ -45,7 +45,7 @@ $ratings = array_values(array_map(function($item) {
 $smarty = smarty();
 $smarty->assign('title', $evaluation->display_title());
 $smarty->assign('results', $evaluation->get_results());
-$smarty->assign('levels', $descriptorset->levels);
+$smarty->assign('levels', $evaluation->get_levels());
 $smarty->assign('ratings', $ratings);
 $smarty->assign('PAGEHEADING', get_string('selfevaluationprintout', 'artefact.epos'));
 $smarty->display('artefact:epos:evaluation-print.tpl');
