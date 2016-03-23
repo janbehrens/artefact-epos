@@ -747,21 +747,36 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         add_key($evaluationrequesttable, $inquirerevaluationkey);  // this doesn't seem to work
 
         // update artefact
-        $sql = "SELECT a.*, b.title as parenttitle FROM artefact a
+        $sql = "SELECT a.*, b.title as parenttitle, b.artefacttype as parenttype FROM artefact a
                 JOIN artefact b ON a.parent = b.id
                 WHERE a.artefacttype = 'evaluation' OR a.artefacttype = 'customcompetence' OR a.artefacttype = 'customgoal'";
         if ($artefacts = get_records_sql_array($sql)) {
             foreach ($artefacts as $artefact) {
-                if ($artefact->artefacttype == 'evaluation') {
-                    $artefact->description = $artefact->title;
-                    $artefact->title = $artefact->parenttitle;
-                    $artefact->parent = null;
+                if ($artefact->parenttype == 'subject' && $artefact->artefacttype == 'customgoal') {
+                    delete_records('artefact', 'id', $artefact->id);
                 }
-                $artefact->path = substr($artefact->path, strpos($artefact->path, '/', 1));
-                update_record('artefact', $artefact);
+                else {
+                    if ($artefact->artefacttype == 'evaluation') {
+                        $artefact->description = $artefact->title;
+                        $artefact->title = $artefact->parenttitle;
+                        $artefact->parent = null;
+                    }
+                    $artefact->path = substr($artefact->path, strpos($artefact->path, '/', 1));
+                    update_record('artefact', $artefact);
+                }
             }
         }
         delete_records('artefact_epos_mysubject');
+
+        $sql = "SELECT va.* FROM view_artefact va
+                JOIN artefact a ON va.artefact = a.id
+                WHERE a.artefacttype = 'subject'";
+        if ($records = get_records_sql_array($sql)) {
+            foreach ($records as $record) {
+                delete_records('view_artefact', 'id', $record->id);
+                delete_records('block_instance', 'id', $record->block);
+            }
+        }
         delete_records('artefact', 'artefacttype', 'subject');
 
         // drop mysubject
