@@ -148,8 +148,8 @@ if ($data) {
 }
 
 $text_evaluationlevel               = get_string('evaluationlevel', 'artefact.epos');
-$text_competencyname               = get_string('competency_name', 'artefact.epos');
-$text_competencylevel               = get_string('competency_level', 'artefact.epos');
+$text_competencyname               = get_string('competencearea', 'artefact.epos');
+$text_competencylevel               = get_string('competencelevel', 'artefact.epos');
 $text_cando_statement               = get_string('cando_statement', 'artefact.epos');
 $text_cando_statements               = get_string('cando_statements', 'artefact.epos');
 $text_tasklink                       = get_string('tasklink', 'artefact.epos');

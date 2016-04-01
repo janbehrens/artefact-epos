@@ -480,7 +480,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $levels = $this->get_levels();
 
         $columntitles = array_values($levels);
-        array_unshift($columntitles, get_string('competence', 'artefact.epos'));
+        array_unshift($columntitles, get_string('competencearea', 'artefact.epos'));
 
         $columndefinitions = array(
             function ($row) {
@@ -1073,7 +1073,7 @@ class CustomDescriptor {
         $elements = array();
         $elements['customcompetence'] = array(
                 'type' => 'text',
-                'title' => get_string('competence', 'artefact.epos'),
+                'title' => get_string('competencearea', 'artefact.epos'),
                 'defaultvalue' => '',
                 'rules' => array('required' => true)
         );
