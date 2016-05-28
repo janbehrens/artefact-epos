@@ -865,7 +865,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if ($data = get_records_array('artefact', 'artefacttype', 'customgoal')) {
             foreach ($data as $customgoal) {
                 $descriptor = new stdClass();
-                $descriptor->name = $customgoal->title;
+                $descriptor->name = $customgoal->description;
                 $descriptor->competence = $artefactcompetencemap[$customgoal->parent];
                 $descriptor->goal_available = 1;
                 $descriptorid = insert_record('artefact_epos_descriptor', $descriptor, 'id', true);
