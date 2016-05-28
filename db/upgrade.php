@@ -902,5 +902,15 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         change_field_type($evaluationtable, $evaluatorfield);
     }
 
+    if ($oldversion < 2016052800) {
+        $evaluationitemtable = new XMLDBTable('artefact_epos_evaluation_item');
+        $descriptorfield = new XMLDBField('descriptor');
+        $descriptorfield->setAttributes(XMLDB_TYPE_INTEGER, 10, null, true);
+        change_field_type($evaluationitemtable, $descriptorfield);
+        $pk = new XMLDBKey('primary');
+        $pk->setAttributes(XMLDB_KEY_PRIMARY, array('evaluation', 'descriptor'));
+        add_key($evaluationitemtable, $pk);
+    }
+
     return true;
 }
