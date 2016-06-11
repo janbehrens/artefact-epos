@@ -34,61 +34,23 @@ define('TITLE', get_string('subjects', 'artefact.epos'));
 require_once('pieforms/pieform.php');
 safe_require('artefact', 'epos');
 
-//get institutions
-$institutions = get_manageable_institutions($USER);
-$institutionexists = false;
-$accessdenied = true;
+$institutionselector = get_institution_selector(true, false, true, true);
 
-if (isset($_GET['institution'])) {
-    $institution = $_GET['institution'];
-
-    //check if user is allowed to administer the institution indicated by GET parameter
-    foreach ($institutions as $inst) {
-        if ($institution == $inst->name) {
-            $accessdenied = false;
-        }
-    }
+try {
+    $institution = $institutionselector['defaultvalue'] = param_alpha('institution');
 }
-else {
-    $institution = $institutions[0];
-    $institution = $institution->name;
-    $accessdenied = false;
+catch (Exception $e) {
+    $institution = $institutionselector['defaultvalue'];
 }
 
-$subject = isset($_GET['subject']) ? $_GET['subject'] : '';
-$links_inst = '';
-$links_subj = '';
-
-// generate institution list
-if ($institutions) {
-    // select first institution if GET parameter is not set
-    if ($institution == '') {
-        $institution = $institutions[0]->name;
-    }
-
-    $links_inst = '<p>' . get_string('institution', 'mahara') . ': ';
-
-    foreach ($institutions as $field) {
-        if ($field->name == $institution) {
-            $links_inst .= '<b>';
-            $institutionexists = true;
-        }
-        else {
-            $links_inst .= '<a href="?institution=' . $field->name . '">';
-        }
-        $links_inst .= $field->displayname;
-        if ($field->name == $institution) {
-            $links_inst .= '</b> | ';
-        }
-        else {
-            $links_inst .= '</a> | ';
-        }
-    }
-}
-
-if (!$institutionexists) {
-    //TODO: error
-}
+$selector = pieform(array(
+    'name' => 'selector',
+    'checkdirtychange' => false,
+    'elements' => array(
+        'institution' => $institutionselector
+    ),
+    'jsform' => true
+));
 
 $addstr = get_string('add', 'artefact.epos');
 $cancelstr = get_string('cancel', 'artefact.epos');
@@ -101,6 +63,23 @@ $deletestr = get_string('delete', 'mahara');
 $confirmdelstr = get_string('confirmdeletesubject', 'artefact.epos', "' + name + '");
 
 $inlinejs = <<<EOF
+
+function onInstitutionSelect() {
+    // If there are at least two options, pieforms builds a select, otherwise a hidden input
+    var institutionSelect = jQuery('select#selector_institution');
+    var institutionInput = jQuery('input#selector_institution');
+    if (institutionSelect.length > 0) {
+        var selectedInstitution = institutionSelect.children(':selected').attr('value');
+    }
+    else {
+        var selectedInstitution = institutionInput.attr('value');
+    }
+    window.location = '?institution=' + selectedInstitution;
+}
+
+jQuery(window).load(function () {
+    jQuery('select#selector_institution').change(onInstitutionSelect);
+})
 
 function toggleForm() {
     var elemName = 'subjectform';
@@ -258,8 +237,7 @@ $subjectform = pieform(array(
 ));
 
 $smarty = smarty(array('tablerenderer'));
-$smarty->assign('accessdenied', $accessdenied);
-$smarty->assign_by_ref('links_institution', $links_inst);
+$smarty->assign_by_ref('selector', $selector);
 $smarty->assign_by_ref('subjectform', $subjectform);
 $smarty->assign('INLINEJAVASCRIPT', $inlinejs);
 $smarty->assign('PAGEHEADING', TITLE);

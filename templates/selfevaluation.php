@@ -35,32 +35,45 @@ require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
-//get institutions
-$institutions = get_manageable_institutions($USER);
-$institutionexists = false;
-$accessdenied = true;
+$institutionselector = get_institution_selector(true, false, true, true);
 
-if (isset($_GET['institution'])) {
-    $institution = $_GET['institution'];
-
-    //check if user is allowed to administer the institution indicated by GET parameter
-    foreach ($institutions as $inst) {
-        if ($institution == $inst->name) {
-            $accessdenied = false;
-        }
-    }
+try {
+    $institution = $institutionselector['defaultvalue'] = param_alpha('institution');
 }
-else {
-    $institution = $institutions[0];
-    $institution = $institution->name;
-    $accessdenied = false;
+catch (Exception $e) {
+    $institution = $institutionselector['defaultvalue'];
 }
 
-$subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
-$edit = isset($_GET['edit']) ? $_GET['edit'] : 0;
-$links_inst = '';
-$links_subj = '';
-$institution_displayname = '';
+try {
+    $subject = param_integer('subject');
+}
+catch (Exception $e) {
+    $subject = null;
+}
+
+try {
+    $edit = param_integer('edit');
+}
+catch (Exception $e) {
+    $edit = false;
+}
+
+$form = array(
+    'name' => 'selector',
+    'checkdirtychange' => false,
+    'elements' => array(
+        'institution' => $institutionselector,
+        'subject' => array(
+            'type' => 'select',
+            'title' => get_string('subject', 'artefact.epos'),
+            'options' => array(),
+            'value' => $subject
+        )
+    ),
+    'jsform' => true
+);
+
+$institution_displayname = $institutionselector['options'][$institutionselector['defaultvalue']];
 $form_submitted = false;
 $file_submitted = false;
 
@@ -75,38 +88,6 @@ if (isset($_POST['save']) or isset($_POST['saveas'])) {
         $dirpath = "$dataroot/artefact/epos/examples";
         move_uploaded_file($_FILES['examplesfile']['tmp_name'], "$dirpath/examples.zip");
     }
-}
-
-// generate institution list
-if ($institutions) {
-    // select first institution if GET parameter is not set
-    if ($institution == '') {
-        $institution = $institutions[0]->name;
-    }
-
-    $links_inst = '<p>' . get_string('institution', 'artefact.epos') . ': ';
-
-    foreach ($institutions as $field) {
-        if ($field->name == $institution) {
-            $links_inst .= '<b>';
-            $institutionexists = true;
-            $institution_displayname = $field->displayname;
-        }
-        else {
-            $links_inst .= '<a href="?institution=' . $field->name . '">';
-        }
-        $links_inst .= $field->displayname;
-        if ($field->name == $institution) {
-            $links_inst .= '</b> | ';
-        }
-        else {
-            $links_inst .= '</a> | ';
-        }
-    }
-}
-
-if (!$institutionexists) {
-    //TODO: error
 }
 
 //get subjects
@@ -124,28 +105,21 @@ if (!$data = get_records_sql_array($sql, array($institution))) {
 // generate subject list
 if ($data) {
     // select first subject if GET parameter is not set
-    if ($subject == '') {
+    if ($subject == null) {
         $subject = $data[0]->id;
     }
 
-    $links_subj = '<p>' . get_string('subject', 'artefact.epos') . ': ';
-
-    foreach ($data as $field) {
-        if ($field->id == $subject) {
-            $links_subj .= '<b>';
-        }
-        else {
-            $links_subj .= '<a href="?institution=' . $institution . '&subject=' . $field->id . '">';
-        }
-        $links_subj .= $field->name;
-        if ($field->id == $subject) {
-            $links_subj .= '</b> | ';
-        }
-        else {
-            $links_subj .= '</a> | ';
-        }
+    foreach ($data as $row) {
+        $form['elements']['subject']['options'][$row->id] = $row->name;
     }
 }
+
+// Select elements should have at least one option
+if (empty($form['elements']['subject']['options'])) {
+    unset($form['elements']['subject']);
+}
+
+$selector = pieform($form);
 
 $text_evaluationlevel               = get_string('evaluationlevel', 'artefact.epos');
 $text_competencyname               = get_string('competencearea', 'artefact.epos');
@@ -166,9 +140,40 @@ $exportstr = get_string('export', 'artefact.epos');
 $confirmdelstr = get_string('confirmdeletedescriptorset', 'artefact.epos', "' + name + '");
 $subjectsadministrationstr = get_string('subjectsadministration', 'artefact.epos');
 
-
 //JS stuff
 $inlinejs = <<<EOF
+
+function onInstitutionSelect() {
+    // If there are at least two options, pieforms builds a select, otherwise a hidden input
+    var institutionSelect = jQuery('select#selector_institution');
+    var institutionInput = jQuery('input#selector_institution');
+    if (institutionSelect.length > 0) {
+        var selectedInstitution = institutionSelect.children(':selected').attr('value');
+    }
+    else {
+        var selectedInstitution = institutionInput.attr('value');
+    }
+    var newLocation = '?institution=' + selectedInstitution;
+
+    var subjectSelect = jQuery('select#selector_subject');
+    var subjectInput = jQuery('input#selector_subject');
+    if (subjectSelect.length > 0) {
+        var selectedSubject = subjectSelect.children(':selected').attr('value');
+    }
+    else {
+        var selectedSubject = subjectInput.attr('value');
+    }
+    if (selectedSubject) {
+        newLocation += '&subject=' + selectedSubject;
+    }
+
+    window.location = newLocation;
+}
+
+jQuery(window).load(function () {
+    jQuery('select#selector_institution').change(onInstitutionSelect);
+    jQuery('select#selector_subject').change(onInstitutionSelect);
+})
 
 function cancelEditing() {
     window.location.href = '?institution={$institution}&subject={$subject}';
@@ -417,13 +422,11 @@ $smarty->assign('text_name_evaluation_grid', get_string('name_evaluation_grid', 
 $smarty->assign('text_num_rows', get_string('num_rows', 'artefact.epos'));
 $smarty->assign('text_num_cols', get_string('num_cols', 'artefact.epos'));
 
-$smarty->assign('accessdenied', $accessdenied);
+$smarty->assign_by_ref('selector', $selector);
 $smarty->assign('institution', $institution);
 $smarty->assign('institution_displayname', $institution_displayname);
 $smarty->assign('subjectsadministrationstr', $subjectsadministrationstr);
 $smarty->assign('subjects', $subjects);
-$smarty->assign('links_institution', $links_inst);
-$smarty->assign('links_subject', $links_subj);
 $smarty->assign('importformxml', $importformxml);
 $smarty->assign('importformcsv', $importformcsv);
 $smarty->assign('edit', $edit);
