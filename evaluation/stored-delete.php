@@ -36,12 +36,14 @@ safe_require('artefact', 'epos');
 
 $id = param_integer('id', -1);
 $evaluation = artefact_instance_from_id($id);
-$evaluation->check_permission();
+$evaluation->delete();
 
-$question = get_string('confirmdeleteevaluation', 'artefact.epos', '"' . $evaluation->get('title') . '"');
-$confirm = ArtefactTypeEvaluation::form_delete_evaluation($id);
+// $evaluation->check_permission();
 
-$smarty = smarty();
-$smarty->assign('PAGEHEADING', get_string('deleteevaluation', 'artefact.epos'));
-$smarty->assign('content', "<p>$question</p> $confirm");
-$smarty->display('artefact:epos:simple.tpl');
+// $question = get_string('confirmdeleteevaluation', 'artefact.epos', '"' . $evaluation->get('title') . '"');
+// $confirm = ArtefactTypeEvaluation::form_delete_evaluation($id);
+
+// $smarty = smarty();
+// $smarty->assign('PAGEHEADING', get_string('deleteevaluation', 'artefact.epos'));
+// $smarty->assign('content', "<p>$question</p> $confirm");
+// $smarty->display('artefact:epos:simple.tpl');

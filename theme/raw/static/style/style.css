@@ -267,6 +267,10 @@ table.stored_evaluations thead {
     text-align: center;
 }
 
+.stored_evaluations td .evaluation-id {
+    display: none;
+}
+
 /* external evaluations */
 
 .eval-request {

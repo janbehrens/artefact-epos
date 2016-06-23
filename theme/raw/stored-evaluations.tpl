@@ -1,5 +1,8 @@
 {include file="header.tpl"}
 
+<script src="{$WWWROOT}artefact/epos/js/delete_stored_evaluation.js"></script>
+
+
 {if $subjects}
     <form action="{$WWWROOT}artefact/epos/comparison/" method="get">
     {foreach $subjects key=subject item=descriptorsets}
@@ -26,7 +29,8 @@
                 <td>{$evaluation->evaluator_display_name}</td>
                 <td>
                 {if $evaluation->final}
-                    <a href="stored-delete.php?id={$evaluation->id}"><img title="{str tag='deleteevaluation' section='artefact.epos'}" alt="{str tag='deleteevaluation' section='artefact.epos'}" src="{$WWWROOT}theme/raw/static/images/btn_deleteremove.png" /></a>
+                    <a href="#" class="delete-confirmation"><img title="{str tag='deleteevaluation' section='artefact.epos'}" alt="{str tag='deleteevaluation' section='artefact.epos'}" src="{$WWWROOT}theme/raw/static/images/btn_deleteremove.png" /></a>
+                    <p class="evaluation-id">{$evaluation->id}</p>
                 {/if}
                 </td>
                 <td class="selectors">
