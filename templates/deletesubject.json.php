@@ -36,7 +36,6 @@ $id = param_variable('id');
 try {
     // delete all links of the subject to descriptorsets and artefacts
     delete_records('artefact_epos_descriptorset_subject', 'subject', $id);
-    delete_records('artefact_epos_mysubject', 'subject', $id);
     delete_records('artefact_epos_subject', 'id', $id);
 
     //reply
