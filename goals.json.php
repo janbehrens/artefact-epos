@@ -34,7 +34,8 @@ safe_require('artefact', 'epos');
 $id = param_integer('id');
 
 $evaluation = artefact_instance_from_id($id);
-$evaluation->check_permission();
+//FIXME: properly check if user can view this artefact
+//$evaluation->check_permission();
 $data = $evaluation->get_goals();
 
 echo json_encode(array(

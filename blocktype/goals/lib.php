@@ -75,7 +75,7 @@ tableRenderer{$id} = new TableRenderer(
                 data.innerHTML = '<div class="customgoalText" id="' + r.id + '">' + r.description + '</div>';
                 return data;
             }
-            return TD(null, r.descriptor);
+            return TD(null, r.descriptor_name);
         },
         function (r, d) {
             var level = "";
