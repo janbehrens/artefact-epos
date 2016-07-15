@@ -55,6 +55,7 @@ class PluginBlocktypeGoals extends PluginBlocktype {
     }
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
+        $bid = $instance->get('id');
         $result = '';
         $configdata = $instance->get('configdata');
         $id = isset($configdata['artefactid']) ? $configdata['artefactid'] : 0;
@@ -65,8 +66,8 @@ class PluginBlocktypeGoals extends PluginBlocktype {
             $inlinejs = '(function($){$.fn.goals=function(){';
             $inlinejs .= <<<EOF
 
-tableRenderer{$id} = new TableRenderer(
-    'goals_table{$id}',
+tableRenderer_{$bid}_{$id} = new TableRenderer(
+    'goals_table_{$bid}_{$id}',
     '{$jsonpath}',
     [
         function (r, d) {
@@ -94,9 +95,9 @@ tableRenderer{$id} = new TableRenderer(
     ]
 );
 
-tableRenderer{$id}.emptycontent = '';
-tableRenderer{$id}.paginate = false;
-tableRenderer{$id}.updateOnLoad();
+tableRenderer_{$bid}_{$id}.emptycontent = '';
+tableRenderer_{$bid}_{$id}.paginate = false;
+tableRenderer_{$bid}_{$id}.updateOnLoad();
 
 };
 
@@ -104,6 +105,7 @@ $().goals();})(jQuery);
 EOF;
 
             $smarty = smarty_core();
+            $smarty->assign('bid', $bid);
             $smarty->assign('id', $id);
             $smarty->assign('JAVASCRIPT', $inlinejs);
 

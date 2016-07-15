@@ -1,4 +1,4 @@
-<table id="goals_table{$id}">
+<table id="goals_table_{$bid}_{$id}">
     <thead>
         <tr>
             <th>{str tag='goal' section='artefact.epos'}</th>
