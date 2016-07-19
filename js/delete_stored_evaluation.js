@@ -1,6 +1,7 @@
 jQuery(document).ready(function() {
 	jQuery(".stored_evaluations td .delete-confirmation").click(function() {
-		var result = confirm("Are you sure?");
+		var question = jQuery(this).closest("td").find(".evaluation-title").text();
+		var result = confirm(question);
 		if(result) {
 			var evaluationId  = jQuery(this).closest("td").find(".evaluation-id").text();
 			jQuery.ajax({

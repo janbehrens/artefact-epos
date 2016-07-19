@@ -31,6 +31,7 @@
                 {if $evaluation->final}
                     <a href="#" class="delete-confirmation"><img title="{str tag='deleteevaluation' section='artefact.epos'}" alt="{str tag='deleteevaluation' section='artefact.epos'}" src="{$WWWROOT}theme/raw/static/images/btn_deleteremove.png" /></a>
                     <p class="evaluation-id">{$evaluation->id}</p>
+                    <p class="evaluation-title">{get_string('confirmdeleteevaluation', 'artefact.epos','"$evaluation->title"');}</p>
                 {/if}
                 </td>
                 <td class="selectors">
