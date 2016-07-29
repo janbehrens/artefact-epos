@@ -753,6 +753,7 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         if ($artefacts = get_records_sql_array($sql)) {
             foreach ($artefacts as $artefact) {
                 if ($artefact->parenttype == 'subject' && $artefact->artefacttype == 'customgoal') {
+                    delete_records('artefact_access_role', 'artefact', $artefact->id);
                     delete_records('artefact', 'id', $artefact->id);
                 }
                 else {
@@ -777,7 +778,12 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
                 delete_records('block_instance', 'id', $record->block);
             }
         }
-        delete_records('artefact', 'artefacttype', 'subject');
+        if ($artefacts = get_records_array('artefact', 'artefacttype', 'subject')) {
+            foreach ($artefacts as $artefact) {
+                delete_records('artefact_access_role', 'artefact', $artefact->id);
+                delete_records('artefact', 'id', $artefact->id);
+            }
+        }
 
         // drop mysubject
         drop_table($mysubjecttable);
