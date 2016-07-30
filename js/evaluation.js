@@ -34,7 +34,7 @@ function toggleEvaluationForm(competence, level, competenceName, levelName) {
     args = {
         competence: competence,
         level: level,
-        competenceName,
+        competenceName: competenceName,
         levelName: levelName
     };
     form = $j('#evaluationform_div');
