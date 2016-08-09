@@ -265,6 +265,7 @@ if ($form_submitted) {
 function getPostData() {
     postData = {
         'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
+        'jsonCompetencyPatternCopyright' : JSON.stringify('{$_POST['competencyPatternCopyright']}'),
         'arrCompetencyName'          : JSON.stringify($arrCompetencyNameJson),
         'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
         'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),

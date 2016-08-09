@@ -1,4 +1,10 @@
 {include file="header.tpl"}
+<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+<script >
+    tinymce.init({ 
+        selector : 'textarea#competencyPatternCopyright',
+    });
+</script>
 
 {$selector|safe}
 
@@ -40,6 +46,15 @@
             <td><input type="text" name="competencyPatternTitle" id="competencyPatternTitle" maxlength="255" size="25" /></td>
         </tr>
     </table>
+    <!-- tinymce for Description-->
+    <table cellspacing="0">
+        <tr>
+            <th width="200"><label>Description</label></th>
+            <td id="CopyrightButton"><button type='button' id="showEidtor">show editor</button></td>
+            <td id="CopyrightEditor" style="display:none"><textarea name="competencyPatternCopyright" id="competencyPatternCopyright"></textarea><br />
+            <!-- <button type='button' id="hideEidtor">Finish</button> --></td>
+        </tr>
+    </table>
     <br />
     <table cellspacing="0">
         <tr>
@@ -78,6 +93,22 @@
 {else}
     {str tag='nosubjectsconfigured' section='artefact.epos' arg1='$institution_displayname' arg2='<a href="subjects.php?institution=$institution">$subjectsadministrationstr</a>'}
 {/if}
+
+<!-- js for copyright -->
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery('#showEidtor').on('click',function(){
+            jQuery(this).closest("tr").find("#CopyrightEditor").show();
+            jQuery(this).closest("td").hide();
+        });
+        // jQuery('#hideEidtor').on('click',function(){
+        //     jQuery(this).closest("tr").find("#CopyrightButton").show();
+        //     jQuery(this).closest("td").hide();
+        //     var value = tinyMCE.activeEditor.getContent();;
+        //     alert(value);
+        // });
+    });
+</script>
 
 {if $edit && !$form_submitted}
     <script type="text/javascript">
@@ -132,8 +163,10 @@
             jQuery('#competencyPatternTitle').attr('value', data.data.name);
             jQuery('#rows').attr('value', arrCompetencyName.length);
             jQuery('#cols').attr('value', arrCompetencyLevel.length);
-
             onChangeColsRows();
+
+            // Initialize the value of tinymce editor(Description)
+            tinyMCE.activeEditor.setContent(data.data.copyright);
         });
     createTable();
     </script>

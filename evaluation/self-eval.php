@@ -58,6 +58,18 @@ else {
     $render = $evaluation->render_evaluation();
     $selfevaluation = $render['html'];
     $includejs = $render['includejs'];
+
+    // Get the copyright imformation of the evaluation
+    $sql = "SELECT d.copyright
+                FROM artefact_epos_evaluation e
+                JOIN artefact_epos_descriptorset d ON e.descriptorset = d.id
+                WHERE e.artefact = ?";
+
+    if (!$data = get_records_sql_array($sql, array($id))) {
+        return array(null, false);
+    } else {
+        $copyright = $data[0]->copyright;
+    }
 }
 
 $smarty = smarty($includejs);
@@ -67,4 +79,5 @@ $smarty->assign('id', $id);
 $smarty->assign('selectform', $selectform);
 $smarty->assign('selfevaluation', $selfevaluation);
 $smarty->assign('customgoalform', $customgoalform);
+$smarty->assign('copyright', $copyright);
 $smarty->display('artefact:epos:evaluation-self.tpl');

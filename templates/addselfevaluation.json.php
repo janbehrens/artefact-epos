@@ -46,6 +46,7 @@ function object_to_array($mixed) {
 }
 
 $competencyPatternTitle                = json_decode(param_variable('jsonCompetencyPatternTitle'));
+$competencyPatternCopyright                = json_decode(param_variable('jsonCompetencyPatternCopyright'));
 $arrCompetencyName                     = json_decode(param_variable('arrCompetencyName'));
 $arrCompetencyLevel                 = json_decode(param_variable('arrCompetencyLevel'));
 $arrCanDo                            = object_to_array(json_decode(param_variable('arrCanDo'))); // JSON array with missing index
@@ -149,10 +150,10 @@ if (!$emptyfield) {
 
     //write to database and dataroot (create new rows/files if $id is not given, otherwise overwrite)
     if ($id != 0) {
-        write_descriptor_db($filepath, false, $subject, $id);
+        write_descriptor_db_with_copyright($filepath, $competencyPatternCopyright, false, $subject, $id);
     }
     else {
-        write_descriptor_db($filepath, false, $subject);
+        write_descriptor_db_with_copyright($filepath, $competencyPatternCopyright, false, $subject);
     }
 
     if ($file_submitted) {

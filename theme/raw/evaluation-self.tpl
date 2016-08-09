@@ -20,6 +20,23 @@
 <div id="subjects_list">{$selectform|safe}</div>
 
 {if $id}
+
+{if $copyright}
+<span class="help"  id="copyright_icon">
+    <a href="#" title="Copyright" onclick='$j("#copyright_content").show()'><img src="http://epos/theme/raw/static/images/help.png"></a>
+</span>   
+
+<div class="contextualHelp" id="copyright_content" role="dialog">
+    <div class="fr">
+        <a href="#" onclick='$j("#copyright_content").hide()'><img src="http://epos/theme/raw/static/images/btn_close.png" alt="Close"></a>
+    </div>    
+    <div>
+        <h3>Copyright</h3>
+        <div>{$copyright|safe}</div>
+    </div>
+</div>
+{/if}
+
 <p>{str tag='helpselfevaluation' section='artefact.epos'}</p>
 
 {$selfevaluation|safe}
