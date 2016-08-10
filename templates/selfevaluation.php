@@ -261,11 +261,19 @@ if ($form_submitted) {
     $arrEvaluationLevelGlobalJson = json_encode($arrEvaluationLevelGlobal);
     $file_submitted               = $file_submitted ? 'true' : 'false';
 
+    $preCopyright1 = $_POST['competencyPatternCopyright'];
+    if(is_array($preCopyright1)) {
+        $preCopyright2 = implode("",$preCopyright1);
+    } else {
+        $preCopyright2 = $preCopyright1; 
+    }
+    $competencyPatternCopyright= json_encode($preCopyright2);
+
     $inlinejs .= <<<EOF
 function getPostData() {
     postData = {
         'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
-        'jsonCompetencyPatternCopyright' : JSON.stringify('{$_POST['competencyPatternCopyright']}'),
+        'jsonCompetencyPatternCopyright' : JSON.stringify($competencyPatternCopyright),
         'arrCompetencyName'          : JSON.stringify($arrCompetencyNameJson),
         'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
         'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),

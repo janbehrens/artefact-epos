@@ -43,6 +43,7 @@ list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($
 $includejs = array();
 $selfevaluation = array();
 $customgoalform = null;
+$copyright = null;
 if (!$selectform) {
     $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="../index.php">' . get_string('addremoveevaluations', 'artefact.epos') . '</a>');
 }
