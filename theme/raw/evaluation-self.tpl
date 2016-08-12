@@ -21,18 +21,18 @@
 
 {if $id}
 
-{if $copyright}
-<span class="help"  id="copyright_icon">
-    <a href="#" title="Copyright" onclick='$j("#copyright_content").show()'><img src="http://epos/theme/raw/static/images/help.png"></a>
+{if $description}
+<span class="help"  id="description_icon">
+    <a href="#" title="Description" onclick='$j("#description_content").show()'><img src="http://epos/theme/raw/static/images/help.png"></a>
 </span>   
 
-<div class="contextualHelp" id="copyright_content" role="dialog">
+<div class="contextualHelp" id="description_content" role="dialog">
     <div class="fr">
-        <a href="#" onclick='$j("#copyright_content").hide()'><img src="http://epos/theme/raw/static/images/btn_close.png" alt="Close"></a>
+        <a href="#" onclick='$j("#description_content").hide()'><img src="http://epos/theme/raw/static/images/btn_close.png" alt="Close"></a>
     </div>    
     <div>
-        <h3>Copyright</h3>
-        <div>{$copyright|safe}</div>
+        <h3>Description</h3>
+        <div>{$description|safe}</div>
     </div>
 </div>
 {/if}

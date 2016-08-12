@@ -35,13 +35,13 @@ $descriptorset = param_variable('id');
 
 $data = load_descriptors($descriptorset);
 
-$sql = 'SELECT name, copyright FROM artefact_epos_descriptorset
+$sql = 'SELECT name, description FROM artefact_epos_descriptorset
         WHERE id = ?';
 if (!$dsdata = get_records_sql_array($sql, array($descriptorset))) {
     $dsdata = array();
 }
 
 echo json_encode(array(
-    'data' => array('name' => $dsdata[0]->name, 'copyright' => $dsdata[0]->copyright,'descriptors' => $data),
+    'data' => array('name' => $dsdata[0]->name, 'description' => $dsdata[0]->description,'descriptors' => $data),
     'count' => count($data)
 ));

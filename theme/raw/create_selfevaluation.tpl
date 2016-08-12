@@ -2,7 +2,7 @@
 <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 <script >
     tinymce.init({ 
-        selector : 'textarea#competencyPatternCopyright',
+        selector : 'textarea#competencyPatternDescription',
     });
 </script>
 
@@ -50,8 +50,8 @@
     <table cellspacing="0">
         <tr>
             <th width="200"><label>Description</label></th>
-            <td id="CopyrightButton"><button type='button' id="showEidtor">show editor</button></td>
-            <td id="CopyrightEditor" style="display:none"><textarea name="competencyPatternCopyright" id="competencyPatternCopyright"></textarea><br />
+            <td id="DescriptionButton"><button type='button' id="showEidtor">show editor</button></td>
+            <td id="DescriptionEditor" style="display:none"><textarea name="competencyPatternDescription" id="competencyPatternDescription"></textarea><br />
             <!-- <button type='button' id="hideEidtor">Finish</button> --></td>
         </tr>
     </table>
@@ -94,15 +94,15 @@
     {str tag='nosubjectsconfigured' section='artefact.epos' arg1='$institution_displayname' arg2='<a href="subjects.php?institution=$institution">$subjectsadministrationstr</a>'}
 {/if}
 
-<!-- js for copyright -->
+<!-- js for description -->
 <script type="text/javascript">
     jQuery(document).ready(function(){
         jQuery('#showEidtor').on('click',function(){
-            jQuery(this).closest("tr").find("#CopyrightEditor").show();
+            jQuery(this).closest("tr").find("#DescriptionEditor").show();
             jQuery(this).closest("td").hide();
         });
         // jQuery('#hideEidtor').on('click',function(){
-        //     jQuery(this).closest("tr").find("#CopyrightButton").show();
+        //     jQuery(this).closest("tr").find("#DescriptionButton").show();
         //     jQuery(this).closest("td").hide();
         //     var value = tinyMCE.activeEditor.getContent();;
         //     alert(value);
@@ -166,7 +166,7 @@
             onChangeColsRows();
 
             // Initialize the value of tinymce editor(Description)
-            tinyMCE.activeEditor.setContent(data.data.copyright);
+            tinyMCE.activeEditor.setContent(data.data.description);
         });
     createTable();
     </script>

@@ -261,20 +261,20 @@ if ($form_submitted) {
     $arrEvaluationLevelGlobalJson = json_encode($arrEvaluationLevelGlobal);
     $file_submitted               = $file_submitted ? 'true' : 'false';
 
-    $preCopyright1 = $_POST['competencyPatternCopyright'];
-    if(is_array($preCopyright1)) {
-        $preCopyright2 = implode("",$preCopyright1);
+    $preDescription1 = $_POST['competencyPatternDescription'];
+    if(is_array($preDescription1)) {
+        $preDescription2 = implode("",$preDescription1);
     } else {
-        $preCopyright2 = $preCopyright1; 
+        $preDescription2 = $preDescription1; 
     }
-    $preCopyright3 = htmlspecialchars($preCopyright2);
-    $competencyPatternCopyright= json_encode($preCopyright3);
+    $preDescription3 = htmlspecialchars($preDescription2);
+    $competencyPatternDescription= json_encode($preDescription3);
 
     $inlinejs .= <<<EOF
 function getPostData() {
     postData = {
         'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
-        'jsonCompetencyPatternCopyright' : JSON.stringify($competencyPatternCopyright),
+        'jsonCompetencyPatternDescription' : JSON.stringify($competencyPatternDescription),
         'arrCompetencyName'          : JSON.stringify($arrCompetencyNameJson),
         'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
         'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),
@@ -511,8 +511,8 @@ function importcsv_submit(Pieform $form, $values) {
 
     $writer->startElement('DESCRIPTORSET');
     $writer->writeAttribute('NAME', $values['name']);
-    // if($values['copyright']) {
-    //     $writer->writeAttribute('COPYRIGHT', $values['name']);
+    // if($values['description']) {
+    //     $writer->writeAttribute('DESCRIPTION', $values['name']);
     // }
 
     try {

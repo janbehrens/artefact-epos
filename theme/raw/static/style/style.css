@@ -50,14 +50,14 @@ td.radio {
     margin-top: 0px;
 }
 
-#copyright_content {
+#description_content {
     position: absolute; 
     left: 608.359px; 
     top: 232px; 
     display:none;
 }
 
-#copyright_icon {
+#description_icon {
     position:absolute; 
     margin-left:5px; 
     margin-top:3px;
