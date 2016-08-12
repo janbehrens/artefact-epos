@@ -98,6 +98,7 @@ $writer->setIndent(4);
 // declare it as an rss document
 $writer->startElement('DESCRIPTORSET');
 $writer->writeAttribute('NAME', $competencyPatternTitle);
+$writer->writeAttribute('COPYRIGHT', $competencyPatternCopyright);
 
 $emptyfield = false;
 
@@ -150,10 +151,10 @@ if (!$emptyfield) {
 
     //write to database and dataroot (create new rows/files if $id is not given, otherwise overwrite)
     if ($id != 0) {
-        write_descriptor_db_with_copyright($filepath, $competencyPatternCopyright, false, $subject, $id);
+        write_descriptor_db($filepath, false, $subject, $id);
     }
     else {
-        write_descriptor_db_with_copyright($filepath, $competencyPatternCopyright, false, $subject);
+        write_descriptor_db($filepath, false, $subject);
     }
 
     if ($file_submitted) {

@@ -1394,6 +1394,9 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
 
         $descriptorset = $xmlarr['DESCRIPTORSET'];
         $values['name'] = $descriptorsetname = $descriptorset['@']['NAME'];
+        if($descriptorset['@']['COPYRIGHT']){
+            $values['copyright'] = html_entity_decode($descriptorset['@']['COPYRIGHT']);
+        }
         if ($fileistemporary) {
             $values['file'] = 'unknown'; //file name may not be known yet
         }
@@ -1406,87 +1409,6 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
         }
         $values['visible'] = 1;
         $values['active'] = 1;
-
-        //insert
-        db_begin();
-        $values['descriptorset'] = insert_record($descriptorsettable, (object)$values, 'id', true);
-
-        insert_record('artefact_epos_descriptorset_subject', array(
-                'descriptorset' => $values['descriptorset'],
-                'subject' => $subjectid
-        ));
-
-        if ($descriptorsetid != null) {
-            update_record(
-                    $descriptorsettable,
-                    (object) array('id' => $descriptorsetid, 'visible' => 0, 'active' => 0),
-                    'id'
-            );
-        }
-
-        $competences = array();
-        $levels = array();
-
-        foreach ($xmlarr['DESCRIPTORSET']['#']['DESCRIPTOR'] as $x) {
-            $competence = $x['@']['COMPETENCE'];
-            $level = $x['@']['LEVEL'];
-            if (!isset($competences[$competence])) {
-                $cid = insert_record('artefact_epos_competence', (object) array (
-                    'descriptorset' => $values['descriptorset'],
-                    'name' => $competence
-                ), 'id', true);
-                $competences[$competence] = $cid;
-            }
-            if (!isset($levels[$level])) {
-                $lid = insert_record('artefact_epos_level', (object) array (
-                    'descriptorset' => $values['descriptorset'],
-                    'name' => $level
-                ), 'id', true);
-                $levels[$level] = $lid;
-            }
-            $values['competence'] = $competences[$competence];
-            $values['level'] = $levels[$level];
-            $values['name'] = $x['@']['NAME'];
-            $values['link'] = $x['@']['LINK'];
-            $values['goal_available'] = $x['@']['GOAL'];
-            insert_record($descriptortable, (object)$values);
-        }
-        $ratings = array_map('trim', explode(';', $x['@']['EVALUATIONS']));
-        foreach ($ratings as $rating) {
-            insert_record('artefact_epos_rating', (object) array(
-                'descriptorset' => $values['descriptorset'],
-                'name' => $rating
-            ));
-        }
-        db_commit();
-        return array('id' => $values['descriptorset'], 'name' => $descriptorsetname);
-    }
-    return false;
-}
-
-function write_descriptor_db_with_copyright($xml, $copyright, $fileistemporary, $subjectid, $descriptorsetid = null) {
-    if (file_exists($xml) && is_readable($xml)) {
-        $contents = file_get_contents($xml);
-        $xmlarr = xmlize($contents);
-
-        $descriptorsettable = 'artefact_epos_descriptorset';
-        $descriptortable = 'artefact_epos_descriptor';
-
-        $descriptorset = $xmlarr['DESCRIPTORSET'];
-        $values['name'] = $descriptorsetname = $descriptorset['@']['NAME'];
-        if ($fileistemporary) {
-            $values['file'] = 'unknown'; //file name may not be known yet
-        }
-        else {
-            //extract file name from path
-            $path = explode('/', $xml);
-            foreach ($path as $word) {
-                $values['file'] = $word;
-            }
-        }
-        $values['visible'] = 1;
-        $values['active'] = 1;
-        $values['copyright'] = $copyright;
 
         //insert
         db_begin();
