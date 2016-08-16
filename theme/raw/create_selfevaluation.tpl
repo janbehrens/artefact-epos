@@ -1,5 +1,5 @@
 {include file="header.tpl"}
-<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+<script type="application/javascript" src="{get_config('wwwroot')}js/tinymce/tinymce.js"></script>
 <script >
     tinymce.init({ 
         selector : 'textarea#competencyPatternDescription',
