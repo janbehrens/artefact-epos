@@ -3,6 +3,8 @@
 <script >
     tinymce.init({ 
         selector : 'textarea#competencyPatternDescription',
+        width : 350,
+        height : 210,
     });
 </script>
 

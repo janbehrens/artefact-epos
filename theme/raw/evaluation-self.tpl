@@ -22,13 +22,13 @@
 {if $id}
 
 {if $description}
-<span class="help"  id="description_icon">
-    <a href="#" title="Description" onclick='$j("#description_content").show()'><img src="http://epos/theme/raw/static/images/help.png"></a>
+<span id="description_icon">
+    <a href="#" title="Description" onclick='$j("#description_content").show()'><img src="{get_config('wwwroot')}theme/epos/static/images/textbubble.png"></a>
 </span>   
 
-<div class="contextualHelp" id="description_content" role="dialog">
+<div id="description_content" role="dialog">
     <div class="fr">
-        <a href="#" onclick='$j("#description_content").hide()'><img src="http://epos/theme/raw/static/images/btn_close.png" alt="Close"></a>
+        <a href="#" onclick='$j("#description_content").hide()'><img src="{get_config('wwwroot')}theme/raw/static/images/btn_close.png" alt="Close"></a>
     </div>    
     <div>
         <h3>Description</h3>
