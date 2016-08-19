@@ -511,9 +511,6 @@ function importcsv_submit(Pieform $form, $values) {
 
     $writer->startElement('DESCRIPTORSET');
     $writer->writeAttribute('NAME', $values['name']);
-    // if($values['description']) {
-    //     $writer->writeAttribute('DESCRIPTION', $values['name']);
-    // }
 
     try {
         //set error handler in order to catch warnings from XMLWriter
