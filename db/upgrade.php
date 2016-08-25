@@ -918,11 +918,11 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         add_key($evaluationitemtable, $pk);
     }
 
-    if ($oldversion < 2016072500) {
+    if ($oldversion < 2016081900) {
         $descriptorsettable = new XMLDBTable('artefact_epos_descriptorset');
-        $copyrightfield = new XMLDBField('copyright');
-        $copyrightfield->setAttributes(XMLDB_TYPE_TEXT, null, null, false);
-        add_field($descriptorsettable, $copyrightfield);
+        $descriptionfield = new XMLDBField('description');
+        $descriptionfield->setAttributes(XMLDB_TYPE_TEXT, null, null, false);
+        add_field($descriptorsettable, $descriptionfield);
     }
 
     return true;

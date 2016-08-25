@@ -1,4 +1,12 @@
 {include file="header.tpl"}
+<script type="application/javascript" src="{get_config('wwwroot')}js/tinymce/tinymce.js"></script>
+<script >
+    tinymce.init({ 
+        selector : 'textarea#competencyPatternDescription',
+        width : 350,
+        height : 210,
+    });
+</script>
 
 {$selector|safe}
 
@@ -40,6 +48,15 @@
             <td><input type="text" name="competencyPatternTitle" id="competencyPatternTitle" maxlength="255" size="25" /></td>
         </tr>
     </table>
+    <!-- tinymce for Description-->
+    <table cellspacing="0">
+        <tr>
+            <th width="200"><label>Description</label></th>
+            <td id="DescriptionButton"><button type='button' id="showEidtor">show editor</button></td>
+            <td id="DescriptionEditor" style="display:none"><textarea name="competencyPatternDescription" id="competencyPatternDescription"></textarea><br />
+            <!-- <button type='button' id="hideEidtor">Finish</button> --></td>
+        </tr>
+    </table>
     <br />
     <table cellspacing="0">
         <tr>
@@ -78,6 +95,22 @@
 {else}
     {str tag='nosubjectsconfigured' section='artefact.epos' arg1='$institution_displayname' arg2='<a href="subjects.php?institution=$institution">$subjectsadministrationstr</a>'}
 {/if}
+
+<!-- js for description -->
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery('#showEidtor').on('click',function(){
+            jQuery(this).closest("tr").find("#DescriptionEditor").show();
+            jQuery(this).closest("td").hide();
+        });
+        // jQuery('#hideEidtor').on('click',function(){
+        //     jQuery(this).closest("tr").find("#DescriptionButton").show();
+        //     jQuery(this).closest("td").hide();
+        //     var value = tinyMCE.activeEditor.getContent();;
+        //     alert(value);
+        // });
+    });
+</script>
 
 {if $edit && !$form_submitted}
     <script type="text/javascript">
@@ -132,8 +165,10 @@
             jQuery('#competencyPatternTitle').attr('value', data.data.name);
             jQuery('#rows').attr('value', arrCompetencyName.length);
             jQuery('#cols').attr('value', arrCompetencyLevel.length);
-
             onChangeColsRows();
+
+            // Initialize the value of tinymce editor(Description)
+            tinyMCE.activeEditor.setContent(data.data.description);
         });
     createTable();
     </script>

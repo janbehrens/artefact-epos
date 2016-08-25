@@ -43,6 +43,7 @@ list($selectform, $id) = ArtefactTypeEvaluation::form_user_evaluation_selector($
 $includejs = array();
 $selfevaluation = array();
 $customgoalform = null;
+$description = null;
 if (!$selectform) {
     $selectform = get_string('nolanguageselected', 'artefact.epos', '<a href="../index.php">' . get_string('addremoveevaluations', 'artefact.epos') . '</a>');
 }
@@ -58,6 +59,18 @@ else {
     $render = $evaluation->render_evaluation();
     $selfevaluation = $render['html'];
     $includejs = $render['includejs'];
+
+    // Get the description imformation of the evaluation
+    $sql = "SELECT d.description
+                FROM artefact_epos_evaluation e
+                JOIN artefact_epos_descriptorset d ON e.descriptorset = d.id
+                WHERE e.artefact = ?";
+
+    if (!$data = get_records_sql_array($sql, array($id))) {
+        return array(null, false);
+    } else {
+        $description = $data[0]->description;
+    }
 }
 
 $smarty = smarty($includejs);
@@ -67,4 +80,5 @@ $smarty->assign('id', $id);
 $smarty->assign('selectform', $selectform);
 $smarty->assign('selfevaluation', $selfevaluation);
 $smarty->assign('customgoalform', $customgoalform);
+$smarty->assign('description', $description);
 $smarty->display('artefact:epos:evaluation-self.tpl');

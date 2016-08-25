@@ -46,6 +46,7 @@ function object_to_array($mixed) {
 }
 
 $competencyPatternTitle                = json_decode(param_variable('jsonCompetencyPatternTitle'));
+$competencyPatternDescription             = json_decode(param_variable('jsonCompetencyPatternDescription'));
 $arrCompetencyName                     = json_decode(param_variable('arrCompetencyName'));
 $arrCompetencyLevel                 = json_decode(param_variable('arrCompetencyLevel'));
 $arrCanDo                            = object_to_array(json_decode(param_variable('arrCanDo'))); // JSON array with missing index
@@ -97,6 +98,7 @@ $writer->setIndent(4);
 // declare it as an rss document
 $writer->startElement('DESCRIPTORSET');
 $writer->writeAttribute('NAME', $competencyPatternTitle);
+$writer->writeAttribute('DESCRIPTION', $competencyPatternDescription);
 
 $emptyfield = false;
 

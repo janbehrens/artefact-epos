@@ -21,7 +21,7 @@
                 <FIELD NAME="id"                TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
                 <FIELD NAME="name"              TYPE="text" NOTNULL="true" />
                 <FIELD NAME="file"              TYPE="text" NOTNULL="false" />
-                <FIELD NAME="copyright"         TYPE="text" NOTNULL="false" />
+                <FIELD NAME="description"       TYPE="text" NOTNULL="false" />
                 <FIELD NAME="visible"           TYPE="int" NOTNULL="true" />
                 <FIELD NAME="active"            TYPE="int" NOTNULL="true" />
             </FIELDS>

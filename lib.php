@@ -1394,6 +1394,9 @@ function write_descriptor_db($xml, $fileistemporary, $subjectid, $descriptorseti
 
         $descriptorset = $xmlarr['DESCRIPTORSET'];
         $values['name'] = $descriptorsetname = $descriptorset['@']['NAME'];
+        if(array_key_exists("DESCRIPTION", $descriptorset['@'])){
+            $values['description'] = html_entity_decode($descriptorset['@']['DESCRIPTION']);
+        }
         if ($fileistemporary) {
             $values['file'] = 'unknown'; //file name may not be known yet
         }

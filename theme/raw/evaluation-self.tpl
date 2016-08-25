@@ -20,6 +20,23 @@
 <div id="subjects_list">{$selectform|safe}</div>
 
 {if $id}
+
+{if $description}
+<span id="description_icon">
+    <a href="#" title="Description" onclick='$j("#description_content").show()'><img src="{get_config('wwwroot')}theme/epos/static/images/textbubble.png"></a>
+</span>   
+
+<div id="description_content" role="dialog">
+    <div class="fr">
+        <a href="#" onclick='$j("#description_content").hide()'><img src="{get_config('wwwroot')}theme/raw/static/images/btn_close.png" alt="Close"></a>
+    </div>    
+    <div>
+        <h3>Description</h3>
+        <div>{$description|safe}</div>
+    </div>
+</div>
+{/if}
+
 <p>{str tag='helpselfevaluation' section='artefact.epos'}</p>
 
 {$selfevaluation|safe}

@@ -35,6 +35,10 @@ div#subjects_list p {
     font-size: 120%;
 }
 
+div#subjects_list {
+    display:inline-block;
+}
+
 form#addlearnedlanguage table {
     float: left;
 }
@@ -44,6 +48,29 @@ td.radio {
 
 #evaluation .rbuttons {
     margin-top: 0px;
+}
+
+#description_content {
+    display:none;
+    position: absolute; 
+    top: 300px; 
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 210px;
+    max-width: 350px;
+    max-height: 300px;
+    left: 0px;
+    right: 0px;
+    padding: 10px;
+    overflow: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #2d2d2d;
+    z-index: 2000
+}
+
+#description_icon {
+    position:absolute; 
+    margin-left:5px; 
 }
 
 /** Customgoal **/

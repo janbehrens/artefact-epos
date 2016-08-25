@@ -261,10 +261,20 @@ if ($form_submitted) {
     $arrEvaluationLevelGlobalJson = json_encode($arrEvaluationLevelGlobal);
     $file_submitted               = $file_submitted ? 'true' : 'false';
 
+    $preDescription1 = $_POST['competencyPatternDescription'];
+    if(is_array($preDescription1)) {
+        $preDescription2 = implode("",$preDescription1);
+    } else {
+        $preDescription2 = $preDescription1; 
+    }
+    $preDescription3 = htmlspecialchars($preDescription2);
+    $competencyPatternDescription= json_encode($preDescription3);
+
     $inlinejs .= <<<EOF
 function getPostData() {
     postData = {
         'jsonCompetencyPatternTitle' : JSON.stringify('{$_POST['competencyPatternTitle']}'),
+        'jsonCompetencyPatternDescription' : JSON.stringify($competencyPatternDescription),
         'arrCompetencyName'          : JSON.stringify($arrCompetencyNameJson),
         'arrCompetencyLevel'         : JSON.stringify($arrCompetencyLevelJson),
         'arrEvaluationLevelGlobal'   : JSON.stringify($arrEvaluationLevelGlobalJson),
