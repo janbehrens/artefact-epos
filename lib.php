@@ -180,7 +180,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
                     foreach ($data as $field => $value) {
                         $this->{$field} = $value;
                     }
-                    foreach (['id', 'descriptorset', 'final'] as $field) {
+                    $fields = array('id', 'descriptorset', 'final');
+                    foreach ($fields as $field) {
                         $this->{$field} = (int)$this->{$field};
                     }
                     $this->evaluator_display_name = "$data->firstname $data->lastname";
@@ -202,7 +203,8 @@ class ArtefactTypeEvaluation extends ArtefactType {
                     WHERE ei.evaluation = ?";
             if ($items = get_records_sql_array($sql, array($this->id))) {
                 foreach ($items as $item) {
-                    foreach (['descriptor', 'value', 'goal', 'competence', 'level', 'goal_available'] as $field) {
+                    $fields = array('descriptor', 'value', 'goal', 'competence', 'level', 'goal_available');
+                    foreach ($fields as $field) {
                         $item->{$field} = (int)$item->{$field};
                     }
                     // If level is 0, it is a custom descriptor
@@ -1201,7 +1203,8 @@ class Descriptorset implements ArrayAccess, Iterator {
                     WHERE d.descriptorset = ?";
             if ($descriptors = get_records_sql_array($sql, array($this->id))) {
                 foreach ($descriptors as $descriptor) {
-                    foreach (['id', 'competence', 'level', 'goal_available'] as $field) {
+                    $fields = array('id', 'competence', 'level', 'goal_available');
+                    foreach ($fields as $field) {
                         $descriptor->{$field} = (int)$descriptor->{$field};
                     }
                     $this->descriptors[$descriptor->id] = $descriptor;
