@@ -913,9 +913,14 @@ function xmldb_artefact_epos_upgrade($oldversion=0) {
         $descriptorfield = new XMLDBField('descriptor');
         $descriptorfield->setAttributes(XMLDB_TYPE_INTEGER, 10, null, true);
         change_field_type($evaluationitemtable, $descriptorfield);
-        $pk = new XMLDBKey('primary');
-        $pk->setAttributes(XMLDB_KEY_PRIMARY, array('evaluation', 'descriptor'));
-        add_key($evaluationitemtable, $pk);
+
+        $oldpk = new XMLDBKey('primary');
+        $oldpk->setAttributes(XMLDB_KEY_PRIMARY, array('id'));
+        drop_key($evaluationitemtable, $oldpk);
+        
+        $newpk = new XMLDBKey('primary');
+        $newpk->setAttributes(XMLDB_KEY_PRIMARY, array('evaluation', 'descriptor'));
+        add_key($evaluationitemtable, $newpk);
     }
 
     if ($oldversion < 2016081900) {
