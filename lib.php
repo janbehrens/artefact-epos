@@ -388,8 +388,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
             }
             // normal descriptors
             else {
-                uksort($levels, function($a, $b) {
-                    return strcmp($this->levels[$a], $this->levels[$b]);
+                $_levels = $this->levels;
+                uksort($levels, function($a, $b) use($_levels) {
+                    return strcmp($_levels[$a], $_levels[$b]);
                 });
                 foreach ($levels as $levelid => $descriptors) {
                     $complevel = self::get_evaluation_result_for_competencelevel($descriptors, $maxrating);
