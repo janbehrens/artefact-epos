@@ -46,46 +46,34 @@ class PluginArtefactEpos extends PluginArtefact {
     public static function menu_items() {
         return array(
             array(
-                'path' => 'evaluation',
-                'title' => get_string('selfevaluation', 'artefact.epos'),
-                'url' => 'artefact/epos/evaluation/self-eval.php',
-                'weight' => 27,//28
-            ),
-            array(
-                'path' => 'evaluation/selfevaluation',
+                'path' => 'identify/selfevaluation',
                 'title' => get_string('selfevaluation', 'artefact.epos'),
                 'url' => 'artefact/epos/evaluation/self-eval.php',
                 'weight' => 20,
             ),
             array(
-                'path' => 'evaluation/stored',
+                'path' => 'identify/storedevaluations',
                 'title' => get_string('storedevaluations', 'artefact.epos'),
                 'url' => 'artefact/epos/evaluation/stored.php',
                 'weight' => 21,
             ),
             array(
-                'path' => 'evaluation/external',
-                'title' => get_string('externalevaluations', 'artefact.epos'),
-                'url' => 'artefact/epos/evaluation/external.php',
+                'path' => 'identify/addremoveselfevaluations',
+                'title' => get_string('addremoveevaluations', 'artefact.epos'),
+                'url' => 'artefact/epos/index.php',
                 'weight' => 22,
             ),
             array(
-                'path' => 'evaluation/addremove',
-                'title' => get_string('addremoveevaluations', 'artefact.epos'),
-                'url' => 'artefact/epos',
-                'weight' => 27,
+                'path' => 'plan',
+                'url' => 'artefact/epos/goals.php',
+                'title' => get_string('plan', 'pdp'),
+                'weight' => 30,
             ),
             array(
-                'path' => 'goals',
+                'path' => 'plan/goals',
                 'title' => get_string('goals', 'artefact.epos'),
                 'url' => 'artefact/epos/goals.php',
-                'weight' => 28,//29
-            ),
-            array(
-                'path' => 'goals/goals',
-                'title' => get_string('goals', 'artefact.epos'),
-                'url' => 'artefact/epos/goals.php',
-                'weight' => 28,
+                'weight' => 10,
             ),
         );
     }

@@ -26,7 +26,7 @@
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'evaluation/selfevaluation');
+define('MENUITEM', 'identify/selfevaluation');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 define('SECTION_PAGE', 'selfevaluation');

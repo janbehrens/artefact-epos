@@ -26,7 +26,7 @@
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'evaluation');
+define('MENUITEM', 'identify/evaluation');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 

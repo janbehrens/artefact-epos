@@ -26,7 +26,7 @@
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'evaluation/addremove');
+define('MENUITEM', 'identify/addremoveselfevaluations');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 define('SECTION_PAGE', 'addremove');

@@ -26,7 +26,7 @@
  */
 
 define('INTERNAL', true);
-define('MENUITEM', 'goals/goals');
+define('MENUITEM', 'plan/goals');
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'epos');
 define('SECTION_PAGE', 'goals');
