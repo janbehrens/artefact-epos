@@ -299,7 +299,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
      * This function builds the artefact title from language and evaluation information
      * @see ArtefactType::display_title()
      */
-    public function display_title() {
+    public function display_title($maxlen=null) {
         return "$this->title ($this->description)";
     }
 
