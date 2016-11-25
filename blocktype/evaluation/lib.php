@@ -93,7 +93,7 @@ class PluginBlocktypeEvaluation extends PluginBlocktype {
         return $artefact;
     }
 
-    public static function instance_config_form($instance) {
+    public static function instance_config_form(BlockInstance $instance) {
         $configdata = $instance->get('configdata');
         $elements = array();
         $elements[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
