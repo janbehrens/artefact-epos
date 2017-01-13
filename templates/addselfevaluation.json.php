@@ -33,7 +33,7 @@ require_once(get_config('docroot') . 'artefact/lib.php');
 safe_require('artefact', 'epos');
 
 $subject = isset($_GET['subject']) ? $_GET['subject'] : 0;
-$id = isset($_GET['id']) ? $_GET['id'] : 0;
+$id = isset($_GET['id']) && $_GET['id'] !== 'undefined' ? $_GET['id'] : 0;
 
 function object_to_array($mixed) {
     if (is_object($mixed)) {

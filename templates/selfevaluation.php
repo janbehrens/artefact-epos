@@ -226,7 +226,7 @@ if ($form_submitted) {
      * The arrays are reconstructed according to the indices given in the key names.
      */
     foreach (array_keys($_POST) as $key) {
-        $parts = split('_', $key);
+        $parts = explode('_', $key);
 
         if ($parts[0] == 'competencyName') {
             $arrCompetencyName[$parts[1]] = $_POST[$key];
@@ -265,7 +265,7 @@ if ($form_submitted) {
     if(is_array($preDescription1)) {
         $preDescription2 = implode("",$preDescription1);
     } else {
-        $preDescription2 = $preDescription1; 
+        $preDescription2 = $preDescription1;
     }
     $preDescription3 = htmlspecialchars($preDescription2);
     $competencyPatternDescription= json_encode($preDescription3);
