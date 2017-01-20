@@ -104,13 +104,13 @@ if (!$data = get_records_sql_array($sql, array($institution))) {
 
 // generate subject list
 if ($data) {
-    // select first subject if GET parameter is not set
-    if ($subject == null) {
-        $subject = $data[0]->id;
-    }
-
     foreach ($data as $row) {
         $form['elements']['subject']['options'][$row->id] = $row->name;
+    }
+
+    // If subject is not set or not available in the selected institution, select the first available subject
+    if (!isset($subject) || !array_key_exists($subject, $form['elements']['subject']['options'])) {
+        $subject = $form['elements']['subject']['value'] = $data[0]->id;
     }
 }
 
