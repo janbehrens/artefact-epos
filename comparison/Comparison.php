@@ -214,6 +214,9 @@ class Comparison {
             $colors[$evaluation->get('id')] = $this->color_next();
         }
 
+        usort($descriptorset->levels, function($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
         $column_titles = array_map(function ($item) {
             return $item->name;
         }, $descriptorset->levels);
