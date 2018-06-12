@@ -82,27 +82,22 @@ jQuery(window).load(function () {
 })
 
 function toggleForm() {
-    var elemName = 'subjectform';
-    if (hasElementClass(elemName, 'hidden')) {
-        removeElementClass(elemName, 'hidden');
-        $('addbutton').innerHTML = '{$cancelstr}';
+    var elem = $('#subjectform');
+    if (elem.hasClass('hidden')) {
+        elem.removeClass('hidden');
+        $('#addbutton').innerHTML = '{$cancelstr}';
     }
     else {
-        $('addbutton').innerHTML = '{$addstr}';
-        addElementClass(elemName, 'hidden');
+        elem.addClass('hidden');        
+        $('#addbutton').innerHTML = '{$addstr}';
     }
 }
 
 function saveCallback(form, data) {
     tableRenderer.doupdate();
     toggleForm();
-    // Can't reset() the form here, because its values are what were just submitted,
-    // thanks to pieforms
-    forEach(form.elements, function(element) {
-        if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
-            element.value = '';
-        }
-    });
+    // clear form input fields
+    $(form).find('.text,.textarea').val('');
 }
 
 function activateSubject(id) {
@@ -177,28 +172,47 @@ tableRenderer = new TableRenderer(
     'subjects.json.php?institution={$institution}',
     [
         function (r, d) {
-            var data =  TD(null);
-            data.innerHTML = '<div id="subject' + r.id + '">' + r.name + '</div>';
-            return data;
+            return $('<td />').append($('<div />', {
+                id: 'subject' + r.id,
+                text: r.name
+            }));
         },
         function (r, d) {
             if (r.active == 1) {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateSubject(' + r.id + ');'}, '{$deactivatestr}'));
-            }
-            else {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateSubject(' + r.id + ');'}, '{$activatestr}'));
+                return $('<td />').append($('<a />', {
+                    class: '',
+                    href: 'javascript: onClick=deactivateSubject(' + r.id + ');',
+                    text: '{$deactivatestr}'
+                }));
+            } else {
+                return $('<td />').append($('<a />', {
+                    class: '',
+                    href: 'javascript: onClick=activateSubject(' + r.id + ');',
+                    text: '{$activatestr}'
+                }));
             }
         },
         function (r, d) {
-            return TD(null, A({'class': 'icon btn-edit s', 'href': 'javascript: onClick=editSubject('+r.id+')'}, '{$editstr}'));
+            return $('<td />').append($('<a />', {
+                class: 'icon btn-edit s',
+                href: 'javascript: onClick=editSubject(' + r.id + ');',
+                text: '{$editstr}'
+            }));
         },
         function (r, d) {
-            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteSubject(' + r.id + ', "' + r.name + '");'}, '{$deletestr}'));
+            return $('<td />').append($('<a />', {
+                class: 'icon btn-del s',
+                href: 'javascript: onClick=deleteSubject(' + r.id + ', "' + r.name + '");',
+                text: '{$deletestr}'
+            }));
         },
         function (r, d) {
             if (r.active == 1) {
-                link1 = A({'class': 'icon btn-edit s', 'href': '../templates/selfevaluation.php?institution=' + '{$institution}' + '&subject=' + r.id}, '{$selfevaluationstr}');
-                return TD(null, link1);
+                return $('<td />').append($('<a />', {
+                    class: 'icon btn-edit s',
+                    href: '../templates/selfevaluation.php?institution=' + '{$institution}' + '&subject=' + r.id,
+                    text: '{$selfevaluationstr}'
+                }));
             }
         },
     ]

@@ -344,24 +344,44 @@ tableRenderer = new TableRenderer(
     'selfevaluation.json.php?institution={$institution}&subject={$subject}',
     [
         function (r, d) {
-            return TD(null, r.name);
+            return $('<td />', {text: r.name});
         },
         function (r, d) {
             if (r.active == 1) {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=deactivateDescriptorset(' + r.id + ');'}, '{$deactivatestr}'));
+                return $('<td />').append($('<a />', {
+                    class: '',
+                    href: 'javascript: onClick=deactivateDescriptorset(' + r.id + ');',
+                    text: '{$deactivatestr}'
+                }));
             }
             else {
-                return TD(null, A({'class': '', 'href': 'javascript: onClick=activateDescriptorset(' + r.id + ');'}, '{$activatestr}'));
+                return $('<td />').append($('<a />', {
+                    class: '',
+                    href: 'javascript: onClick=activateDescriptorset(' + r.id + ');',
+                    text: '{$activatestr}'
+                }));
             }
         },
         function (r, d) {
-            return TD(null, A({'class': 'icon btn-edit s', 'href': 'javascript: onClick=editDescriptorset(' + r.id + ', ' + JSON.stringify(r.name) + ');'}, '{$editstr}'));
+            return $('<td />').append($('<a />', {
+                class: 'icon icon icon-pencil',
+                href: 'javascript: onClick=editDescriptorset(' + r.id + ', ' + JSON.stringify(r.name) + ');',
+                text: '{$editstr}'
+            }));
         },
         function (r, d) {
-            return TD(null, A({'class': 'icon btn-del s', 'href': 'javascript: onClick=deleteDescriptorset(' + r.id + ', ' + JSON.stringify(r.name) + ');'}, '{$deletestr}'));
+            return $('<td />').append($('<a />', {
+                class: 'icon icon-trash',
+                href: 'javascript: onClick=deleteDescriptorset(' + r.id + ', ' + JSON.stringify(r.name) + ');',
+                text: '{$deletestr}'
+            }));
         },
         function (r, d) {
-            return TD(null, A({'class': '', 'href': 'exportdescriptorset.php?file=' + r.file}, '{$exportstr}'));
+            return $('<td />').append($('<a />', {
+                class: '',
+                href: 'javascript: onClick=exportdescriptorset(' + r.id + ', ' + JSON.stringify(r.name) + ');',
+                text: '{$exportstr}'
+            }));
         },
     ]
 );

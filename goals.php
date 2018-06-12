@@ -66,12 +66,17 @@ tableRenderer = new TableRenderer(
     'goals.json.php?id={$id}',
     [
         function (r, d) {
-            var data = TD(null);
+            var data = $('<td />');
             if(r.descriptor == null && r.description != null) {
-                data.innerHTML = '<div class="customgoalText" id="custom_' + r.id + '">' + r.description + '</div>';
-                return data;
+                data.append($('<div />', {
+                    class: 'customgoalText',
+                    id: 'custom_' + r.id,
+                    text: r.description
+                }));
+            } else {
+                data.text(r.descriptor_name);
             }
-            return TD(null, r.descriptor_name);
+            return data;            
         },
         function (r, d) {
             var level = '';
@@ -82,15 +87,14 @@ tableRenderer = new TableRenderer(
             if (r.level) {
                 level = ' – ' + r.level_name;
             }
-            return TD(null, competence + level);
+            return $('<td />', { text: competence + ' ' + level });            
         },
         function (r, d) {
-            var data = TD(null);
+            var data = document.createElement('td');
             if(r.description != null) {
                 data.innerHTML = '<div style="width:48px;"><a href="javascript: onClick=editCustomGoal('+r.id+');" title="$editCustomgoal"><img src="$editbuttonurl" alt="$editCustomgoal"></a><a href="javascript: deleteCustomGoal('+r.id+');" title="$deleteCustomgoal"><img src="$deletebuttonurl" alt="$deleteCustomgoal"></a></div>';
-                return data;
             }
-            return TD(null);
+            return data;
         },
     ]
 );

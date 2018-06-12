@@ -49,14 +49,15 @@ $nodescriptorsetstr = get_string('nodescriptorsetavailable', 'artefact.epos');
 $inlinejs = <<<EOF
 
 function toggleLanguageForm() {
-    var elemName = 'learnedlanguageform';
-    if (hasElementClass(elemName, 'hidden')) {
-        removeElementClass(elemName, 'hidden');
-        addElementClass('addlearnedlanguagebutton', 'hidden');
+    var formEle = $('#learnedlanguageform');
+    var btn = $('#addlearnedlanguagebutton');
+    if (formEle.hasClass('hidden')) {
+        formEle.removeClass('hidden');
+        btn.addClass('hidden');
     }
     else {
-        removeElementClass('addlearnedlanguagebutton', 'hidden');
-        addElementClass(elemName, 'hidden');
+        formEle.addClass('hidden');        
+        btn.removeClass('hidden');
     }
     loadDescriptorsets();
     jQuery('select#createselfevaluation_subject').change(loadDescriptorsets);
@@ -65,11 +66,7 @@ function toggleLanguageForm() {
 function saveCallback(form, data) {
     tableRenderer.doupdate();
     toggleLanguageForm();
-    forEach(form.elements, function(element) {
-        if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) {
-            element.value = '';
-        }
-    });
+    $(form).find('.text,.textarea').val('');
 }
 
 function deleteLanguage(evaluation_id) {
@@ -131,19 +128,24 @@ tableRenderer = new TableRenderer(
     'evaluations.json.php',
     [
         function (r, d) {
-            var link = A({'href': './evaluation/self-eval.php?id=' + r.id}, r.title);
-            return TD(null, link);
+            return $('<td />').append($('<a />', {
+                href: './evaluation/self-eval.php?id=' + r.id,
+                text: r.title
+            }));
         },
         function (r, d) {
-            return TD(null, r.description);
+            return $('<td />', { text: r.description});
         },
         function (r, d) {
-            var del = A({'class': 'icon btn-del s', 'href': ''}, '{$delstr}');
-            connect(del, 'onclick', function (e) {
-                e.stop();
+            var del = $('<a />', {
+                class: 'icon btn-del s',
+                href: '#',
+                text: '{$delstr}'
+            }).click(function (e) {
+                e.stopPropagation();
                 return deleteLanguage(r.id);
-            });
-            return TD(null, del);
+            })
+            return $('<td />').append(del);
         },
     ]
 );

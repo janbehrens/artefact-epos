@@ -100,9 +100,5 @@ function customgoalSaveCallback(form, data) {
     tableRenderer.doupdate();
     // Can't reset() the form here, because its values are what were just submitted, 
     // thanks to pieforms 
-    forEach(form.elements, function(element) { 
-        if (hasElementClass(element, 'text') || hasElementClass(element, 'textarea')) { 
-            element.value = ''; 
-        } 
-    }); 
+    $(form).find('.text,.textarea').val('');
 }
