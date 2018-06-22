@@ -1644,7 +1644,10 @@ EOF;
  * @param array $hidden Hidden values to store in the form (array of objects with name and value)
  */
 function html_select($data, $value, $name, $selected=null, $hidden=array()) {
-    $selectform = '<form action="" method="GET"><select name="' . $name . '">';
+    $selectform = <<<EOF
+    <form class="pieform" action="" method="GET">
+        <span class="picker"><select onchange="this.form.submit()" class="form-control select" name="{$name}">';
+EOF;
     foreach ($data as $item) {
         $selected_property = '';
         if ($item->id == $selected) {
@@ -1652,8 +1655,8 @@ function html_select($data, $value, $name, $selected=null, $hidden=array()) {
         }
         $selectform .= "<option value=\"$item->id\" $selected_property>$item->title</option>";
     }
-    $selectform .= '</select>';
-    $selectform .= "<input type=\"submit\" value=\"$value\" />";
+    $selectform .= '</span></select>';
+    // $selectform .= "<input type=\"submit\" value=\"$value\" />";
     foreach ($hidden as $hidden_input) {
         $selectform .= '<input type="hidden" name="' . $hidden_input->name . '" value="' . $hidden_input->value . '" />';
     }
