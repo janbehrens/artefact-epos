@@ -14,7 +14,6 @@
         </a>
     </div>
 </div>
-</div>
 {/if}
 
 <div id="subjects_list">{$selectform|safe}</div>
