@@ -33,6 +33,8 @@ define('SECTION_PAGE', 'comparison'); // this is for help
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 require_once('Comparison.php');
+
+safe_require('artefact', 'epos');
 define('TITLE', get_string('selfevaluation', 'artefact.epos'));
 
 $evaluations = param_variable('evaluations');

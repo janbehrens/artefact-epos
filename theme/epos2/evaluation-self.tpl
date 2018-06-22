@@ -9,7 +9,7 @@
         <a class="btn btn-default addpost" href="{$WWWROOT}artefact/epos/evaluation/store.php?id={$id}">
             <span>{str tag='storeevaluation' section='artefact.epos'}<span>
         </a>
-        <a class="btn btn-default addpost" href="{$WWWROOT}artefact/epos/evaluation/comparison.php?id={$id}">
+        <a class="btn btn-default addpost" href="{$WWWROOT}artefact/epos/comparison/?evaluations[]={$id}">
             <span>{str tag='compare' section='artefact.epos'}<span>
         </a>
     </div>
