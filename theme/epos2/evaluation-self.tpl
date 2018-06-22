@@ -2,18 +2,18 @@
 
 {if $id}
 <div class="rbuttons{if $GROUP} pagetabs{/if}">
-    <form method="get" action="{$WWWROOT}artefact/epos/evaluation/print.php">
-        <input type="submit" class="submit" value="{str tag='printevaluation' section='artefact.epos'}">
-        <input type="hidden" name="id" value="{$id}">
-    </form>
-    <form method="get" action="{$WWWROOT}artefact/epos/evaluation/store.php">
-        <input type="submit" class="submit" value="{str tag='storeevaluation' section='artefact.epos'}">
-        <input type="hidden" name="id" value="{$id}">
-    </form>
-    <form method="get" action="{$WWWROOT}artefact/epos/comparison/">
-        <input type="submit" class="submit" value="{str tag='compare' section='artefact.epos'}">
-        <input type="hidden" name="evaluations[]" value="{$id}">
-    </form>
+    <div class="btn-top-right btn-group btn-group-top">
+        <a class="btn btn-default addpost btn-print" href="{$WWWROOT}artefact/epos/evaluation/print.php?id={$id}">
+            <span>{str tag='printevaluation' section='artefact.epos'}<span>
+        </a>
+        <a class="btn btn-default addpost" href="{$WWWROOT}artefact/epos/evaluation/store.php?id={$id}">
+            <span>{str tag='storeevaluation' section='artefact.epos'}<span>
+        </a>
+        <a class="btn btn-default addpost" href="{$WWWROOT}artefact/epos/evaluation/comparison.php?id={$id}">
+            <span>{str tag='compare' section='artefact.epos'}<span>
+        </a>
+    </div>
+</div>
 </div>
 {/if}
 
