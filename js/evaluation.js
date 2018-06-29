@@ -112,3 +112,13 @@ function openPopup(url) {
     });
     return false;
 }
+
+function toggleCustomGoalFormModal(e) {
+    var form = $('#customgoalform .form-body');
+    var modal = $('#customgoalformModel');
+    modal.find('.modal-body').append(form);
+    modal.modal('show');
+    // once the modal show it will keep add competence button show
+    $('#customgoalform').css({display:'none'});
+    $(e.currentTarget).css({display:'block'});
+}
