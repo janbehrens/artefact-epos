@@ -10,7 +10,9 @@
         </a></td>
         <td>
         {if count($compared) > 1}
-            <a href="?{$evaluation->url_without_this}"><img alt="{str tag=remove}" src="../../../theme/raw/static/images/delete_small.png" /></a>
+            <a href="?{$evaluation->url_without_this}">
+                <img alt="{str tag=remove}" src="{$THEME->get_url('images/delete_small.png')}" />
+            </a>
         {/if}
         </td>    
     </tr>

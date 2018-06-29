@@ -451,10 +451,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
      * @return array ($html, $includejs)
      */
     public function render_evaluation() {
-        $evaluationform = $this->form_evaluation_all_types();
         $smarty = smarty();
         $smarty->assign('id', $this->get('id'));
-        $smarty->assign('evaluationform', $evaluationform);
+        $smarty->assign('evaluationform', $this->form_evaluation_all_types());
         $smarty->assign('evaltable', $this->render_evaluation_table(true));
         $includejs = array(
             'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js',
@@ -842,7 +841,7 @@ EOL
             $evaluation->title = "$evaluation->title ($evaluation->description)";
         }
         //$selectform = get_string('selfevaluations', 'artefact.epos') . ': ';
-        $selectform = html_select($data, get_string('select'), "id", $id);
+        $selectform = html_select($data, "", "id", $id);
         return array($selectform, $id);
     }
 
@@ -1644,9 +1643,10 @@ EOF;
  * @param array $hidden Hidden values to store in the form (array of objects with name and value)
  */
 function html_select($data, $value, $name, $selected=null, $hidden=array()) {
+    $onchangeJSfun = $value ? '' : 'onchange="this.form.submit()"';
     $selectform = <<<EOF
     <form class="pieform" action="" method="GET">
-        <span class="picker"><select onchange="this.form.submit()" class="form-control select" name="{$name}">';
+        <span class="picker"><select {$onchangeJSfun} class="form-control select" name="{$name}">';
 EOF;
     foreach ($data as $item) {
         $selected_property = '';
@@ -1655,8 +1655,10 @@ EOF;
         }
         $selectform .= "<option value=\"$item->id\" $selected_property>$item->title</option>";
     }
-    $selectform .= '</span></select>';
-    // $selectform .= "<input type=\"submit\" value=\"$value\" />";
+    $selectform .= '</select></span>';
+    if ($value) {
+        $selectform .= "<input type=\"submit\" value=\"$value\" />";
+    }
     foreach ($hidden as $hidden_input) {
         $selectform .= '<input type="hidden" name="' . $hidden_input->name . '" value="' . $hidden_input->value . '" />';
     }
