@@ -12,15 +12,15 @@ td img {
 }
 
 .btn-print,
-.btn-compare,
 #customgoalform,
-// .evaluation-table
+// .evaluation-table>.table-lg
  {
     @media (max-width: $screen-xs-max) {
         display: none;
     }
 }
 
+.evaluation-table>.table-sm,
 .btn.btn-add-compentence,
 {
     display: none;
@@ -94,6 +94,9 @@ form#addlearnedlanguage table {
 }
 td.radio {
     white-space: nowrap;
+    label {
+        padding: 0 15px 0 12px;
+    }
 }
 
 #evaluation .rbuttons {

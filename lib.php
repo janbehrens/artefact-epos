@@ -455,6 +455,9 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $smarty->assign('id', $this->get('id'));
         $smarty->assign('evaluationform', $this->form_evaluation_all_types());
         $smarty->assign('evaltable', $this->render_evaluation_table(true));
+        $smarty->assign('levels', $this->get_levels());
+        $smarty->assign('results', $this->get_results());
+        // log_debug($this->get_results());
         $includejs = array(
             'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js',
             'artefact/epos/js/evaluation.js',
