@@ -457,6 +457,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
         $smarty->assign('evaltable', $this->render_evaluation_table(true));
         $smarty->assign('levels', $this->get_levels());
         $smarty->assign('results', $this->get_results());
+        // log_debug($this->get_levels());
         // log_debug($this->get_results());
         $includejs = array(
             'artefact/epos/js/jquery/jquery.simplemodal.1.4.4.min.js',
@@ -509,7 +510,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
                             'onclick' => "toggleEvaluationForm($competenceid, $levelid, '$name', '$level')"
                         );
                     }
-                    $classes []= "interactive";
+                    $classes []= "interactive level-grid level" . $levelid;
                 }
                 if ($row['custom']) {
                     $cell['properties']['colspan'] = $levelcount;

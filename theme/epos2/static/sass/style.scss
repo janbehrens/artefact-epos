@@ -11,17 +11,29 @@ td img {
     font-size: 1.167em;
 }
 
+.table-sm .levels {
+    margin: 15px 0;
+}
+
 .btn-print,
 #customgoalform,
-// .evaluation-table>.table-lg
+table.evaluation thead,
+table.evaluation tbody tr td.level-grid,
  {
     @media (max-width: $screen-xs-max) {
         display: none;
     }
 }
 
+table.evaluation tbody tr td.selected,
+{
+    @media (max-width: $screen-xs-max) {
+        display: table-cell;
+    }
+}
+
 .evaluation-table>.table-sm,
-.btn.btn-add-compentence,
+.btn.btn-add-compentence
 {
     display: none;
     @media (max-width: $screen-xs-max) {

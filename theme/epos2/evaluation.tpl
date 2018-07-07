@@ -1,9 +1,9 @@
 <!-- Adapt the table to a mobile screen -->
 <div class="table-sm">
-    <div class="levels">
+    <div class="levels" id="competenceLevelList">
         {foreach $levels key=level_id item=level}
-        <a class="btn btn-default" href="#{$level_id}">{$level}</a>
-        {/foreach}        
+        <a onclick="switchLevel({$level_id})" class="btn btn-default" href="#{$level_id}">{$level}</a>
+        {/foreach}
     </div>
     <div class="results"></div>
 </div>

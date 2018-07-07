@@ -122,3 +122,10 @@ function toggleCustomGoalFormModal(e) {
     $('#customgoalform').css({display:'none'});
     $(e.currentTarget).css({display:'block'});
 }
+
+function switchLevel (levelId) {
+    // var levels = $('#competenceLevelList');
+    var table = $('table.evaluation');
+    table.find('.level-grid').removeClass('selected');
+    table.find('.level-grid.level' + levelId).addClass('selected');
+}
