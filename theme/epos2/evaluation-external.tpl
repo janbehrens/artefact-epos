@@ -16,7 +16,7 @@
                 {if $request->response_date}
                     <img alt="{str tag='returnedrequest' section='artefact.epos'}"
                          title="{str tag='returnedrequest' section='artefact.epos'}"
-                         src="../theme/raw/static/images/evaluation_entry.png" />
+                         src="{$THEME->get_url('images/evaluation_entry.png')}" />
                 {/if}
             </div>
             <div class="main">
@@ -29,19 +29,19 @@
                         <a href="external-return.php?id={$request->id}" class="tools">
                             <img alt="{str tag='reply' section='artefact.epos'}"
                                  title="{str tag='reply' section='artefact.epos'}"
-                                 src="../../../theme/raw/static/images/reply_small.png" />
+                                 src="{$THEME->get_url('images/reply_small.png')}" />
                         </a>
                         {if $request->evaluator_evaluation}
                             <a href="evaluate.php?id={$request->evaluator_evaluation}" class="tools">
                                 <img alt="{str tag='evaluate' section='artefact.epos'}"
                                      title="{str tag='evaluate' section='artefact.epos'}"
-                                     src="../theme/raw/static/images/evaluate.png" />
+                                     src="{$THEME->get_url('images/evaluate.png')}" />
                             </a>
                         {else}
                             <a href="create.php?request={$request->id}" class="tools">
                                 <img alt="{str tag='evaluate' section='artefact.epos'}"
                                      title="{str tag='evaluate' section='artefact.epos'}"
-                                     src="../theme/raw/static/images/evaluate.png" />
+                                     src="{$THEME->get_url('images/evaluate.png')}" />
                             </a>
                             <span class="tools">({str tag='notyetevaluated' section='artefact.epos'})</span>
                         {/if}
@@ -49,7 +49,7 @@
                         <a href="display.php?id={$request->evaluator_evaluation}" class="tools">
                             <img alt="{str tag='display' section='artefact.epos'}"
                                  title="{str tag='display' section='artefact.epos'}"
-                                 src="../theme/raw/static/images/evaluate.png" />
+                                 src="{$THEME->get_url('images/evaluate.png')}" />
                         </a>
                     {/if}
                 </p>
@@ -79,7 +79,7 @@
                 {if $request->response_date}
                     <img alt="{str tag='returnedrequest' section='artefact.epos'}"
                          title="{str tag='returnedrequest' section='artefact.epos'}"
-                         src="../theme/raw/static/images/evaluation_entry.png" />
+                         src="{$THEME->get_url('images/evaluation_entry.png')}" />
                 {/if}
             </div>
             <div class="main">

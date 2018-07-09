@@ -101,7 +101,7 @@ jQuery(document).ready(function() {
                             var nameDisplay = msg['message']['firstnames'][i] + " " + msg['message']['lastnames'][i] + " (" + msg['message']['usernames'][i] + ")";
                             var user = "<tr class=\"institutionMember\" style=\"cursor:pointer\">\n" + 
                                             "<th></th>\n" + 
-                                            "<td><img src=\"" + config.wwwroot + "/artefact/epos/theme/raw/static/images/no_userphoto16.png\" style=\"padding-right:5px\">" + nameDisplay + "</td>\n" +
+                                            "<td><img src=\"" + config.wwwroot + "/artefact/epos/theme/epos2/static/images/no_userphoto16.png\" style=\"padding-right:5px\">" + nameDisplay + "</td>\n" +
                                         "</tr>";
                             jQuery("#create_evaluation_request_evaluator_container").after(user);
                         }
