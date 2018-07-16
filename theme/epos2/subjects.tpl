@@ -26,7 +26,7 @@
 </table>
 <div>
     <div id="subjectform" class="hidden">{$subjectform|safe}</div>
-    <button id="addbutton" onclick="toggleForm();">{str tag='add'}</button>
+    <button class="btn btn-default" id="addbutton" onclick="toggleForm();">{str tag='add'}</button>
 </div>
 
 {include file="footer.tpl"}

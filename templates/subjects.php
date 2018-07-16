@@ -83,13 +83,13 @@ jQuery(window).load(function () {
 
 function toggleForm() {
     var elem = $('#subjectform');
+    var btn = $('#addbutton');
     if (elem.hasClass('hidden')) {
         elem.removeClass('hidden');
-        $('#addbutton').innerHTML = '{$cancelstr}';
-    }
-    else {
+        btn.text('{$cancelstr}');
+    } else {
         elem.addClass('hidden');        
-        $('#addbutton').innerHTML = '{$addstr}';
+        btn.text('{$addstr}');
     }
 }
 

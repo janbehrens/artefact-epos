@@ -1092,7 +1092,7 @@ class CustomDescriptor {
         );
         $elements['submit'] = array(
                 'type' => 'submit',
-                'value' => get_string('add'),
+                'value' => get_string('save'),
         );
         $customdescriptorform = pieform(array(
                 'name' => 'addcustomgoal',

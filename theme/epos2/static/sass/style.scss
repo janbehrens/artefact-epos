@@ -15,7 +15,7 @@ td img {
     margin: 15px 0;
 }
 
-.btn-print,
+// .btn-print,
 #customgoalform,
 table.evaluation thead,
 table.evaluation tbody tr td.level-grid,
@@ -220,6 +220,9 @@ table.evaluation .column_0 {
             input[type="radio"] {
                 margin-top: 5px;
             }
+        }
+        .radio:first-child > label{
+            padding-left: 15px;
         }
     }
 }
