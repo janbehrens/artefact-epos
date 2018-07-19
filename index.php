@@ -96,28 +96,27 @@ function loadDescriptorsets() {
         var selectedSubject = subjectInput.attr('value');
     }
 
-    var descriptorsetContainer = jQuery('#createselfevaluation_descriptorset_container td');
+    var descriptorsetContainer = jQuery('#createselfevaluation_descriptorset_container');
     var descriptorsetSelect = jQuery('select#createselfevaluation_descriptorset');
-    var descriptorsetOptions = descriptorsetSelect.children();
-    var descriptorsetInput = jQuery('input#createselfevaluation_descriptorset');
 
     sendjsonrequest('evaluationform.json.php',
         {subject_id: selectedSubject},
         'GET',
         function (data) {
-            descriptorsetContainer.children().remove();
-            descriptorsetContainer.empty();
-
+            var notDescriptorsetHint = descriptorsetContainer.find('.no-descriptorset');
             if (data instanceof Array) {
-                jQuery('#createselfevaluation_descriptorset_container td')
-                    .append('<span>{$nodescriptorsetstr}</span>');
-            }
-            else {
-                descriptorsetContainer.append('<select class="select" id="createselfevaluation_descriptorset" name="descriptorset"></select>');
-                descriptorsetSelect = jQuery('select#createselfevaluation_descriptorset');
+                if (notDescriptorsetHint.length === 0) {
+                    descriptorsetContainer.append('<span class="no-descriptorset">{$nodescriptorsetstr}</span>');
+                }
+                descriptorsetSelect.parent('.picker').hide();
+                notDescriptorsetHint.show();
+            } else {
+                descriptorsetSelect.empty();
                 for (var id in data) {
                     descriptorsetSelect.append(new Option(data[id], id));
                 }
+                notDescriptorsetHint.hide();
+                descriptorsetSelect.parent('.picker').show();
             }
         }
     );

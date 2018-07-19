@@ -21,7 +21,7 @@
 </table>
 <div>
     <div id="learnedlanguageform" class="hidden">{$evaluationsform|safe}</div>
-    <button id="addlearnedlanguagebutton" onclick="toggleLanguageForm()">{str tag='add'}</button>
+    <button class="btn" id="addlearnedlanguagebutton" onclick="toggleLanguageForm()">{str tag='add'}</button>
 </div>
 {else}<p>{str tag='nosubjectsconfiguredforuser' section='artefact.epos'}</p>
 {/if}
