@@ -16,6 +16,8 @@
         {/foreach}
     </tbody>
 </table>
+
+<script src="{$WWWROOT}/js/tablerenderer.js"></script>
 <script>
 {$JAVASCRIPT|safe}
 </script>

@@ -18,7 +18,7 @@ td img {
 // .btn-print,
 #customgoalform,
 table.evaluation thead,
-table.evaluation tbody tr td.level-grid,
+// table.evaluation tbody tr td.level-grid,
  {
     @media (max-width: $screen-xs-max) {
         display: none;
@@ -32,7 +32,10 @@ table.evaluation tbody tr td.selected,
     }
 }
 
-.evaluation-table>.table-sm,
+.evaluation-table>.table-sm {
+    display: none;
+}
+
 .btn.btn-add-compentence
 {
     display: none;

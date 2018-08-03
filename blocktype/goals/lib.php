@@ -66,7 +66,7 @@ class PluginBlocktypeGoals extends PluginBlocktype {
             $inlinejs = '(function($){$.fn.goals=function(){';
             $inlinejs .= <<<EOF
 
-tableRenderer_{$bid}_{$id} = new TableRenderer(
+var tableRenderer_{$bid}_{$id} = new TableRenderer(
     'goals_table_{$bid}_{$id}',
     '{$jsonpath}',
     [
@@ -100,7 +100,6 @@ tableRenderer_{$bid}_{$id} = new TableRenderer(
     ]
 );
 
-tableRenderer_{$bid}_{$id}.emptycontent = '';
 tableRenderer_{$bid}_{$id}.paginate = false;
 tableRenderer_{$bid}_{$id}.updateOnLoad();
 

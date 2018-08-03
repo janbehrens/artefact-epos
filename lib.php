@@ -522,7 +522,7 @@ class ArtefactTypeEvaluation extends ArtefactType {
             };
         }
         $eval_table = new HTMLTable_epos($columntitles, $columndefinitions);
-        $eval_table->add_table_classes('evaluation');
+        $eval_table->add_table_classes('evaluation fullwidth');
         return $eval_table->render($results);
     }
 
