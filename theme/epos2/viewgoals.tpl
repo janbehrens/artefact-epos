@@ -1,4 +1,4 @@
-<table id="goals_table_{$bid}_{$id}">
+<table id="goals_table_{$bid}_{$id}" class="fullwidth">
     <thead>
         <tr>
             <th>{str tag='goal' section='artefact.epos'}</th>

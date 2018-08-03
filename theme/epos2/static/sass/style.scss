@@ -62,30 +62,6 @@ table.evaluation tbody tr td.selected,
     }
 }
 
-.progressbar {
-    height: 26px;
-    position: relative;
-    border-radius: 4px;
-    border: 1px solid #AAAAAA;
-    background-color: white;
-}
- 
-.progressbar-value {
-    background: url("") repeat-x scroll 50% 50% #CCCCCC;
-    height: 100%;
-    margin: -1px;
-    position: absolute;
-    border: 1px solid #AAAAAA;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progressbar-content {
-    padding: 6px 15px;
-    position: absolute;
-    color: #333;
-}
-
 a label {
     cursor: pointer;
 }
