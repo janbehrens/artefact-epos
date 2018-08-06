@@ -8,6 +8,21 @@
     });
 </script>
 
+<div class="create-self-evaluation">
+<style>
+.create-self-evaluation .form-group {
+    border-bottom: none;
+    padding: 5px 0;
+}
+.create-self-evaluation fieldset {
+    border: 1px solid #14436F;
+    padding: 10px 15px;
+    margin: 20px 0;
+    border-radius: 10px;
+    background-color:#fff;
+}
+</style>
+
 {$selector|safe}
 
 {if $subjects}
@@ -95,6 +110,8 @@
 {else}
     {str tag='nosubjectsconfigured' section='artefact.epos' arg1='$institution_displayname' arg2='<a href="subjects.php?institution=$institution">$subjectsadministrationstr</a>'}
 {/if}
+
+</div>
 
 <!-- js for description -->
 <script type="text/javascript">

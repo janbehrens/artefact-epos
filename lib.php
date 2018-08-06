@@ -1092,6 +1092,7 @@ class CustomDescriptor {
         );
         $elements['submit'] = array(
                 'type' => 'submit',
+                'class' => 'btn-default',
                 'value' => get_string('save'),
         );
         $customdescriptorform = pieform(array(

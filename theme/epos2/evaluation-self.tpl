@@ -56,10 +56,13 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{str tag="addcustomcompetenceformtitle" section="artefact.epos"}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                <button class="deletebutton close" data-dismiss="modal" aria-label="Close">
+                    <span class="times">×</span>
+                    <span class="sr-only">Close</span>
                 </button>
+                <h4 class="modal-title text-inline">
+                {str tag="addcustomcompetenceformtitle" section="artefact.epos"}
+                </h4>
             </div>
             <div class="modal-body"></div>
         </div>
