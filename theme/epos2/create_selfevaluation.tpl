@@ -19,7 +19,6 @@
     padding: 10px 15px;
     margin: 20px 0;
     border-radius: 10px;
-    background-color:#fff;
 }
 </style>
 
@@ -101,9 +100,9 @@
     {if $edit}
         <button type="button" onclick="cancelEditing();">{str tag='cancel'}</button>
     {/if}
-    <button type="submit" name="save">{str tag='save'}</input>
+    <button type="submit" class="btn" name="save">{str tag='save'}</input>
     {if $edit}
-        <button type="submit" name="saveas">{str tag='saveasnewtemplate' section='artefact.epos'}</button>
+        <button type="submit" class="btn" name="saveas">{str tag='saveasnewtemplate' section='artefact.epos'}</button>
     {/if}
     </form>
     </fieldset>
